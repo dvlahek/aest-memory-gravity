@@ -1,0 +1,3 @@
+# v0.19p precision level p2
+tol_perturb_integration = 2.e-7
+perturb_sampling_stepsize = 0.005
