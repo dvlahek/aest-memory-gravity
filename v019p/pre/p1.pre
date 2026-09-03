@@ -1,0 +1,4 @@
+# v0.19p precision level p1
+# CLASS high-accuracy perturbation settings used as first convergence step.
+tol_perturb_integration = 1.e-6
+perturb_sampling_stepsize = 0.01
