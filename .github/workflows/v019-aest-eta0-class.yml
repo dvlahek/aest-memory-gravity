@@ -1,0 +1,82 @@
+name: v019 AeST eta0 CLASS physics bridge
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019/**'
+      - '.github/workflows/v019-aest-eta0-class.yml'
+
+jobs:
+  class-v019:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_pristine
+      - name: Duplicate source tree
+        run: cp -a class_pristine class_patched
+      - name: Apply active v0.19 eta0 patch
+        run: python3 v019/apply_patch_v019.py class_patched
+      - name: Standalone Cosh/Exp background self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          gcc -O2 -Iv019/patch/include v019/patch/source/aest_memory.c v019/test_aest_background.c -lm -o test_v019_background
+          ./test_v019_background | tee results/v019_background_selftest.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          txt=Path('results/v019_background_selftest.txt').read_text()
+          ok='kernel_status=0 cosh_status=0 exp_status=0' in txt
+          Path('results/v019_background_selftest.json').write_text(json.dumps({'gate_status':'PASS' if ok else 'FAIL','raw':txt},indent=2))
+          raise SystemExit(0 if ok else 1)
+          PY
+      - name: Build pristine CLASS
+        run: make -C class_pristine -j2 class
+      - name: Build v0.19 patched CLASS
+        run: make -C class_patched -j2 class
+      - name: Confirm helper module linked
+        run: nm class_patched/class | grep aest_background_eval
+      - name: Re-run v0.18 AeST-off zero regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p class_pristine/output class_patched/output results
+          (cd class_pristine && ./class base_2018_plikHM_TTTEEE_lowl_lowE_lensing.ini > ../results/v019_pristine_off.log 2>&1)
+          (cd class_patched && ./class base_2018_plikHM_TTTEEE_lowl_lowE_lensing.ini > ../results/v019_patched_off.log 2>&1)
+          python3 compare_class_outputs.py class_pristine/output class_patched/output --json-out results/v019_off_compare.json
+      - name: Run matched CDM and AeST eta0 benchmarks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp v019/ini/cdm_newtonian.ini class_patched/v019_cdm.ini
+          cp v019/ini/aest_cosh.ini class_patched/v019_cosh.ini
+          cp v019/ini/aest_exp.ini class_patched/v019_exp.ini
+          (cd class_patched && ./class v019_cdm.ini) | tee results/v019_cdm.log
+          (cd class_patched && ./class v019_cosh.ini) | tee results/v019_cosh.log
+          (cd class_patched && ./class v019_exp.ini) | tee results/v019_exp.log
+      - name: Parse CLASS background/log diagnostics
+        run: python3 v019/parse_class_logs.py results --json-out results/v019_log_diagnostics.json
+      - name: Compare eta0 CMB spectra with matched CDM
+        run: python3 v019/compare_eta0.py class_patched/output --json-out results/v019_eta0_spectra.json
+      - name: Write build status
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path('results/v019_build_report.json').write_text(json.dumps({'pristine_build':'PASS','patched_build':'PASS','helper_linked':'PASS','aest_runs':'PASS'},indent=2))
+          PY
+      - name: Create v0.19 result bundle
+        run: python3 v019/make_report.py
+      - name: Upload v0.19 result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019
+          path: results_bundle_v019.zip
