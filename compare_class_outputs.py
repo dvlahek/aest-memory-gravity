@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import argparse, json
-import numpy as np
+import argparse, json, math
 
 ap=argparse.ArgumentParser()
 ap.add_argument("pristine_output")
@@ -10,6 +9,42 @@ ap.add_argument("--rtol",type=float,default=2e-13)
 ap.add_argument("--atol",type=float,default=1e-30)
 ap.add_argument("--json-out",default="results/off_baseline_compare.json")
 args=ap.parse_args()
+
+def load_numeric(path):
+    rows=[]
+    for raw in path.read_text(errors="replace").splitlines():
+        line=raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        vals=[]
+        for token in line.split():
+            vals.append(float(token))
+        rows.append(vals)
+    return rows
+
+def numeric_compare(pa,pb):
+    xa=load_numeric(pa); xb=load_numeric(pb)
+    if len(xa)!=len(xb):
+        return {"numeric_ok":False,"rows_a":len(xa),"rows_b":len(xb)}
+    max_abs=0.0; max_rel=0.0
+    for i,(ra,rb) in enumerate(zip(xa,xb)):
+        if len(ra)!=len(rb):
+            return {"numeric_ok":False,"row":i,"cols_a":len(ra),"cols_b":len(rb)}
+        for j,(va,vb) in enumerate(zip(ra,rb)):
+            if math.isnan(va) and math.isnan(vb):
+                continue
+            if math.isinf(va) or math.isinf(vb):
+                if va!=vb:
+                    return {"numeric_ok":False,"row":i,"col":j,"a":va,"b":vb}
+                continue
+            diff=abs(va-vb)
+            scale=max(abs(va),abs(vb),args.atol)
+            rel=diff/scale
+            max_abs=max(max_abs,diff); max_rel=max(max_rel,rel)
+            if diff>args.atol+args.rtol*max(abs(va),abs(vb)):
+                return {"numeric_ok":False,"row":i,"col":j,"a":va,"b":vb,
+                        "max_abs":max_abs,"max_rel":max_rel}
+    return {"numeric_ok":True,"max_abs":max_abs,"max_rel":max_rel}
 
 a=Path(args.pristine_output); b=Path(args.patched_output)
 fa={p.name:p for p in a.glob("*.dat")}
@@ -26,15 +61,7 @@ for name in common:
         rec.update(max_abs=0.0,max_rel=0.0,numeric_ok=True)
     else:
         try:
-            xa=np.loadtxt(fa[name]); xb=np.loadtxt(fb[name])
-            if xa.shape != xb.shape:
-                rec.update(numeric_ok=False,shape_a=list(xa.shape),shape_b=list(xb.shape))
-            else:
-                diff=np.abs(xa-xb)
-                denom=np.maximum(np.abs(xa),args.atol)
-                rec["max_abs"]=float(np.max(diff))
-                rec["max_rel"]=float(np.max(diff/denom))
-                rec["numeric_ok"]=bool(np.allclose(xa,xb,rtol=args.rtol,atol=args.atol,equal_nan=True))
+            rec.update(numeric_compare(fa[name],fb[name]))
         except Exception as e:
             rec.update(numeric_ok=False,error=str(e))
     all_ok &= bool(rec["numeric_ok"])
