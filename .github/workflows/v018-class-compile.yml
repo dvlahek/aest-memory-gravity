@@ -1,0 +1,84 @@
+name: v018 CLASS compile and zero regression
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'apply_patch.py'
+      - 'patch/**'
+      - 'tests/**'
+      - 'compare_class_outputs.py'
+      - '.github/workflows/v018-class-compile.yml'
+
+jobs:
+  class-v018:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout v0.18 harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS pristine
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_pristine
+
+      - name: Duplicate source tree
+        run: cp -a class_pristine class_patched
+
+      - name: Apply v0.18 patch
+        run: python3 apply_patch.py class_patched
+
+      - name: Standalone module self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          gcc -O2 -Ipatch/include patch/source/aest_memory.c tests/test_aest_memory_module.c -lm -o test_aest_memory
+          ./test_aest_memory | tee results/module_selftest.txt
+          STATUS=$(awk -F= '/^status=/{print $2}' results/module_selftest.txt)
+          MAXREL=$(awk -F= '/^max_relative_kernel_error=/{print $2}' results/module_selftest.txt)
+          python3 - "$STATUS" "$MAXREL" <<'PY'
+          import json,sys
+          from pathlib import Path
+          status=int(sys.argv[1]); maxrel=float(sys.argv[2])
+          Path("results/module_selftest.json").write_text(json.dumps({"status":status,"max_relative_kernel_error":maxrel,"gate_status":"PASS" if status==0 else "FAIL"},indent=2))
+          PY
+          test "$STATUS" = "0"
+
+      - name: Build pristine CLASS
+        run: make -C class_pristine -j2 class
+
+      - name: Build patched CLASS
+        run: make -C class_patched -j2 class
+
+      - name: Verify module linked
+        run: nm class_patched/class | grep aest_memory_module_version
+
+      - name: Run Planck-2018 baseline in both trees
+        shell: bash
+        run: |
+          mkdir -p class_pristine/output class_patched/output
+          (cd class_pristine && ./class base_2018_plikHM_TTTEEE_lowl_lowE_lensing.ini)
+          (cd class_patched && ./class base_2018_plikHM_TTTEEE_lowl_lowE_lensing.ini)
+
+      - name: Compare off-baseline outputs
+        run: python3 compare_class_outputs.py class_pristine/output class_patched/output --json-out results/off_baseline_compare.json
+
+      - name: Write build report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path("results/build_report.json").write_text(json.dumps({"pristine_build":"PASS","patched_build":"PASS","linked_symbol":"aest_memory_module_version"},indent=2))
+          PY
+
+      - name: Create result bundle
+        run: python3 make_v018_report.py
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v018
+          path: results_bundle_v018.zip

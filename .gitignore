@@ -1,0 +1,7 @@
+_class_work/
+results/
+results_bundle_*.zip
+*.o
+class
+__pycache__/
+*.pyc
