@@ -1,0 +1,102 @@
+name: v019y Exp tauH0=1 high-output-precision tangent
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019y/**'
+      - '.github/workflows/v019y-high-output-precision.yml'
+
+jobs:
+  high-output-precision-v019y:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_y
+
+      - name: Apply AeST bridge, bath, variational forcing and output precision patch
+        run: |
+          mkdir -p results class_y/output
+          python3 v019/apply_patch_v019.py class_y
+          python3 v019i/apply_ic_patch.py class_y
+          python3 v019j/apply_memory_patch.py class_y
+          python3 v019u/apply_tau1_bath_patch.py class_y
+          sed -i 's/pba->aest_memory_order = 16;/pba->aest_memory_order = 39;/' class_y/source/input.c
+          python3 v019w/apply_variational_forcing_patch.py class_y
+          python3 v019y/apply_output_precision_patch.py class_y
+
+      - name: Build high-output-precision CLASS
+        run: make -C class_y -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '#define _OUTPUTPRECISION_ 17' class_y/include/common.h
+          grep -q '#define _COLUMNWIDTH_ 28' class_y/include/common.h
+          grep -q 'aest_tangent_trace_force' class_y/source/perturbations.c
+          grep -q 'aest_tangent_external_force' class_y/source/perturbations.c
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_y/source/perturbations.c
+
+      - name: Prepare v0.19y inputs
+        run: python3 v019y/prepare_v019y_ini.py class_y
+
+      - name: Trace N39 eta0 forcing p3
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_y && AEST_TANGENT_TRACE_FILE="$GITHUB_WORKSPACE/results/v019y_force39_raw.dat" OMP_NUM_THREADS=1 ./class v019y_trace39.ini ../v019p/pre/p3.pre) > results/v019y_trace39.log 2>&1
+          python3 v019w/normalize_force_table.py results/v019y_force39_raw.dat results/v019y_force39.dat --json-out results/v019y_force39_stats.json
+
+      - name: Run high-precision p3 lambda ladder
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v019y_force39.dat"
+          run_case () {
+            label="$1"; lam="$2"
+            echo "=== ${label} lambda=${lam} p3 ==="
+            (cd class_y && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$lam" OMP_NUM_THREADS=1 ./class "v019y_${label}.ini" ../v019p/pre/p3.pre) > "results/v019y_${label}.log" 2>&1
+          }
+          run_case force_l0 0
+          run_case force_p100 100
+          run_case force_m100 -100
+          run_case force_p300 300
+          run_case force_m300 -300
+          run_case force_p1000 1000
+          run_case force_m1000 -1000
+
+      - name: Run p4 lambda300 precision control
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v019y_force39.dat"
+          (cd class_y && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=300 OMP_NUM_THREADS=1 ./class v019y_force_p300_p4.ini ../v019v/pre/p4.pre) > results/v019y_force_p300_p4.log 2>&1
+          (cd class_y && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=-300 OMP_NUM_THREADS=1 ./class v019y_force_m300_p4.ini ../v019v/pre/p4.pre) > results/v019y_force_m300_p4.log 2>&1
+
+      - name: Analyse high-output-precision tangent
+        run: python3 v019y/analyse_v019y.py class_y/output --json-out results/v019y_analysis.json
+
+      - name: Create report
+        run: python3 v019y/make_report.py
+
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019y_debug_results
+          path: results/
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019y
+          path: results_bundle_v019y.zip
