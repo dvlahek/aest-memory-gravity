@@ -1,0 +1,114 @@
+name: v019j first finite eta CLASS memory test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019j/**'
+      - '.github/workflows/v019j-finite-memory.yml'
+
+jobs:
+  class-v019j:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS eta0 tree
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_eta0
+
+      - name: Apply eta0 AeST bridge and leading adiabatic IC
+        run: |
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_eta0
+          python3 v019i/apply_ic_patch.py class_eta0
+
+      - name: Duplicate eta0 tree and apply finite-memory patch
+        run: |
+          cp -a class_eta0 class_memory
+          python3 v019j/apply_memory_patch.py class_memory
+
+      - name: Validate finite-bath representation and regular memory IC
+        run: python3 v019j/validate_memory_representation.py
+
+      - name: Build eta0 and memory-patched CLASS
+        run: |
+          make -C class_eta0 -j2 class
+          make -C class_memory -j2 class
+
+      - name: Audit compiled memory source
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'index_pt_mem_q_aest' class_memory/include/perturbations.h
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_memory/source/perturbations.c
+          grep -q 'aest_memory_enabled' class_memory/source/input.c
+
+      - name: Memory-disabled zero-regression pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp v019/ini/aest_exp.ini class_eta0/v019j_off.ini
+          python3 - <<'PY'
+          from pathlib import Path
+          for d in ['class_eta0','class_memory']:
+              if d == 'class_memory':
+                  Path(d+'/v019j_off.ini').write_text(Path('class_eta0/v019j_off.ini').read_text())
+              p=Path(d+'/v019j_off.ini');s=p.read_text().splitlines();out=[]
+              for line in s:
+                  out.append('root = output/v019j_off_' if line.strip().startswith('root =') else line)
+              out += ['write_background = yes','write_thermodynamics = yes']
+              p.write_text('\n'.join(out)+'\n')
+          PY
+          mkdir -p class_eta0/output class_memory/output
+          (cd class_eta0 && ./class v019j_off.ini ../v019p/pre/p3.pre) > ../results/v019j_off_eta0.log 2>&1
+          (cd class_memory && ./class v019j_off.ini ../v019p/pre/p3.pre) > ../results/v019j_off_memorypatch.log 2>&1
+          python3 compare_class_outputs.py class_eta0/output class_memory/output --json-out results/v019j_off_regression.json
+
+      - name: Prepare finite-eta campaign INIs
+        run: |
+          rm -f class_memory/output/*.dat
+          python3 v019j/prepare_memory_ini.py class_memory
+
+      - name: Run Cosh and Exp eta/order campaign at strict precision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for model in cosh exp; do
+            for case in off n16_e0_t1 n16_e01_t1 n16_e03_t1 n16_e10_t1 n20_e0_t1 n20_e03_t1; do
+              echo "=== ${model} ${case} ==="
+              (cd class_memory && ./class "v019j_${model}_${case}.ini" ../v019p/pre/p3.pre) > "results/v019j_${model}_${case}.log" 2>&1
+            done
+          done
+
+      - name: Analyse finite eta scaling and bath-order convergence
+        run: python3 v019j/analyse_memory.py class_memory/output --json-out results/v019j_memory.json
+
+      - name: Write build report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path('results/v019j_build_report.json').write_text(json.dumps({
+            'builds':'PASS',
+            'memory_runs':'PASS',
+            'models':['Cosh','Exp'],
+            'eta_values':[0.0,0.01,0.03,0.10],
+            'tau_H0':1.0,
+            'bath_orders':[16,20]
+          },indent=2))
+          PY
+
+      - name: Create v0.19j result bundle
+        run: python3 v019j/make_report.py
+
+      - name: Upload v0.19j result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019j
+          path: results_bundle_v019j.zip
