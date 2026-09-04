@@ -16,14 +16,18 @@ CASES={
 
 def rewrite(text,root,case):
     out=[];root_found=False
+    seen_background=False;seen_thermo=False
     for line in text.splitlines():
         s=line.strip()
         if s.startswith('root ='):
             out.append(f'root = {root}');root_found=True
         else:
             out.append(line)
+        if s.startswith('write_background ='): seen_background=True
+        if s.startswith('write_thermodynamics ='): seen_thermo=True
     if not root_found:raise RuntimeError('root line not found')
-    out += ['write_background = yes','write_thermodynamics = yes']
+    if not seen_background: out.append('write_background = yes')
+    if not seen_thermo: out.append('write_thermodynamics = yes')
     if case is not None:
         order,eta,tau=case
         out += [
