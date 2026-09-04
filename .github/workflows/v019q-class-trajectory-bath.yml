@@ -51,22 +51,39 @@ jobs:
         run: |
           set -euo pipefail
           cd class_trace
-          AEST_TRACE_FILE=../results/v019q_cosh_trace.csv OMP_NUM_THREADS=1 ./class v019q_cosh.ini > ../results/v019q_cosh.log 2>&1
+          if ! AEST_TRACE_FILE=../results/v019q_cosh_trace.csv OMP_NUM_THREADS=1 ./class v019q_cosh.ini > ../results/v019q_cosh.log 2>&1; then
+            echo '--- CLASS Cosh log ---'
+            cat ../results/v019q_cosh.log
+            exit 1
+          fi
 
       - name: Run traced Exp eta0 CLASS
         shell: bash
         run: |
           set -euo pipefail
           cd class_trace
-          AEST_TRACE_FILE=../results/v019q_exp_trace.csv OMP_NUM_THREADS=1 ./class v019q_exp.ini > ../results/v019q_exp.log 2>&1
+          if ! AEST_TRACE_FILE=../results/v019q_exp_trace.csv OMP_NUM_THREADS=1 ./class v019q_exp.ini > ../results/v019q_exp.log 2>&1; then
+            echo '--- CLASS Exp log ---'
+            cat ../results/v019q_exp.log
+            exit 1
+          fi
 
       - name: Fit and validate source-weighted fixed bath
         run: python3 v019q/analyse_and_fit.py
 
       - name: Create master report
+        if: success()
         run: python3 v019q/make_report.py
 
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019q_debug_logs
+          path: results/
+
       - name: Upload result bundle
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: results_bundle_v019q
