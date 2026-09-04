@@ -60,9 +60,14 @@ jobs:
               if d == 'class_memory':
                   Path(d+'/v019j_off.ini').write_text(Path('class_eta0/v019j_off.ini').read_text())
               p=Path(d+'/v019j_off.ini');s=p.read_text().splitlines();out=[]
+              seen_thermo=False
               for line in s:
-                  out.append('root = output/v019j_off_' if line.strip().startswith('root =') else line)
-              out += ['write_background = yes','write_thermodynamics = yes']
+                  st=line.strip()
+                  out.append('root = output/v019j_off_' if st.startswith('root =') else line)
+                  if st.startswith('write_thermodynamics ='):
+                      seen_thermo=True
+              if not seen_thermo:
+                  out.append('write_thermodynamics = yes')
               p.write_text('\n'.join(out)+'\n')
           PY
           mkdir -p class_eta0/output class_memory/output
