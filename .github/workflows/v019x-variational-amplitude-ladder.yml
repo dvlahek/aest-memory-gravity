@@ -1,0 +1,102 @@
+name: v019x Exp tauH0=1 variational amplitude ladder
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019x/**'
+      - '.github/workflows/v019x-variational-amplitude-ladder.yml'
+
+jobs:
+  variational-amplitude-v019x:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_x
+
+      - name: Apply eta0 AeST bridge, validated tau1 bath and variational forcing patch
+        run: |
+          mkdir -p results class_x/output
+          python3 v019/apply_patch_v019.py class_x
+          python3 v019i/apply_ic_patch.py class_x
+          python3 v019j/apply_memory_patch.py class_x
+          python3 v019u/apply_tau1_bath_patch.py class_x
+          sed -i 's/pba->aest_memory_order = 16;/pba->aest_memory_order = 39;/' class_x/source/input.c
+          python3 v019w/apply_variational_forcing_patch.py class_x
+
+      - name: Build variational diagnostic CLASS
+        run: make -C class_x -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'aest_tangent_trace_force' class_x/source/perturbations.c
+          grep -q 'aest_tangent_external_force' class_x/source/perturbations.c
+          grep -q 'AEST_TANGENT_FORCE_FILE' class_x/source/aest_memory.c
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_x/source/perturbations.c
+
+      - name: Prepare v0.19x inputs
+        run: python3 v019x/prepare_v019x_ini.py class_x
+
+      - name: Trace N39 eta0 forcing p3
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_x && AEST_TANGENT_TRACE_FILE="$GITHUB_WORKSPACE/results/v019x_force39_raw.dat" OMP_NUM_THREADS=1 ./class v019x_trace39.ini ../v019p/pre/p3.pre) > results/v019x_trace39.log 2>&1
+          python3 v019w/normalize_force_table.py results/v019x_force39_raw.dat results/v019x_force39.dat --json-out results/v019x_force39_stats.json
+
+      - name: Run amplified p3 lambda ladder
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v019x_force39.dat"
+          run_case () {
+            label="$1"; lam="$2"
+            echo "=== ${label} lambda=${lam} p3 ==="
+            (cd class_x && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$lam" OMP_NUM_THREADS=1 ./class "v019x_${label}.ini" ../v019p/pre/p3.pre) > "results/v019x_${label}.log" 2>&1
+          }
+          run_case force_l0 0
+          run_case force_p30 30
+          run_case force_m30 -30
+          run_case force_p100 100
+          run_case force_m100 -100
+          run_case force_p300 300
+          run_case force_m300 -300
+          run_case force_p1000 1000
+          run_case force_m1000 -1000
+
+      - name: Run p4 lambda300 precision control
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v019x_force39.dat"
+          (cd class_x && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=300 OMP_NUM_THREADS=1 ./class v019x_force_p300_p4.ini ../v019v/pre/p4.pre) > results/v019x_force_p300_p4.log 2>&1
+          (cd class_x && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=-300 OMP_NUM_THREADS=1 ./class v019x_force_m300_p4.ini ../v019v/pre/p4.pre) > results/v019x_force_m300_p4.log 2>&1
+
+      - name: Analyse amplitude ladder
+        run: python3 v019x/analyse_v019x.py class_x/output --json-out results/v019x_analysis.json
+
+      - name: Create report
+        run: python3 v019x/make_report.py
+
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019x_debug_results
+          path: results/
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019x
+          path: results_bundle_v019x.zip
