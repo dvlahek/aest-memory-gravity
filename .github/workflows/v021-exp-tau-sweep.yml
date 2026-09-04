@@ -36,6 +36,9 @@ jobs:
           ref: e85808324f51fc694d12e3ed7439552a3c3f9540
           path: class_v021
 
+      - name: Install quadrature dependencies
+        run: python3 -m pip install --user numpy scipy
+
       - name: Apply AeST, direct Drude bath, variational and high-output-precision patches
         run: |
           mkdir -p results class_v021/output
