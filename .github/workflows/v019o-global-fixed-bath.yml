@@ -1,0 +1,42 @@
+name: v019o global fixed positive bath
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019o/**'
+      - '.github/workflows/v019o-global-fixed-bath.yml'
+
+jobs:
+  global-fixed-v019o:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install numerical dependencies
+        run: pip install numpy scipy
+
+      - name: Fit global positive fixed-frequency bath
+        run: PYTHONPATH=v019o python3 v019o/01_fit_global_fixed.py
+
+      - name: Validate on independent time-dependent histories
+        run: PYTHONPATH=v019o python3 v019o/02_time_domain_validation.py
+
+      - name: Audit passivity and asymptotic limits
+        run: PYTHONPATH=v019o python3 v019o/03_passivity_limits.py
+
+      - name: Create master report
+        run: python3 v019o/04_make_report.py
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019o
+          path: results_bundle_v019o.zip
