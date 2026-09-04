@@ -6,18 +6,20 @@ KS='1e-4,3e-4,1e-3,3e-3,1e-2,3e-2,1e-1,3e-1'
 
 
 def rewrite(text,root):
-    out=[];root_ok=False
+    out=[];root_ok=False;write_bg_ok=False
     for line in text.splitlines():
         s=line.strip()
         if s.startswith('root ='):
             out.append(f'root = {root}');root_ok=True
         elif s.startswith('k_output_values ='):
             continue
+        elif s.startswith('write_background ='):
+            out.append('write_background = yes');write_bg_ok=True
         else:
             out.append(line)
     if not root_ok: out.append(f'root = {root}')
+    if not write_bg_ok: out.append('write_background = yes')
     out.append(f'k_output_values = {KS}')
-    out.append('write_background = yes')
     return '\n'.join(out)+'\n'
 
 
