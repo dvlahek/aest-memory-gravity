@@ -35,7 +35,7 @@ def build_complex_samples(hvals,nuvals,epsvals):
     return np.asarray(zs,complex),np.asarray(hs,float),np.asarray(targets,complex)
 
 
-def fit_positive(hvals,nuvals,epsvals,N,wmin=1e-9,wmax=1e9):
+def fit_positive(hvals,nuvals,epsvals,N,wmin=1e-9,wmax=1e9,sum_constraint_weight=30.0):
     omega=candidate_nodes(N,wmin,wmax)
     z,h,K=build_complex_samples(hvals,nuvals,epsvals)
     blocks=[]
@@ -45,6 +45,10 @@ def fit_positive(hvals,nuvals,epsvals,N,wmin=1e-9,wmax=1e9):
     scale=np.maximum(np.abs(K),1e-12)
     M=np.vstack([B.real/scale[:,None],B.imag/scale[:,None]])
     y=np.r_[K.real/scale,K.imag/scale]
+    # High-frequency exact limit K -> 1 requires sum_j w_j = 1.
+    # Enforce it softly but strongly while retaining non-negative least squares.
+    M=np.vstack([M,sum_constraint_weight*np.ones((1,N))])
+    y=np.r_[y,sum_constraint_weight]
     w,_=nnls(M,y,maxiter=500*N)
     pred=B@w
     rel=np.abs(pred-K)/scale
