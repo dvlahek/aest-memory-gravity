@@ -1,0 +1,45 @@
+name: v019l passive complex-domain rational memory
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019l/**'
+      - '.github/workflows/v019l-passive-rational.yml'
+
+jobs:
+  passive-v019l:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install numerical dependencies
+        run: python -m pip install --upgrade pip numpy scipy
+
+      - name: Verify exact passive diffusive identity
+        run: python v019l/01_diffusive_identity.py
+
+      - name: Build N24 nonnegative complex-domain table
+        run: python v019l/02_build_passive_table.py
+
+      - name: Audit interpolation between H anchors
+        run: python v019l/03_interpolation_audit.py
+
+      - name: Audit passivity and pole locations
+        run: python v019l/04_passivity_audit.py
+
+      - name: Create master report
+        run: python v019l/05_make_report.py
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019l
+          path: results_bundle_v019l.zip
