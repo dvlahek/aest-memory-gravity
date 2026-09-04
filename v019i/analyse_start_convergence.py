@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse,json,math
 
-LEVELS=('s0','s1','s2','s3')
+LEVELS=('s0','c1','c2','s1','s2','s3')
 PRIMARY_COLS=(2,3,4)
 
 
@@ -57,11 +57,6 @@ def cl_pair(out,ma,la,mb,lb):
 
 
 def differential_signal_change(out,model,level):
-    """Compare [model-CDM] at `level` with [model-CDM] at s0.
-
-    This cancels the common CLASS shift caused solely by moving the integration
-    start. The normalization is the s0 CDM peak in each CMB column.
-    """
     ans={};primary_max=0.0;all_max=0.0
     for key,suf in [('unlensed','cl.dat'),('lensed','cl_lensed.dat')]:
         c0=load_numeric(find_one(out,'v019i_cdm_s0_',suf))
@@ -120,13 +115,8 @@ def main():
     exp0=res['levels']['s0']['exp_vs_cdm']['primary_max']
     cosh0=res['levels']['s0']['cosh_vs_cdm']['primary_max']
     reference_signal=max(exp0,cosh0,1e-300)
-
-    # A start level is usable as an IC convergence control only while matched CDM
-    # itself remains stable. If CDM moves substantially, the test has entered a
-    # CLASS start/sampling regime and cannot be attributed to AeST IC physics.
     control_limit=max(1e-5,0.10*reference_signal)
-    valid_levels=[];rejected_levels=[]
-    per_level={}
+    valid_levels=[];rejected_levels=[];per_level={}
     for lev in LEVELS[1:]:
         cdm_self=res['self_convergence']['cdm'][f's0_vs_{lev}_cl']['primary_max']
         exp_r=res['levels'][lev]['exp_vs_cdm']['primary_max']
@@ -138,9 +128,7 @@ def main():
         valid=cdm_self<=control_limit
         (valid_levels if valid else rejected_levels).append(lev)
         per_level[lev]={
-          'cdm_self_primary':cdm_self,
-          'control_limit':control_limit,
-          'control_valid':valid,
+          'cdm_self_primary':cdm_self,'control_limit':control_limit,'control_valid':valid,
           'exp_residual':exp_r,'exp_residual_fractional_drift':exp_drift,
           'cosh_residual':cosh_r,'cosh_residual_fractional_drift':cosh_drift,
           'exp_differential_signal_fractional_change':exp_ds,
@@ -165,16 +153,13 @@ def main():
         gate='CHECK'
 
     res['summary']={
-      'exp_cdm_primary_s0':exp0,
-      'cosh_cdm_primary_s0':cosh0,
-      'control_limit':control_limit,
-      'valid_earlier_start_levels':valid_levels,
-      'rejected_common_mode_levels':rejected_levels,
-      'per_level':per_level,
+      'exp_cdm_primary_s0':exp0,'cosh_cdm_primary_s0':cosh0,
+      'control_limit':control_limit,'valid_earlier_start_levels':valid_levels,
+      'rejected_common_mode_levels':rejected_levels,'per_level':per_level,
       'max_valid_residual_fractional_drift':max_valid_drift,
       'max_valid_differential_signal_fractional_change':max_valid_signal_change,
       'classification':classification,'gate_status':gate,
-      'meaning':'Earlier-start levels are interpreted only while the matched CDM control remains stable. Levels where CDM itself shifts are classified as CLASS start/sampling common-mode breakdown, not evidence for AeST finite-gradient IC terms.'
+      'meaning':'Earlier-start levels are interpreted only while the matched CDM control remains stable. Levels where CDM itself shifts are CLASS start/sampling common-mode breakdown, not evidence for AeST finite-gradient IC terms.'
     }
     res['gate_status']=gate
     p=Path(args.json_out);p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(res,indent=2))
