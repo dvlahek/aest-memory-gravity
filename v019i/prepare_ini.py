@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse
 
-LEVELS=('s0','s1','s2','s3')
+LEVELS=('s0','c1','c2','s1','s2','s3')
 MODELS={
  'cdm':'v019/ini/cdm_newtonian.ini',
  'exp':'v019/ini/aest_exp.ini',
