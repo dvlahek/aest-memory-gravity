@@ -1,0 +1,108 @@
+name: v020 Exp tauH0=1 core-LambdaCDM revolution gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v020/**'
+      - '.github/workflows/v020-core-lcdm-revolution-gate.yml'
+
+jobs:
+  revolution-gate-v020:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v020
+
+      - name: Apply validated AeST, memory, variational and high-output-precision patches
+        run: |
+          mkdir -p results class_v020/output
+          python3 v019/apply_patch_v019.py class_v020
+          python3 v019i/apply_ic_patch.py class_v020
+          python3 v019j/apply_memory_patch.py class_v020
+          python3 v019u/apply_tau1_bath_patch.py class_v020
+          sed -i 's/pba->aest_memory_order = 16;/pba->aest_memory_order = 39;/' class_v020/source/input.c
+          python3 v019w/apply_variational_forcing_patch.py class_v020
+          python3 v019y/apply_output_precision_patch.py class_v020
+
+      - name: Build v0.20 diagnostic CLASS
+        run: make -C class_v020 -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v020/include/common.h
+          grep -q 'aest_tangent_trace_force' class_v020/source/perturbations.c
+          grep -q 'aest_tangent_external_force' class_v020/source/perturbations.c
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_v020/source/perturbations.c
+
+      - name: Prepare v0.20 inputs
+        run: python3 v020/prepare_v020_ini.py class_v020 --steps-json results/v020_steps.json
+
+      - name: Trace N39 eta0 memory forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v020 && AEST_TANGENT_TRACE_FILE="$GITHUB_WORKSPACE/results/v020_force39_raw.dat" OMP_NUM_THREADS=1 ./class v020_trace39.ini ../v019p/pre/p3.pre) > results/v020_trace39.log 2>&1
+          python3 v019w/normalize_force_table.py results/v020_force39_raw.dat results/v020_force39.dat --json-out results/v020_force39_stats.json
+
+      - name: Run baseline and memory tangent controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v020_force39.dat"
+          (cd class_v020 && OMP_NUM_THREADS=1 ./class v020_force_l0.ini ../v019p/pre/p3.pre) > results/v020_force_l0.log 2>&1
+          run_forced_pair () {
+            lp="$1"; lm="$2"; lam="$3"
+            (cd class_v020 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$lam" OMP_NUM_THREADS=1 ./class "v020_${lp}.ini" ../v019p/pre/p3.pre) > "results/v020_${lp}.log" 2>&1 & p1=$!
+            (cd class_v020 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="-$lam" OMP_NUM_THREADS=1 ./class "v020_${lm}.ini" ../v019p/pre/p3.pre) > "results/v020_${lm}.log" 2>&1 & p2=$!
+            wait $p1
+            wait $p2
+          }
+          run_forced_pair force_p300 force_m300 300
+          run_forced_pair force_p1000 force_m1000 1000
+
+      - name: Run core-LambdaCDM nuisance derivative grid
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_pair () {
+            lp="$1"; lm="$2"
+            echo "=== ${lp} / ${lm} ==="
+            (cd class_v020 && OMP_NUM_THREADS=1 ./class "v020_${lp}.ini" ../v019p/pre/p3.pre) > "results/v020_${lp}.log" 2>&1 & p1=$!
+            (cd class_v020 && OMP_NUM_THREADS=1 ./class "v020_${lm}.ini" ../v019p/pre/p3.pre) > "results/v020_${lm}.log" 2>&1 & p2=$!
+            wait $p1
+            wait $p2
+          }
+          for par in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            run_pair "${par}_full_p" "${par}_full_m"
+            run_pair "${par}_half_p" "${par}_half_m"
+          done
+
+      - name: Analyse CV-weighted memory fingerprint
+        run: python3 v020/analyse_v020.py class_v020/output --json-out results/v020_analysis.json
+
+      - name: Create v0.20 report
+        run: python3 v020/make_report.py
+
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v020_debug_results
+          path: results/
+
+      - name: Upload v0.20 result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v020
+          path: results_bundle_v020.zip
