@@ -1,0 +1,67 @@
+name: v019t tauH0=1 positive bath compression
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019t/**'
+      - '.github/workflows/v019t-tau1-compression.yml'
+
+jobs:
+  tau1-compression-v019t:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_trace
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical dependencies
+        run: pip install numpy scipy
+      - name: Apply eta0 AeST bridge and leading adiabatic IC
+        run: |
+          python3 v019/apply_patch_v019.py class_trace
+          python3 v019i/apply_ic_patch.py class_trace
+      - name: Apply validated eta0 source tracer
+        run: python3 v019r/apply_trace_patch.py class_trace
+      - name: Build traced CLASS
+        run: make -C class_trace -j2 class
+      - name: Prepare inputs
+        run: |
+          mkdir -p results class_trace/output
+          python3 v019t/prepare_trace_ini.py class_trace
+      - name: Run Cosh trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd class_trace
+          AEST_TRACE_FILE=../results/v019t_cosh_trace.csv OMP_NUM_THREADS=1 ./class v019t_cosh.ini > ../results/v019t_cosh.log 2>&1
+      - name: Run Exp trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd class_trace
+          AEST_TRACE_FILE=../results/v019t_exp_trace.csv OMP_NUM_THREADS=1 ./class v019t_exp.ini > ../results/v019t_exp.log 2>&1
+      - name: Fit tauH0=1 positive compression
+        run: python3 v019t/analyse_tau1_compression.py
+      - name: Create report
+        run: python3 v019t/make_report.py
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019t_debug_results
+          path: results/
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019t
+          path: results_bundle_v019t.zip
