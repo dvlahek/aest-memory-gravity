@@ -1,0 +1,86 @@
+name: v019r stable CLASS-trajectory Drude quadrature
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019r/**'
+      - '.github/workflows/v019r-stable-drude-quadrature.yml'
+
+jobs:
+  stable-drude-v019r:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_trace
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install numerical dependencies
+        run: pip install numpy scipy
+
+      - name: Apply eta0 AeST bridge and leading adiabatic IC
+        run: |
+          python3 v019/apply_patch_v019.py class_trace
+          python3 v019i/apply_ic_patch.py class_trace
+
+      - name: Apply test-only chi trajectory tracer
+        run: python3 v019r/apply_trace_patch.py class_trace
+
+      - name: Build traced CLASS
+        run: make -C class_trace -j2 class
+
+      - name: Prepare traced Cosh and Exp inputs
+        run: |
+          mkdir -p results class_trace/output
+          python3 v019r/prepare_trace_ini.py class_trace
+
+      - name: Run traced Cosh eta0 CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd class_trace
+          if ! AEST_TRACE_FILE=../results/v019r_cosh_trace.csv OMP_NUM_THREADS=1 ./class v019r_cosh.ini > ../results/v019r_cosh.log 2>&1; then
+            cat ../results/v019r_cosh.log
+            exit 1
+          fi
+
+      - name: Run traced Exp eta0 CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd class_trace
+          if ! AEST_TRACE_FILE=../results/v019r_exp_trace.csv OMP_NUM_THREADS=1 ./class v019r_exp.ini > ../results/v019r_exp.log 2>&1; then
+            cat ../results/v019r_exp.log
+            exit 1
+          fi
+
+      - name: Stable tan-theta quadrature validation
+        run: python3 v019r/analyse_quadrature.py
+
+      - name: Create master report
+        run: python3 v019r/make_report.py
+
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019r_debug_results
+          path: results/
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019r
+          path: results_bundle_v019r.zip
