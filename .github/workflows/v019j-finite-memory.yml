@@ -66,8 +66,8 @@ jobs:
               p.write_text('\n'.join(out)+'\n')
           PY
           mkdir -p class_eta0/output class_memory/output
-          (cd class_eta0 && ./class v019j_off.ini ../v019p/pre/p3.pre) > ../results/v019j_off_eta0.log 2>&1
-          (cd class_memory && ./class v019j_off.ini ../v019p/pre/p3.pre) > ../results/v019j_off_memorypatch.log 2>&1
+          (cd class_eta0 && ./class v019j_off.ini ../v019p/pre/p3.pre) > results/v019j_off_eta0.log 2>&1
+          (cd class_memory && ./class v019j_off.ini ../v019p/pre/p3.pre) > results/v019j_off_memorypatch.log 2>&1
           python3 compare_class_outputs.py class_eta0/output class_memory/output --json-out results/v019j_off_regression.json
 
       - name: Prepare finite-eta campaign INIs
