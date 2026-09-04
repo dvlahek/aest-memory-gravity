@@ -1,0 +1,94 @@
+name: v019u tauH0=1 validated finite-memory CLASS response
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019u/**'
+      - '.github/workflows/v019u-tau1-finite-response.yml'
+
+jobs:
+  class-v019u:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_eta0
+      - name: Apply eta0 AeST bridge and leading adiabatic IC
+        run: |
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_eta0
+          python3 v019i/apply_ic_patch.py class_eta0
+      - name: Apply v0.19j memory dynamics and v0.19u validated tau1 baths
+        run: |
+          cp -a class_eta0 class_memory
+          python3 v019j/apply_memory_patch.py class_memory
+          python3 v019u/apply_tau1_bath_patch.py class_memory
+      - name: Build eta0 and finite-memory CLASS
+        run: |
+          make -C class_eta0 -j2 class
+          make -C class_memory -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'index_pt_mem_q_aest' class_memory/include/perturbations.h
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_memory/source/perturbations.c
+          grep -q '_aest_tau1_omega39' class_memory/source/aest_memory.c
+          grep -q '_aest_tau1_omega47' class_memory/source/aest_memory.c
+      - name: Memory-disabled zero regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp v019/ini/aest_exp.ini class_eta0/v019u_off.ini
+          cp v019/ini/aest_exp.ini class_memory/v019u_off.ini
+          python3 - <<'PY'
+          from pathlib import Path
+          for d in ['class_eta0','class_memory']:
+              p=Path(d)/'v019u_off.ini';out=[];seen=False
+              for line in p.read_text().splitlines():
+                  s=line.strip()
+                  out.append('root = output/v019u_off_' if s.startswith('root =') else line)
+                  if s.startswith('write_thermodynamics ='): seen=True
+              if not seen: out.append('write_thermodynamics = yes')
+              p.write_text('\n'.join(out)+'\n')
+          PY
+          mkdir -p class_eta0/output class_memory/output
+          (cd class_eta0 && ./class v019u_off.ini ../v019p/pre/p3.pre) > results/v019u_off_eta0.log 2>&1
+          (cd class_memory && ./class v019u_off.ini ../v019p/pre/p3.pre) > results/v019u_off_memorypatch.log 2>&1
+          python3 compare_class_outputs.py class_eta0/output class_memory/output --json-out results/v019u_off_regression.json
+      - name: Prepare tau1 finite-memory campaign
+        run: |
+          rm -f class_memory/output/*.dat
+          python3 v019u/prepare_tau1_memory_ini.py class_memory
+      - name: Run Cosh and Exp campaign at strict precision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for model in cosh exp; do
+            for case in off n39_e0 n39_e003 n39_e01 n39_e03 n47_e0 n47_e01; do
+              echo "=== ${model} ${case} ==="
+              (cd class_memory && ./class "v019u_${model}_${case}.ini" ../v019p/pre/p3.pre) > "results/v019u_${model}_${case}.log" 2>&1
+            done
+          done
+      - name: Analyse eta-linearity and bath-order convergence
+        run: python3 v019u/analyse_response.py class_memory/output --json-out results/v019u_response.json
+      - name: Create master report
+        run: python3 v019u/make_report.py
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019u_debug_results
+          path: results/
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019u
+          path: results_bundle_v019u.zip
