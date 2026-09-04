@@ -1,0 +1,83 @@
+name: v019n strict structural null extra-state test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019n/**'
+      - '.github/workflows/v019n-structural-null.yml'
+
+jobs:
+  class-v019n:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_patched
+
+      - name: Apply validated v0.19 eta0 bridge
+        run: python3 v019/apply_patch_v019.py class_patched
+
+      - name: Apply v0.19n strict structural-null patch
+        run: python3 v019n/apply_structural_null.py class_patched
+
+      - name: Build patched CLASS
+        run: make -C class_patched -j2 class
+
+      - name: Audit compiled source contains frozen null states
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'aest_null_states' class_patched/include/background.h
+          grep -q 'dy\[pv->index_pt_alpha_aest\] = 0.' class_patched/source/perturbations.c
+          grep -q 'dy\[pv->index_pt_E_aest\] = 0.' class_patched/source/perturbations.c
+
+      - name: Prepare CDM and structural-null INIs
+        run: |
+          mkdir -p results class_patched/output
+          python3 v019n/prepare_ini.py class_patched
+
+      - name: Run p0 CDM and frozen-extra-state pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_patched && ./class v019n_cdm_p0.ini) > results/v019n_cdm_p0.log 2>&1
+          (cd class_patched && ./class v019n_null_p0.ini) > results/v019n_null_p0.log 2>&1
+
+      - name: Run p3 CDM and frozen-extra-state pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_patched && ./class v019n_cdm_p3.ini ../v019p/pre/p3.pre) > results/v019n_cdm_p3.log 2>&1
+          (cd class_patched && ./class v019n_null_p3.ini ../v019p/pre/p3.pre) > results/v019n_null_p3.log 2>&1
+
+      - name: Analyse strict structural null
+        run: python3 v019n/analyse_null.py class_patched/output --json-out results/v019n_null.json
+
+      - name: Write build/run report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path('results/v019n_build_report.json').write_text(json.dumps({
+            'patched_build':'PASS',
+            'cdm_runs':'PASS',
+            'null_runs':'PASS'
+          },indent=2))
+          PY
+
+      - name: Create v0.19n result bundle
+        run: python3 v019n/make_report.py
+
+      - name: Upload v0.19n result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019n
+          path: results_bundle_v019n.zip
