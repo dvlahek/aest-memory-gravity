@@ -1,0 +1,90 @@
+name: v019v Exp tauH0=1 tangent-limit diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019v/**'
+      - '.github/workflows/v019v-exp-tangent-limit.yml'
+
+jobs:
+  tangent-v019v:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_tangent
+
+      - name: Apply eta0 AeST bridge and leading adiabatic IC
+        run: |
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_tangent
+          python3 v019i/apply_ic_patch.py class_tangent
+
+      - name: Apply validated tau1 memory bath and signed tangent probe
+        run: |
+          python3 v019j/apply_memory_patch.py class_tangent
+          python3 v019u/apply_tau1_bath_patch.py class_tangent
+          sed -i 's/pba->aest_memory_order = 16;/pba->aest_memory_order = 39;/' class_tangent/source/input.c
+          python3 v019v/apply_tangent_probe_patch.py class_tangent
+
+      - name: Build tangent diagnostic CLASS
+        run: make -C class_tangent -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '_aest_tau1_omega39' class_tangent/source/aest_memory.c
+          grep -q '_aest_tau1_omega47' class_tangent/source/aest_memory.c
+          grep -q 'v0.19v tangent probe requires' class_tangent/source/input.c
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_tangent/source/perturbations.c
+
+      - name: Prepare Exp signed-eta tangent inputs
+        run: |
+          mkdir -p class_tangent/output
+          python3 v019v/prepare_tangent_ini.py class_tangent
+
+      - name: Run p3 tangent sequence
+        shell: bash
+        run: |
+          set -euo pipefail
+          for case in n39_e0 n39_p03 n39_m03 n39_p01 n39_m01 n39_p003 n39_m003 n47_p01 n47_m01; do
+            echo "=== exp ${case} p3 ==="
+            (cd class_tangent && OMP_NUM_THREADS=1 ./class "v019v_exp_${case}.ini" ../v019p/pre/p3.pre) > "results/v019v_exp_${case}.log" 2>&1
+          done
+
+      - name: Run p4 precision control
+        shell: bash
+        run: |
+          set -euo pipefail
+          for case in n39_p01_p4 n39_m01_p4; do
+            echo "=== exp ${case} p4 ==="
+            (cd class_tangent && OMP_NUM_THREADS=1 ./class "v019v_exp_${case}.ini" ../v019v/pre/p4.pre) > "results/v019v_exp_${case}.log" 2>&1
+          done
+
+      - name: Analyse tangent limit
+        run: python3 v019v/analyse_tangent.py class_tangent/output --json-out results/v019v_tangent.json
+
+      - name: Create report
+        run: python3 v019v/make_report.py
+
+      - name: Upload debug results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v019v_debug_results
+          path: results/
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019v
+          path: results_bundle_v019v.zip
