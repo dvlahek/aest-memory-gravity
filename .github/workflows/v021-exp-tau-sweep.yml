@@ -1,0 +1,157 @@
+name: v021 Exp memory timescale revolution sweep
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v021/**'
+      - '.github/workflows/v021-exp-tau-sweep.yml'
+
+jobs:
+  tau-point:
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - {tau: '0.001', tag: 't0001'}
+          - {tau: '0.003', tag: 't0003'}
+          - {tau: '0.01',  tag: 't001'}
+          - {tau: '0.03',  tag: 't003'}
+          - {tau: '0.1',   tag: 't01'}
+          - {tau: '0.3',   tag: 't03'}
+          - {tau: '1',     tag: 't1'}
+          - {tau: '3',     tag: 't3'}
+          - {tau: '10',    tag: 't10'}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v021
+
+      - name: Apply AeST, direct Drude bath, variational and high-output-precision patches
+        run: |
+          mkdir -p results class_v021/output
+          python3 v019/apply_patch_v019.py class_v021
+          python3 v019i/apply_ic_patch.py class_v021
+          python3 v019j/apply_memory_patch.py class_v021
+          python3 v021/apply_direct_bath_patch.py class_v021
+          python3 v019w/apply_variational_forcing_patch.py class_v021
+          python3 v019y/apply_output_precision_patch.py class_v021
+
+      - name: Build v0.21 direct-bath CLASS
+        run: make -C class_v021 -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'v0.21 direct positive tan-theta Drude quadrature' class_v021/source/aest_memory.c
+          grep -q 'order == 512' class_v021/source/aest_memory.c
+          grep -q 'order == 256' class_v021/source/aest_memory.c
+          grep -q 'aest_tangent_trace_force' class_v021/source/perturbations.c
+          grep -q 'aest_tangent_external_force' class_v021/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v021/include/common.h
+
+      - name: Prepare tau-point inputs
+        run: python3 v021/prepare_v021_ini.py class_v021 --tau '${{ matrix.tau }}' --tag '${{ matrix.tag }}' --meta results/v021_${{ matrix.tag }}_meta.json
+
+      - name: Trace direct N256 bath forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v021 && AEST_TANGENT_TRACE_FILE="$GITHUB_WORKSPACE/results/${{ matrix.tag }}_force256_raw.dat" OMP_NUM_THREADS=1 ./class v021_trace256.ini ../v019p/pre/p3.pre) > results/${{ matrix.tag }}_trace256.log 2>&1
+          python3 v019w/normalize_force_table.py results/${{ matrix.tag }}_force256_raw.dat results/${{ matrix.tag }}_force256.dat --json-out results/${{ matrix.tag }}_force256_stats.json
+
+      - name: Trace direct N512 bath forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v021 && AEST_TANGENT_TRACE_FILE="$GITHUB_WORKSPACE/results/${{ matrix.tag }}_force512_raw.dat" OMP_NUM_THREADS=1 ./class v021_trace512.ini ../v019p/pre/p3.pre) > results/${{ matrix.tag }}_trace512.log 2>&1
+          python3 v019w/normalize_force_table.py results/${{ matrix.tag }}_force512_raw.dat results/${{ matrix.tag }}_force512.dat --json-out results/${{ matrix.tag }}_force512_stats.json
+
+      - name: Run baseline and amplified tangent pairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/${{ matrix.tag }}_force512.dat"
+          (cd class_v021 && OMP_NUM_THREADS=1 ./class v021_force_l0.ini ../v019p/pre/p3.pre) > results/${{ matrix.tag }}_force_l0.log 2>&1
+          run_forced () {
+            label="$1"; lam="$2"
+            (cd class_v021 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$lam" OMP_NUM_THREADS=1 ./class "v021_${label}.ini" ../v019p/pre/p3.pre) > "results/${{ matrix.tag }}_${label}.log" 2>&1
+          }
+          run_forced force_p300 300 & p1=$!
+          run_forced force_m300 -300 & p2=$!
+          run_forced force_p1000 1000 & p3=$!
+          run_forced force_m1000 -1000 & p4=$!
+          wait $p1; wait $p2; wait $p3; wait $p4
+
+      - name: Run six core-LambdaCDM nuisance directions
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_pair () {
+            p="$1"
+            (cd class_v021 && OMP_NUM_THREADS=1 ./class "v021_nuis_${p}_p.ini" ../v019p/pre/p3.pre) > "results/${{ matrix.tag }}_nuis_${p}_p.log" 2>&1 & a=$!
+            (cd class_v021 && OMP_NUM_THREADS=1 ./class "v021_nuis_${p}_m.ini" ../v019p/pre/p3.pre) > "results/${{ matrix.tag }}_nuis_${p}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          }
+          for p in H0 omega_b omega_cdm tau_reio n_s lnA_s; do run_pair "$p"; done
+
+      - name: Analyse tau point
+        run: |
+          python3 v021/analyse_tau_point.py class_v021/output \
+            --tau '${{ matrix.tau }}' --tag '${{ matrix.tag }}' \
+            --force256 results/${{ matrix.tag }}_force256.dat \
+            --force512 results/${{ matrix.tag }}_force512.dat \
+            --json-out results/v021_${{ matrix.tag }}_analysis.json
+
+      - name: Upload tau-point result
+        uses: actions/upload-artifact@v4
+        with:
+          name: v021_tau_${{ matrix.tag }}
+          path: |
+            results/v021_${{ matrix.tag }}_analysis.json
+            results/v021_${{ matrix.tag }}_meta.json
+            results/${{ matrix.tag }}_force256_stats.json
+            results/${{ matrix.tag }}_force512_stats.json
+
+      - name: Upload tau-point debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v021_debug_${{ matrix.tag }}
+          path: results/
+
+  aggregate:
+    if: always()
+    needs: tau-point
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+
+      - name: Download completed tau-point artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: v021_tau_*
+          path: tau_results
+          merge-multiple: true
+
+      - name: Aggregate revolution sweep
+        run: python3 v021/aggregate_tau_sweep.py tau_results --json-out results/v021_tau_sweep.json --csv-out results/v021_tau_sweep.csv
+
+      - name: Upload aggregate sweep
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v021_tau_sweep
+          path: |
+            results/v021_tau_sweep.json
+            results/v021_tau_sweep.csv
