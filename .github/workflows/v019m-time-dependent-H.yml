@@ -1,0 +1,48 @@
+name: v019m time-dependent-H memory audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019m/**'
+      - '.github/workflows/v019m-time-dependent-H.yml'
+
+jobs:
+  time-dependent-v019m:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install numerical dependencies
+        run: python -m pip install --upgrade numpy scipy
+
+      - name: Rebuild validated v0.19l N24 frozen-H table
+        run: |
+          rm -rf results
+          mkdir -p results
+          python v019l/02_build_passive_table.py
+
+      - name: Audit Htau coverage
+        run: python v019m/01_coverage.py
+
+      - name: Compare instantaneous rational with conservative time-dependent bath
+        run: python v019m/02_nonautonomous_audit.py
+
+      - name: Fit positive fixed-oscillator fallback candidate
+        run: python v019m/03_fixed_oscillator_candidate.py
+
+      - name: Create master report
+        run: python v019m/04_make_report.py
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019m
+          path: results_bundle_v019m.zip
