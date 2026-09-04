@@ -21,7 +21,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install numerical dependencies
-        run: python -m pip install --upgrade pip numpy scipy
+        run: python -m pip install --upgrade pip numpy scipy mpmath
 
       - name: Complex-frequency audit of current N16/N20 designs
         run: python v019k/01_complex_kernel_audit.py
