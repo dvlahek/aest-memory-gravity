@@ -56,54 +56,125 @@ def cl_pair(out,ma,la,mb,lb):
     return ans
 
 
+def differential_signal_change(out,model,level):
+    """Compare [model-CDM] at `level` with [model-CDM] at s0.
+
+    This cancels the common CLASS shift caused solely by moving the integration
+    start. The normalization is the s0 CDM peak in each CMB column.
+    """
+    ans={};primary_max=0.0;all_max=0.0
+    for key,suf in [('unlensed','cl.dat'),('lensed','cl_lensed.dat')]:
+        c0=load_numeric(find_one(out,'v019i_cdm_s0_',suf))
+        m0=load_numeric(find_one(out,f'v019i_{model}_s0_',suf))
+        cL=load_numeric(find_one(out,f'v019i_cdm_{level}_',suf))
+        mL=load_numeric(find_one(out,f'v019i_{model}_{level}_',suf))
+        if not (len(c0)==len(m0)==len(cL)==len(mL)):
+            raise RuntimeError('row mismatch in differential signal comparison')
+        ncol=min(len(c0[0]),len(m0[0]),len(cL[0]),len(mL[0]))
+        amps=[0.0]*ncol;diffs=[0.0]*ncol;n=0
+        for r0,rm0,rL,rmL in zip(c0,m0,cL,mL):
+            ell=r0[0]
+            if ell<30 or ell>2500:continue
+            n+=1
+            for j in range(1,ncol):
+                amps[j]=max(amps[j],abs(r0[j]))
+                d0=rm0[j]-r0[j]
+                dL=rmL[j]-rL[j]
+                diffs[j]=max(diffs[j],abs(dL-d0))
+        cols=[]
+        for j in range(1,ncol):
+            q=diffs[j]/max(amps[j],1e-300)
+            cols.append({'column':j+1,'max_delta_signal_change_over_cdm_peak':q})
+        p=max((c['max_delta_signal_change_over_cdm_peak'] for c in cols if c['column'] in PRIMARY_COLS),default=0.0)
+        a=max((c['max_delta_signal_change_over_cdm_peak'] for c in cols),default=0.0)
+        ans[key]={'rows':n,'columns':cols,'primary_max':p,'all_columns_max':a}
+        primary_max=max(primary_max,p);all_max=max(all_max,a)
+    ans['primary_max']=primary_max;ans['all_columns_max']=all_max
+    return ans
+
+
 def scalar_file_pair(out,model,la,lb,suffix):
-    try:
-        return compare(find_one(out,f'v019i_{model}_{la}_',suffix),find_one(out,f'v019i_{model}_{lb}_',suffix),False)
-    except Exception as e:
-        return {'error':str(e)}
+    try:return compare(find_one(out,f'v019i_{model}_{la}_',suffix),find_one(out,f'v019i_{model}_{lb}_',suffix),False)
+    except Exception as e:return {'error':str(e)}
 
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('output_dir');ap.add_argument('--json-out',default='results/v019i_start_convergence.json');args=ap.parse_args()
     out=Path(args.output_dir)
-    res={'levels':{},'self_convergence':{}}
+    res={'levels':{},'self_convergence':{},'differential_signal_stability':{}}
     for lev in LEVELS:
         res['levels'][lev]={
           'exp_vs_cdm':cl_pair(out,'cdm',lev,'exp',lev),
           'cosh_vs_cdm':cl_pair(out,'cdm',lev,'cosh',lev),
         }
     for model in ('cdm','exp','cosh'):
-        res['self_convergence'][model]={
-          's0_vs_s3_cl':cl_pair(out,model,'s0',model,'s3'),
-          's0_vs_s3_pk':scalar_file_pair(out,model,'s0','s3','pk.dat'),
-          's0_vs_s3_background':scalar_file_pair(out,model,'s0','s3','background.dat'),
-          's0_vs_s3_thermodynamics':scalar_file_pair(out,model,'s0','s3','thermodynamics.dat'),
+        res['self_convergence'][model]={}
+        for lev in LEVELS[1:]:
+            res['self_convergence'][model][f's0_vs_{lev}_cl']=cl_pair(out,model,'s0',model,lev)
+        res['self_convergence'][model]['s0_vs_s3_pk']=scalar_file_pair(out,model,'s0','s3','pk.dat')
+        res['self_convergence'][model]['s0_vs_s3_background']=scalar_file_pair(out,model,'s0','s3','background.dat')
+        res['self_convergence'][model]['s0_vs_s3_thermodynamics']=scalar_file_pair(out,model,'s0','s3','thermodynamics.dat')
+    for model in ('exp','cosh'):
+        res['differential_signal_stability'][model]={lev:differential_signal_change(out,model,lev) for lev in LEVELS[1:]}
+
+    exp0=res['levels']['s0']['exp_vs_cdm']['primary_max']
+    cosh0=res['levels']['s0']['cosh_vs_cdm']['primary_max']
+    reference_signal=max(exp0,cosh0,1e-300)
+
+    # A start level is usable as an IC convergence control only while matched CDM
+    # itself remains stable. If CDM moves substantially, the test has entered a
+    # CLASS start/sampling regime and cannot be attributed to AeST IC physics.
+    control_limit=max(1e-5,0.10*reference_signal)
+    valid_levels=[];rejected_levels=[]
+    per_level={}
+    for lev in LEVELS[1:]:
+        cdm_self=res['self_convergence']['cdm'][f's0_vs_{lev}_cl']['primary_max']
+        exp_r=res['levels'][lev]['exp_vs_cdm']['primary_max']
+        cosh_r=res['levels'][lev]['cosh_vs_cdm']['primary_max']
+        exp_drift=abs(exp_r-exp0)/exp0
+        cosh_drift=abs(cosh_r-cosh0)/cosh0
+        exp_ds=res['differential_signal_stability']['exp'][lev]['primary_max']/exp0
+        cosh_ds=res['differential_signal_stability']['cosh'][lev]['primary_max']/cosh0
+        valid=cdm_self<=control_limit
+        (valid_levels if valid else rejected_levels).append(lev)
+        per_level[lev]={
+          'cdm_self_primary':cdm_self,
+          'control_limit':control_limit,
+          'control_valid':valid,
+          'exp_residual':exp_r,'exp_residual_fractional_drift':exp_drift,
+          'cosh_residual':cosh_r,'cosh_residual_fractional_drift':cosh_drift,
+          'exp_differential_signal_fractional_change':exp_ds,
+          'cosh_differential_signal_fractional_change':cosh_ds,
         }
 
-    exp0=res['levels']['s0']['exp_vs_cdm']['primary_max'];exp3=res['levels']['s3']['exp_vs_cdm']['primary_max']
-    cosh0=res['levels']['s0']['cosh_vs_cdm']['primary_max'];cosh3=res['levels']['s3']['cosh_vs_cdm']['primary_max']
-    exp_self=res['self_convergence']['exp']['s0_vs_s3_cl']['primary_max']
-    cosh_self=res['self_convergence']['cosh']['s0_vs_s3_cl']['primary_max']
-    cdm_self=res['self_convergence']['cdm']['s0_vs_s3_cl']['primary_max']
-    exp_drift=abs(exp3-exp0)/max(exp0,1e-300)
-    cosh_drift=abs(cosh3-cosh0)/max(cosh0,1e-300)
+    valid_drifts=[];valid_signal_changes=[]
+    for lev in valid_levels:
+        valid_drifts += [per_level[lev]['exp_residual_fractional_drift'],per_level[lev]['cosh_residual_fractional_drift']]
+        valid_signal_changes += [per_level[lev]['exp_differential_signal_fractional_change'],per_level[lev]['cosh_differential_signal_fractional_change']]
+    max_valid_drift=max(valid_drifts,default=math.inf)
+    max_valid_signal_change=max(valid_signal_changes,default=math.inf)
 
-    if exp_self<1e-5 and cosh_self<1e-5 and exp_drift<0.02 and cosh_drift<0.02:
-        classification='LEADING_ADIABATIC_START_CONVERGED'
-        gate='PASS_START_CONVERGENCE'
-    elif exp_self>1e-4 or cosh_self>1e-4 or exp_drift>0.10 or cosh_drift>0.10:
+    if len(valid_levels)>=2 and max_valid_drift<0.01 and max_valid_signal_change<0.05:
+        classification='LEADING_ADIABATIC_START_CONVERGED_CONTROLLED_WINDOW'
+        gate='PASS_CONTROLLED_START_CONVERGENCE'
+    elif len(valid_levels)>=1 and (max_valid_drift>0.05 or max_valid_signal_change>0.20):
         classification='FINITE_GRADIENT_IC_CORRECTION_REQUIRED'
         gate='NEEDS_FROBENIUS_K2'
     else:
-        classification='MIXED_START_CONVERGENCE'
+        classification='START_CONVERGENCE_INCONCLUSIVE'
         gate='CHECK'
 
     res['summary']={
-      'exp_cdm_primary_s0':exp0,'exp_cdm_primary_s3':exp3,'exp_residual_fractional_drift':exp_drift,
-      'cosh_cdm_primary_s0':cosh0,'cosh_cdm_primary_s3':cosh3,'cosh_residual_fractional_drift':cosh_drift,
-      'cdm_s0_s3_primary_self':cdm_self,'exp_s0_s3_primary_self':exp_self,'cosh_s0_s3_primary_self':cosh_self,
+      'exp_cdm_primary_s0':exp0,
+      'cosh_cdm_primary_s0':cosh0,
+      'control_limit':control_limit,
+      'valid_earlier_start_levels':valid_levels,
+      'rejected_common_mode_levels':rejected_levels,
+      'per_level':per_level,
+      'max_valid_residual_fractional_drift':max_valid_drift,
+      'max_valid_differential_signal_fractional_change':max_valid_signal_change,
       'classification':classification,'gate_status':gate,
-      'meaning':'Tests omitted finite-gradient corrections to the derived chi=E=0 leading adiabatic mode by moving the CLASS start farther outside the horizon.'
+      'meaning':'Earlier-start levels are interpreted only while the matched CDM control remains stable. Levels where CDM itself shifts are classified as CLASS start/sampling common-mode breakdown, not evidence for AeST finite-gradient IC terms.'
     }
     res['gate_status']=gate
     p=Path(args.json_out);p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(res,indent=2))
