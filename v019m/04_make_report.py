@@ -18,9 +18,10 @@ elif cov.get('gate_status')=='COVERAGE_EXTENSION_REQUIRED':
 else:
     overall='PASS_TIME_DEPENDENT_MEMORY_REALIZATION'
 
+refconv=na.get('reference_convergence_max_relative_L2',1)
 gates=[
  {'id':'M1','name':'v0.19l Htau coverage for full CMB history','status':cov.get('gate_status','UNKNOWN')},
- {'id':'M2','name':'dense conservative reference convergence','status':'PASS' if na.get('reference_convergence_max_relative_L2',1)>5e-4 else 'CHECK'},
+ {'id':'M2','name':'dense conservative reference convergence','status':'PASS' if refconv<5e-4 else 'CHECK'},
  {'id':'M3','name':'instantaneous N24 rational under time-dependent H','status':na.get('classification','UNKNOWN')},
  {'id':'M4','name':'positive fixed-oscillator fallback candidate','status':fx.get('classification','UNKNOWN')},
  {'id':'M5','name':'overall recommendation','status':overall},
