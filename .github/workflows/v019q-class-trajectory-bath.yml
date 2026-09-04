@@ -1,0 +1,73 @@
+name: v019q CLASS trajectory source-weighted bath
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019q/**'
+      - '.github/workflows/v019q-class-trajectory-bath.yml'
+
+jobs:
+  trajectory-v019q:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_trace
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install numerical dependencies
+        run: pip install numpy scipy
+
+      - name: Apply eta0 AeST bridge and leading adiabatic IC
+        run: |
+          python3 v019/apply_patch_v019.py class_trace
+          python3 v019i/apply_ic_patch.py class_trace
+
+      - name: Apply test-only chi trajectory tracer
+        run: python3 v019q/apply_trace_patch.py class_trace
+
+      - name: Build traced CLASS
+        run: make -C class_trace -j2 class
+
+      - name: Prepare traced Cosh and Exp inputs
+        run: |
+          mkdir -p results class_trace/output
+          python3 v019q/prepare_trace_ini.py class_trace
+
+      - name: Run traced Cosh eta0 CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd class_trace
+          AEST_TRACE_FILE=../results/v019q_cosh_trace.csv OMP_NUM_THREADS=1 ./class v019q_cosh.ini > ../results/v019q_cosh.log 2>&1
+
+      - name: Run traced Exp eta0 CLASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd class_trace
+          AEST_TRACE_FILE=../results/v019q_exp_trace.csv OMP_NUM_THREADS=1 ./class v019q_exp.ini > ../results/v019q_exp.log 2>&1
+
+      - name: Fit and validate source-weighted fixed bath
+        run: python3 v019q/analyse_and_fit.py
+
+      - name: Create master report
+        run: python3 v019q/make_report.py
+
+      - name: Upload result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019q
+          path: results_bundle_v019q.zip
