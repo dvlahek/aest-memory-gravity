@@ -13,13 +13,17 @@ def diffusive_integral(z,h):
     D=np.sqrt(a*a+4.0)
     r0=(a+D)/2.0
     c0=2.0/(r0*D)
-    def mu(r):
-        y=np.sqrt(max(r*(a-r),0.0))
-        return y/(np.pi*r*(1.0+y*y))
-    def term(r):
-        return mu(r)*z/(z+r)
-    re=quad(lambda r:term(r).real,0,a,epsabs=2e-11,epsrel=2e-11,limit=1000,points=[0,a])[0]
-    im=quad(lambda r:term(r).imag,0,a,epsabs=2e-11,epsrel=2e-11,limit=1000,points=[0,a])[0]
+
+    # Stable endpoint-regularized form using r=a sin^2(theta):
+    # mu(r) dr = [2 a cos^2(theta)]/[pi(1+a^2 sin^2(theta)cos^2(theta))] dtheta.
+    def term(theta):
+        s=np.sin(theta); c=np.cos(theta)
+        r=a*s*s
+        W=2.0*a*c*c/(np.pi*(1.0+a*a*s*s*c*c))
+        return W*z/(z+r)
+
+    re=quad(lambda th:term(th).real,0,np.pi/2,epsabs=2e-11,epsrel=2e-11,limit=1500,points=[0,np.pi/2])[0]
+    im=quad(lambda th:term(th).imag,0,np.pi/2,epsabs=2e-11,epsrel=2e-11,limit=1500,points=[0,np.pi/2])[0]
     return c0*z/(z+r0)+re+1j*im,r0,c0
 
 rows=[];mx=0.0;min_mu=np.inf
@@ -44,6 +48,7 @@ with open(OUT/'diffusive_identity.csv','w',newline='') as f:
 out={
  'identity':'K_h(z)=c_* z/(z+r_*) + integral_0^(3h) mu_h(r) z/(z+r) dr',
  'mu':'sqrt[r(3h-r)]/[pi r (1+r(3h-r))]',
+ 'quadrature_variable':'r=3h sin^2(theta)',
  'all_measure_samples_positive':bool(min_mu>0),
  'max_relative_error':float(mx),
  'tested_points':len(rows),
