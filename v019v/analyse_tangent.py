@@ -18,9 +18,12 @@ def load_numeric(path):
 
 
 def find_one(out,label,suffix='cl_lensed.dat'):
-    m=sorted(out.glob(f'v019v_exp_{label}_*{suffix}'))
-    if len(m)!=1:raise RuntimeError(f'expected one {label} * {suffix}, found {len(m)}: {m}')
-    return m[0]
+    # CLASS roots in prepare_tangent_ini.py end with an underscore, while
+    # CLASS output suffixes begin with one. Match the complete filename so
+    # labels such as n39_p01 do not also capture n39_p01_p4 controls.
+    p=out/f'v019v_exp_{label}__{suffix}'
+    if not p.exists():raise RuntimeError(f'expected output {p}, file not found')
+    return p
 
 
 def primary_vector(path,peaks=None):
