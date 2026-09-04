@@ -30,6 +30,10 @@ jobs:
           cp -a class_eta0 class_memory
           python3 v019j/apply_memory_patch.py class_memory
           python3 v019u/apply_tau1_bath_patch.py class_memory
+          # v0.19j default is order 16. v0.19u accepts only the validated 39/47
+          # representations, so make 39 the inert default as well. This has no
+          # physical effect when aest_memory_enabled=no but preserves zero regression.
+          sed -i 's/pba->aest_memory_order = 16;/pba->aest_memory_order = 39;/' class_memory/source/input.c
       - name: Build eta0 and finite-memory CLASS
         run: |
           make -C class_eta0 -j2 class
@@ -42,6 +46,7 @@ jobs:
           grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_memory/source/perturbations.c
           grep -q '_aest_tau1_omega39' class_memory/source/aest_memory.c
           grep -q '_aest_tau1_omega47' class_memory/source/aest_memory.c
+          grep -q 'pba->aest_memory_order = 39;' class_memory/source/input.c
       - name: Memory-disabled zero regression
         shell: bash
         run: |
