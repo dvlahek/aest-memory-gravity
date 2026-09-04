@@ -1,0 +1,5 @@
+# v0.19i controlled earlier-start level c1
+tol_perturb_integration = 5.e-8
+perturb_sampling_stepsize = 0.0025
+start_large_k_at_tau_h_over_tau_k = 0.056
+start_small_k_at_tau_c_over_tau_h = 0.0012
