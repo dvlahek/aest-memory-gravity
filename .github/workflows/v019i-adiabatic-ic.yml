@@ -58,18 +58,18 @@ jobs:
             (cd class_patched && ./class "v019i_${model}_s0.ini" ../v019p/pre/p3.pre) > "results/v019i_${model}_s0.log" 2>&1
           done
 
-      - name: Run progressively earlier starts s1-s3
+      - name: Run controlled and aggressive earlier starts
         shell: bash
         run: |
           set -euo pipefail
-          for level in s1 s2 s3; do
+          for level in c1 c2 s1 s2 s3; do
             for model in cdm exp cosh; do
               echo "=== ${model} ${level} ==="
               (cd class_patched && ./class "v019i_${model}_${level}.ini" "../v019i/pre/${level}.pre") > "results/v019i_${model}_${level}.log" 2>&1
             done
           done
 
-      - name: Analyse start-time convergence
+      - name: Analyse start-time convergence with CDM common-mode control
         run: python3 v019i/analyse_start_convergence.py class_patched/output --json-out results/v019i_start_convergence.json
 
       - name: Write build report
@@ -81,7 +81,7 @@ jobs:
             'patched_build':'PASS',
             'start_ladder':'PASS',
             'models':['cdm','exp','cosh'],
-            'levels':['s0','s1','s2','s3'],
+            'levels':['s0','c1','c2','s1','s2','s3'],
             'memory_enabled':False
           },indent=2))
           PY
