@@ -1,0 +1,96 @@
+name: v019i AeST radiation-era adiabatic IC gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v019i/**'
+      - '.github/workflows/v019i-adiabatic-ic.yml'
+
+jobs:
+  class-v019i:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_patched
+
+      - name: Derive and self-test leading adiabatic mode
+        run: |
+          mkdir -p results
+          python3 v019i/derive_leading_mode.py
+
+      - name: Apply validated eta0 bridge
+        run: python3 v019/apply_patch_v019.py class_patched
+
+      - name: Apply v0.19i adiabatic IC patch
+        run: python3 v019i/apply_ic_patch.py class_patched
+
+      - name: Build patched CLASS
+        run: make -C class_patched -j2 class
+
+      - name: Audit compiled IC source
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'delta_A/(1+w_A)=delta_c' class_patched/source/perturbations.c
+          grep -q 'index_pt_delta_cdm] \*= (1.+w_aest_ini)' class_patched/source/perturbations.c
+          grep -q 'index_pt_E_aest] = 0.' class_patched/source/perturbations.c
+
+      - name: Prepare start-time campaign INIs
+        run: |
+          mkdir -p class_patched/output
+          python3 v019i/prepare_ini.py class_patched
+
+      - name: Run s0 strict-precision baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          for model in cdm exp cosh; do
+            echo "=== ${model} s0 ==="
+            (cd class_patched && ./class "v019i_${model}_s0.ini" ../v019p/pre/p3.pre) > "results/v019i_${model}_s0.log" 2>&1
+          done
+
+      - name: Run progressively earlier starts s1-s3
+        shell: bash
+        run: |
+          set -euo pipefail
+          for level in s1 s2 s3; do
+            for model in cdm exp cosh; do
+              echo "=== ${model} ${level} ==="
+              (cd class_patched && ./class "v019i_${model}_${level}.ini" "../v019i/pre/${level}.pre") > "results/v019i_${model}_${level}.log" 2>&1
+            done
+          done
+
+      - name: Analyse start-time convergence
+        run: python3 v019i/analyse_start_convergence.py class_patched/output --json-out results/v019i_start_convergence.json
+
+      - name: Write build report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path('results/v019i_build_report.json').write_text(json.dumps({
+            'patched_build':'PASS',
+            'start_ladder':'PASS',
+            'models':['cdm','exp','cosh'],
+            'levels':['s0','s1','s2','s3'],
+            'memory_enabled':False
+          },indent=2))
+          PY
+
+      - name: Create v0.19i result bundle
+        run: python3 v019i/make_report.py
+
+      - name: Upload v0.19i result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v019i
+          path: results_bundle_v019i.zip
