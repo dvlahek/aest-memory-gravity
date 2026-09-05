@@ -1,0 +1,107 @@
+name: v037 refitted accepted-grid positive-Drude memory
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v037/**'
+      - '.github/workflows/v037-refitted-memory.yml'
+
+jobs:
+  refitted-memory:
+    strategy:
+      fail-fast: false
+      matrix:
+        kb: [0.067, 0.066]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v037
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches and prepare refitted case
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v037/output
+          python3 v019/apply_patch_v019.py class_v037
+          python3 v019i/apply_ic_patch.py class_v037
+          python3 v019j/apply_memory_patch.py class_v037
+          python3 v019w/apply_variational_forcing_patch.py class_v037
+          python3 v019y/apply_output_precision_patch.py class_v037
+          python3 v023/apply_source_grid_trace_patch.py class_v037
+          TAG=$(python3 v037/prepare_refitted_memory_case.py class_v037 --kb '${{ matrix.kb }}' --meta results/v037_meta.json | tail -1)
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "KB=${{ matrix.kb }}" >> "$GITHUB_ENV"
+      - name: Build CLASS
+        run: make -C class_v037 -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v037/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v037/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v037/include/common.h
+      - name: Run refitted candidate and matched KB=0.1 reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v037 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v037_${TAG}_trace.dat" OMP_NUM_THREADS=1 ./class "v027_${TAG}_base.ini" ../v019p/pre/p3.pre) > "results/v037_${TAG}_base.log" 2>&1
+          (cd class_v037 && OMP_NUM_THREADS=1 ./class "v027_${TAG}_ref.ini" ../v019p/pre/p3.pre) > "results/v037_${TAG}_ref.log" 2>&1
+          test -s "results/v037_${TAG}_trace.dat"
+      - name: Build accepted-grid tauH0=10 positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v027/build_tau10_forcing.py "results/v037_${TAG}_trace.dat" --KB "$KB" --out-prefix "results/v037_${TAG}" \
+            --control-order 512 --primary-order 1024 --summary "results/v037_${TAG}_forcing.json"
+      - name: Run six nuisance directions at refitted point
+        shell: bash
+        run: |
+          set -euo pipefail
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            (cd class_v037 && OMP_NUM_THREADS=1 ./class "v027_${TAG}_nuis_${q}_p.ini" ../v019p/pre/p3.pre) > "results/v037_${TAG}_nuis_${q}_p.log" 2>&1 & a=$!
+            (cd class_v037 && OMP_NUM_THREADS=1 ./class "v027_${TAG}_nuis_${q}_m.ini" ../v019p/pre/p3.pre) > "results/v037_${TAG}_nuis_${q}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Run full lambda ladder at refitted point
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v037_${TAG}_force.dat"
+          for L in 1 3 10 30 100 300 1000; do
+            (cd class_v037 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$L" OMP_NUM_THREADS=1 ./class "v027_${TAG}_l${L}_p.ini" ../v019p/pre/p3.pre) > "results/v037_${TAG}_l${L}_p.log" 2>&1 & a=$!
+            (cd class_v037 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="-$L" OMP_NUM_THREADS=1 ./class "v027_${TAG}_l${L}_m.ini" ../v019p/pre/p3.pre) > "results/v037_${TAG}_l${L}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Analyse refitted memory tangent
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v032/analyse_transition_case.py class_v037/output --tag "$TAG" --kb "$KB" \
+            --force-control "results/v037_${TAG}_force_control.dat" --force-primary "results/v037_${TAG}_force.dat" \
+            --json-out "results/v037_${TAG}_analysis.json"
+      - name: Upload v0.37 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v037_refitted_memory_kb_${{ matrix.kb }}
+          path: |
+            results/v037_*_analysis.json
+            results/v037_*_forcing.json
+            results/v037_meta.json
+            results/v023_trace_patch.json
+      - name: Upload v0.37 debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v037_debug_kb_${{ matrix.kb }}
+          path: |
+            results/*.json
+            results/*.log
