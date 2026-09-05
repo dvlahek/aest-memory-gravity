@@ -1,0 +1,86 @@
+name: v033 KB critical singular-perturbation map
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v033/**'
+      - '.github/workflows/v033-critical-structure.yml'
+
+jobs:
+  critical-map:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v033
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy
+
+      - name: Apply validated AeST patches and critical trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v033/output
+          python3 v019/apply_patch_v019.py class_v033
+          python3 v019i/apply_ic_patch.py class_v033
+          python3 v019j/apply_memory_patch.py class_v033
+          python3 v019w/apply_variational_forcing_patch.py class_v033
+          python3 v019y/apply_output_precision_patch.py class_v033
+          python3 v023/apply_source_grid_trace_patch.py class_v033
+          python3 v033/apply_critical_trace_patch.py class_v033
+          python3 v027/prepare_kb_case.py class_v033 --kb 0.1 --meta results/v033_meta.json
+
+      - name: Build CLASS
+        run: make -C class_v033 -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.33 intrinsic critical-mode trace' class_v033/source/aest_memory.c
+          grep -q 'aest_critical_trace_state' class_v033/source/perturbations.c
+          grep -q 'dy\[pv->index_pt_E_aest\] = a\*E_rhs_aest/pba->aest_KB' class_v033/source/perturbations.c
+          grep -q 'aest_tangent_trace_force(k,tau,-0.5\*a\*Q_aest\*Braw_aest/pba->aest_KB)' class_v033/source/perturbations.c
+
+      - name: Trace accepted-grid Exp baseline coefficients
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v033 && AEST_CRITICAL_TRACE_FILE="$GITHUB_WORKSPACE/results/v033_critical_trace.dat" OMP_NUM_THREADS=1 ./class v027_kb0p1_base.ini ../v019p/pre/p3.pre) > results/v033_base.log 2>&1
+          test -s results/v033_critical_trace.dat
+          head -2 results/v033_critical_trace.dat
+
+      - name: Reconstruct intrinsic mode spectrum and resolvent scaling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v033/analyse_intrinsic_modes.py results/v033_critical_trace.dat --json-out results/v033_critical_structure.json
+
+      - name: Upload v0.33 critical-structure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v033_critical_structure
+          path: |
+            results/v033_critical_structure.json
+            results/v033_meta.json
+            results/v033_trace_patch.json
+            results/v023_trace_patch.json
+            results/v033_base.log
+
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v033_debug
+          path: |
+            results/*.json
+            results/*.log
