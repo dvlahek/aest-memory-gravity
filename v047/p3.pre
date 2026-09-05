@@ -1,0 +1,4 @@
+# v0.47 strict precision profile derived from v0.19p p2
+# Physics/model unchanged; only numerical integration/sampling tightened.
+tol_perturb_integration = 5.e-8
+perturb_sampling_stepsize = 0.0025
