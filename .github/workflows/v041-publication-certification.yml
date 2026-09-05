@@ -1,0 +1,69 @@
+name: v041 publication-grade numerical certification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v041/**'
+      - '.github/workflows/v041-publication-certification.yml'
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v041
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated AeST baseline patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v041/output
+          python3 v019/apply_patch_v019.py class_v041
+          python3 v019i/apply_ic_patch.py class_v041
+          python3 v019j/apply_memory_patch.py class_v041
+          python3 v019y/apply_output_precision_patch.py class_v041
+      - name: Build CLASS
+        run: make -C class_v041 -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v041/include/common.h
+          grep -q 'aest_memory_enabled' class_v041/source/input.c
+          grep -q 'aest_KB' class_v041/source/input.c
+      - name: Four deterministic nonlinear refit starts
+        shell: bash
+        run: |
+          set -euo pipefail
+          for S in canonical plus minus cross; do
+            python3 v041/refit_multistart.py class_v041 --kb 0.0665 --start "$S" --iters 6 --json-out "results/v041_${S}_refit.json"
+          done
+      - name: Certification summary and gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v041/certify_multistart.py --glob 'results/v041_*_refit.json' --json-out results/v041_certification_summary.json
+      - name: Upload v0.41 certification
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v041_publication_certification
+          path: |
+            results/v041_*_refit.json
+            results/v041_certification_summary.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v041_debug
+          path: |
+            results/*.json
+            results/*.log
