@@ -1,0 +1,76 @@
+name: v042 locked-KB multi-start nonlinear refit certification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v042/**'
+      - '.github/workflows/v042-multistart-refit.yml'
+
+jobs:
+  multistart-refit:
+    strategy:
+      fail-fast: false
+      matrix:
+        start: [canonical, locked_v038, plus_halftrust, minus_halftrust, mixed]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v042
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v042/output
+          python3 v019/apply_patch_v019.py class_v042
+          python3 v019i/apply_ic_patch.py class_v042
+          python3 v019j/apply_memory_patch.py class_v042
+          python3 v019w/apply_variational_forcing_patch.py class_v042
+          python3 v019y/apply_output_precision_patch.py class_v042
+          python3 v023/apply_source_grid_trace_patch.py class_v042
+      - name: Build CLASS
+        run: make -C class_v042 -j2 class
+      - name: Source audit
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v042/source/aest_memory.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v042/include/common.h
+      - name: Run locked KB=0.0665 nonlinear refit from pre-registered start
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v042/refit_multistart.py class_v042 --kb 0.0665 --start '${{ matrix.start }}' --iters 6 --json-out 'results/v042_${{ matrix.start }}.json'
+      - name: Certification gate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          s='${{ matrix.start }}'
+          q=json.load(open(f'results/v042_{s}.json'))
+          x=q['best_verified_baseline_CV_SNR']
+          assert x < 5.0, f'{s}: nonlinear baseline no longer viable: {x}'
+          assert q['reference_KB']==0.1 and abs(q['KB']-0.0665)<1e-15
+          print({'start':s,'initial':q['initial_baseline_CV_SNR'],'final':x,'best':q['best_parameters']})
+          PY
+      - name: Upload v0.42 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v042_${{ matrix.start }}
+          path: results/v042_${{ matrix.start }}.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v042_debug_${{ matrix.start }}
+          path: |
+            results/*.json
+            results/*.log
