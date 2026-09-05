@@ -1,0 +1,122 @@
+name: v043 locked-model nuisance conditioning certification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v043/**'
+      - '.github/workflows/v043-conditioning-certification.yml'
+
+jobs:
+  conditioning-certification:
+    strategy:
+      fail-fast: false
+      matrix:
+        scale: [0.5, 1.0, 2.0]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v043
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v043/output
+          python3 v019/apply_patch_v019.py class_v043
+          python3 v019i/apply_ic_patch.py class_v043
+          python3 v019j/apply_memory_patch.py class_v043
+          python3 v019w/apply_variational_forcing_patch.py class_v043
+          python3 v019y/apply_output_precision_patch.py class_v043
+          python3 v023/apply_source_grid_trace_patch.py class_v043
+      - name: Build CLASS
+        run: make -C class_v043 -j2 class
+      - name: Source audit
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v043/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v043/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v043/include/common.h
+      - name: Prepare derivative-scale case
+        shell: bash
+        run: |
+          set -euo pipefail
+          SCALE='${{ matrix.scale }}'
+          TAG=$(python3 v043/prepare_derivative_scale.py class_v043 --scale "$SCALE" --meta "results/v043_meta_${SCALE}.json" | tail -1)
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "SCALE=$SCALE" >> "$GITHUB_ENV"
+          echo "KB=0.0665" >> "$GITHUB_ENV"
+      - name: Run locked candidate and reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v019p/pre/p2.pre'
+          (cd class_v043 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v043_${SCALE}_trace.dat" OMP_NUM_THREADS=1 ./class "v043_${TAG}_base.ini" "$PRE") > "results/v043_${SCALE}_base.log" 2>&1
+          (cd class_v043 && OMP_NUM_THREADS=1 ./class "v043_${TAG}_ref.ini" "$PRE") > "results/v043_${SCALE}_ref.log" 2>&1
+          test -s "results/v043_${SCALE}_trace.dat"
+      - name: Build converged positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v040/build_time_dependent_tau_forcing.py "results/v043_${SCALE}_trace.dat" --KB "$KB" --tau0H0 10 --p 0 --out-prefix "results/v043_${SCALE}" --control-order 512 --primary-order 1024 --summary "results/v043_${SCALE}_forcing.json"
+      - name: Run six nuisance directions
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v019p/pre/p2.pre'
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            (cd class_v043 && OMP_NUM_THREADS=1 ./class "v043_${TAG}_nuis_${q}_p.ini" "$PRE") > "results/v043_${SCALE}_nuis_${q}_p.log" 2>&1 & a=$!
+            (cd class_v043 && OMP_NUM_THREADS=1 ./class "v043_${TAG}_nuis_${q}_m.ini" "$PRE") > "results/v043_${SCALE}_nuis_${q}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Run tangent lambda 10 pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v019p/pre/p2.pre'
+          FORCE="$GITHUB_WORKSPACE/results/v043_${SCALE}_force.dat"
+          (cd class_v043 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA='10' OMP_NUM_THREADS=1 ./class "v043_${TAG}_l10_p.ini" "$PRE") > "results/v043_${SCALE}_l10_p.log" 2>&1 & a=$!
+          (cd class_v043 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA='-10' OMP_NUM_THREADS=1 ./class "v043_${TAG}_l10_m.ini" "$PRE") > "results/v043_${SCALE}_l10_m.log" 2>&1 & b=$!
+          wait $a; wait $b
+      - name: Analyse conditioning and derivative stability
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v043/analyse_conditioning.py class_v043/output --tag "$TAG" --scale "$SCALE" --force-control "results/v043_${SCALE}_force_control.dat" --force-primary "results/v043_${SCALE}_force.dat" --json-out "results/v043_${SCALE}_analysis.json"
+      - name: Certification gate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,os
+          s=os.environ['SCALE']
+          q=json.load(open(f'results/v043_{s}_analysis.json'))
+          assert q['nuisance_rank']==6
+          assert q['normalized_gram_condition_number'] < 1e8
+          assert q['relative_difference_from_locked_reference'] < 0.05
+          assert all(q['gates'].values())
+          print({'scale':s,'condition':q['normalized_gram_condition_number'],'marginalized':q['memory_marginalized_CV_SNR_per_eta'],'retained':q['memory_retained_fraction']})
+          PY
+      - name: Upload v0.43 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v043_${{ matrix.scale }}
+          path: |
+            results/v043_*_analysis.json
+            results/v043_*_forcing.json
+            results/v043_meta_*.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v043_debug_${{ matrix.scale }}
+          path: |
+            results/*.json
+            results/*.log
