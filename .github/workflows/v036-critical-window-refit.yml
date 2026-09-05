@@ -1,0 +1,64 @@
+name: v036 critical-window nonlinear baseline refit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/v036-critical-window-refit.yml'
+
+jobs:
+  refit:
+    strategy:
+      fail-fast: false
+      matrix:
+        kb: [0.067, 0.066, 0.065]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v036
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated AeST baseline patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v036/output
+          python3 v019/apply_patch_v019.py class_v036
+          python3 v019i/apply_ic_patch.py class_v036
+          python3 v019j/apply_memory_patch.py class_v036
+          python3 v019y/apply_output_precision_patch.py class_v036
+      - name: Build CLASS
+        run: make -C class_v036 -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v036/include/common.h
+          grep -q 'aest_memory_enabled' class_v036/source/input.c
+      - name: Nonlinear six-parameter baseline refit
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG=$(echo '${{ matrix.kb }}' | sed 's/\./p/g')
+          python3 v031/refit_baseline.py class_v036 --kb '${{ matrix.kb }}' --iters 5 --json-out "results/v036_kb_${TAG}_refit.json"
+      - name: Upload v0.36 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v036_kb_${{ matrix.kb }}
+          path: |
+            results/v036_*_refit.json
+      - name: Upload v0.36 debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v036_debug_kb_${{ matrix.kb }}
+          path: |
+            results/*.json
+            results/*.log
