@@ -1,0 +1,70 @@
+name: v042 extended multistart convergence certification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v042/**'
+      - '.github/workflows/v042-multistart-convergence.yml'
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 480
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v042
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated AeST baseline patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v042/output
+          python3 v019/apply_patch_v019.py class_v042
+          python3 v019i/apply_ic_patch.py class_v042
+          python3 v019j/apply_memory_patch.py class_v042
+          python3 v019y/apply_output_precision_patch.py class_v042
+      - name: Build CLASS
+        run: make -C class_v042 -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v042/include/common.h
+          grep -q 'aest_memory_enabled' class_v042/source/input.c
+          grep -q 'aest_KB' class_v042/source/input.c
+      - name: Four continued deterministic nonlinear refits
+        shell: bash
+        run: |
+          set -euo pipefail
+          for S in canonical plus minus cross; do
+            python3 v042/refit_multistart_continued.py class_v042 --kb 0.0665 --start "$S" --iters 12 --json-out "results/v042_${S}_refit.json"
+          done
+      - name: Convergence certification summary and locked gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v042/certify_continued_multistart.py --glob 'results/v042_*_refit.json' --json-out results/v042_convergence_summary.json
+      - name: Upload v0.42 results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v042_multistart_convergence
+          path: |
+            results/v042_*_refit.json
+            results/v042_convergence_summary.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v042_debug
+          path: |
+            results/*.json
+            results/*.log
