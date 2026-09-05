@@ -1,0 +1,86 @@
+name: v035 KB forcing scaling sweep
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v035/**'
+      - '.github/workflows/v035-kb-forcing-scaling.yml'
+
+jobs:
+  forcing-scaling:
+    strategy:
+      fail-fast: false
+      matrix:
+        kb: [0.1, 0.09, 0.08, 0.075, 0.072, 0.07, 0.069, 0.068, 0.067, 0.066, 0.065, 0.064, 0.063, 0.062, 0.061, 0.06, 0.055, 0.05, 0.04, 0.03]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v035
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply validated patches and prepare KB case
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v035/output
+          python3 v019/apply_patch_v019.py class_v035
+          python3 v019i/apply_ic_patch.py class_v035
+          python3 v019j/apply_memory_patch.py class_v035
+          python3 v019w/apply_variational_forcing_patch.py class_v035
+          python3 v023/apply_source_grid_trace_patch.py class_v035
+          TAG=$(python3 v027/prepare_kb_case.py class_v035 --kb '${{ matrix.kb }}' --meta results/v035_meta.json | tail -1)
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "KB=${{ matrix.kb }}" >> "$GITHUB_ENV"
+
+      - name: Build CLASS
+        run: make -C class_v035 -j2 class
+
+      - name: Trace eta0 state
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v035 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v035_${TAG}_trace.dat" OMP_NUM_THREADS=1 ./class "v027_${TAG}_base.ini" ../v019p/pre/p3.pre) > "results/v035_${TAG}_base.log" 2>&1
+          test -s "results/v035_${TAG}_trace.dat"
+
+      - name: Build tauH0=10 positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v027/build_tau10_forcing.py "results/v035_${TAG}_trace.dat" --KB "$KB" --out-prefix "results/v035_${TAG}" \
+            --control-order 512 --primary-order 1024 --summary "results/v035_${TAG}_forcing_convergence.json"
+
+      - name: Analyse forcing and eta0-state scaling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v035/analyse_forcing_scaling.py "results/v035_${TAG}_trace.dat" "results/v035_${TAG}_force.dat" \
+            --kb "$KB" --json-out "results/v035_${TAG}_scaling.json"
+
+      - name: Upload v0.35 result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v035_kb_${{ matrix.kb }}
+          path: |
+            results/v035_*_scaling.json
+            results/v035_*_forcing_convergence.json
+            results/v035_meta.json
+
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v035_debug_kb_${{ matrix.kb }}
+          path: |
+            results/*.json
+            results/*.log
