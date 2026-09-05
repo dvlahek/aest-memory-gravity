@@ -20,15 +20,16 @@ def main():
     ap.add_argument('--force-control',required=True)
     ap.add_argument('--force-primary',required=True)
     ap.add_argument('--json-out',required=True)
+    ap.add_argument('--prefix',default='v027',help='CLASS output-root prefix; default preserves v0.27-v0.37 behavior')
     z=ap.parse_args(); out=Path(z.output_dir)
 
-    files={'base':out/f'v027_{z.tag}_base__cl.dat','ref':out/f'v027_{z.tag}_ref__cl.dat'}
+    files={'base':out/f'{z.prefix}_{z.tag}_base__cl.dat','ref':out/f'{z.prefix}_{z.tag}_ref__cl.dat'}
     for L in LAM:
-        files[f'p{L}']=out/f'v027_{z.tag}_l{L}_p__cl.dat'
-        files[f'm{L}']=out/f'v027_{z.tag}_l{L}_m__cl.dat'
+        files[f'p{L}']=out/f'{z.prefix}_{z.tag}_l{L}_p__cl.dat'
+        files[f'm{L}']=out/f'{z.prefix}_{z.tag}_l{L}_m__cl.dat'
     for q in a.PARAMS:
-        files[f'nuis_{q}_p']=out/f'v027_{z.tag}_nuis_{q}_p__cl.dat'
-        files[f'nuis_{q}_m']=out/f'v027_{z.tag}_nuis_{q}_m__cl.dat'
+        files[f'nuis_{q}_p']=out/f'{z.prefix}_{z.tag}_nuis_{q}_p__cl.dat'
+        files[f'nuis_{q}_m']=out/f'{z.prefix}_{z.tag}_nuis_{q}_m__cl.dat'
 
     maps={k:a.load_cl(v) for k,v in files.items()}
     ells=sorted(set.intersection(*(set(v) for v in maps.values())))
