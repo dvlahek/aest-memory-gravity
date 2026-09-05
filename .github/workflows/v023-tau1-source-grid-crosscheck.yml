@@ -1,0 +1,126 @@
+name: v023 tau1 accepted source-grid crosscheck
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v023/**'
+      - '.github/workflows/v023-tau1-source-grid-crosscheck.yml'
+
+jobs:
+  tau1-crosscheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v023
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply validated AeST and accepted-grid trace patches
+        run: |
+          mkdir -p results class_v023/output
+          python3 v019/apply_patch_v019.py class_v023
+          python3 v019i/apply_ic_patch.py class_v023
+          python3 v019j/apply_memory_patch.py class_v023
+          python3 v019w/apply_variational_forcing_patch.py class_v023
+          python3 v019y/apply_output_precision_patch.py class_v023
+          python3 v023/apply_source_grid_trace_patch.py class_v023
+          python3 v022/prepare_v022_ini.py class_v023 --meta results/v023_meta.json
+
+      - name: Build CLASS
+        run: make -C class_v023 -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v023/source/aest_memory.c
+          grep -q 'aest_offline_trace_state(k,tau,a,pvecback\[pba->index_bg_H\],pba->H0' class_v023/source/perturbations.c
+          grep -q 'aest_tangent_external_force' class_v023/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v023/include/common.h
+
+      - name: Trace eta0 AeST on accepted source grid
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v023 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v023_eta0_state_raw.dat" OMP_NUM_THREADS=1 ./class v022_trace.ini ../v019p/pre/p3.pre) > results/v023_trace.log 2>&1
+          test -s results/v023_eta0_state_raw.dat
+          echo "trace rows: $(wc -l < results/v023_eta0_state_raw.dat)"
+
+      - name: Build tau1 exact offline Drude forcing
+        run: |
+          python3 v023/build_tau1_forcing.py results/v023_eta0_state_raw.dat \
+            --out-dir results --control-order 512 --primary-order 1024 \
+            --summary results/v023_tau1_forcing_summary.json
+
+      - name: Run tau1 amplified variational responses
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v022_t1_force.dat"
+          run_forced () {
+            lab="$1"; lam="$2"
+            (cd class_v023 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$lam" OMP_NUM_THREADS=1 ./class "v022_t1_force_${lab}.ini" ../v019p/pre/p3.pre) > "results/v023_t1_${lab}.log" 2>&1
+          }
+          run_forced p300 300 & p1=$!
+          run_forced m300 -300 & p2=$!
+          run_forced p1000 1000 & p3=$!
+          run_forced m1000 -1000 & p4=$!
+          wait $p1; wait $p2; wait $p3; wait $p4
+
+      - name: Run six core-LambdaCDM nuisance directions
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_pair () {
+            p="$1"
+            (cd class_v023 && OMP_NUM_THREADS=1 ./class "v022_nuis_${p}_p.ini" ../v019p/pre/p3.pre) > "results/v023_nuis_${p}_p.log" 2>&1 & a=$!
+            (cd class_v023 && OMP_NUM_THREADS=1 ./class "v022_nuis_${p}_m.ini" ../v019p/pre/p3.pre) > "results/v023_nuis_${p}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          }
+          for p in H0 omega_b omega_cdm tau_reio n_s lnA_s; do run_pair "$p"; done
+
+      - name: Analyse tau1
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$GITHUB_WORKSPACE/results/analyse_t1"
+          mkdir -p "$D"
+          ln -sf "$GITHUB_WORKSPACE/class_v023/output/v022_trace__cl.dat" "$D/v021_force_l0__cl.dat"
+          for lab in p300 m300 p1000 m1000; do
+            ln -sf "$GITHUB_WORKSPACE/class_v023/output/v022_t1_force_${lab}__cl.dat" "$D/v021_force_${lab}__cl.dat"
+          done
+          for p in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            ln -sf "$GITHUB_WORKSPACE/class_v023/output/v022_nuis_${p}_p__cl.dat" "$D/v021_nuis_${p}_p__cl.dat"
+            ln -sf "$GITHUB_WORKSPACE/class_v023/output/v022_nuis_${p}_m__cl.dat" "$D/v021_nuis_${p}_m__cl.dat"
+          done
+          python3 v021/analyse_tau_point.py "$D" --tau 1 --tag t1 \
+            --force256 results/v022_t1_force_control.dat \
+            --force512 results/v022_t1_force.dat \
+            --json-out results/v023_t1_analysis.json
+
+      - name: Enforce v0.20 tau1 crosscheck
+        run: python3 v023/check_tau1_crosscheck.py results/v023_t1_analysis.json --json-out results/v023_tau1_crosscheck.json
+
+      - name: Upload v0.23 crosscheck
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v023_tau1_crosscheck
+          path: |
+            results/v023_tau1_crosscheck.json
+            results/v023_t1_analysis.json
+            results/v023_tau1_forcing_summary.json
+            results/v023_trace_patch.json
+            results/v023_meta.json
+            results/v023_trace.log
+            results/v023_t1_*.log
