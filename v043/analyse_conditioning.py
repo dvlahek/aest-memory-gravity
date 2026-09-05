@@ -8,7 +8,10 @@ a=importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
 REF_MARG=0.1364941527698679
 
 def inner(x,y,W):
-    return float(np.dot(x, W @ y))
+    x=np.asarray(x,dtype=float)
+    y=np.asarray(y,dtype=float)
+    W=np.asarray(W,dtype=float)
+    return float(x @ W @ y)
 
 def main():
     ap=argparse.ArgumentParser()
