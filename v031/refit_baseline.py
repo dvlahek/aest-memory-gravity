@@ -86,6 +86,48 @@ def apply_step(params,step,scale=1.0,trust_scale=1.0):
 
 def step_vector(realized): return np.array([realized[p] for p in PARAMS],dtype=float)
 
+def finite_vector(name,v):
+    x=np.asarray(v,dtype=float)
+    if not np.all(np.isfinite(x)):
+        bad=int(np.size(x)-np.count_nonzero(np.isfinite(x)))
+        raise RuntimeError(f'{name} contains {bad} non-finite entries')
+    return x
+
+def normalized_gn_step(deriv,r,W):
+    # Solve in a CV-unit-normalized derivative basis. This avoids forming
+    # raw Gram elements whose dynamic range can overflow at small KB.
+    r_arr=finite_vector('baseline residual',r)
+    basis=[]; scales=[]; diag=[]
+    for i,d in enumerate(deriv):
+        x=finite_vector(f'derivative {PARAMS[i]}',d)
+        amp=float(np.max(np.abs(x)))
+        if not math.isfinite(amp) or amp<=1e-300:
+            raise RuntimeError(f'derivative {PARAMS[i]} has invalid amplitude {amp}')
+        u=(x/amp).tolist()
+        n=float(a.wnorm(u,W))
+        if not math.isfinite(n) or n<=1e-250:
+            raise RuntimeError(f'derivative {PARAMS[i]} has invalid normalized CV norm {n}')
+        v=a.scale(u,1.0/n)
+        basis.append(v); scales.append((amp,n))
+        diag.append({'parameter':PARAMS[i],'max_abs_derivative':amp,'CV_norm_after_maxabs_scaling':n})
+    C=np.array([[a.inner(basis[i],basis[j],W) for j in range(6)] for i in range(6)],dtype=float)
+    c=np.array([a.inner(basis[i],r_arr.tolist(),W) for i in range(6)],dtype=float)
+    if not np.all(np.isfinite(C)) or not np.all(np.isfinite(c)):
+        raise RuntimeError('normalized Gauss-Newton system contains non-finite entries')
+    C=0.5*(C+C.T)
+    ridge=1e-10
+    A=C+ridge*np.eye(6)
+    # Symmetric eigensolve is stable for this 6x6 correlation-like matrix.
+    ev,U=np.linalg.eigh(A)
+    floor=max(float(np.max(np.abs(ev)))*1e-12,1e-12)
+    inv=np.array([1.0/max(float(x),floor) for x in ev])
+    y=-(U @ (inv*(U.T@c)))
+    step=np.array([(float(y[i])/scales[i][1])/scales[i][0] for i in range(6)],dtype=float)
+    if not np.all(np.isfinite(step)):
+        raise RuntimeError('normalized Gauss-Newton step is non-finite')
+    cond=float(np.max(np.abs(ev))/max(np.min(np.abs(ev)),floor))
+    return step,cond,diag
+
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('class_root'); ap.add_argument('--kb',type=float,required=True)
     ap.add_argument('--iters',type=int,default=4); ap.add_argument('--json-out',required=True)
@@ -99,7 +141,6 @@ def main():
         current,ells,W,r=cv_residual(ref,base)
         if best is None or current<best['snr']:
             best={'snr':current,'params':dict(params),'iteration':it,'label':f'i{it}_base'}
-        # local derivatives, evaluated around the current candidate point
         jobs={}
         with ThreadPoolExecutor(max_workers=4) as ex:
             for p in PARAMS:
@@ -115,11 +156,7 @@ def main():
             common=sorted(set(ells)&set(mp)&set(mm))
             if common!=ells: raise RuntimeError('multipole grid changed during derivative evaluation')
             deriv.append(a.vec(ells,mp,mm,2.0*delta_at(params,p)))
-        G=np.array([[a.inner(deriv[i],deriv[j],W) for j in range(6)] for i in range(6)],dtype=float)
-        b=np.array([a.inner(deriv[i],r,W) for i in range(6)],dtype=float)
-        ridge=max(np.trace(G)/6.0,1e-300)*1e-12
-        step=np.linalg.lstsq(G+ridge*np.eye(6),-b,rcond=None)[0]
-        # clip to trust region, then test three actual CLASS points along the same direction
+        step,gn_condition,deriv_diag=normalized_gn_step(deriv,r,W)
         trial_specs=[]
         for fac in (1.0,0.5,0.25):
             pp,real=apply_step(params,step,fac,trust_scale)
@@ -133,10 +170,10 @@ def main():
         trials.sort(key=lambda x:x['snr']); chosen=trials[0]
         pred_step=step_vector(chosen['realized_step'])
         rp=list(r)
-        for j in range(6): rp=a.sub(rp,a.scale(deriv[j],-pred_step[j]))  # r + J dx
+        for j in range(6): rp=a.sub(rp,a.scale(deriv[j],-pred_step[j]))
         predicted=a.wnorm(rp,W)
         history.append({'iteration':it,'current_CV_SNR':current,'linear_predicted_CV_SNR':predicted,
-                        'gram_condition':float(np.linalg.cond(G+ridge*np.eye(6))),
+                        'normalized_GN_condition':gn_condition,'derivative_scaling':deriv_diag,
                         'raw_GN_step':{PARAMS[i]:float(step[i]) for i in range(6)},
                         'trust_scale':trust_scale,'line_search':trials,'chosen_factor':chosen['factor']})
         if chosen['snr']<best['snr']:
@@ -148,7 +185,6 @@ def main():
             if trust_scale<0.125: break
         if best['snr']<1.0: break
 
-    # independent final rerun of best parameters
     final_cl=run_class(class_root,tag,'best_verify',z.kb,best['params']); final_map=a.load_cl(final_cl)
     final_snr,_,_,_=cv_residual(ref,final_map)
     best['verified_CV_SNR']=final_snr
@@ -160,6 +196,7 @@ def main():
          'parameter_shifts':shifts,'initial_baseline_CV_SNR':history[0]['current_CV_SNR'] if history else None,
          'best_verified_baseline_CV_SNR':final_snr,'best_iteration':best['iteration'],'history':history,
          'bounds':BOUNDS,'trust_caps_per_iteration':TRUST,
+         'solver':'CV-unit-normalized symmetric Gauss-Newton with bounded line search',
          'scope':'unlensed full-sky CV TT/EE/TE ell=30..2500; nonlinear Gauss-Newton refit of H0, omega_b, omega_cdm, tau_reio, n_s, lnA_s; no real-data likelihood yet'}
     Path(z.json_out).write_text(json.dumps(res,indent=2)); print(json.dumps(res,indent=2))
 
