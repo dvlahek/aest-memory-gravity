@@ -1,0 +1,153 @@
+name: v022 Exp offline-continuum memory timescale sweep
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v022/**'
+      - '.github/workflows/v022-offline-continuum-tau-sweep.yml'
+
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v022
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply AeST and variational patches
+        run: |
+          mkdir -p results class_v022/output
+          python3 v019/apply_patch_v019.py class_v022
+          python3 v019i/apply_ic_patch.py class_v022
+          python3 v019j/apply_memory_patch.py class_v022
+          python3 v019w/apply_variational_forcing_patch.py class_v022
+          python3 v019y/apply_output_precision_patch.py class_v022
+          python3 v022/apply_offline_trace_patch.py class_v022
+          python3 v022/prepare_v022_ini.py class_v022 --meta results/v022_meta.json
+
+      - name: Build v0.22 CLASS
+        run: make -C class_v022 -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.22 eta0 source trace for offline Drude continuum' class_v022/source/aest_memory.c
+          grep -q 'aest_offline_trace_state(k,tau,a,H_aest,pba->H0,chi_aest,Q_aest)' class_v022/source/perturbations.c
+          grep -q 'aest_tangent_external_force' class_v022/source/perturbations.c
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_v022/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v022/include/common.h
+
+      - name: Trace eta0 AeST source once
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v022 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v022_eta0_state_raw.dat" OMP_NUM_THREADS=1 ./class v022_trace.ini ../v019p/pre/p3.pre) > results/v022_trace.log 2>&1
+          test -s results/v022_eta0_state_raw.dat
+          echo "trace rows: $(wc -l < results/v022_eta0_state_raw.dat)"
+
+      - name: Build exact offline Drude forcing for all tau
+        run: |
+          python3 v022/build_offline_forcing.py results/v022_eta0_state_raw.dat \
+            --out-dir results --control-order 512 --primary-order 1024 \
+            --summary results/v022_offline_forcing_summary.json
+
+      - name: Run six core-LambdaCDM nuisance directions once
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_pair () {
+            p="$1"
+            (cd class_v022 && OMP_NUM_THREADS=1 ./class "v022_nuis_${p}_p.ini" ../v019p/pre/p3.pre) > "results/v022_nuis_${p}_p.log" 2>&1 & a=$!
+            (cd class_v022 && OMP_NUM_THREADS=1 ./class "v022_nuis_${p}_m.ini" ../v019p/pre/p3.pre) > "results/v022_nuis_${p}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          }
+          for p in H0 omega_b omega_cdm tau_reio n_s lnA_s; do run_pair "$p"; done
+
+      - name: Run amplified variational responses for all tau
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_tau () {
+            tag="$1"
+            FORCE="$GITHUB_WORKSPACE/results/v022_${tag}_force.dat"
+            run_forced () {
+              lab="$1"; lam="$2"
+              (cd class_v022 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$lam" OMP_NUM_THREADS=1 ./class "v022_${tag}_force_${lab}.ini" ../v019p/pre/p3.pre) > "results/v022_${tag}_${lab}.log" 2>&1
+            }
+            run_forced p300 300 & p1=$!
+            run_forced m300 -300 & p2=$!
+            run_forced p1000 1000 & p3=$!
+            run_forced m1000 -1000 & p4=$!
+            wait $p1; wait $p2; wait $p3; wait $p4
+          }
+          for tag in t0001 t0003 t001 t003 t01 t03 t1 t3 t10; do run_tau "$tag"; done
+
+      - name: Analyse every tau point
+        shell: bash
+        run: |
+          set -euo pipefail
+          analyse () {
+            tag="$1"; tau="$2"; D="$GITHUB_WORKSPACE/results/analyse_${tag}"
+            mkdir -p "$D"
+            ln -sf "$GITHUB_WORKSPACE/class_v022/output/v022_trace__cl.dat" "$D/v021_force_l0__cl.dat"
+            for lab in p300 m300 p1000 m1000; do
+              ln -sf "$GITHUB_WORKSPACE/class_v022/output/v022_${tag}_force_${lab}__cl.dat" "$D/v021_force_${lab}__cl.dat"
+            done
+            for p in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+              ln -sf "$GITHUB_WORKSPACE/class_v022/output/v022_nuis_${p}_p__cl.dat" "$D/v021_nuis_${p}_p__cl.dat"
+              ln -sf "$GITHUB_WORKSPACE/class_v022/output/v022_nuis_${p}_m__cl.dat" "$D/v021_nuis_${p}_m__cl.dat"
+            done
+            python3 v021/analyse_tau_point.py "$D" --tau "$tau" --tag "$tag" \
+              --force256 "results/v022_${tag}_force_control.dat" \
+              --force512 "results/v022_${tag}_force.dat" \
+              --json-out "results/raw_v021_${tag}_analysis.json"
+          }
+          analyse t0001 0.001
+          analyse t0003 0.003
+          analyse t001 0.01
+          analyse t003 0.03
+          analyse t01 0.1
+          analyse t03 0.3
+          analyse t1 1
+          analyse t3 3
+          analyse t10 10
+
+      - name: Finalize offline-continuum sweep
+        run: |
+          python3 v022/finalize_v022.py results \
+            --forcing-summary results/v022_offline_forcing_summary.json \
+            --json-out results/v022_tau_sweep.json \
+            --csv-out results/v022_tau_sweep.csv
+
+      - name: Upload v0.22 results
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v022_offline_tau_sweep
+          path: |
+            results/v022_tau_sweep.json
+            results/v022_tau_sweep.csv
+            results/v022_offline_forcing_summary.json
+            results/v022_*_analysis.json
+            results/v022_meta.json
+            results/v022_trace_patch.json
+
+      - name: Upload v0.22 debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v022_debug
+          path: |
+            results/*.json
+            results/*.log
