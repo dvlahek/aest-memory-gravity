@@ -1,0 +1,98 @@
+name: v029 Exp expansion-running coupling diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v029/**'
+      - '.github/workflows/v029-running-coupling-diagnostic.yml'
+
+jobs:
+  running:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v029
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply patches and prepare cases
+        run: |
+          mkdir -p results class_v029/output
+          python3 v019/apply_patch_v019.py class_v029
+          python3 v019i/apply_ic_patch.py class_v029
+          python3 v019j/apply_memory_patch.py class_v029
+          python3 v019w/apply_variational_forcing_patch.py class_v029
+          python3 v019y/apply_output_precision_patch.py class_v029
+          python3 v023/apply_source_grid_trace_patch.py class_v029
+          python3 v029/prepare_v029_ini.py class_v029 --meta results/v029_meta.json
+      - name: Build CLASS
+        run: make -C class_v029 -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v029/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v029/source/perturbations.c
+      - name: Trace baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v029 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v029_trace.dat" OMP_NUM_THREADS=1 ./class v029_base.ini ../v019p/pre/p3.pre) > results/v029_base.log 2>&1
+          test -s results/v029_trace.dat
+      - name: Build running-coupling forcing family
+        run: |
+          python3 v029/build_running_coupling_forcing.py results/v029_trace.dat --out-dir results --KB 0.1 --control-order 512 --primary-order 1024 --summary results/v029_forcing_summary.json
+      - name: Run six core-LambdaCDM nuisance directions
+        shell: bash
+        run: |
+          set -euo pipefail
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            (cd class_v029 && OMP_NUM_THREADS=1 ./class "v029_nuis_${q}_p.ini" ../v019p/pre/p3.pre) > "results/v029_nuis_${q}_p.log" 2>&1 & a=$!
+            (cd class_v029 && OMP_NUM_THREADS=1 ./class "v029_nuis_${q}_m.ini" ../v019p/pre/p3.pre) > "results/v029_nuis_${q}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Run normalized lambda ladders
+        shell: bash
+        run: |
+          set -euo pipefail
+          for tag in q0 q025 q05 q075 q1; do
+            FORCE="$GITHUB_WORKSPACE/results/v029_${tag}_force.dat"
+            for L in 30 100 300 1000; do
+              (cd class_v029 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$L" OMP_NUM_THREADS=1 ./class "v029_${tag}_l${L}_p.ini" ../v019p/pre/p3.pre) > "results/v029_${tag}_l${L}_p.log" 2>&1 & a=$!
+              (cd class_v029 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="-$L" OMP_NUM_THREADS=1 ./class "v029_${tag}_l${L}_m.ini" ../v019p/pre/p3.pre) > "results/v029_${tag}_l${L}_m.log" 2>&1 & b=$!
+              wait $a; wait $b
+            done
+          done
+      - name: Analyse running-coupling points
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v029/analyse_running_point.py class_v029/output --tag q0 --q 0 --forcing-summary results/v029_forcing_summary.json --json-out results/v029_q0_analysis.json
+          python3 v029/analyse_running_point.py class_v029/output --tag q025 --q 0.25 --forcing-summary results/v029_forcing_summary.json --json-out results/v029_q025_analysis.json
+          python3 v029/analyse_running_point.py class_v029/output --tag q05 --q 0.5 --forcing-summary results/v029_forcing_summary.json --json-out results/v029_q05_analysis.json
+          python3 v029/analyse_running_point.py class_v029/output --tag q075 --q 0.75 --forcing-summary results/v029_forcing_summary.json --json-out results/v029_q075_analysis.json
+          python3 v029/analyse_running_point.py class_v029/output --tag q1 --q 1 --forcing-summary results/v029_forcing_summary.json --json-out results/v029_q1_analysis.json
+      - name: Upload v0.29 results
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v029_running_coupling_diagnostic
+          path: |
+            results/v029_*_analysis.json
+            results/v029_forcing_summary.json
+            results/v029_meta.json
+            results/v023_trace_patch.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v029_debug
+          path: |
+            results/*.json
+            results/*.log
