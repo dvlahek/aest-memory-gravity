@@ -1,0 +1,74 @@
+name: v048 locked-model weak nuisance-direction decomposition
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v048/**'
+      - '.github/workflows/v048-weak-direction.yml'
+
+jobs:
+  weak-direction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v048
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v048/output
+          python3 v019/apply_patch_v019.py class_v048
+          python3 v019i/apply_ic_patch.py class_v048
+          python3 v019j/apply_memory_patch.py class_v048
+          python3 v019w/apply_variational_forcing_patch.py class_v048
+          python3 v019y/apply_output_precision_patch.py class_v048
+          python3 v023/apply_source_grid_trace_patch.py class_v048
+      - name: Build CLASS
+        run: make -C class_v048 -j2 class
+      - name: Source audit
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v048/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v048/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v048/include/common.h
+      - name: Prepare identical locked five-point cases
+        run: python3 v046/prepare_fivepoint_cases.py class_v048 --meta results/v048_meta.json
+      - name: Run locked base and nuisance stencil
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v047/p3.pre'
+          (cd class_v048 && OMP_NUM_THREADS=1 ./class 'v046_kb0p0665_tau10_p0_base.ini' "$PRE") > results/v048_base.log 2>&1
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            for s in m2 m1 p1 p2; do
+              (cd class_v048 && OMP_NUM_THREADS=1 ./class "v046_kb0p0665_tau10_p0_nuis_${q}_${s}.ini" "$PRE") > "results/v048_${q}_${s}.log" 2>&1
+            done
+          done
+      - name: Decompose weak nuisance direction
+        run: python3 v048/analyse_weak_direction.py class_v048/output --json-out results/v048_weak_direction.json
+      - name: Upload v0.48 result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v048
+          path: |
+            results/v048_weak_direction.json
+            results/v048_meta.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v048_debug
+          path: |
+            results/*.json
+            results/*.log
