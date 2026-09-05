@@ -1,0 +1,123 @@
+name: v026 Exp tau0 tracking sweep
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v026/**'
+      - '.github/workflows/v026-tau0-tracking-sweep.yml'
+
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v026
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply validated AeST and accepted-grid trace patches
+        run: |
+          mkdir -p results class_v026/output
+          python3 v019/apply_patch_v019.py class_v026
+          python3 v019i/apply_ic_patch.py class_v026
+          python3 v019j/apply_memory_patch.py class_v026
+          python3 v019w/apply_variational_forcing_patch.py class_v026
+          python3 v019y/apply_output_precision_patch.py class_v026
+          python3 v023/apply_source_grid_trace_patch.py class_v026
+          python3 v026/prepare_v026_ini.py class_v026 --meta results/v026_meta.json
+
+      - name: Build CLASS
+        run: make -C class_v026 -j2 class
+
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v026/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v026/source/perturbations.c
+          grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' class_v026/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v026/include/common.h
+
+      - name: Trace accepted eta0 source grid and baseline CMB
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v026 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v026_eta0_state_raw.dat" OMP_NUM_THREADS=1 ./class v026_base.ini ../v019p/pre/p3.pre) > results/v026_base.log 2>&1
+          test -s results/v026_eta0_state_raw.dat
+          echo "trace rows: $(wc -l < results/v026_eta0_state_raw.dat)"
+
+      - name: Build p=0.5,1 tau0-sweep positive Drude forcing
+        run: |
+          python3 v026/build_tau0_tracking_forcing.py results/v026_eta0_state_raw.dat --out-dir results \
+            --control-order 512 --primary-order 1024 --summary results/v026_forcing_summary.json
+
+      - name: Run six core-LambdaCDM nuisance directions once
+        shell: bash
+        run: |
+          set -euo pipefail
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            (cd class_v026 && OMP_NUM_THREADS=1 ./class "v026_nuis_${q}_p.ini" ../v019p/pre/p3.pre) > "results/v026_nuis_${q}_p.log" 2>&1 & a=$!
+            (cd class_v026 && OMP_NUM_THREADS=1 ./class "v026_nuis_${q}_m.ini" ../v019p/pre/p3.pre) > "results/v026_nuis_${q}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+
+      - name: Run adaptive lambda response ladders
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_pair () {
+            tag="$1"; L="$2"; FORCE="$GITHUB_WORKSPACE/results/v026_${tag}_force.dat"
+            (cd class_v026 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$L" OMP_NUM_THREADS=1 ./class "v026_${tag}_l${L}_p.ini" ../v019p/pre/p3.pre) > "results/v026_${tag}_l${L}_p.log" 2>&1 & a=$!
+            (cd class_v026 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="-$L" OMP_NUM_THREADS=1 ./class "v026_${tag}_l${L}_m.ini" ../v019p/pre/p3.pre) > "results/v026_${tag}_l${L}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          }
+          for tag in p05_t01 p05_t1 p05_t10 p05_t100 p1_t01 p1_t1 p1_t10 p1_t100; do
+            for L in 1 3 10 30 100 300 1000; do run_pair "$tag" "$L"; done
+          done
+
+      - name: Analyse tau0 tracking points
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p05_t01 --p 0.5 --tau0H0 0.1 --force-control results/v026_p05_t01_force_control.dat --force-primary results/v026_p05_t01_force.dat --json-out results/v026_p05_t01_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p05_t1 --p 0.5 --tau0H0 1 --force-control results/v026_p05_t1_force_control.dat --force-primary results/v026_p05_t1_force.dat --json-out results/v026_p05_t1_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p05_t10 --p 0.5 --tau0H0 10 --force-control results/v026_p05_t10_force_control.dat --force-primary results/v026_p05_t10_force.dat --json-out results/v026_p05_t10_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p05_t100 --p 0.5 --tau0H0 100 --force-control results/v026_p05_t100_force_control.dat --force-primary results/v026_p05_t100_force.dat --json-out results/v026_p05_t100_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p1_t01 --p 1 --tau0H0 0.1 --force-control results/v026_p1_t01_force_control.dat --force-primary results/v026_p1_t01_force.dat --json-out results/v026_p1_t01_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p1_t1 --p 1 --tau0H0 1 --force-control results/v026_p1_t1_force_control.dat --force-primary results/v026_p1_t1_force.dat --json-out results/v026_p1_t1_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p1_t10 --p 1 --tau0H0 10 --force-control results/v026_p1_t10_force_control.dat --force-primary results/v026_p1_t10_force.dat --json-out results/v026_p1_t10_analysis.json
+          python3 v026/analyse_tau0_tracking_point.py class_v026/output --tag p1_t100 --p 1 --tau0H0 100 --force-control results/v026_p1_t100_force_control.dat --force-primary results/v026_p1_t100_force.dat --json-out results/v026_p1_t100_analysis.json
+
+      - name: Finalize tau0 tracking sweep
+        run: python3 v026/finalize_v026.py results --json-out results/v026_tau0_tracking_sweep.json --csv-out results/v026_tau0_tracking_sweep.csv
+
+      - name: Upload v0.26 results
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v026_tau0_tracking_sweep
+          path: |
+            results/v026_tau0_tracking_sweep.json
+            results/v026_tau0_tracking_sweep.csv
+            results/v026_forcing_summary.json
+            results/v026_*_analysis.json
+            results/v026_meta.json
+            results/v023_trace_patch.json
+
+      - name: Upload v0.26 debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v026_debug
+          path: |
+            results/*.json
+            results/*.log
