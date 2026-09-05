@@ -6,6 +6,7 @@ on:
     paths:
       - 'v038/**'
       - '.github/workflows/v038-dense-refitted-memory.yml'
+      - 'v032/analyse_transition_case.py'
 
 jobs:
   dense-refitted-memory:
@@ -96,7 +97,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 v032/analyse_transition_case.py class_v038/output --tag "$TAG" --kb "$KB" \
+          python3 v032/analyse_transition_case.py class_v038/output --tag "$TAG" --kb "$KB" --prefix v038 \
             --force-control "results/v038_${TAG}_force_control.dat" --force-primary "results/v038_${TAG}_force.dat" \
             --json-out "results/v038_${TAG}_analysis.json"
       - name: Upload v0.38 result
