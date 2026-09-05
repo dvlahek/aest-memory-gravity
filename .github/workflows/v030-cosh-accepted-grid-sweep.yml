@@ -1,0 +1,108 @@
+name: v030 Cosh accepted-grid memory sweep
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v030/**'
+      - '.github/workflows/v030-cosh-accepted-grid-sweep.yml'
+
+jobs:
+  cosh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v030
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply patches and prepare Cosh cases
+        run: |
+          mkdir -p results class_v030/output
+          python3 v019/apply_patch_v019.py class_v030
+          python3 v019i/apply_ic_patch.py class_v030
+          python3 v019j/apply_memory_patch.py class_v030
+          python3 v019w/apply_variational_forcing_patch.py class_v030
+          python3 v019y/apply_output_precision_patch.py class_v030
+          python3 v023/apply_source_grid_trace_patch.py class_v030
+          python3 v030/prepare_v030_ini.py class_v030 --meta results/v030_meta.json
+      - name: Build CLASS
+        run: make -C class_v030 -j2 class
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v030/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v030/source/perturbations.c
+      - name: Trace Cosh and Exp reference source grids
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v030 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v030_cosh_trace.dat" OMP_NUM_THREADS=1 ./class v030_cosh_base.ini ../v019p/pre/p3.pre) > results/v030_cosh_base.log 2>&1
+          (cd class_v030 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v030_exp_trace.dat" OMP_NUM_THREADS=1 ./class v030_exp_ref.ini ../v019p/pre/p3.pre) > results/v030_exp_ref.log 2>&1
+          test -s results/v030_cosh_trace.dat
+          test -s results/v030_exp_trace.dat
+      - name: Build normalized exact Cosh Drude forcing sweep
+        run: |
+          python3 v030/build_cosh_forcing.py results/v030_cosh_trace.dat results/v030_exp_trace.dat --out-dir results --control-order 512 --primary-order 1024 --summary results/v030_forcing_summary.json
+      - name: Run six Cosh nuisance directions
+        shell: bash
+        run: |
+          set -euo pipefail
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            (cd class_v030 && OMP_NUM_THREADS=1 ./class "v030_nuis_${q}_p.ini" ../v019p/pre/p3.pre) > "results/v030_nuis_${q}_p.log" 2>&1 & a=$!
+            (cd class_v030 && OMP_NUM_THREADS=1 ./class "v030_nuis_${q}_m.ini" ../v019p/pre/p3.pre) > "results/v030_nuis_${q}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Run normalized Cosh lambda ladders
+        shell: bash
+        run: |
+          set -euo pipefail
+          for tag in t0001 t0003 t001 t003 t01 t03 t1 t3 t10; do
+            FORCE="$GITHUB_WORKSPACE/results/v030_${tag}_force.dat"
+            for L in 30 100 300 1000; do
+              (cd class_v030 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$L" OMP_NUM_THREADS=1 ./class "v030_${tag}_l${L}_p.ini" ../v019p/pre/p3.pre) > "results/v030_${tag}_l${L}_p.log" 2>&1 & a=$!
+              (cd class_v030 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="-$L" OMP_NUM_THREADS=1 ./class "v030_${tag}_l${L}_m.ini" ../v019p/pre/p3.pre) > "results/v030_${tag}_l${L}_m.log" 2>&1 & b=$!
+              wait $a; wait $b
+            done
+          done
+      - name: Analyse all Cosh tau points
+        shell: bash
+        run: |
+          set -u
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t0001 --tau 0.001 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t0001_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t0003 --tau 0.003 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t0003_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t001 --tau 0.01 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t001_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t003 --tau 0.03 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t003_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t01 --tau 0.1 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t01_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t03 --tau 0.3 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t03_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t1 --tau 1 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t1_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t3 --tau 3 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t3_analysis.json || true
+          python3 v030/analyse_cosh_point.py class_v030/output --tag t10 --tau 10 --forcing-summary results/v030_forcing_summary.json --json-out results/v030_t10_analysis.json || true
+      - name: Finalize Cosh sweep
+        run: python3 v030/finalize_v030.py results --json-out results/v030_cosh_sweep.json --csv-out results/v030_cosh_sweep.csv
+      - name: Upload v0.30 results
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v030_cosh_accepted_grid
+          path: |
+            results/v030_cosh_sweep.json
+            results/v030_cosh_sweep.csv
+            results/v030_forcing_summary.json
+            results/v030_*_analysis.json
+            results/v030_meta.json
+            results/v023_trace_patch.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v030_debug
+          path: |
+            results/*.json
+            results/*.log
