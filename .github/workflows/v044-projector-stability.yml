@@ -1,0 +1,126 @@
+name: v044 whitened-SVD nuisance projector certification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v044/**'
+      - '.github/workflows/v044-projector-stability.yml'
+
+jobs:
+  projector-certification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v044
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v044/output
+          python3 v019/apply_patch_v019.py class_v044
+          python3 v019i/apply_ic_patch.py class_v044
+          python3 v019j/apply_memory_patch.py class_v044
+          python3 v019w/apply_variational_forcing_patch.py class_v044
+          python3 v019y/apply_output_precision_patch.py class_v044
+          python3 v023/apply_source_grid_trace_patch.py class_v044
+      - name: Build CLASS
+        run: make -C class_v044 -j2 class
+      - name: Source audit
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v044/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v044/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v044/include/common.h
+      - name: Prepare five pre-registered derivative scales
+        shell: bash
+        run: |
+          set -euo pipefail
+          for SCALE in 0.5 0.75 1.0 1.5 2.0; do
+            python3 v044/prepare_projector_scale.py class_v044 --scale "$SCALE" --meta "results/v044_meta_${SCALE}.json"
+          done
+          echo 'KB=0.0665' >> "$GITHUB_ENV"
+      - name: Run locked base trace and memory tangent once
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v019p/pre/p2.pre'
+          TAG='kb0p0665_tau10_p0_s1'
+          (cd class_v044 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v044_trace.dat" OMP_NUM_THREADS=1 ./class "v044_${TAG}_base.ini" "$PRE") > results/v044_base.log 2>&1
+          (cd class_v044 && OMP_NUM_THREADS=1 ./class "v044_${TAG}_ref.ini" "$PRE") > results/v044_ref.log 2>&1
+          test -s results/v044_trace.dat
+      - name: Build converged positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v040/build_time_dependent_tau_forcing.py results/v044_trace.dat --KB "$KB" --tau0H0 10 --p 0 --out-prefix results/v044 --control-order 512 --primary-order 1024 --summary results/v044_forcing.json
+      - name: Run memory tangent lambda 10 pair once
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v019p/pre/p2.pre'
+          TAG='kb0p0665_tau10_p0_s1'
+          FORCE="$GITHUB_WORKSPACE/results/v044_force.dat"
+          (cd class_v044 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA='10' OMP_NUM_THREADS=1 ./class "v044_${TAG}_l10_p.ini" "$PRE") > results/v044_l10_p.log 2>&1 & a=$!
+          (cd class_v044 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA='-10' OMP_NUM_THREADS=1 ./class "v044_${TAG}_l10_m.ini" "$PRE") > results/v044_l10_m.log 2>&1 & b=$!
+          wait $a; wait $b
+      - name: Run nuisance directions for all five scales
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE='../v019p/pre/p2.pre'
+          for SCALE in 0.5 0.75 1.0 1.5 2.0; do
+            TAG=$(python3 -c "x=float('$SCALE'); print(('kb0p0665_tau10_p0_s'+('%.6g'%x).replace('.','p').replace('-','m')))" )
+            for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+              (cd class_v044 && OMP_NUM_THREADS=1 ./class "v044_${TAG}_nuis_${q}_p.ini" "$PRE") > "results/v044_${SCALE}_nuis_${q}_p.log" 2>&1 & a=$!
+              (cd class_v044 && OMP_NUM_THREADS=1 ./class "v044_${TAG}_nuis_${q}_m.ini" "$PRE") > "results/v044_${SCALE}_nuis_${q}_m.log" 2>&1 & b=$!
+              wait $a; wait $b
+            done
+          done
+      - name: Analyse whitened-SVD projector stability
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v044/analyse_projector_stability.py class_v044/output --force-control results/v044_force_control.dat --force-primary results/v044_force.dat --json-out results/v044_projector_stability.json
+      - name: Locked certification gate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          q=json.load(open('results/v044_projector_stability.json'))
+          assert q['gates']['quadrature']
+          assert q['gates']['rank_6_all_scales']
+          assert q['gates']['normalized_design_condition_all_scales']
+          assert q['gates']['projector_principal_angle_stability']
+          assert q['gates']['marginalized_memory_spread']
+          print({'classification':q['classification'],
+                 'relative_spread':q['marginalized_memory_relative_spread_across_scales'],
+                 'max_sin_principal_angle':q['max_sin_principal_angle_across_scales'],
+                 'max_condition':q['max_normalized_design_condition_number']})
+          PY
+      - name: Upload v0.44 result
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v044
+          path: |
+            results/v044_projector_stability.json
+            results/v044_forcing.json
+            results/v044_meta_*.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v044_debug
+          path: |
+            results/*.json
+            results/*.log
