@@ -1,0 +1,103 @@
+name: v049 locked-memory D2-D5 projector robustness
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'v049/**'
+      - '.github/workflows/v049-memory-projector-robustness.yml'
+
+jobs:
+  memory-projector:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v049
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v049/output
+          python3 v019/apply_patch_v019.py class_v049
+          python3 v019i/apply_ic_patch.py class_v049
+          python3 v019j/apply_memory_patch.py class_v049
+          python3 v019w/apply_variational_forcing_patch.py class_v049
+          python3 v019y/apply_output_precision_patch.py class_v049
+          python3 v023/apply_source_grid_trace_patch.py class_v049
+      - name: Build CLASS
+        run: make -C class_v049 -j2 class
+      - name: Source and strict-accuracy audit
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v049/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v049/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v049/include/common.h
+          grep -q 'tol_perturb_integration = 5.e-8' v047/p3.pre
+          grep -q 'perturb_sampling_stepsize = 0.0025' v047/p3.pre
+      - name: Prepare locked memory and five-point nuisance cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v039/prepare_locked_tau_case.py class_v049 --tauH0 10 --meta results/v049_memory_meta.json >/dev/null
+          python3 v046/prepare_fivepoint_cases.py class_v049 --meta results/v049_nuisance_meta.json >/dev/null
+      - name: Run locked base and accepted-grid trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v049 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v049_trace.dat" OMP_NUM_THREADS=1 ./class v039_kb0p0665_tau10_base.ini ../v047/p3.pre) > results/v049_base.log 2>&1
+          test -s results/v049_trace.dat
+      - name: Build locked positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v039/build_tau_forcing.py results/v049_trace.dat --KB 0.0665 --tauH0 10 --out-prefix results/v049 \
+            --control-order 512 --primary-order 1024 --summary results/v049_forcing.json
+      - name: Run locked lambda10 memory tangent
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v049_force.dat"
+          (cd class_v049 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=10 OMP_NUM_THREADS=1 ./class v039_kb0p0665_tau10_l10_p.ini ../v047/p3.pre) > results/v049_l10_p.log 2>&1 & a=$!
+          (cd class_v049 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=-10 OMP_NUM_THREADS=1 ./class v039_kb0p0665_tau10_l10_m.ini ../v047/p3.pre) > results/v049_l10_m.log 2>&1 & b=$!
+          wait $a; wait $b
+      - name: Run identical D2-D5 nuisance stencil
+        shell: bash
+        run: |
+          set -euo pipefail
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            for s in m2 m1 p1 p2; do
+              (cd class_v049 && OMP_NUM_THREADS=1 ./class "v046_kb0p0665_tau10_p0_nuis_${q}_${s}.ini" ../v047/p3.pre) > "results/v049_${q}_${s}.log" 2>&1
+            done
+          done
+      - name: Analyse locked memory projector robustness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v049/analyse_memory_projector_robustness.py class_v049/output --json-out results/v049_memory_projector.json
+      - name: Upload v0.49 result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v049
+          path: |
+            results/v049_memory_projector.json
+            results/v049_forcing.json
+            results/v049_memory_meta.json
+            results/v049_nuisance_meta.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v049_debug
+          path: |
+            results/*.json
+            results/*.log
