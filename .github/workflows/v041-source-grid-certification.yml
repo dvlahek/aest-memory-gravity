@@ -1,0 +1,130 @@
+name: v041 locked-model source-grid certification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/v041-source-grid-certification.yml'
+
+jobs:
+  source-grid-certification:
+    strategy:
+      fail-fast: false
+      matrix:
+        precision: [p1, p2, p3]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v041
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v041/output
+          python3 v019/apply_patch_v019.py class_v041
+          python3 v019i/apply_ic_patch.py class_v041
+          python3 v019j/apply_memory_patch.py class_v041
+          python3 v019w/apply_variational_forcing_patch.py class_v041
+          python3 v019y/apply_output_precision_patch.py class_v041
+          python3 v023/apply_source_grid_trace_patch.py class_v041
+      - name: Build CLASS
+        run: make -C class_v041 -j2 class
+      - name: Source audit
+        run: |
+          set -euo pipefail
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v041/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v041/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v041/include/common.h
+      - name: Prepare locked fiducial case
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREC='${{ matrix.precision }}'
+          TAG=$(python3 v040/prepare_time_dependent_case.py class_v041 --p 0 --tau0H0 10 --meta "results/v041_meta_${PREC}.json" | tail -1)
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "PREC=$PREC" >> "$GITHUB_ENV"
+          echo "KB=0.0665" >> "$GITHUB_ENV"
+      - name: Run candidate and matched reference on accepted source grid
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE="../v019p/pre/${PREC}.pre"
+          (cd class_v041 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v041_${PREC}_trace.dat" OMP_NUM_THREADS=1 ./class "v040_${TAG}_base.ini" "$PRE") > "results/v041_${PREC}_base.log" 2>&1
+          (cd class_v041 && OMP_NUM_THREADS=1 ./class "v040_${TAG}_ref.ini" "$PRE") > "results/v041_${PREC}_ref.log" 2>&1
+          test -s "results/v041_${PREC}_trace.dat"
+      - name: Build converged positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v040/build_time_dependent_tau_forcing.py "results/v041_${PREC}_trace.dat" --KB "$KB" --tau0H0 10 --p 0 --out-prefix "results/v041_${PREC}" --control-order 512 --primary-order 1024 --summary "results/v041_${PREC}_forcing.json"
+      - name: Run six nuisance directions at same precision
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE="../v019p/pre/${PREC}.pre"
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            (cd class_v041 && OMP_NUM_THREADS=1 ./class "v040_${TAG}_nuis_${q}_p.ini" "$PRE") > "results/v041_${PREC}_nuis_${q}_p.log" 2>&1 & a=$!
+            (cd class_v041 && OMP_NUM_THREADS=1 ./class "v040_${TAG}_nuis_${q}_m.ini" "$PRE") > "results/v041_${PREC}_nuis_${q}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Run full tangent lambda ladder at same precision
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRE="../v019p/pre/${PREC}.pre"
+          FORCE="$GITHUB_WORKSPACE/results/v041_${PREC}_force.dat"
+          for L in 1 3 10 30 100 300 1000; do
+            (cd class_v041 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="$L" OMP_NUM_THREADS=1 ./class "v040_${TAG}_l${L}_p.ini" "$PRE") > "results/v041_${PREC}_l${L}_p.log" 2>&1 & a=$!
+            (cd class_v041 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA="-$L" OMP_NUM_THREADS=1 ./class "v040_${TAG}_l${L}_m.ini" "$PRE") > "results/v041_${PREC}_l${L}_m.log" 2>&1 & b=$!
+            wait $a; wait $b
+          done
+      - name: Analyse certification point
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v039/analyse_tau_generality.py class_v041/output --tag "$TAG" --kb "$KB" --tauH0 10 --prefix v040 --force-control "results/v041_${PREC}_force_control.dat" --force-primary "results/v041_${PREC}_force.dat" --json-out "results/v041_${PREC}_analysis.json"
+          python3 - <<'PY'
+          import json,os
+          p=os.environ['PREC']
+          f=f'results/v041_{p}_analysis.json'
+          q=json.load(open(f))
+          q['certification_precision']=p
+          q['precision_file']=f'v019p/pre/{p}.pre'
+          q['locked_KB']=0.0665
+          q['locked_tauH0']=10.0
+          q['locked_p']=0.0
+          if p=='p3':
+              target=0.1364941541091334
+              got=q['memory_candidate_covariance']['marginalized_CV_SNR_per_unit_eta']
+              rel=abs(got-target)/target
+              q['v040_p3_regression_relative_difference']=rel
+              q['v040_p3_regression_gate']=rel<1e-6
+              if not q['v040_p3_regression_gate']:
+                  raise SystemExit('p3 failed v0.40 locked-result regression')
+          open(f,'w').write(json.dumps(q,indent=2))
+          PY
+      - name: Upload certification result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v041_${{ matrix.precision }}
+          path: |
+            results/v041_*_analysis.json
+            results/v041_*_forcing.json
+            results/v041_meta_*.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v041_debug_${{ matrix.precision }}
+          path: |
+            results/*.json
+            results/*.log
