@@ -1,0 +1,106 @@
+name: v057 future CMB memory Fisher forecast
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v057/**'
+      - '.github/workflows/v057-future-cmb-memory-forecast.yml'
+
+jobs:
+  forecast:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v057
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v057/output
+          python3 v019/apply_patch_v019.py class_v057
+          python3 v019i/apply_ic_patch.py class_v057
+          python3 v019j/apply_memory_patch.py class_v057
+          python3 v019w/apply_variational_forcing_patch.py class_v057
+          python3 v019y/apply_output_precision_patch.py class_v057
+          python3 v023/apply_source_grid_trace_patch.py class_v057
+      - name: Build CLASS
+        run: make -C class_v057 -j2 class
+      - name: Freeze and forecast audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v053/audit_model_freeze.py v053/model_freeze.json --json-out results/v057_freeze_reaudit.json
+          python3 -m py_compile v057/future_cmb_forecast.py
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v057/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v057/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v057/include/common.h
+      - name: Prepare locked memory and five-point nuisance cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v039/prepare_locked_tau_case.py class_v057 --tauH0 10 --meta results/v057_memory_meta.json >/dev/null
+          python3 v046/prepare_fivepoint_cases.py class_v057 --meta results/v057_nuisance_meta.json >/dev/null
+      - name: Run locked base and accepted-grid trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v057 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v057_trace.dat" OMP_NUM_THREADS=1 ./class v039_kb0p0665_tau10_base.ini ../v047/p3.pre) > results/v057_base.log 2>&1
+          test -s results/v057_trace.dat
+      - name: Build locked positive Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v039/build_tau_forcing.py results/v057_trace.dat --KB 0.0665 --tauH0 10 --out-prefix results/v057 \
+            --control-order 512 --primary-order 1024 --summary results/v057_forcing.json
+      - name: Run locked lambda10 memory tangent
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v057_force.dat"
+          (cd class_v057 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=10 OMP_NUM_THREADS=1 ./class v039_kb0p0665_tau10_l10_p.ini ../v047/p3.pre) > results/v057_l10_p.log 2>&1 & a=$!
+          (cd class_v057 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=-10 OMP_NUM_THREADS=1 ./class v039_kb0p0665_tau10_l10_m.ini ../v047/p3.pre) > results/v057_l10_m.log 2>&1 & b=$!
+          wait $a; wait $b
+      - name: Run certified five-point nuisance stencil
+        shell: bash
+        run: |
+          set -euo pipefail
+          for q in H0 omega_b omega_cdm tau_reio n_s lnA_s; do
+            for s in m2 m1 p1 p2; do
+              (cd class_v057 && OMP_NUM_THREADS=1 ./class "v046_kb0p0665_tau10_p0_nuis_${q}_${s}.ini" ../v047/p3.pre) > "results/v057_${q}_${s}.log" 2>&1
+            done
+          done
+      - name: Compute SO CMB-S4 and CVL forecasts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v057/future_cmb_forecast.py class_v057/output --json-out results/v057_future_cmb_forecast.json
+      - name: Upload v0.57 forecast
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v057_future_cmb
+          path: |
+            results/v057_future_cmb_forecast.json
+            results/v057_freeze_reaudit.json
+            results/v057_forcing.json
+            results/v057_memory_meta.json
+            results/v057_nuisance_meta.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v057_debug
+          path: |
+            results/*.json
+            results/*.log
