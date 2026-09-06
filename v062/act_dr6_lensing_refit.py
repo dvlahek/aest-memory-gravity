@@ -124,8 +124,12 @@ class ACTLensLike:
         self.bcents=np.asarray(self.data['bcents_act'],dtype=float)
         self.nbins=int(np.asarray(self.data['data_binned_clkk']).size)
     def chi2(self,ckk):
-        if len(ckk)<=TRIM_LMAX: return 1e100
-        theory=np.asarray(ckk[:TRIM_LMAX+1],dtype=float)
+        # The official loader standardizes the ACT binning matrix to
+        # trim_lmax + 2 multipoles (L=0,...,trim_lmax+1).  Match that exact
+        # matrix width rather than assuming trim_lmax+1 samples.
+        ntheory=int(np.asarray(self.data['binmat_act']).shape[1])
+        if len(ckk)<ntheory: return 1e100
+        theory=np.asarray(ckk[:ntheory],dtype=float)
         b=np.asarray(self.data['binmat_act'])@theory
         d=np.asarray(self.data['data_binned_clkk'])-b
         return float(d@np.asarray(self.data['cinv'])@d)
