@@ -1,0 +1,96 @@
+name: v054 Planck 2018 high-l fixed-cosmology eta profile
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v054/**'
+      - '.github/workflows/v054-planck-highl-profile.yml'
+
+jobs:
+  planck-highl-profile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v054
+      - name: Install numerical and Planck likelihood dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user numpy scipy 'cobaya==3.6.2' getdist
+          mkdir -p planck_packages results class_v054/output
+          python3 -m cobaya.install planck_2018_highl_plik.TTTEEE_lite_native -p "$GITHUB_WORKSPACE/planck_packages"
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v054
+          python3 v019i/apply_ic_patch.py class_v054
+          python3 v019j/apply_memory_patch.py class_v054
+          python3 v019w/apply_variational_forcing_patch.py class_v054
+          python3 v019y/apply_output_precision_patch.py class_v054
+          python3 v023/apply_source_grid_trace_patch.py class_v054
+      - name: Build CLASS
+        run: make -C class_v054 -j2 class
+      - name: Pre-data lock and source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v053/audit_model_freeze.py v053/model_freeze.json --json-out results/v054_freeze_reaudit.json
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v054/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v054/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v054/include/common.h
+          grep -q '"KB": 0.0665' v053/model_freeze.json
+          grep -q '"tauH0": 10.0' v053/model_freeze.json
+          grep -q '"lambda_regularization": 10.0' v053/model_freeze.json
+      - name: Prepare predeclared lensed Planck adapter
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG=$(python3 v054/prepare_planck_highl_case.py class_v054 --meta results/v054_planck_predata.json | tail -1)
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+      - name: Generate locked source trace and baseline spectrum
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd class_v054 && AEST_OFFLINE_TRACE_FILE="$GITHUB_WORKSPACE/results/v054_trace.dat" OMP_NUM_THREADS=1 ./class "v054_${TAG}_base.ini" ../v019p/pre/p3.pre) > results/v054_base.log 2>&1
+          test -s results/v054_trace.dat
+      - name: Build locked positive-Drude forcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v039/build_tau_forcing.py results/v054_trace.dat --KB 0.0665 --tauH0 10 --out-prefix results/v054_planck \
+            --control-order 512 --primary-order 1024 --summary results/v054_forcing.json
+      - name: Generate centered lambda plus/minus lensed spectra
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="$GITHUB_WORKSPACE/results/v054_planck_force.dat"
+          (cd class_v054 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=10 OMP_NUM_THREADS=1 ./class "v054_${TAG}_l10_p.ini" ../v019p/pre/p3.pre) > results/v054_plus.log 2>&1 & a=$!
+          (cd class_v054 && AEST_TANGENT_FORCE_FILE="$FORCE" AEST_TANGENT_LAMBDA=-10 OMP_NUM_THREADS=1 ./class "v054_${TAG}_l10_m.ini" ../v019p/pre/p3.pre) > results/v054_minus.log 2>&1 & b=$!
+          wait $a; wait $b
+      - name: Evaluate real Planck 2018 Plik-lite TTTEEE likelihood profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v054/planck_pliklite_profile.py \
+            --base "class_v054/output/v054_${TAG}_base__cl.dat" \
+            --plus "class_v054/output/v054_${TAG}_l10_p__cl.dat" \
+            --minus "class_v054/output/v054_${TAG}_l10_m__cl.dat" \
+            --packages planck_packages --meta results/v054_planck_predata.json --json-out results/v054_planck_highl_profile.json
+      - name: Upload v0.54 result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v054_planck_highl
+          path: |
+            results/*.json
+            results/*.log
