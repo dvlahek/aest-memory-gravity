@@ -1,0 +1,52 @@
+{
+  "classification": "V062_PREDATA_ACT_DR6_LENSING_DECLARATION",
+  "created_before_act_lensing_eta_result": true,
+  "campaign": "Third predeclared external observational channel after Planck, ACT primary CMB, and SPT-3G primary CMB. This test targets the integrated gravitational-potential history through CMB lensing rather than another TT/TE/EE primary-CMB replication.",
+  "dataset": "ACT DR6 CMB lensing auto-spectrum",
+  "official_likelihood": "ACTCollaboration/act_dr6_lenslike",
+  "official_likelihood_commit": "b386ddbb5821c1216c709f051c9289292f174d30",
+  "likelihood_variant": "act_baseline",
+  "likelihood_mode": {
+    "lens_only": true,
+    "like_corrections": false,
+    "reason": "Use the official ACT-only baseline lensing power-spectrum likelihood as a standalone lensing test, exactly as recommended by the likelihood documentation when not combining with primary CMB data."
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "observable": {
+    "theory_quantity": "C_L^{kappa kappa}",
+    "conversion": "CLASS C_L^{phi phi} is converted to convergence using C_L^{kappa kappa} = [L(L+1)]^2 C_L^{phi phi}/4.",
+    "multipole_policy": "Use the native ACT DR6 act_baseline lensing multipole selection from the official likelihood. Do not post-select lensing multipoles after seeing eta."
+  },
+  "inference": {
+    "comparison": "free eta versus eta=0",
+    "eta_bounds": [-40.0, 40.0],
+    "cosmological_parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s"],
+    "iterations": 3,
+    "method": "deterministic iterated local spectral linearization with bounded optimization, matching the frozen-model Planck/ACT/SPT campaign philosophy",
+    "flat_or_weak_directions": "Standalone lensing may weakly constrain some primary-CMB parameters, especially tau_reio. Keep the same six-parameter definition and bounded optimizer rather than adding post hoc external priors solely to improve eta sensitivity."
+  },
+  "theory_support": {
+    "l_max_scalars": 4000,
+    "lensing": true,
+    "nonlinear": "halofit",
+    "reason": "Provide sufficient lensing-theory support for the official ACT DR6 baseline likelihood. This is a technical theory-support choice made before reading eta."
+  },
+  "report_regardless_of_outcome": [
+    "best-fit eta and sign",
+    "chi2 free eta",
+    "chi2 eta=0",
+    "Delta chi2 improvement",
+    "best-fit cosmological state",
+    "official ACT likelihood variant and mode",
+    "native ACT lensing multipole selection",
+    "any technical failures or pre-result amendments"
+  ],
+  "anti_tuning": "No change to KB, tauH0, p, lambda, CLASS patch chain, eta bounds, official ACT lensing variant, lens_only setting, or native lensing multipole selection may be motivated by the observed ACT lensing eta preference. Any required technical compatibility amendment must be committed before re-reading the eta result and may not alter the physical model.",
+  "interpretation": "A positive lensing preference compatible in sign and scale with the Planck memory direction would be independent cross-observable support. A null or opposite-sign lensing result must be retained and reported without retuning."
+}
