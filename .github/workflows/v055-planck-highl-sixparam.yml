@@ -1,0 +1,102 @@
+name: v055 Planck 2018 high-l six-parameter eta refit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v055/**'
+      - '.github/workflows/v055-planck-highl-sixparam.yml'
+
+jobs:
+  fit:
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [free, eta0]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 330
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v055
+      - name: Install dependencies and Planck native likelihood data
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user numpy scipy 'cobaya==3.6.2' getdist
+          mkdir -p planck_packages results class_v055/output
+          python3 -m cobaya.install planck_2018_highl_plik.TTTEEE_lite_native -p "$GITHUB_WORKSPACE/planck_packages"
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v055
+          python3 v019i/apply_ic_patch.py class_v055
+          python3 v019j/apply_memory_patch.py class_v055
+          python3 v019w/apply_variational_forcing_patch.py class_v055
+          python3 v019y/apply_output_precision_patch.py class_v055
+          python3 v023/apply_source_grid_trace_patch.py class_v055
+      - name: Build CLASS
+        run: make -C class_v055 -j2 class
+      - name: Freeze and syntax audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v053/audit_model_freeze.py v053/model_freeze.json --json-out results/v055_freeze_reaudit.json
+          python3 -m py_compile v055/planck_highl_gauss_newton.py v055/compare_planck_refits.py
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v055/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v055/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v055/include/common.h
+      - name: Run deterministic Planck high-l six-parameter refit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v055/planck_highl_gauss_newton.py \
+            --class-root class_v055 --packages planck_packages --mode '${{ matrix.mode }}' \
+            --json-out 'results/v055_${{ matrix.mode }}.json'
+      - name: Upload v0.55 member result
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v055_${{ matrix.mode }}
+          path: |
+            results/v055_${{ matrix.mode }}.json
+            results/v055_freeze_reaudit.json
+            results/v055_it*_forcing.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v055_debug_${{ matrix.mode }}
+          path: |
+            results/*.json
+            results/*.log
+
+  compare:
+    needs: fit
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Download member results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: results_bundle_v055_*
+          path: gathered
+          merge-multiple: true
+      - name: Compare free eta and eta0 refits
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v055/compare_planck_refits.py --free gathered/v055_free.json --eta0 gathered/v055_eta0.json --json-out results/v055_planck_highl_comparison.json
+      - name: Upload v0.55 comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v055_comparison
+          path: results/v055_planck_highl_comparison.json
