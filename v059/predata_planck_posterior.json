@@ -1,0 +1,26 @@
+{
+  "classification": "V059_PREDATA_PLANCK_POSTERIOR_DECLARATION",
+  "parent_profile_run": 34039647438,
+  "likelihood": "Planck 2018 Plik-lite TTTEEE native high-l + native low-l TT + native low-l EE; common A_planck Gaussian prior sigma=0.0025",
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "sampled_parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s", "eta", "A_planck"],
+  "eta_prior": [-40.0, 40.0],
+  "cosmology_bounds": "same frozen v0.56/v0.58 bounds",
+  "sampler": {
+    "method": "emcee ensemble MCMC",
+    "walkers": 48,
+    "steps": 6000,
+    "burnin": 1500,
+    "thin": 5,
+    "seed": 5900665
+  },
+  "theory_approximation": "One frozen CLASS spectral linearization around the v0.56 free-fit state, with exact Planck high-l Gaussian and native low-l TT/EE likelihood evaluations on the linearized spectra. Memory is represented by the locked central lambda=10 tangent. This is a nuisance-marginalized local-linearized posterior, not an exact nonlinear CLASS-at-every-sample posterior.",
+  "validation": "Compare eta posterior location and width against the independently computed v0.58 fixed-eta nonlinear profile. No frozen physics parameter may be changed in response to the posterior.",
+  "anti_tuning": "No post-Planck retuning of KB, tauH0, p, lambda, CLASS commit, patch chain, likelihood components, or eta prior after reading the result."
+}
