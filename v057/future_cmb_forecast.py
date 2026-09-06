@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('ana',ROOT/'v021'/'analyse_tau_point.py')
 a=importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
 PARAMS=list(a.PARAMS)
+T_CMB_K=2.7255
 
 # Predeclared effective survey specifications. These are intentionally simple
 # TT/TE/EE Fisher forecasts: white map noise + Gaussian beam, no foreground
@@ -28,10 +29,14 @@ SURVEYS={
 
 def noise_Dl(ell, depth, beam):
     if depth<=0: return 0.0
-    d=depth*math.pi/(180.0*60.0)  # uK-rad
+    # CLASS class-format CMB cl.dat stores dimensionless [l(l+1)/2pi] C_l
+    # for Delta T/T. Survey map depth is conventionally in uK-arcmin, so the
+    # white-noise power must be converted to the same dimensionless units.
+    d_uK_rad=depth*math.pi/(180.0*60.0)
+    d_dimless_rad=d_uK_rad/(T_CMB_K*1.0e6)
     sig=beam*math.pi/(180.0*60.0)/math.sqrt(8.0*math.log(2.0)) if beam>0 else 0.0
-    nl=d*d*math.exp(ell*(ell+1.0)*sig*sig)  # C_l noise in uK^2
-    return ell*(ell+1.0)*nl/(2.0*math.pi)    # CLASS cl.dat stores D_l
+    nl=d_dimless_rad*d_dimless_rad*math.exp(ell*(ell+1.0)*sig*sig)
+    return ell*(ell+1.0)*nl/(2.0*math.pi)
 
 
 def invcov_survey(ells,base,cfg):
@@ -108,11 +113,13 @@ def main():
       'all_nuisance_rank_6':all(v['nuisance_rank']==6 for v in surveys.values()),
       'CVL_reproduces_locked_v049_within_1pct':abs(cv-locked)/locked<0.01,
       'ordering_sigma_CVL_le_S4_le_SO':surveys['CVL_fullsky']['sigma_eta_Fisher'] <= surveys['CMB_S4_wide']['sigma_eta_Fisher'] <= surveys['SO_baseline']['sigma_eta_Fisher'],
+      'finite_reasonable_future_sigma':all(math.isfinite(surveys[k]['sigma_eta_Fisher']) and surveys[k]['sigma_eta_Fisher']<1.0e4 for k in ('SO_baseline','CMB_S4_wide')),
     }
     result={
       'classification':'V057_FUTURE_CMB_MEMORY_FORECAST_PASS' if all(gates.values()) else 'V057_FUTURE_CMB_MEMORY_FORECAST_FOLLOWUP',
       'frozen_model':{'KB':0.0665,'tauH0':10.0,'p':0.0,'lambda':10.0,'eta_is_only_new_amplitude':True},
       'observable_scope':{'spectra':['TT','EE','TE'],'ell':[30,2500],'lensing':False,'foreground_residuals':False},
+      'class_spectrum_units':'dimensionless [l(l+1)/(2pi)] C_l for DeltaT/T; map-noise uK-arcmin converted by (T_cmb*1e6)^2',
       'derivatives':'locked v0.49 memory tangent plus certified five-point six-parameter nuisance stencil',
       'survey_model':'Gaussian TT/TE/EE covariance with f_sky, white map noise, Gaussian beam; effective single-survey specifications, not a full multifrequency foreground forecast',
       'surveys':surveys,
