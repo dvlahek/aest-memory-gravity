@@ -1,0 +1,16 @@
+{
+  "classification": "V060_TECHNICAL_WINDOW_SUPPORT_AMENDMENT",
+  "failed_runs": [34041127921, 34041650987],
+  "scientific_result_available_before_amendment": false,
+  "observed_technical_requirement": "For ACT DR6 CMB-only SACC band centers restricted to ell=600..2500, the native bandpower windows still contain support up to ell=8501.",
+  "original_theory_support": "CLASS spectra extended only to l_max_scalars=3000, yielding output through ell=3500.",
+  "required_theory_support": "Extend CLASS l_max_scalars to 9000 so the native ACT windows are evaluated without truncation.",
+  "unchanged_analysis_selection": {
+    "ACT_band_center_ell_range": [600, 2500],
+    "spectra": ["TT", "TE", "EE"],
+    "frozen_model": {"KB": 0.0665, "tauH0": 10.0, "p": 0.0, "lambda": 10.0},
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "interpretation": "This is a numerical support-range correction required by the public likelihood's native window functions, not a change to the selected ACT multipole range and not a result-driven physics or data cut change.",
+  "anti_tuning": "No ACT eta/free-versus-eta0 likelihood result existed before this amendment. The correction is documented before re-reading any ACT memory-fit result."
+}
