@@ -36,6 +36,7 @@ jobs:
           python3 v019w/apply_variational_forcing_patch.py class_v063
           python3 v019y/apply_output_precision_patch.py class_v063
           python3 v023/apply_source_grid_trace_patch.py class_v063
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v063
 
       - name: Build CLASS executable
         run: make -C class_v063 -j2 class
