@@ -1,0 +1,22 @@
+{
+  "classification": "V058_PREDATA_PLANCK_ETA_PROFILE_DECLARATION",
+  "purpose": "Profile the frozen gravitational-memory amplitude eta against Planck 2018 high-l TTTEEE plus low-l TT and EE by refitting the same six LambdaCDM parameters and A_planck at each fixed eta.",
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "likelihoods": [
+    "planck_2018_highl_plik.TTTEEE_lite_native",
+    "planck_2018_lowl.TT",
+    "planck_2018_lowl.EE"
+  ],
+  "eta_grid": [-30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0],
+  "profiled_parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s", "A_planck"],
+  "optimizer": "same deterministic three-iteration local CLASS spectral linearization plus exact native low-l likelihood evaluation used in v0.56",
+  "reported_quantities": ["chi2_profile", "delta_chi2_vs_eta0", "best_grid_eta", "quadratic_local_eta_hat", "quadratic_local_sigma_eta"],
+  "anti_tuning": "The eta grid and frozen physics are declared before v0.58 profile values are read. No KB, tauH0, p, lambda, CLASS patch-chain, likelihood, or nuisance-definition changes are permitted in response to the profile result.",
+  "scope_note": "This is a deterministic profile-likelihood robustness test, not a Bayesian posterior or MCMC. A full posterior is a subsequent step if the profile is numerically regular."
+}
