@@ -1,0 +1,56 @@
+{
+  "classification": "V057_PREDECLARED_GENERAL_MEMORY_SUBSPACE_PROTOCOL",
+  "purpose": "Test whether a broad positive single-relaxation basis of finite-memory responses collapses onto a low-dimensional observable CMB subspace after six-parameter LambdaCDM projection.",
+  "frozen_parent_commit": "dc5e6d4435115442e82c12b3f324611b3191d920",
+  "physics": {
+    "KB": 0.0665,
+    "p": 0.0,
+    "eta_linearization": 0.0,
+    "lambda": 10.0,
+    "memory_class": "causal passive positive exponential/Drude relaxation basis"
+  },
+  "theory_engine": {
+    "repository": "lesgourg/class_public",
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "basis": {
+    "tauH0_grid": [0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0],
+    "equivalent_gamma_over_H0": [100.0, 33.3333333333333, 10.0, 3.33333333333333, 1.0, 0.333333333333333, 0.1, 0.0333333333333333, 0.01],
+    "template_definition": "centered eta tangent from +lambda and -lambda runs using the accepted CLASS source-grid trace and positive continuum Drude forcing",
+    "normalization_for_shape_PCA": "each projected template is normalized to unit norm in the pre-data TT/TE/EE cosmic-variance metric before SVD",
+    "amplitude_information": "reported separately and not used to define dimensionality"
+  },
+  "observable_metric": {
+    "spectra": ["TT", "TE", "EE"],
+    "ell_min": 30,
+    "ell_max": 2500,
+    "covariance": "full-sky unlensed cosmic-variance metric used only as a pre-data observable-space geometry"
+  },
+  "nuisance_projection": {
+    "parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s"],
+    "derivatives": "five-point D5 construction when available; otherwise the already-certified v0.49 D5-equivalent basis is to be reused without retuning",
+    "projection": "whitened SVD orthogonal projection"
+  },
+  "predeclared_dominance_metrics": {
+    "report": [
+      "singular_values",
+      "fraction_explained_mode_1",
+      "fraction_explained_modes_1_2",
+      "fraction_explained_modes_1_3",
+      "pairwise_projected_template_cosines",
+      "effective_rank_entropy",
+      "distance_of_locked_tauH0_10_template_to_leading_subspace"
+    ],
+    "strong_dominant_subspace_gate": {
+      "first_2_modes_fraction": 0.9,
+      "first_3_modes_fraction": 0.95
+    },
+    "interpretation_rule": "If the gate fails, report the failure. Do not change the tau grid, metric, nuisance definition, or normalization after inspecting the result in order to recover dominance."
+  },
+  "separation_from_real_data": "No Planck, ACT, or SPT likelihood value is used in v0.57. This is a theory-space generality test. The generality campaign was initiated after the first Planck analysis and is therefore not described as pre-Planck, but its v0.57 protocol is frozen before inspecting v0.57 outputs.",
+  "next_if_successful": [
+    "v0.58 positive multi-pole mixtures and random positive spectral measures",
+    "v0.59 kernel-family universality and leading-mode stability",
+    "derive a general response-cone statement for causal passive memory"
+  ]
+}
