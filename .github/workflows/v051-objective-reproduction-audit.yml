@@ -1,0 +1,51 @@
+name: v051 locked objective reproduction audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [v051-v052-certification]
+    paths:
+      - 'v051/**'
+      - '.github/workflows/v051-objective-reproduction-audit.yml'
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v051
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v051/output
+          python3 v019/apply_patch_v019.py class_v051
+          python3 v019i/apply_ic_patch.py class_v051
+          python3 v019j/apply_memory_patch.py class_v051
+          python3 v019w/apply_variational_forcing_patch.py class_v051
+          python3 v019y/apply_output_precision_patch.py class_v051
+          python3 v023/apply_source_grid_trace_patch.py class_v051
+      - name: Build CLASS
+        run: make -C class_v051 -j2 class
+      - name: Source audit
+        run: |
+          grep -q 'AeST v0.23 eta0 accepted source-grid trace' class_v051/source/aest_memory.c
+          grep -q 'aest_tangent_external_force' class_v051/source/perturbations.c
+          grep -q '#define _OUTPUTPRECISION_ 17' class_v051/include/common.h
+      - name: Reproduce exact v0.42 endpoints
+        run: python3 v051/objective_reproduction_audit.py class_v051 --json-out results/v051_objective_audit.json
+      - name: Upload v0.51 result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v051
+          path: |
+            results/v051_objective_audit.json
+            results/*.log
