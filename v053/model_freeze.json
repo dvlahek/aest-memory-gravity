@@ -1,0 +1,64 @@
+{
+  "classification": "V053_MODEL_FREEZE",
+  "purpose": "Freeze the theory/numerical model before any real CMB likelihood is inspected.",
+  "frozen_source_commit": "5bf61cf74b315056ffd94d93ad71e44ba6f7dc3b",
+  "reference_runs": {
+    "locked_window_and_refit": 33969456272,
+    "tau_generality": 33972545591,
+    "time_dependent_tau_robustness": 33980489674,
+    "memory_projector_D2_D5": 33996515184,
+    "global_refit_multistart": 34014387686,
+    "reference_provenance_audit": 34019742887,
+    "global_refit_continuation": 34020338405
+  },
+  "physics": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "tau_evolution_p": 0.0,
+    "lambda_regularization": 10.0,
+    "memory_model": "positive/passive Drude finite-memory response",
+    "eta": "only new inference amplitude; no post-data retuning of KB, tauH0, p, or lambda"
+  },
+  "theory_engine": {
+    "CLASS_repository": "lesgourg/class_public",
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "patch_chain": [
+      "v019/apply_patch_v019.py",
+      "v019i/apply_ic_patch.py",
+      "v019j/apply_memory_patch.py",
+      "v019w/apply_variational_forcing_patch.py",
+      "v019y/apply_output_precision_patch.py",
+      "v023/apply_source_grid_trace_patch.py"
+    ]
+  },
+  "observable_scope": {
+    "spectra": ["TT", "TE", "EE"],
+    "lensed": false,
+    "ell_min": 30,
+    "ell_max": 2500,
+    "forecast_covariance": "full-sky cosmic-variance covariance used only for pre-data certification",
+    "real_data_policy": "real likelihood must use the likelihood's own covariance/data model; forecast CV metric is not reused as a data likelihood"
+  },
+  "nuisance_cosmology": {
+    "parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s"],
+    "rank": 6,
+    "finite_difference_policy": "locked to pre-data implementation; D2/D5 observable-specific robustness already certified",
+    "global_refit_policy": "retain residual multistart spread transparently; do not tune solver or gates after freeze"
+  },
+  "pre_data_certification": {
+    "locked_memory_marginalized_SNR_per_eta_tau10": 0.1364941527698679,
+    "D5_memory_marginalized_SNR_per_eta": 0.13666835,
+    "D2_D5_relative_difference": 0.001275,
+    "v050_global_refit_SNR_range": [1.7916717970724956, 2.3918256975638816],
+    "v050_v052_spread": 0.6001539004913861,
+    "spread_gate": 0.5,
+    "spread_gate_passed": false,
+    "interpretation": "all four nonlinear baseline refits are below 5 sigma in the pre-data CV metric, but residual basin dependence remains and is frozen rather than tuned away"
+  },
+  "real_data_sequence": [
+    "Planck 2018 nuisance-marginalized high-l TTTEEE likelihood plus low-l TT/EE",
+    "report eta posterior, Delta chi2, and eta/sigma_eta without retuning frozen physics",
+    "only after Planck result, perform independent ACT/SPT confirmation if technically feasible"
+  ],
+  "anti_tuning_rule": "After this freeze, no change to KB, tauH0, p, lambda, CLASS commit, patch chain, ell range, or six-parameter cosmology definition may be motivated by the observed real-data preference for eta. Any necessary technical change must be documented as a new provenance event before re-reading the data result."
+}
