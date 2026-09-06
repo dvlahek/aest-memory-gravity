@@ -1,0 +1,39 @@
+{
+  "classification": "V060_PREDATA_EXTERNAL_THREE_TEST_CAMPAIGN",
+  "purpose": "Predeclare three independent external-data tests of the already frozen finite-memory AeST model before reading any ACT/SPT/lensing memory-fit result.",
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "memory_model": "positive/passive Drude finite-memory response"
+  },
+  "tests": [
+    {
+      "version": "v060",
+      "dataset": "ACT DR6 foreground-marginalized CMB-only TT/TE/EE likelihood",
+      "observable": "lensed TT/TE/EE",
+      "ell_range": [600, 2500],
+      "inference": "free eta versus eta=0, with six standard cosmological parameters and ACT calibration/polarization nuisance parameters profiled",
+      "reason": "Independent primary-CMB experiment, restricted to the already certified ell<=2500 theory range."
+    },
+    {
+      "version": "v061",
+      "dataset": "SPT-3G D1 public TT/TE/EE likelihood",
+      "observable": "lensed TT/TE/EE",
+      "ell_cap": 2500,
+      "inference": "free eta versus eta=0 with the same six cosmological parameters and the likelihood's required nuisance model",
+      "reason": "Independent high-resolution primary-CMB experiment."
+    },
+    {
+      "version": "v062",
+      "dataset": "ACT DR6 CMB lensing auto-spectrum likelihood",
+      "observable": "CMB lensing convergence/potential power spectrum",
+      "inference": "free eta versus eta=0 using the public ACT DR6 lensing likelihood in lens-only mode before any combined primary-CMB+lensing fit",
+      "reason": "Independent gravitational observable sensitive to integrated Weyl-potential evolution rather than only primary TT/TE/EE."
+    }
+  ],
+  "decision_rule": "All three tests will be reported irrespective of sign or significance. No result-dependent selection of experiments, multipole cuts, KB, tauH0, p, lambda, CLASS commit, or memory forcing construction is allowed.",
+  "anti_tuning": "The three-test campaign is frozen before inspecting any of these external memory-fit results. Technical changes required to make a public likelihood run must be documented before re-reading the corresponding eta result and must not be chosen to increase the eta preference."
+}
