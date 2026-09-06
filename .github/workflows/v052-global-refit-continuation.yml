@@ -1,0 +1,68 @@
+name: v052 locked global refit continuation certification
+on:
+  workflow_dispatch:
+
+jobs:
+  continuation-member:
+    strategy:
+      fail-fast: false
+      matrix:
+        start: [canonical, plus, minus, cross]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v052
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+      - name: Apply validated patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v052/output
+          python3 v019/apply_patch_v019.py class_v052
+          python3 v019i/apply_ic_patch.py class_v052
+          python3 v019j/apply_memory_patch.py class_v052
+          python3 v019w/apply_variational_forcing_patch.py class_v052
+          python3 v019y/apply_output_precision_patch.py class_v052
+          python3 v023/apply_source_grid_trace_patch.py class_v052
+      - name: Build CLASS
+        run: make -C class_v052 -j2 class
+      - name: Continue identical LM from exact v0.50 endpoint
+        run: python3 v052/refit_lm_continuation.py class_v052 --kb 0.0665 --start '${{ matrix.start }}' --iters 8 --json-out 'results/v052_${{ matrix.start }}.json'
+      - name: Upload member result
+        uses: actions/upload-artifact@v4
+        with:
+          name: v052_member_${{ matrix.start }}
+          path: results/v052_${{ matrix.start }}.json
+  certify:
+    needs: continuation-member
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: v052_member_*
+          path: results
+          merge-multiple: true
+      - name: Require all four results
+        run: |
+          test -s results/v052_canonical.json
+          test -s results/v052_plus.json
+          test -s results/v052_minus.json
+          test -s results/v052_cross.json
+      - name: Apply unchanged certification gates
+        run: python3 v052/certify_continuation.py results/v052_canonical.json results/v052_plus.json results/v052_minus.json results/v052_cross.json --json-out results/v052_certification.json
+      - name: Upload certification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v052
+          path: results/*.json
