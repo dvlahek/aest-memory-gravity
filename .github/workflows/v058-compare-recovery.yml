@@ -1,0 +1,37 @@
+name: v058 profile comparison recovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v058-compare-recovery.yml'
+
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Install comparison dependency
+        run: python3 -m pip install --user numpy
+      - name: Download completed v0.58 profile members
+        uses: actions/download-artifact@v4
+        with:
+          pattern: results_bundle_v058_eta_*
+          path: gathered
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          run-id: 34035722456
+      - name: Compare eta profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v058/compare_eta_profile.py --input-dir gathered --json-out results/v058_planck_eta_profile.json
+      - name: Upload recovered v0.58 comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v058_comparison_recovered
+          path: results/v058_planck_eta_profile.json
