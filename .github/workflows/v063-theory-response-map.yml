@@ -68,6 +68,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # The inherited v0.19 benchmark asks CLASS for lensed CMB output.
+          # v0.63 is transfer/P(k)-only, so disable that output flag without
+          # changing perturbation physics or any predeclared response window.
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
           python3 v063/theory_response_map.py \
             --class-root class_v063 \
             --json-out results/v063_theory_response_summary.json \
