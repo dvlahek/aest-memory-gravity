@@ -1,0 +1,38 @@
+{
+  "classification": "V061_PREDATA_SPT3G_D1_DECLARATION",
+  "created_before_spt_eta_result": true,
+  "campaign": "Predeclared independent primary-CMB replication after Planck; ACT DR6 v0.60 was still unresolved when this declaration was committed.",
+  "dataset": "SPT-3G D1 TT/TE/EE",
+  "official_likelihood": "SouthPoleTelescope/spt_candl_data via candl",
+  "preferred_shortcut": "spt_candl_data.SPT3G_D1_TnE_lite",
+  "reason_for_lite": "Use the official foreground/nuisance-marginalized SPT-lite likelihood for an independent primary-CMB replication with the same frozen cosmological memory model; do not introduce a new multifrequency foreground model solely for this test.",
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "inference": {
+    "comparison": "free eta versus eta=0",
+    "eta_bounds": [-40.0, 40.0],
+    "cosmological_parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s"],
+    "iterations": 3,
+    "method": "deterministic iterated local spectral linearization with bounded optimization, matching the frozen-model Planck/ACT campaign philosophy"
+  },
+  "multipole_policy": {
+    "analysis_selection": "Use only native SPT-3G D1 TT/TE/EE bandpowers whose effective multipoles lie within the already-certified primary-CMB range 400<=ell<=2500.",
+    "theory_support": "CLASS may be evaluated beyond ell=2500 only when required by native SPT bandpower-window support. Such an extension is technical support, not an expansion of the selected analysis range, and must be documented before reading an eta result."
+  },
+  "report_regardless_of_outcome": [
+    "best-fit eta and sign",
+    "chi2 free eta",
+    "chi2 eta=0",
+    "Delta chi2 improvement",
+    "best-fit cosmological state",
+    "likelihood and multipole selection",
+    "any technical failures or amendments"
+  ],
+  "anti_tuning": "No change to KB, tauH0, p, lambda, CLASS patch chain, eta bounds, or selected SPT multipole policy may be motivated by the observed SPT eta preference. The SPT result is retained and reported regardless of sign or significance.",
+  "next_independent_test": "CMB lensing remains separately predeclared as the third observational channel after ACT and SPT primary-CMB tests."
+}
