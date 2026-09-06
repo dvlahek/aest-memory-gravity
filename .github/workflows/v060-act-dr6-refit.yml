@@ -1,0 +1,107 @@
+name: v060 ACT DR6 frozen-model refit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v060/**'
+      - '.github/workflows/v060-act-dr6-refit.yml'
+
+jobs:
+  fit:
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [free, eta0]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 330
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v060
+      - name: Install dependencies and ACT DR6 CMB-only data
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user numpy scipy sacc astropy
+          mkdir -p results class_v060/output act_data
+          curl -L --fail --retry 3 https://lambda.gsfc.nasa.gov/data/act/pspipe/sacc_files/dr6_data_cmbonly.tar.gz -o act_data/dr6_data_cmbonly.tar.gz
+          tar -xzf act_data/dr6_data_cmbonly.tar.gz -C act_data
+          find act_data -name 'dr6_data_cmbonly.fits' -print
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v060
+          python3 v019i/apply_ic_patch.py class_v060
+          python3 v019j/apply_memory_patch.py class_v060
+          python3 v019w/apply_variational_forcing_patch.py class_v060
+          python3 v019y/apply_output_precision_patch.py class_v060
+          python3 v023/apply_source_grid_trace_patch.py class_v060
+      - name: Build CLASS
+        run: make -C class_v060 -j2 class
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v060/act_dr6_refit.py v060/compare_act_refits.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v060/predata_external_three_test_campaign.json'))
+          assert d['classification']=='V060_PREDATA_EXTERNAL_THREE_TEST_CAMPAIGN'
+          assert d['frozen_model']['KB']==0.0665 and d['frozen_model']['tauH0']==10.0 and d['frozen_model']['lambda']==10.0
+          t=d['tests'][0]
+          assert t['version']=='v060' and t['ell_range']==[600,2500]
+          print('V060_PREDATA_AUDIT_PASS')
+          PY
+      - name: Run ACT DR6 refit
+        shell: bash
+        run: |
+          set -euo pipefail
+          FITS=$(find act_data -name 'dr6_data_cmbonly.fits' -print -quit)
+          test -n "$FITS"
+          python3 v060/act_dr6_refit.py --class-root class_v060 --fits "$FITS" --mode '${{ matrix.mode }}' --json-out results/v060_act_${{ matrix.mode }}.json
+      - name: Upload ACT member
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v060_act_${{ matrix.mode }}
+          path: |
+            results/v060_act_${{ matrix.mode }}.json
+            results/v060_it*_forcing.json
+            results/v060_*.log
+
+  compare:
+    needs: fit
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download free member
+        uses: actions/download-artifact@v4
+        with:
+          name: results_bundle_v060_act_free
+          path: gathered/free
+      - name: Download eta0 member
+        uses: actions/download-artifact@v4
+        with:
+          name: results_bundle_v060_act_eta0
+          path: gathered/eta0
+      - name: Compare ACT refits
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v060/compare_act_refits.py --free gathered/free/v060_act_free.json --eta0 gathered/eta0/v060_act_eta0.json --json-out results/v060_act_comparison.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v060_act_comparison
+          path: results/v060_act_comparison.json
