@@ -1,0 +1,23 @@
+name: v053 model freeze certification
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v053/**'
+      - '.github/workflows/v053-model-freeze.yml'
+  workflow_dispatch:
+
+jobs:
+  freeze-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen model manifest
+        run: python3 v053/audit_model_freeze.py | tee v053_model_freeze_audit.json
+      - name: Upload freeze certificate
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v053
+          path: |
+            v053/model_freeze.json
+            v053_model_freeze_audit.json
