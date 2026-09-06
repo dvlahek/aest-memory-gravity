@@ -1,6 +1,11 @@
 name: v052 locked global refit continuation certification
 on:
   workflow_dispatch:
+  push:
+    branches: [v051-v052-certification]
+    paths:
+      - 'v052/**'
+      - '.github/workflows/v052-global-refit-continuation.yml'
 
 jobs:
   continuation-member:
@@ -34,6 +39,13 @@ jobs:
           python3 v023/apply_source_grid_trace_patch.py class_v052
       - name: Build CLASS
         run: make -C class_v052 -j2 class
+      - name: Source and lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "TERMINAL_TRUST_SCALE=0.25" v052/refit_lm_continuation.py
+          grep -q "ref_cl=r.run_class(class_root,'v050_refkb0p1','base',0.1,BASE)" v050/refit_lm_multistart.py
+          grep -q "SPREAD_GATE=0.5" v052/certify_continuation.py
       - name: Continue identical LM from exact v0.50 endpoint
         run: python3 v052/refit_lm_continuation.py class_v052 --kb 0.0665 --start '${{ matrix.start }}' --iters 8 --json-out 'results/v052_${{ matrix.start }}.json'
       - name: Upload member result
