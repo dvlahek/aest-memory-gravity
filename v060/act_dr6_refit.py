@@ -66,12 +66,12 @@ def rewrite_ini(text,root,s):
         if st.startswith('root ='): out.append(f'root = {root}')
         elif st.startswith('output ='): out.append('output = tCl,pCl,lCl')
         elif st.startswith('lensing ='): out.append('lensing = yes'); lens=True
-        elif key=='l_max_scalars': out.append('l_max_scalars = 3000'); lm=True
+        elif key=='l_max_scalars': out.append('l_max_scalars = 9000'); lm=True
         elif key in ch: out.append(f'{key} = {ch[key]:.17g}'); seen.add(key)
         else: out.append(line)
     if set(ch)-seen: raise RuntimeError(f'missing CLASS parameters {sorted(set(ch)-seen)}')
     if not lens: out.append('lensing = yes')
-    if not lm: out.append('l_max_scalars = 3000')
+    if not lm: out.append('l_max_scalars = 9000')
     out += ['# v0.60 predeclared ACT DR6 independent primary-CMB test','aest_memory_enabled = no','aest_memory_order = 16','aest_eta = 0',f'aest_tau_H0 = {TAUH0:.17g}']
     return '\n'.join(out)+'\n'
 def run_class(cr,text,s,label,envx=None):
@@ -129,8 +129,8 @@ def fit(mode,cr,fits_path,out):
        'act_ell_cuts':[ELL_MIN,ELL_MAX],'act_window_lmax_used':like.max_window_ell,
        'locked_model':{'KB':KB,'tauH0':TAUH0,'p':0.0,'lambda':LAMBDA,'CLASS_commit':'e85808324f51fc694d12e3ed7439552a3c3f9540'},
        'likelihood':'ACT DR6 foreground-marginalized CMB-only TT/TE/EE SACC likelihood, with A_act and P_act profiled',
-       'scope':'Deterministic iterated six-parameter ACT DR6 refit, free eta versus eta=0. Selected ACT band centers restricted to ell=600..2500; CLASS is evaluated to ell=3000 only to cover native bandpower-window support.',
-       'anti_tuning':'v0.60 is one member of the predeclared ACT/SPT/lensing three-test campaign. Frozen physics and forcing construction unchanged.'}
+       'scope':'Deterministic iterated six-parameter ACT DR6 refit, free eta versus eta=0. Selected ACT band centers remain restricted to ell=600..2500; CLASS is evaluated to l_max_scalars=9000 only because the native ACT bandpower windows for those selected bands have support through ell=8501.',
+       'anti_tuning':'v0.60 is one member of the predeclared ACT/SPT/lensing three-test campaign. Frozen physics, selected ACT band centers, and forcing construction unchanged. The theory support extension is documented in provenance/v060_act_window_support_amendment.json before any ACT eta result is read.'}
     Path(out).write_text(json.dumps(r,indent=2)); print(json.dumps(r,indent=2))
 
 def main():
