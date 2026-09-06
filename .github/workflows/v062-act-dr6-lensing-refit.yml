@@ -1,0 +1,130 @@
+name: v062 ACT DR6 lensing frozen-model refit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v062/**'
+      - '.github/workflows/v062-act-dr6-lensing-refit.yml'
+
+jobs:
+  fit:
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [free, eta0]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062
+
+      - name: Checkout pinned ACT DR6 lensing likelihood
+        uses: actions/checkout@v4
+        with:
+          repository: ACTCollaboration/act_dr6_lenslike
+          ref: b386ddbb5821c1216c709f051c9289292f174d30
+          path: act_lens_src
+
+      - name: Install ACT DR6 lensing likelihood and data
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user numpy scipy
+          cd act_lens_src
+          bash get-act-data.sh
+          cd ..
+          python3 -m pip install --user -e ./act_lens_src
+          mkdir -p results class_v062/output
+          python3 - <<'PY'
+          import act_dr6_lenslike as alike
+          d=alike.load_data('act_baseline',lens_only=True,like_corrections=False,trim_lmax=2998)
+          print('ACT DR6 lensing baseline bins:',len(d['data_binned_clkk']))
+          print('ACT DR6 lensing baseline centers:',d['bcents_act'])
+          PY
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062
+          python3 v019i/apply_ic_patch.py class_v062
+          python3 v019j/apply_memory_patch.py class_v062
+          python3 v019w/apply_variational_forcing_patch.py class_v062
+          python3 v019y/apply_output_precision_patch.py class_v062
+          python3 v023/apply_source_grid_trace_patch.py class_v062
+
+      - name: Build CLASS
+        run: make -C class_v062 -j2 class
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v062/act_dr6_lensing_refit.py v062/compare_act_lensing_refits.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v062/predata_act_dr6_lensing.json'))
+          assert d['classification']=='V062_PREDATA_ACT_DR6_LENSING_DECLARATION'
+          assert d['created_before_act_lensing_eta_result'] is True
+          assert d['official_likelihood_commit']=='b386ddbb5821c1216c709f051c9289292f174d30'
+          assert d['likelihood_variant']=='act_baseline'
+          assert d['likelihood_mode']['lens_only'] is True
+          assert d['likelihood_mode']['like_corrections'] is False
+          assert d['frozen_model']['KB']==0.0665 and d['frozen_model']['tauH0']==10.0 and d['frozen_model']['lambda']==10.0
+          assert d['inference']['eta_bounds']==[-40.0,40.0]
+          print('V062_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Run ACT DR6 lensing refit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v062/act_dr6_lensing_refit.py --class-root class_v062 --mode '${{ matrix.mode }}' --json-out results/v062_act_lensing_${{ matrix.mode }}.json
+
+      - name: Upload ACT lensing member
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v062_act_lensing_${{ matrix.mode }}
+          path: |
+            results/v062_act_lensing_${{ matrix.mode }}.json
+            results/v062_it*_forcing.json
+            results/v062_*.log
+
+  compare:
+    needs: fit
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download free member
+        uses: actions/download-artifact@v4
+        with:
+          name: results_bundle_v062_act_lensing_free
+          path: gathered/free
+      - name: Download eta0 member
+        uses: actions/download-artifact@v4
+        with:
+          name: results_bundle_v062_act_lensing_eta0
+          path: gathered/eta0
+      - name: Compare ACT lensing refits
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v062/compare_act_lensing_refits.py --free gathered/free/v062_act_lensing_free.json --eta0 gathered/eta0/v062_act_lensing_eta0.json --json-out results/v062_act_lensing_comparison.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v062_act_lensing_comparison
+          path: results/v062_act_lensing_comparison.json
