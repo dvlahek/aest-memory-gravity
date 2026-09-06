@@ -1,0 +1,31 @@
+{
+  "classification": "V056_PREDATA_PLANCK_HIGHL_LOWL_REFIT_DECLARATION",
+  "purpose": "Add the predeclared Planck 2018 low-l TT and EE likelihoods to the already validated high-l TTTEEE six-parameter refit without changing the frozen AeST physics.",
+  "likelihoods": [
+    "planck_2018_highl_plik.TTTEEE_lite_native",
+    "planck_2018_lowl.TT",
+    "planck_2018_lowl.EE"
+  ],
+  "high_l": "Planck 2018 Plik-lite TTTEEE native, nuisance-marginalized, with A_planck Gaussian prior sigma=0.0025",
+  "low_l": "Planck 2018 Cobaya-native Gibbs TT and SimAll EE likelihoods, ell=2..29, evaluated from the same lensed CLASS spectra and the same A_planck calibration parameter.",
+  "fit_parameters": ["H0", "omega_b", "omega_cdm", "tau_reio", "n_s", "lnA_s"],
+  "extension_parameter": "eta",
+  "comparison": "free eta versus eta=0 under the same combined high-l+low-l objective",
+  "optimizer": "Three deterministic bounded local quasi-Newton/Powell surrogate updates. The high-l part uses the same local linearized residual construction as v0.55. The exact native low-l likelihood is evaluated on the same local spectral tangent surrogate at each update, and the center spectrum/tangent is recomputed after every iteration.",
+  "frozen_physics": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "patch_chain": [
+    "v019/apply_patch_v019.py",
+    "v019i/apply_ic_patch.py",
+    "v019j/apply_memory_patch.py",
+    "v019w/apply_variational_forcing_patch.py",
+    "v019y/apply_output_precision_patch.py",
+    "v023/apply_source_grid_trace_patch.py"
+  ],
+  "anti_tuning": "No KB, tauH0, p, lambda, CLASS commit, patch-chain, parameter-definition or likelihood choice may be changed in response to the v0.56 result. Technical changes required to make the declared likelihood combination run must be documented before inspecting the resulting eta preference."
+}
