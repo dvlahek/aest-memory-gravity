@@ -40,8 +40,28 @@ jobs:
           set -euo pipefail
           python3 -m pip install --user numpy scipy
           cd act_lens_src
-          bash get-act-data.sh
-          cd ..
+          DATA_DIR='act_dr6_lenslike/data'
+          DATA_TGZ='ACT_dr6_likelihood_v1.2.tgz'
+          DATA_URL='https://lambda.gsfc.nasa.gov/data/suborbital/ACT/ACT_dr6/likelihood/data/ACT_dr6_likelihood_v1.2.tgz'
+          mkdir -p "$DATA_DIR"
+          cd "$DATA_DIR"
+          ok=0
+          for attempt in 1 2 3 4; do
+            echo "ACT DR6 official-data download attempt ${attempt}/4"
+            rm -f "$DATA_TGZ"
+            if wget --timeout=30 --tries=3 --retry-connrefused -O "$DATA_TGZ" "$DATA_URL"; then
+              tar -xzf "$DATA_TGZ"
+              rm -f "$DATA_TGZ"
+              if [ -d v1.2 ]; then
+                ok=1
+                break
+              fi
+            fi
+            sleep 10
+          done
+          test "$ok" -eq 1
+          test -d v1.2
+          cd ../../..
           python3 -m pip install --user -e ./act_lens_src
           mkdir -p results class_v062/output
           python3 - <<'PY'
