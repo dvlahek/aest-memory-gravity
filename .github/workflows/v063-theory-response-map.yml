@@ -1,0 +1,85 @@
+name: v063 theory-first late-time response map
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v063/**'
+      - '.github/workflows/v063-theory-response-map.yml'
+
+jobs:
+  theory-map:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v063
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v063
+          python3 v019i/apply_ic_patch.py class_v063
+          python3 v019j/apply_memory_patch.py class_v063
+          python3 v019w/apply_variational_forcing_patch.py class_v063
+          python3 v019y/apply_output_precision_patch.py class_v063
+          python3 v023/apply_source_grid_trace_patch.py class_v063
+
+      - name: Build CLASS executable
+        run: make -C class_v063 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v063 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v063/theory_response_map.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v063/predata_theory_target_selection.json'))
+          assert d['classification']=='V063_PREDATA_THEORY_FIRST_TARGET_SELECTION'
+          assert d['created_before_v063_theory_response_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['frozen_model']['KB']==0.0665
+          assert d['frozen_model']['tauH0']==10.0
+          assert d['frozen_model']['p']==0.0
+          assert d['frozen_model']['lambda']==10.0
+          assert d['theory_domain']['linear_theory_only'] is True
+          assert set(d['response_scores'])=={'cosmic_shear_weyl','linear_galaxy_clustering','RSD_fsigma8'}
+          print('V063_PREDATA_THEORY_TARGET_AUDIT_PASS')
+          PY
+
+      - name: Run theory-first response map
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v063/theory_response_map.py \
+            --class-root class_v063 \
+            --json-out results/v063_theory_response_summary.json \
+            --npz-out results/v063_theory_response_map.npz
+
+      - name: Upload theory response bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v063_theory_response
+          path: |
+            results/v063_theory_response_summary.json
+            results/v063_theory_response_map.npz
+            results/v063_theory_forcing.json
+            results/v063_theory_trace.log
