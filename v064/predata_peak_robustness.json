@@ -1,0 +1,49 @@
+{
+  "classification": "V064_PREDATA_TANGENT_PEAK_ROBUSTNESS",
+  "created_before_v064_result": true,
+  "uses_observational_data": false,
+  "purpose": "Test whether the v0.63 late-time linear-clustering response peak is stable to tangent forcing amplitude and resolves on a dense k-z grid before fitting any new late-time observational dataset.",
+  "source_result": {
+    "v063_run_id": 34061118644,
+    "v063_selected_observable_class": "linear_galaxy_clustering",
+    "v063_peak_k_h_per_Mpc": 0.10250971366580042,
+    "v063_peak_z": 0.2476197546610166,
+    "v063_peak_signed_response_per_eta": 13.900441112411244
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [5.0, 10.0, 20.0]
+  },
+  "dense_grid": {
+    "k_h_per_Mpc_min": 0.08,
+    "k_h_per_Mpc_max": 0.15,
+    "k_h_per_Mpc_step": 0.0005,
+    "z_min": 0.2,
+    "z_max": 0.7,
+    "z_step": 0.005,
+    "linear_theory_only": true
+  },
+  "response_definition": "R_lambda(k,z) = [P_m(+lambda)-P_m(-lambda)]/[2 lambda P_m(0)]",
+  "robustness_reference_lambda": 10.0,
+  "gates": {
+    "normalized_l2_difference_max": 0.02,
+    "peak_k_shift_h_per_Mpc_max": 0.002,
+    "peak_z_shift_max": 0.02,
+    "peak_amplitude_relative_difference_max": 0.05,
+    "sigma8_normalized_l2_difference_max": 0.02
+  },
+  "reported_shape_diagnostics": [
+    "global peak location and signed amplitude for each tangent amplitude",
+    "absolute-response quantiles",
+    "fraction of dense grid with |R| > 0.1, 1, and 5",
+    "contiguous half-maximum width in k at the reference peak z",
+    "contiguous half-maximum width in z at the reference peak k",
+    "response at the original v0.63 peak location",
+    "sigma8 response versus redshift"
+  ],
+  "interpretation_rule": "Passing lambda-invariance establishes numerical/tangent robustness of the scale-dependent feature. It is not an observational detection and lambda is a tangent forcing amplitude, not a fitted physical eta value.",
+  "anti_tuning": "No survey residuals, covariances, S8 anomaly values, or new likelihood evaluations enter v0.64. The dense window is centered on the already-recorded v0.63 theory peak only."
+}
