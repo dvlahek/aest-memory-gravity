@@ -1,0 +1,94 @@
+name: v059 Planck high-l plus low-l local posterior
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v059/**'
+      - '.github/workflows/v059-planck-local-posterior.yml'
+
+jobs:
+  posterior:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 330
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v059
+      - name: Install dependencies and native Planck likelihood data
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user numpy scipy emcee 'cobaya==3.6.2' getdist
+          mkdir -p planck_packages results class_v059/output gathered_v058
+          python3 -m cobaya.install planck_2018_highl_plik.TTTEEE_lite_native planck_2018_lowl.TT planck_2018_lowl.EE -p "$GITHUB_WORKSPACE/planck_packages"
+      - name: Download certified v0.58 profile comparison
+        uses: actions/download-artifact@v4
+        with:
+          name: results_bundle_v058_comparison_recovered
+          path: gathered_v058
+          repository: dvlahek/aest-memory-gravity
+          run-id: 34039647438
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v059
+          python3 v019i/apply_ic_patch.py class_v059
+          python3 v019j/apply_memory_patch.py class_v059
+          python3 v019w/apply_variational_forcing_patch.py class_v059
+          python3 v019y/apply_output_precision_patch.py class_v059
+          python3 v023/apply_source_grid_trace_patch.py class_v059
+      - name: Build CLASS
+        run: make -C class_v059 -j2 class
+      - name: Freeze and predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v053/audit_model_freeze.py v053/model_freeze.json --json-out results/v059_freeze_reaudit.json
+          python3 -m py_compile v059/planck_local_posterior.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v059/predata_planck_posterior.json'))
+          assert d['classification']=='V059_PREDATA_PLANCK_POSTERIOR_DECLARATION'
+          assert d['frozen_model']['KB']==0.0665 and d['frozen_model']['tauH0']==10.0 and d['frozen_model']['lambda']==10.0
+          assert d['eta_prior']==[-40.0,40.0]
+          assert d['sampler']['walkers']==48 and d['sampler']['steps']==6000 and d['sampler']['burnin']==1500 and d['sampler']['thin']==5
+          print('V059_PREDATA_AUDIT_PASS')
+          PY
+      - name: Run nuisance-marginalized local posterior
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROFILE=$(find gathered_v058 -name 'v058_planck_eta_profile.json' -print -quit)
+          test -n "$PROFILE"
+          python3 v059/planck_local_posterior.py \
+            --class-root class_v059 \
+            --packages planck_packages \
+            --profile-json "$PROFILE" \
+            --json-out results/v059_planck_local_posterior.json \
+            --chain-out results/v059_planck_local_chain.npz
+      - name: Upload v0.59 posterior
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v059_planck_local_posterior
+          path: |
+            results/v059_planck_local_posterior.json
+            results/v059_planck_local_chain.npz
+            results/v059_freeze_reaudit.json
+            results/v056_it*_forcing.json
+      - name: Upload debug on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v059_debug
+          path: |
+            results/*.json
+            results/*.log
