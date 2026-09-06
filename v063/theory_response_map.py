@@ -32,7 +32,6 @@ def rewrite_ini(text, root):
     have_zmax = False
     have_pkmax = False
     have_output = False
-    have_nl = False
     for line in text.splitlines():
         st = line.strip()
         key = st.split('=', 1)[0].strip() if '=' in st else None
@@ -48,8 +47,7 @@ def rewrite_ini(text, root):
             out.append(f'P_k_max_h/Mpc = {PKMAX_H:.17g}')
             have_pkmax = True
         elif key == 'non linear':
-            out.append('non linear = none')
-            have_nl = True
+            continue
         elif key in ch:
             out.append(f'{key} = {ch[key]:.17g}')
             seen.add(key)
@@ -64,8 +62,6 @@ def rewrite_ini(text, root):
         out.append(f'z_max_pk = {ZMAX:.17g}')
     if not have_pkmax:
         out.append(f'P_k_max_h/Mpc = {PKMAX_H:.17g}')
-    if not have_nl:
-        out.append('non linear = none')
     out += [
         '# v0.63 predeclared theory-first response map',
         'aest_memory_enabled = no',
