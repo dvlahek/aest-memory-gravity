@@ -5,15 +5,21 @@ import numpy as np
 from scipy.optimize import minimize
 
 ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT))
-import v056.planck_highl_lowl_refit as v
 
+# Keep the ACT-only refit self-contained.  Importing the v0.56 Planck refit
+# also imports the Planck/getdist likelihood stack, which is intentionally not
+# installed in the v0.62 ACT-only workflow.  These are the unchanged v0.56
+# base path, finite-difference steps, and physical parameter bounds.
+BASE=ROOT/'v019/ini/aest_exp.ini'
 KB=0.0665; TAUH0=10.0; LAMBDA=10.0; NITER=3
 THEORY_LMAX=4000; TRIM_LMAX=2998
 START={'H0':67.3324639084866,'omega_b':0.022377376877682164,'omega_cdm':0.12006705327635288,
        'tau_reio':0.06174082364515668,'n_s':0.9666229454895277,'lnA_s':math.log(2.1308864352626987e-9)}
-STEP=dict(v.STEP); PARAMS=list(v.PARAMS)
-BOUNDS=dict(v.BOUNDS); BOUNDS['eta']=(-40.,40.)
+STEP={'H0':START['H0']*0.0025,'omega_b':START['omega_b']*0.005,'omega_cdm':START['omega_cdm']*0.005,
+      'tau_reio':0.0015,'n_s':0.003,'lnA_s':0.01}
+PARAMS=list(STEP)
+BOUNDS={'H0':(50,90),'omega_b':(0.018,0.026),'omega_cdm':(0.08,0.16),'tau_reio':(0.01,0.12),
+        'n_s':(0.90,1.05),'lnA_s':(math.log(1.5e-9),math.log(3e-9)),'eta':(-40.,40.)}
 
 
 def physical(s):
@@ -138,7 +144,7 @@ def total_chi2(like,B,T,D,s,delta=None,names=None):
 
 def fit(mode,cr,out):
     like=ACTLensLike(); state=dict(START); state['eta']=0.0
-    text=v.BASE.read_text(); hist=[]
+    text=BASE.read_text(); hist=[]
     for it in range(NITER):
         B,T,D=generate(cr,text,state,it)
         if len(B)<=TRIM_LMAX:
