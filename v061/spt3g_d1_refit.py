@@ -73,12 +73,19 @@ class SPTLike:
                             data_selection=['ell<400 remove','ell>2500 remove'])
         self.ell_max=int(self.like.ell_max)
         self.required=list(self.like.required_nuisance_parameters)
+        # candl 2.0.3 internal-prior path is incompatible with the current JAX runtime
+        # when given a list to jnp.atleast_1d. Preserve the official SPTlite priors
+        # exactly by evaluating the Gaussian tau and Tcal terms explicitly here.
+        self.like.priors=[]
     def chi2(self,cl,state):
         ell=np.arange(2,self.ell_max+1,dtype=int)
         if max(ell)>=len(cl['TT']): return 1e100
         pars={'Dl':{'ell':ell,'TT':cl['TT'][2:self.ell_max+1],'TE':cl['TE'][2:self.ell_max+1],'EE':cl['EE'][2:self.ell_max+1]},
               'tau':state['tau_reio'],'Tcal':state['Tcal'],'Ecal':state['Ecal']}
-        return float(-2.0*self.like.log_like(pars))
+        chi2=float(-2.0*self.like.log_like(pars))
+        chi2 += ((state['tau_reio']-0.051)/0.006)**2
+        chi2 += ((state['Tcal']-1.0)/0.00360)**2
+        return chi2
 
 def total_chi2(like,B,T,D,s,delta=None,names=None):
     c=dict(s); cl={k:B[k]+s['eta']*T[k] for k in B}
@@ -109,9 +116,9 @@ def fit(mode,cr,out):
     r={'classification':'V061_SPT3G_D1_REFIT_COMPLETE','mode':mode,'iterations':NITER,'final_state':state,'final_chi2':float(final),'history':hist,
        'spt_ell_cuts':[ELL_MIN,ELL_MAX],'candl_ell_max':like.ell_max,'required_nuisance_parameters':like.required,
        'locked_model':{'KB':KB,'tauH0':TAUH0,'p':0.0,'lambda':LAMBDA,'CLASS_commit':'e85808324f51fc694d12e3ed7439552a3c3f9540'},
-       'likelihood':'Official SPT-3G D1 T&E SPTlite likelihood from SouthPoleTelescope/spt_candl_data via candl, preserving its internal priors and profiling Tcal/Ecal.',
+       'likelihood':'Official SPT-3G D1 T&E SPTlite likelihood from SouthPoleTelescope/spt_candl_data via candl; official Gaussian tau and Tcal priors are preserved explicitly, and Tcal/Ecal are profiled.',
        'scope':'Deterministic iterated six-parameter SPT-3G D1 refit, free eta versus eta=0, with candl angular-scale selection restricted to 400<=ell<=2500.',
-       'anti_tuning':'Predeclared v0.61 SPT member. Frozen memory physics and selected SPT multipole policy unchanged.'}
+       'anti_tuning':'Predeclared v0.61 SPT member. Frozen memory physics and selected SPT multipole policy unchanged. This technical prior-evaluation compatibility fix was made before any SPT eta result was obtained.'}
     Path(out).write_text(json.dumps(r,indent=2)); print(json.dumps(r,indent=2))
 
 def main():
