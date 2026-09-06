@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m pip install --user numpy scipy sacc astropy
+          python3 -m pip install --user numpy scipy sacc astropy getdist
           mkdir -p results class_v060/output act_data
           curl -L --fail --retry 3 https://lambda.gsfc.nasa.gov/data/act/pspipe/sacc_files/dr6_data_cmbonly.tar.gz -o act_data/dr6_data_cmbonly.tar.gz
           tar -xzf act_data/dr6_data_cmbonly.tar.gz -C act_data
