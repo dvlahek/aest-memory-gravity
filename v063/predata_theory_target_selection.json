@@ -1,0 +1,57 @@
+{
+  "classification": "V063_PREDATA_THEORY_FIRST_TARGET_SELECTION",
+  "created_before_v063_theory_response_result": true,
+  "uses_observational_data": false,
+  "purpose": "Select the next late-time observable class from the frozen AeST memory theory response before fitting any new late-time dataset.",
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "lambda": 10.0,
+    "eta_response_definition": "central tangent response (X(+lambda)-X(-lambda))/(2 lambda), interpreted as dX/deta at eta=0",
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    }
+  },
+  "theory_domain": {
+    "z_max_pk": 5.0,
+    "P_k_max_h_per_Mpc": 2.0,
+    "linear_theory_only": true
+  },
+  "response_scores": {
+    "cosmic_shear_weyl": {
+      "quantity": "d ln P_Weyl / d eta",
+      "z_range": [0.2, 1.5],
+      "k_h_per_Mpc_range": [0.01, 0.3],
+      "score": "RMS fractional response over the fixed window"
+    },
+    "linear_galaxy_clustering": {
+      "quantity": "d ln P_m / d eta",
+      "z_range": [0.2, 1.5],
+      "k_h_per_Mpc_range": [0.01, 0.2],
+      "score": "RMS fractional response over the fixed window"
+    },
+    "RSD_fsigma8": {
+      "quantity": "d ln [f(k,z) sigma8(z)] / d eta",
+      "z_grid": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+      "k_h_per_Mpc_grid": [0.03, 0.05, 0.08, 0.1, 0.15, 0.2],
+      "score": "RMS fractional response over the fixed grid"
+    }
+  },
+  "diagnostic_only": {
+    "cmb_lensing_weyl_proxy": {
+      "quantity": "d ln P_Weyl / d eta",
+      "z_range": [0.5, 5.0],
+      "k_h_per_Mpc_range": [0.01, 0.5],
+      "note": "Reported for physical context only. ACT DR6 lensing is already the independently predeclared v0.62 test and is excluded from v0.63 next-target ranking."
+    }
+  },
+  "selection_rule": "Among cosmic_shear_weyl, linear_galaxy_clustering, and RSD_fsigma8, select the observable class with the largest predeclared RMS absolute fractional response per unit eta. This is a response-only ranking, not a forecast signal-to-noise or a claim about an existing anomaly.",
+  "anti_tuning": "No late-time observational likelihood, bandpower, covariance, residual, anomaly significance, or survey-specific result is inspected in v0.63 before the observable class is selected."
+}
