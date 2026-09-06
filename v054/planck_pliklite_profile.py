@@ -99,7 +99,8 @@ def main():
     etahat=sigma=None; qfit=None
     j=rows.index(best)
     if 0<j<len(rows)-1:
-        xs=np.array([rows[j-1]['eta'],rows[j]['eta'],rows[j+1]['eta']]); ys=np.array([rows[j-1]['chi2_profiled'],rows[j]['chi2_profiled'],rows[j+1]['chi2_profiled'])
+        xs=np.array([rows[j-1]['eta'],rows[j]['eta'],rows[j+1]['eta']])
+        ys=np.array([rows[j-1]['chi2_profiled'],rows[j]['chi2_profiled'],rows[j+1]['chi2_profiled']])
         co=np.polyfit(xs,ys,2); A2,B2,C2=co
         if A2>0:
             etahat=float(-B2/(2*A2)); sigma=float(1/math.sqrt(A2)); qfit={'a':float(A2),'b':float(B2),'c':float(C2)}
