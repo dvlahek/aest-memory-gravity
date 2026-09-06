@@ -30,11 +30,12 @@ class LowTT:
     lmin=2; lmax=29
     def __init__(self,packages):
         p=locate(packages,'planck_2018_lowT_native')
-        self.covinv=np.linalg.inv(np.loadtxt(p/'cov.txt'))
-        self.mu=np.loadtxt(p/'mu.txt')
-        mu_sigma=np.zeros(self.lmax+1); mu_sigma[self.lmin:]=np.loadtxt(p/'mu_sigma.txt')
-        sc=np.loadtxt(p/'cl2x_1.txt'); sv=np.loadtxt(p/'cl2x_2.txt'); self.spl=[]; self.ds=[]; self.bounds=np.zeros((28,2))
-        for i in range(28):
+        n=self.lmax-self.lmin+1
+        self.covinv=np.linalg.inv(np.loadtxt(p/'cov.txt')[:n,:n])
+        self.mu=np.loadtxt(p/'mu.txt')[:n]
+        mu_sigma=np.zeros(self.lmax+1); mu_sigma[self.lmin:]=np.loadtxt(p/'mu_sigma.txt')[:n]
+        sc=np.loadtxt(p/'cl2x_1.txt')[:,:n]; sv=np.loadtxt(p/'cl2x_2.txt')[:,:n]; self.spl=[]; self.ds=[]; self.bounds=np.zeros((n,2))
+        for i in range(n):
             j=0
             while abs(sv[j,i]+5)<1e-4: j+=1
             self.bounds[i,0]=sc[j+2,i]
@@ -78,7 +79,6 @@ def rewrite_ini(text,root,s):
     if not lm: out.append('l_max_scalars = 2600')
     out += ['# v0.56 frozen combined Planck likelihood','aest_memory_enabled = no','aest_memory_order = 16','aest_eta = 0',f'aest_tau_H0 = {TAUH0:.17g}']
     return '\n'.join(out)+'\n'
-
 def run_class(cr,text,s,label,envx=None):
     ini=cr/f'v056_{label}.ini'; root=f'output/v056_{label}_'; ini.write_text(rewrite_ini(text,root,s)); env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
     if envx: env.update({k:str(v) for k,v in envx.items()})
