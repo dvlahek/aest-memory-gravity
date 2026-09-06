@@ -8,6 +8,10 @@ on:
       - 'v059/**'
       - '.github/workflows/v059-planck-local-posterior.yml'
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   posterior:
     runs-on: ubuntu-24.04
@@ -35,6 +39,7 @@ jobs:
           path: gathered_v058
           repository: dvlahek/aest-memory-gravity
           run-id: 34039647438
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Apply unchanged validated AeST patches
         shell: bash
         run: |
