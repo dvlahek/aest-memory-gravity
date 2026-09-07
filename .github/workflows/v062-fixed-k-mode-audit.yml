@@ -1,0 +1,310 @@
+name: v062 fixed-k mode audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-fixed-k-mode-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_fixedk
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_fixedk
+          python3 v019i/apply_ic_patch.py class_v062_fixedk
+          python3 v019j/apply_memory_patch.py class_v062_fixedk
+          python3 v019w/apply_variational_forcing_patch.py class_v062_fixedk
+          python3 v019y/apply_output_precision_patch.py class_v062_fixedk
+          python3 v023/apply_source_grid_trace_patch.py class_v062_fixedk
+
+      - name: Build CLASS
+        run: make -C class_v062_fixedk -j2 class
+
+      - name: Install diagnostic Python dependency
+        run: python3 -m pip install --disable-pip-version-check numpy
+
+      - name: Run identical physical k modes across global k grids
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v062_fixedk/output
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, subprocess
+
+          root=Path('class_v062_fixedk').resolve()
+          results=Path('results').resolve()
+          base=Path('v019/ini/aest_exp.ini').read_text()
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'omega_cdm':0.12006705327635288,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'aest_KB':0.0665,
+          }
+          h=pars['H0']/100.0
+          kh_targets=[0.03,0.05,0.08,0.10,0.12,0.134,0.146,0.148,0.15,0.20,0.30]
+          k_targets=[x*h for x in kh_targets]  # CLASS k_output_values are in 1/Mpc
+          k_string=', '.join(f'{x:.17g}' for x in k_targets)
+
+          def make_ini(label):
+            out=[]; seen=set(); lens=False
+            skip={'write_perturbations','k_output_values'}
+            for line in base.splitlines():
+              st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
+              if st.startswith('root ='):
+                out.append(f'root = output/{label}_')
+              elif st.startswith('output ='):
+                out.append('output = mPk')
+              elif st.startswith('lensing ='):
+                out.append('lensing = no'); lens=True
+              elif key=='non linear':
+                continue
+              elif key in skip:
+                continue
+              elif key in pars:
+                out.append(f'{key} = {pars[key]:.17g}'); seen.add(key)
+              elif key in ('input_verbose','background_verbose','thermodynamics_verbose','perturbations_verbose','transfer_verbose','primordial_verbose','harmonic_verbose','fourier_verbose','lensing_verbose','output_verbose'):
+                continue
+              else:
+                out.append(line)
+            miss=set(pars)-seen
+            if miss: raise RuntimeError(f'missing parameters: {sorted(miss)}')
+            if not lens: out.append('lensing = no')
+            out += [
+              '# v0.62 data-blind fixed-k mode audit; no ACT likelihood is read',
+              'aest_memory_enabled = no',
+              'aest_memory_order = 16',
+              'aest_eta = 0',
+              'aest_tau_H0 = 10',
+              'P_k_max_h/Mpc = 10',
+              'z_pk = 0',
+              'write_perturbations = yes',
+              f'k_output_values = {k_string}',
+            ]
+            p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
+
+          kpds=[10,40,160]
+          status={}
+          for kpd in kpds:
+            label=f'kpd{kpd}'
+            pre=root/f'{label}.pre'
+            pre.write_text(
+              'tol_perturb_integration = 5e-8\n'
+              'perturb_sampling_stepsize = 0.0025\n'
+              f'k_per_decade_for_pk = {kpd}\n'
+              'k_per_decade_for_bao = 70\n'
+            )
+            env=os.environ.copy()
+            env['OMP_NUM_THREADS']='1'
+            env['AEST_OFFLINE_TRACE_FILE']=str(results/f'{label}_accepted_source_trace.dat')
+            log=results/f'{label}.log'
+            with log.open('w') as f:
+              cp=subprocess.run([str(root/'class'),make_ini(label).name,pre.name],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=False)
+            perturb_files=sorted((root/'output').glob(f'{label}_perturbations_k*_s.dat'))
+            status[label]={
+              'returncode':cp.returncode,
+              'k_per_decade_for_pk':kpd,
+              'tol_perturb_integration':5e-8,
+              'perturb_sampling_stepsize':0.0025,
+              'k_per_decade_for_bao':70,
+              'perturbation_file_count':len(perturb_files),
+              'trace_file':str(results/f'{label}_accepted_source_trace.dat'),
+            }
+          meta={
+            'classification':'V062_FIXED_K_MODE_AUDIT_RUN_STATUS',
+            'h':h,
+            'kh_targets_h_per_Mpc':kh_targets,
+            'k_output_values_per_Mpc':k_targets,
+            'status':status,
+          }
+          Path('results/v062_fixed_k_status.json').write_text(json.dumps(meta,indent=2)+'\n')
+          print(json.dumps(meta,indent=2))
+          if any(v['returncode'] for v in status.values()):
+            raise SystemExit('fixed-k CLASS run failed; inspect logs')
+          if any(v['perturbation_file_count'] != len(k_targets) for v in status.values()):
+            raise SystemExit('unexpected number of fixed-k perturbation files')
+          PY
+
+      - name: Compare exact modes and accepted-source chi histories
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re, numpy as np
+
+          root=Path('class_v062_fixedk/output')
+          results=Path('results')
+          meta=json.loads((results/'v062_fixed_k_status.json').read_text())
+          kh=np.array(meta['kh_targets_h_per_Mpc'],float)
+          kt=np.array(meta['k_output_values_per_Mpc'],float)
+          kpds=[10,40,160]
+          labels=[f'kpd{x}' for x in kpds]
+
+          def load_numeric(path):
+            a=np.loadtxt(path)
+            if a.ndim==1: a=a[None,:]
+            return a
+
+          def comments(path):
+            return [ln.strip() for ln in Path(path).read_text(errors='replace').splitlines() if ln.lstrip().startswith('#')]
+
+          def interp_columns(a, tau_grid):
+            # CLASS perturbation files use conformal time as first numeric column.
+            t=a[:,0]
+            order=np.argsort(t); t=t[order]; y=a[order,1:]
+            out=np.empty((len(tau_grid),y.shape[1]))
+            for j in range(y.shape[1]):
+              out[:,j]=np.interp(tau_grid,t,y[:,j])
+            return out
+
+          def column_metrics(a,b):
+            lo=max(a[:,0].min(),b[:,0].min()); hi=min(a[:,0].max(),b[:,0].max())
+            if not (hi>lo): return {'error':'no overlapping tau range'}
+            tg=np.linspace(lo,hi,800)
+            A=interp_columns(a,tg); B=interp_columns(b,tg)
+            n=min(A.shape[1],B.shape[1]); A=A[:,:n]; B=B[:,:n]
+            scale=np.maximum(np.sqrt(np.mean(B*B,axis=0)),1e-30)
+            D=A-B
+            rms=np.sqrt(np.mean(D*D,axis=0))/scale
+            mx=np.max(np.abs(D),axis=0)/scale
+            return {
+              'n_compared_columns_excluding_tau':int(n),
+              'max_normalized_rms_over_columns':float(np.max(rms)) if n else None,
+              'median_normalized_rms_over_columns':float(np.median(rms)) if n else None,
+              'max_normalized_maxabs_over_columns':float(np.max(mx)) if n else None,
+              'worst_rms_column_after_tau':int(np.argmax(rms)+1) if n else None,
+              'worst_maxabs_column_after_tau':int(np.argmax(mx)+1) if n else None,
+            }
+
+          report={
+            'classification':'V062_FIXED_K_MODE_AUDIT',
+            'question':'Does the same physical k mode change when only the global CLASS k_per_decade_for_pk grid is changed?',
+            'kh_targets_h_per_Mpc':kh.tolist(),
+            'k_targets_per_Mpc':kt.tolist(),
+            'perturbation_histories':{},
+            'trace_chi_histories':{},
+            'pk_nearest_rows':{},
+          }
+
+          # 1) Direct perturbation-history files: same k_output_values and same index in every run.
+          for i,(kh_i,k_i) in enumerate(zip(kh,kt)):
+            key=f'kh={kh_i:.6g}'
+            report['perturbation_histories'][key]={}
+            files={lab:root/f'{lab}_perturbations_k{i}_s.dat' for lab in labels}
+            arr={lab:load_numeric(p) for lab,p in files.items()}
+            report['perturbation_histories'][key]['headers']={lab:comments(p)[-4:] for lab,p in files.items()}
+            for a,b in [('kpd10','kpd40'),('kpd40','kpd160'),('kpd10','kpd160')]:
+              report['perturbation_histories'][key][f'{a}_vs_{b}']=column_metrics(arr[a],arr[b])
+
+          # 2) Accepted source-grid trace of AeST chi and Q. Select the exact requested k.
+          traces={}
+          for lab in labels:
+            tr=np.loadtxt(results/f'{lab}_accepted_source_trace.dat',skiprows=1)
+            if tr.ndim==1: tr=tr[None,:]
+            traces[lab]=tr
+
+          def trace_mode(tr,k0):
+            u=np.unique(tr[:,0]); ku=u[np.argmin(np.abs(u-k0))]
+            tol=max(1e-13,abs(k0)*1e-10)
+            m=np.abs(tr[:,0]-ku)<=tol
+            x=tr[m]
+            x=x[np.argsort(x[:,2])] # a
+            return ku,x
+
+          def trace_metrics(x,y,col):
+            lo=max(x[:,2].min(),y[:,2].min()); hi=min(x[:,2].max(),y[:,2].max())
+            if not (hi>lo): return {'error':'no overlapping a range'}
+            # geometric in a when positive, otherwise linear
+            ag=np.geomspace(max(lo,1e-14),hi,800)
+            X=np.interp(ag,x[:,2],x[:,col]); Y=np.interp(ag,y[:,2],y[:,col])
+            d=X-Y
+            scale=max(float(np.sqrt(np.mean(Y*Y))),1e-30)
+            return {
+              'normalized_rms':float(np.sqrt(np.mean(d*d))/scale),
+              'normalized_maxabs':float(np.max(np.abs(d))/scale),
+              'absolute_rms':float(np.sqrt(np.mean(d*d))),
+              'absolute_maxabs':float(np.max(np.abs(d))),
+            }
+
+          for kh_i,k_i in zip(kh,kt):
+            key=f'kh={kh_i:.6g}'
+            modes={}
+            report['trace_chi_histories'][key]={}
+            for lab in labels:
+              ku,x=trace_mode(traces[lab],k_i)
+              modes[lab]=x
+              report['trace_chi_histories'][key].setdefault('resolved_k_per_Mpc',{})[lab]=float(ku)
+              report['trace_chi_histories'][key].setdefault('rows',{})[lab]=int(len(x))
+            for a,b in [('kpd10','kpd40'),('kpd40','kpd160'),('kpd10','kpd160')]:
+              report['trace_chi_histories'][key][f'{a}_vs_{b}']={
+                'chi':trace_metrics(modes[a],modes[b],4),
+                'Q':trace_metrics(modes[a],modes[b],5),
+              }
+
+          # 3) Final linear P(k): record the nearest row to each exact target.
+          for lab in labels:
+            pk=load_numeric(root/f'{lab}__pk.dat')
+            rows=[]
+            for kh_i,k_i in zip(kh,kt):
+              j=int(np.argmin(np.abs(pk[:,0]-k_i)))
+              rows.append({
+                'kh_target':float(kh_i),
+                'k_target_per_Mpc':float(k_i),
+                'k_nearest_per_Mpc':float(pk[j,0]),
+                'relative_k_offset':float((pk[j,0]-k_i)/k_i),
+                'P_nearest':float(pk[j,1]),
+              })
+            report['pk_nearest_rows'][lab]=rows
+
+          # Global summary gates are diagnostic only, not a preregistered science gate.
+          chi_40_160=[]; pert_40_160=[]
+          for key in report['trace_chi_histories']:
+            v=report['trace_chi_histories'][key]['kpd40_vs_kpd160']['chi'].get('normalized_rms')
+            if v is not None: chi_40_160.append(v)
+          for key in report['perturbation_histories']:
+            v=report['perturbation_histories'][key]['kpd40_vs_kpd160'].get('max_normalized_rms_over_columns')
+            if v is not None: pert_40_160.append(v)
+          report['summary']={
+            'max_chi_normalized_rms_kpd40_vs_160':float(max(chi_40_160)) if chi_40_160 else None,
+            'max_perturbation_column_normalized_rms_kpd40_vs_160':float(max(pert_40_160)) if pert_40_160 else None,
+            'interpretation_rule':(
+              'Near-zero same-k differences imply the modes themselves are stable and the ordinary P(k) ladder is undersampling/aliasing fine k structure. '
+              'Order-unity same-k differences imply a global-k-grid dependence inside the patched calculation and point to an implementation/state-handling bug.'
+            ),
+          }
+
+          (results/'v062_fixed_k_mode_audit.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload fixed-k audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_fixed_k_mode_audit
+          path: |
+            results/v062_fixed_k*.json
+            results/kpd*.log
+            results/kpd*_accepted_source_trace.dat
+            class_v062_fixedk/output/kpd*_perturbations_k*_s.dat
+            class_v062_fixedk/output/kpd*__pk.dat
