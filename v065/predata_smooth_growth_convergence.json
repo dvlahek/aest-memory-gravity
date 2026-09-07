@@ -1,0 +1,60 @@
+{
+  "classification": "V065_PREDATA_SMOOTH_GROWTH_CONVERGENCE",
+  "created_before_v065_result": true,
+  "uses_observational_data": false,
+  "motivation": "v0.64 rejected the narrow scale-dependent P_m peak as tangent-amplitude non-robust, while the smooth sigma8 response remained sign-stable and comparatively insensitive to lambda. v0.65 tests only this smooth late-time growth response in the zero-amplitude tangent limit.",
+  "source_results": {
+    "v063_classification": "V063_THEORY_FIRST_TARGET_SELECTION_COMPLETE",
+    "v064_classification": "V064_TANGENT_AMPLITUDE_ROBUSTNESS_FAIL",
+    "policy": "The rejected v0.64 narrow P_m feature is not promoted or rescued in v0.65."
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "linear_theory_only": true,
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true
+  },
+  "primary_observable": {
+    "quantity": "sigma8(z)",
+    "response": "R_sigma(lambda,z)=[sigma8(+lambda,z)-sigma8(-lambda,z)]/[2 lambda sigma8(0,z)]",
+    "primary_redshifts": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+    "context_redshifts": [1.0, 1.2, 1.5],
+    "zero_amplitude_fit": "R_sigma(lambda,z)=R0(z)+c(z) lambda^2",
+    "interpretation": "R0(z) estimates d ln sigma8 / d eta at eta=0."
+  },
+  "secondary_observable": {
+    "quantity": "f(k,z) sigma8(z)",
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.1, 0.15, 0.2],
+    "summary_policy": "Report median response over the fixed k grid, 10-90 percent range, and sign fraction at each z. Do not rank or select by maxima or RMS.",
+    "classification_role": "context_only"
+  },
+  "s8_identity": {
+    "statement": "At fixed Omega_m, d ln S8 / d eta equals d ln sigma8 / d eta.",
+    "classification_role": "interpretive_identity_only_not_an_observational_fit"
+  },
+  "gates": {
+    "all_primary_lambda_responses_negative": true,
+    "all_primary_extrapolated_R0_negative": true,
+    "stabilization_definition": "abs[R_sigma(1.25,z)-R_sigma(2.5,z)] < abs[R_sigma(5,z)-R_sigma(10,z)]",
+    "minimum_primary_redshifts_stabilizing": 6,
+    "number_primary_redshifts": 7,
+    "fit_residuals": "report_without_post_hoc_threshold"
+  },
+  "classification_policy": {
+    "pass": "V065_SMOOTH_GROWTH_TANGENT_LIMIT_PASS",
+    "fail": "V065_SMOOTH_GROWTH_TANGENT_LIMIT_FAIL",
+    "meaning": "PASS is a data-blind numerical certification of a smooth negative late-time growth response. It is not an observational detection."
+  },
+  "anti_tuning": "No observational data are used. Do not change the frozen cosmology, KB, tauH0, p, CLASS commit, lambda sequence, primary redshift set, response definition, extrapolation form, or gates after reading v0.65 results. A FAIL is retained as a scientific null/falsification of the proposed smooth-growth tangent limit."
+}
