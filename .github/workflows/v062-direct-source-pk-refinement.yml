@@ -1,3 +1,4 @@
+# Direct-source validation of the fine-k structure; no ACT likelihood is read here.
 name: v062 direct-source P(k) refinement audit
 
 on:
@@ -128,8 +129,6 @@ jobs:
             dm=float(np.asarray(mode['delta_m'],float)[-1])
             tm=float(np.asarray(mode['theta_m'],float)[-1])
             k_actual=float(unique_trace_k[np.argmin(np.abs(unique_trace_k-k_req))])
-            # CLASS default matter source is gauge invariant:
-            # delta_m^GI = delta_m + 3 a H theta_m/k^2.
             dm_gi=dm + 3.0*a*H0_Mpc*tm/(k_actual*k_actual)
             PR=As*(k_actual/kpivot)**(ns-1.0)
             P_direct=(2.0*math.pi**2/k_actual**3)*(dm_gi**2)*PR
@@ -163,14 +162,12 @@ jobs:
               if cp.returncode:
                 raise SystemExit(f'{stage} batch {bi} failed with return code {cp.returncode}')
               rows.extend(json.loads((results/f'v062_directpk_{stage}_batch_{bi}.json').read_text())['rows'])
-            # de-duplicate anchors and any repeated points, keeping first copy for map
             by={}
             for r in rows:
               by.setdefault(round(r['kh_requested'],7),[]).append(r)
             merged=[]
             for kh_key,rs in sorted(by.items()):
-              base=dict(rs[0])
-              base['copies']=len(rs)
+              base=dict(rs[0]); base['copies']=len(rs)
               if len(rs)>1:
                 p=np.array([x['P_direct_Mpc3'] for x in rs],float)
                 s=np.array([x['delta_m_gi_final'] for x in rs],float)
@@ -194,7 +191,6 @@ jobs:
           src=np.array([r['delta_m_gi_final'] for r in c],float)
           pd=np.array([r['P_direct_Mpc3'] for r in c],float)
 
-          # Build refinement windows from direct-source sign changes plus very deep sampled minima.
           centers=[]
           for i in range(len(kh)-1):
             if src[i]==0 or src[i]*src[i+1]<0:
@@ -208,7 +204,6 @@ jobs:
           for cen in centers:
             refine += list(np.round(np.arange(cen-0.0006,cen+0.0006001,0.00005),7))
           refine=[x for x in sorted(set(float(v) for v in refine)) if 0.06 <= x <= 0.202]
-          # Keep runtime bounded while retaining deterministic data-blind selection.
           if len(refine)>600:
             raise RuntimeError(f'adaptive refinement generated {len(refine)} points > 600 safety cap')
           refine_rows=run_stage('refine',refine) if refine else []
