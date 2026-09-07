@@ -1,0 +1,168 @@
+name: v062 linear Pk convergence diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-linear-pk-convergence-diagnostic.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_pkdiag
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_pkdiag
+          python3 v019i/apply_ic_patch.py class_v062_pkdiag
+          python3 v019j/apply_memory_patch.py class_v062_pkdiag
+          python3 v019w/apply_variational_forcing_patch.py class_v062_pkdiag
+          python3 v019y/apply_output_precision_patch.py class_v062_pkdiag
+          python3 v023/apply_source_grid_trace_patch.py class_v062_pkdiag
+
+      - name: Build CLASS
+        run: make -C class_v062_pkdiag -j2 class
+
+      - name: Run linear Pk precision sequence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v062_pkdiag/output
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, subprocess
+
+          root=Path('class_v062_pkdiag').resolve()
+          base=Path('v019/ini/aest_exp.ini').read_text()
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'omega_cdm':0.12006705327635288,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'aest_KB':0.0665,
+          }
+
+          def ini(label):
+            out=[]; seen=set(); ae=False
+            for line in base.splitlines():
+              st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
+              if st.startswith('root ='):
+                out.append(f'root = output/{label}_')
+              elif st.startswith('output ='):
+                out.append('output = mPk')
+              elif st.startswith('lensing ='):
+                out.append('lensing = no')
+              elif key=='non linear':
+                continue
+              elif key in pars:
+                out.append(f'{key} = {pars[key]:.17g}'); seen.add(key)
+              elif key in ('input_verbose','background_verbose','thermodynamics_verbose','perturbations_verbose','transfer_verbose','primordial_verbose','harmonic_verbose','fourier_verbose','lensing_verbose','output_verbose'):
+                continue
+              else:
+                out.append(line)
+            miss=set(pars)-seen
+            if miss: raise RuntimeError(f'missing parameters: {sorted(miss)}')
+            out += [
+              '# v0.62 data-blind linear P(k) convergence diagnostic',
+              'aest_memory_enabled = no',
+              'aest_memory_order = 16',
+              'aest_eta = 0',
+              'aest_tau_H0 = 10',
+              'P_k_max_h/Mpc = 10',
+              'z_pk = 0',
+            ]
+            p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
+
+          variants=[
+            ('p3',5e-8,0.0025,10.0),
+            ('tight',1e-8,0.00125,20.0),
+            ('tightest',2e-9,0.000625,40.0),
+          ]
+          status={}
+          for label,tol,dt,kpd in variants:
+            pre=root/f'{label}.pre'
+            pre.write_text(
+              f'tol_perturb_integration = {tol:.17g}\n'
+              f'perturb_sampling_stepsize = {dt:.17g}\n'
+              f'k_per_decade_for_pk = {kpd:.17g}\n'
+              f'k_per_decade_for_bao = {max(70.0,kpd):.17g}\n'
+            )
+            env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+            log=Path('results')/f'{label}.log'
+            with log.open('w') as f:
+              cp=subprocess.run([str(root/'class'),ini(label).name,pre.name],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=False)
+            status[label]={'returncode':cp.returncode,'tol':tol,'sampling':dt,'k_per_decade':kpd}
+          Path('results/v062_linear_pk_status.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status,indent=2))
+          if any(v['returncode'] for v in status.values()): raise SystemExit('CLASS precision control failed; inspect logs')
+          PY
+
+      - name: Quantify convergence
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, numpy as np
+          root=Path('class_v062_pkdiag/output')
+          data={k:np.loadtxt(root/f'{k}__pk.dat') for k in ['p3','tight','tightest']}
+          ref=data['tightest']
+          kr=ref[:,0]; Pr=ref[:,1]
+          ranges={'linear_target':[0.03,0.30],'transition':[0.30,1.0],'high_k':[1.0,8.0]}
+          report={}
+          for name,a in data.items():
+            k=a[:,0]; P=a[:,1]
+            good=(k>0)&(P>0)&np.isfinite(P)
+            report[name]={
+              'rows':int(len(a)),
+              'P_min':float(P[good].min()),'P_max':float(P[good].max()),
+            }
+            if name!='tightest':
+              li=np.interp(np.log(kr),np.log(k[good]),np.log(P[good]))
+              lr=np.log(Pr)
+              for rn,(lo,hi) in ranges.items():
+                m=(kr>=lo)&(kr<=hi)
+                d=li[m]-lr[m]
+                report[name][rn]={
+                  'rms_abs_dlnP':float(np.sqrt(np.mean(d*d))),
+                  'max_abs_dlnP':float(np.max(np.abs(d))),
+                }
+          for name,a in data.items():
+            k=a[:,0]; P=a[:,1]
+            good=(k>0)&(P>0)&np.isfinite(P)
+            kg=k[good]; Pg=P[good]
+            slope=np.gradient(np.log(Pg),np.log(kg))
+            m=(kg>=0.08)&(kg<=0.15)
+            report[name]['feature_008_015']={
+              'slope_min':float(slope[m].min()),
+              'slope_max':float(slope[m].max()),
+              'P_min':float(Pg[m].min()),
+              'P_max':float(Pg[m].max()),
+            }
+          Path('results/v062_linear_pk_convergence.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload convergence audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_linear_pk_convergence_diagnostic
+          path: |
+            results/*.json
+            results/*.log
+            class_v062_pkdiag/output/*__pk.dat
