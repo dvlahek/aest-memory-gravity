@@ -1,0 +1,145 @@
+\section{Numerical methodology and validation log}
+\label{sec:numerical_validation_log}
+
+This section records the numerical validation sequence used in the AeST memory-gravity analysis. Its purpose is to distinguish physical or statistical outcomes from failures caused by the numerical implementation, external likelihood interfaces, or continuous-integration infrastructure. The validation sequence was carried out incrementally, with the relevant model choices and numerical gates fixed before inspecting the corresponding results.
+
+All calculations and validation workflows are archived in the public repository
+\href{https://github.com/dvlahek/aest-memory-gravity}{\texttt{dvlahek/aest-memory-gravity}}.
+Individual GitHub Actions runs cited below provide an immutable execution record for the corresponding tests.
+
+\subsection{Validation principle}
+
+A failure of a predeclared physical, statistical, convergence, or robustness criterion was retained as a scientific failure. Such a result was not reclassified by changing parameter ranges, likelihood choices, multipole ranges, tolerances, or acceptance thresholds after inspection of the data.
+
+In contrast, failures caused by the computational infrastructure were treated as implementation failures. Examples include inconsistent array dimensions, incorrect parsing of external output, missing diagnostic files, or exhaustion of the GitHub Actions execution-time limit. Corrections in this category were restricted to changes that leave the tested physical model and the predeclared scientific decision rule unchanged.
+
+This distinction is important because a successful software execution is not equivalent to a successful scientific gate, and conversely a failed CI job does not by itself constitute evidence against the tested model.
+
+\subsection{Frozen-model ACT DR6 lensing test}
+\label{sec:act_dr6_validation}
+
+The ACT DR6 lensing test was designed as a frozen-model refit. The AeST background and memory parameters relevant to this stage were held at
+\begin{equation}
+K_B=0.0665,\qquad \tau H_0=10,\qquad p=0,\qquad \lambda=10.
+\end{equation}
+The test used the official ACT DR6 lensing likelihood in its standalone lensing configuration, with \texttt{lens\_only=True}. No primary-CMB likelihood correction was introduced. The CLASS version, parameter bounds, data selection, likelihood definition, and optimization setup were frozen before the resulting likelihood values were interpreted.
+
+An early implementation exposed a dimension mismatch between the ACT binning matrix and the supplied theory vector. With \texttt{trim\_lmax=2998}, the standardized ACT matrix contains 3000 theory entries corresponding to $L=0,\ldots,2999$, whereas the initial interface supplied only 2999 entries. The correction was restricted to matching the theory-vector length to the interface expected by the official likelihood. No physical or statistical setting was changed. The implementation correction is recorded in commit \texttt{f148566ce4972308013a0bf9d49d78d9250ad1a8}.
+
+A subsequent diagnostic stage revealed a more fundamental numerical issue. Non-finite lensing-potential values were already present in the raw CLASS output before ACT binning and likelihood evaluation. Consequently, an earlier numerical result with an approximately vanishing likelihood difference cannot yet be regarded as the final ACT DR6 scientific result.
+
+To localize this problem without altering the frozen model, the workflow was modified only to archive the underlying CLASS \texttt{cl.dat} output. This diagnostic-only modification is recorded in commit \texttt{f0d7787dc1726b2b6dace44d0de950e10d3fd92a}. The corresponding diagnostic workflow is \href{https://github.com/dvlahek/aest-memory-gravity/actions/runs/34089543180}{GitHub Actions run 34089543180}.
+
+At this stage the ACT DR6 result is therefore classified as \emph{numerically unresolved}, rather than as a detection or a null result. No clipping, zero replacement, spectrum modification, likelihood modification, or post-hoc parameter adjustment has been applied to remove the non-finite CLASS values.
+
+\subsection{Fixed-$k$ convergence analysis}
+\label{sec:fixed_k_convergence}
+
+The subsequent analysis examined the numerical stability of the structure seen in the matter-sector response at fixed wavenumber. The central question was whether rapid zero crossings or sharp minima survived increasingly tight integration settings.
+
+The final smooth-limit test concentrates on two narrow windows centred at
+\begin{equation}
+k/h=0.09200\ {\rm Mpc}^{-1},\qquad k/h=0.12650\ {\rm Mpc}^{-1},
+\end{equation}
+with half-width $1.5\times10^{-4}\ {\rm Mpc}^{-1}$ and grid spacing $2.5\times10^{-5}\ {\rm Mpc}^{-1}$.
+
+Four NDF15 integrations define successive numerical limits:
+\begin{align}
+{\cal V}_1 &: \epsilon_{\rm int}=3\times10^{-9},\ s=0.1,\ r_{\rm small}=5\times10^{-4},\ r_{\rm large}=0.03,\\
+{\cal V}_2 &: \epsilon_{\rm int}=10^{-9},\ s=0.1,\ r_{\rm small}=5\times10^{-4},\ r_{\rm large}=0.03,\\
+{\cal V}_3 &: \epsilon_{\rm int}=10^{-9},\ s=0.05,\ r_{\rm small}=5\times10^{-4},\ r_{\rm large}=0.03,\\
+{\cal V}_4 &: \epsilon_{\rm int}=10^{-9},\ s=0.05,\ r_{\rm small}=2\times10^{-4},\ r_{\rm large}=0.015.
+\end{align}
+The successive comparisons ${\cal V}_1\rightarrow{\cal V}_2\rightarrow{\cal V}_3\rightarrow{\cal V}_4$ separately probe tolerance convergence, step-size convergence, and start-time convergence.
+
+\subsection{Predeclared smooth-limit gates}
+
+The final certification uses four numerical consistency requirements. The normalized source difference must satisfy $R_{\rm source}<10^{-3}$. The displacement of the local minimum must satisfy
+\begin{equation}
+|\Delta k_{\rm min}|\leq2.5\times10^{-5}\ h\,{\rm Mpc}^{-1}.
+\end{equation}
+The independently reconstructed direct power and CLASS power must agree to
+\begin{equation}
+\max_k\left|\frac{P_{\rm direct}(k)}{P_{\rm CLASS}(k)}-1\right|<10^{-10},
+\end{equation}
+and any paired zero crossings must move by no more than
+\begin{equation}
+|\Delta k_{\rm root}|\leq2.5\times10^{-5}\ h\,{\rm Mpc}^{-1}.
+\end{equation}
+The smooth-limit interpretation additionally requires the final tight solution ${\cal V}_4$ to contain no surviving rapid roots in either tested window.
+
+The possible outcomes were fixed as
+\begin{align}
+\texttt{V062\_SMOOTH\_LIMIT\_CERTIFIED}&:\quad \text{all convergence gates pass and no final rapid roots remain},\\
+\texttt{V062\_TIGHT\_LIMIT\_RETAINS\_RAPID\_ROOTS}&:\quad \text{the numerical limits converge but rapid roots remain},\\
+\texttt{V062\_SMOOTH\_LIMIT\_NEEDS\_FOLLOWUP}&:\quad \text{at least one locked convergence requirement fails}.
+\end{align}
+These definitions are evaluated mechanically by the archived analysis script and are not changed after inspecting the resulting spectra.
+
+\subsection{Direct-source cross-check}
+
+For every requested mode the matter perturbation is reconstructed directly from the baryon, cold-dark-matter, and massive-neutrino perturbations. The gauge-invariant matter source used in the cross-check is
+\begin{equation}
+\Delta_m=\delta_m+3aH\frac{\theta_m}{k^2}.
+\end{equation}
+The corresponding directly reconstructed linear matter power is
+\begin{equation}
+P_{\rm direct}(k)=\frac{2\pi^2}{k^3}\Delta_m^2(k)A_s\left(\frac{k}{k_{\rm pivot}}\right)^{n_s-1}.
+\end{equation}
+This quantity is compared point-by-point with \texttt{CLASS::pk\_lin}. Repeated anchor modes are retained across numerical batches, providing an additional check that splitting the calculation into independent executions does not alter the reconstructed source or power.
+
+\subsection{CI timeout and computational acceleration}
+\label{sec:ci_acceleration}
+
+The first execution of the final smooth-limit certification is archived as \href{https://github.com/dvlahek/aest-memory-gravity/actions/runs/34115256459}{GitHub Actions run 34115256459}. This run did not produce a scientific classification. The first tight NDF15 case, \texttt{ndf15\_t3e9\_s01\_early}, remained in the CLASS calculation until the GitHub Actions job reached its three-hour execution limit. GitHub then terminated the job. The outcome is therefore classified as a \emph{CI timeout}, not as a failed smooth-limit gate.
+
+As an initial infrastructure-only correction, the workflow timeout was extended from 180 to 360 minutes. The corresponding commit is \texttt{e376a811c353fc29cdae58a2ff98da11c9699782}, with the replacement \href{https://github.com/dvlahek/aest-memory-gravity/actions/runs/34133421603}{GitHub Actions run 34133421603}.
+
+Because the four convergence variants are scientifically independent until their final comparison, executing them serially is unnecessary. The calculation was therefore reorganized so that the same frozen variants can be evaluated concurrently. This changes only the scheduling of the calculation. It does not modify the physical model, $k$ values, solver, tolerances, step-size settings, initial-time conditions, or acceptance gates.
+
+The parallelized implementation is recorded in commit \texttt{8e2c9c2ad9bba209e1f50bcd6b2c0fba80aeb549}. The corresponding accelerated certification is \href{https://github.com/dvlahek/aest-memory-gravity/actions/runs/34134113608}{GitHub Actions run 34134113608}. At the time of this record, the accelerated certification was still in progress. Its result must therefore be appended without modifying the predeclared gates above.
+
+\subsection{Earlier robustness outcomes}
+
+The validation sequence also contains deliberately retained negative robustness results. In particular, the narrow-$k$ robustness stage associated with v0.64 completed technically but failed its preregistered scientific criterion. This result was retained unchanged.
+
+The subsequent v0.65 smooth-growth/tangent-limit test provided a stronger structural result. The response remained negative,
+\begin{equation}
+R_{\sigma}(\lambda,z)<0,
+\end{equation}
+for all four tested $\lambda$ values and all seven primary redshifts. The extrapolated limiting response likewise remained negative,
+\begin{equation}
+R_0(z)<0,\qquad z=0.2,\ldots,0.8.
+\end{equation}
+The preregistered v0.65 classification nevertheless remained a FAIL because the stronger convergence requirement
+\begin{equation}
+|R_{1.25}-R_{2.5}|<|R_{5}-R_{10}|
+\end{equation}
+was required to hold for at least six of the seven redshifts and did not meet that threshold. The sign result and convergence result are therefore reported separately. No attempt was made to weaken this criterion after observing the result.
+
+\subsection{Current status}
+
+The validation chain presently supports three distinct conclusions. First, several apparent structures found at less restrictive numerical settings are not automatically interpretable as physical features; their survival must be tested against tolerance, step-size, and integration-start limits. Second, the v0.65 analysis provides evidence for a stable negative response sign over the tested redshift and smoothing range, but its stronger predeclared convergence criterion remains failed. Third, the final fixed-$k$ smooth-limit classification is still pending completion of the accelerated NDF15 certification. The ACT DR6 lensing constraint is independently pending resolution of the non-finite raw CLASS lensing spectrum. Neither unresolved calculation is used as positive or negative observational evidence at this stage.
+
+\subsection{Reproducibility record}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Selected numerical-validation checkpoints. A technical failure is not interpreted as a scientific failure.}
+\label{tab:aest_validation_log}
+\begin{tabular}{p{0.13\linewidth}p{0.20\linewidth}p{0.26\linewidth}p{0.31\linewidth}}
+\toprule
+Stage & Record & Status & Interpretation \\
+\midrule
+ACT DR6 & \texttt{34089543180} & Diagnostic & Non-finite raw CLASS lensing spectrum; scientific ACT result unresolved. \\
+v0.64 & archived workflow & Scientific FAIL & Predeclared narrow-$k$ robustness criterion not satisfied; retained unchanged. \\
+v0.65 & archived workflow & Scientific FAIL & Negative response sign persists, but the stronger preregistered convergence gate is not satisfied. \\
+v0.62 final & \texttt{34115256459} & CI timeout & Terminated after 3\,h before scientific classification. \\
+v0.62 final & \texttt{34133421603} & Superseded & Same certification with extended CI time limit. \\
+v0.62 final & \texttt{34134113608} & Running & Parallel execution of the same frozen numerical variants. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The repository and GitHub Actions history therefore provide both the final results and the unsuccessful intermediate executions. We retain these records because they document the distinction between numerical debugging and post-hoc modification of a scientific criterion.
