@@ -1,0 +1,175 @@
+name: v062 linear Pk one-factor diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-linear-pk-onefactor-diagnostic.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_onefactor
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_onefactor
+          python3 v019i/apply_ic_patch.py class_v062_onefactor
+          python3 v019j/apply_memory_patch.py class_v062_onefactor
+          python3 v019w/apply_variational_forcing_patch.py class_v062_onefactor
+          python3 v019y/apply_output_precision_patch.py class_v062_onefactor
+          python3 v023/apply_source_grid_trace_patch.py class_v062_onefactor
+
+      - name: Build CLASS
+        run: make -C class_v062_onefactor -j2 class
+
+      - name: Install diagnostic Python dependency
+        run: python3 -m pip install --disable-pip-version-check numpy
+
+      - name: Run one-factor linear Pk controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v062_onefactor/output
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, subprocess
+
+          root=Path('class_v062_onefactor').resolve()
+          base=Path('v019/ini/aest_exp.ini').read_text()
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'omega_cdm':0.12006705327635288,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'aest_KB':0.0665,
+          }
+
+          def make_ini(label):
+            out=[]; seen=set(); lens=False
+            for line in base.splitlines():
+              st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
+              if st.startswith('root ='):
+                out.append(f'root = output/{label}_')
+              elif st.startswith('output ='):
+                out.append('output = mPk')
+              elif st.startswith('lensing ='):
+                out.append('lensing = no'); lens=True
+              elif key=='non linear':
+                continue
+              elif key in pars:
+                out.append(f'{key} = {pars[key]:.17g}'); seen.add(key)
+              elif key in ('input_verbose','background_verbose','thermodynamics_verbose','perturbations_verbose','transfer_verbose','primordial_verbose','harmonic_verbose','fourier_verbose','lensing_verbose','output_verbose'):
+                continue
+              else:
+                out.append(line)
+            miss=set(pars)-seen
+            if miss: raise RuntimeError(f'missing parameters: {sorted(miss)}')
+            if not lens: out.append('lensing = no')
+            out += [
+              '# v0.62 data-blind one-factor linear P(k) diagnostic',
+              'aest_memory_enabled = no',
+              'aest_memory_order = 16',
+              'aest_eta = 0',
+              'aest_tau_H0 = 10',
+              'P_k_max_h/Mpc = 10',
+              'z_pk = 0',
+            ]
+            p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
+
+          variants={
+            'base':      {'tol':5e-8,'sampling':0.0025,'kpd':10.0},
+            'tol_only':  {'tol':2e-9,'sampling':0.0025,'kpd':10.0},
+            'samp_only': {'tol':5e-8,'sampling':0.000625,'kpd':10.0},
+            'kgrid_only':{'tol':5e-8,'sampling':0.0025,'kpd':40.0},
+            'all_tight': {'tol':2e-9,'sampling':0.000625,'kpd':40.0},
+          }
+          status={}
+          for label,cfg in variants.items():
+            pre=root/f'{label}.pre'
+            pre.write_text(
+              f"tol_perturb_integration = {cfg['tol']:.17g}\n"
+              f"perturb_sampling_stepsize = {cfg['sampling']:.17g}\n"
+              f"k_per_decade_for_pk = {cfg['kpd']:.17g}\n"
+              f"k_per_decade_for_bao = {max(70.0,cfg['kpd']):.17g}\n"
+            )
+            env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+            log=Path('results')/f'{label}.log'
+            with log.open('w') as f:
+              cp=subprocess.run([str(root/'class'),make_ini(label).name,pre.name],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=False)
+            status[label]={'returncode':cp.returncode,**cfg}
+          Path('results/v062_linear_pk_onefactor_status.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status,indent=2))
+          if any(v['returncode'] for v in status.values()):
+            raise SystemExit('one-factor CLASS run failed; inspect logs')
+          PY
+
+      - name: Quantify one-factor sensitivity
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, numpy as np
+
+          root=Path('class_v062_onefactor/output')
+          names=['base','tol_only','samp_only','kgrid_only','all_tight']
+          data={n:np.loadtxt(root/f'{n}__pk.dat') for n in names}
+          grid=np.geomspace(1e-4,8.0,800)
+
+          def interp(a):
+            k=a[:,0]; P=a[:,1]
+            good=(k>0)&(P>0)&np.isfinite(P)
+            return np.interp(np.log(grid),np.log(k[good]),np.log(P[good]))
+
+          L={n:interp(a) for n,a in data.items()}
+          ranges={
+            'very_low':[1e-4,0.01],
+            'low':[0.01,0.03],
+            'pre_feature':[0.03,0.08],
+            'feature':[0.08,0.15],
+            'post_feature':[0.15,0.30],
+            'transition':[0.30,1.0],
+            'high_k':[1.0,8.0],
+          }
+          report={'reference':'base','tight_reference':'all_tight','variants':{}}
+          for n in names:
+            r={}
+            for rn,(lo,hi) in ranges.items():
+              m=(grid>=lo)&(grid<=hi)
+              db=L[n][m]-L['base'][m]
+              dt=L[n][m]-L['all_tight'][m]
+              r[rn]={
+                'rms_dlnP_vs_base':float(np.sqrt(np.mean(db*db))),
+                'max_abs_dlnP_vs_base':float(np.max(np.abs(db))),
+                'rms_dlnP_vs_all_tight':float(np.sqrt(np.mean(dt*dt))),
+                'max_abs_dlnP_vs_all_tight':float(np.max(np.abs(dt))),
+              }
+            report['variants'][n]=r
+          Path('results/v062_linear_pk_onefactor.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload one-factor audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_linear_pk_onefactor_diagnostic
+          path: |
+            results/*.json
+            results/*.log
+            class_v062_onefactor/output/*__pk.dat
