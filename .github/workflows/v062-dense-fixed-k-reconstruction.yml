@@ -1,0 +1,282 @@
+name: v062 dense fixed-k spectrum reconstruction
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-dense-fixed-k-reconstruction.yml'
+
+jobs:
+  reconstruct:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_dense
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_dense
+          python3 v019i/apply_ic_patch.py class_v062_dense
+          python3 v019j/apply_memory_patch.py class_v062_dense
+          python3 v019w/apply_variational_forcing_patch.py class_v062_dense
+          python3 v019y/apply_output_precision_patch.py class_v062_dense
+          python3 v023/apply_source_grid_trace_patch.py class_v062_dense
+
+      - name: Build patched CLASS Python interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check numpy cython setuptools wheel
+          make -C class_v062_dense -j2 classy
+
+      - name: Reconstruct exact fixed-k linear spectrum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, math, os, subprocess, sys, textwrap
+          import numpy as np
+
+          results=Path('results').resolve()
+          h=67.3324639084866/100.0
+
+          # Dense region chosen data-blind from the numerical pathology found in
+          # the preceding v0.62 diagnostics. No ACT likelihood is read here.
+          # 0.001 h/Mpc sampling through the feature, coarser shoulders.
+          kh=[]
+          kh += list(np.round(np.arange(0.060,0.080,0.002),6))
+          kh += list(np.round(np.arange(0.080,0.171,0.001),6))
+          kh += list(np.round(np.arange(0.172,0.202,0.002),6))
+          kh=sorted(set(float(x) for x in kh))
+
+          anchors=[0.100,0.134,0.148]
+          payload=[x for x in kh if x not in anchors]
+          # CLASS stores at most 30 k_output_values. Reserve 3 overlap anchors
+          # in every batch to test that the result is independent of batching.
+          chunks=[payload[i:i+27] for i in range(0,len(payload),27)]
+          batches=[]
+          for i,ch in enumerate(chunks):
+            vals=sorted(set(ch+anchors))
+            if len(vals)>30: raise RuntimeError('batch exceeds CLASS k_output_values limit')
+            batches.append(vals)
+
+          batch_script=results/'_v062_dense_batch.py'
+          batch_script.write_text(r'''
+          import json, os, sys
+          from pathlib import Path
+          import numpy as np
+          from classy import Class
+
+          batch_id=int(sys.argv[1])
+          kh=[float(x) for x in json.loads(sys.argv[2])]
+          h=67.3324639084866/100.0
+          k=[x*h for x in kh]
+
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'N_ur':2.046,
+            'omega_cdm':0.12006705327635288,
+            'N_ncdm':1,
+            'm_ncdm':0.06,
+            'T_ncdm':0.7137658555036082,
+            'YHe':0.2454006,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'gauge':'newtonian',
+            'aest_enabled':'yes',
+            'aest_model':'Exp',
+            'aest_KB':0.0665,
+            'aest_Q0':1e-4,
+            'aest_K2':9500,
+            'aest_Z0':1e-17,
+            'aest_memory_enabled':'no',
+            'aest_memory_order':16,
+            'aest_eta':0,
+            'aest_tau_H0':10,
+            'output':'mPk',
+            'lensing':'no',
+            'P_k_max_h/Mpc':10,
+            'z_pk':0,
+            'tol_perturb_integration':5e-8,
+            'perturb_sampling_stepsize':0.0025,
+            'k_per_decade_for_pk':40,
+            'k_per_decade_for_bao':70,
+            'k_output_values':', '.join(f'{x:.17g}' for x in k),
+          }
+
+          cosmo=Class()
+          cosmo.set(pars)
+          cosmo.compute()
+          pt=cosmo.get_perturbations()['scalar']
+          if len(pt)!=len(k):
+            raise RuntimeError(f'expected {len(k)} scalar modes, got {len(pt)}')
+
+          rows=[]
+          for i,(kh_i,k_i,mode) in enumerate(zip(kh,k,pt)):
+            def last(name):
+              arr=np.asarray(mode[name],float)
+              return float(arr[-1])
+            rows.append({
+              'batch':batch_id,
+              'mode_index':i,
+              'kh_h_per_Mpc':kh_i,
+              'k_per_Mpc':k_i,
+              'P_linear_Mpc3':float(cosmo.pk(k_i,0.0)),
+              'a_final':last('a'),
+              'delta_cdm_final':last('delta_cdm'),
+              'theta_cdm_final':last('theta_cdm'),
+              'phi_final':last('phi'),
+              'psi_final':last('psi'),
+              'delta_b_final':last('delta_b'),
+            })
+
+          out=Path('results')/f'v062_dense_batch_{batch_id}.json'
+          out.write_text(json.dumps({'batch':batch_id,'kh':kh,'rows':rows},indent=2)+'\n')
+          cosmo.struct_cleanup(); cosmo.empty()
+          print(json.dumps({'batch':batch_id,'n':len(rows),'kh_min':min(kh),'kh_max':max(kh)},indent=2))
+          ''')
+
+          meta={'classification':'V062_DENSE_FIXED_K_RECONSTRUCTION_SETUP',
+                'h':h,'unique_kh_targets':kh,'anchors':anchors,'batches':batches,
+                'fixed':{'k_per_decade_for_pk':40,'k_per_decade_for_bao':70,
+                         'tol_perturb_integration':5e-8,'perturb_sampling_stepsize':0.0025,
+                         'eta':0,'memory_enabled':False}}
+          (results/'v062_dense_setup.json').write_text(json.dumps(meta,indent=2)+'\n')
+
+          for i,b in enumerate(batches):
+            env=os.environ.copy()
+            env['OMP_NUM_THREADS']='1'
+            env['AEST_OFFLINE_TRACE_FILE']=str(results/f'v062_dense_batch_{i}_trace.dat')
+            cp=subprocess.run([sys.executable,str(batch_script),str(i),json.dumps(b)],
+                              env=env,check=False)
+            if cp.returncode:
+              raise SystemExit(f'dense fixed-k batch {i} failed with return code {cp.returncode}')
+          PY
+
+      - name: Analyze reconstructed k structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv, json
+          import numpy as np
+
+          results=Path('results')
+          setup=json.loads((results/'v062_dense_setup.json').read_text())
+          files=sorted(results.glob('v062_dense_batch_[0-9]*.json'))
+          allrows=[]
+          for p in files:
+            allrows.extend(json.loads(p.read_text())['rows'])
+
+          # Check overlap anchors before merging duplicates.
+          by_k={}
+          for r in allrows:
+            by_k.setdefault(round(r['kh_h_per_Mpc'],9),[]).append(r)
+          overlap={}
+          for k,rs in by_k.items():
+            if len(rs)>1:
+              P=np.array([x['P_linear_Mpc3'] for x in rs],float)
+              d=np.array([x['delta_cdm_final'] for x in rs],float)
+              overlap[f'{k:.9f}']={
+                'copies':len(rs),
+                'P_relative_spread':float((P.max()-P.min())/max(abs(P.mean()),1e-300)),
+                'delta_cdm_relative_spread':float((d.max()-d.min())/max(abs(d).mean(),1e-300)),
+              }
+
+          merged=[]
+          for k,rs in sorted(by_k.items()):
+            keys=['P_linear_Mpc3','delta_cdm_final','theta_cdm_final','phi_final','psi_final','delta_b_final','a_final','k_per_Mpc']
+            row={'kh_h_per_Mpc':float(k)}
+            for key in keys:
+              row[key]=float(np.mean([x[key] for x in rs]))
+            merged.append(row)
+
+          kh=np.array([r['kh_h_per_Mpc'] for r in merged])
+          P=np.array([r['P_linear_Mpc3'] for r in merged])
+          dc=np.array([r['delta_cdm_final'] for r in merged])
+          if np.any(~np.isfinite(P)) or np.any(P<=0):
+            raise RuntimeError('non-finite/non-positive exact fixed-k linear P in dense reconstruction')
+
+          lnk=np.log(kh); lnP=np.log(P)
+          slope=np.gradient(lnP,lnk)
+          curvature=np.gradient(slope,lnk)
+          for r,s,c in zip(merged,slope,curvature):
+            r['dlnP_dlnk']=float(s); r['d2lnP_dlnk2']=float(c)
+
+          # Sign changes in the AeST effective density mode at z=0.
+          zeros=[]
+          for i in range(len(kh)-1):
+            if dc[i]==0:
+              zeros.append(float(kh[i]))
+            elif dc[i]*dc[i+1]<0:
+              kz=kh[i] + (kh[i+1]-kh[i])*(-dc[i])/(dc[i+1]-dc[i])
+              zeros.append(float(kz))
+
+          # Local extrema of exact P on the sampled fixed-k map.
+          extrema=[]
+          for i in range(1,len(P)-1):
+            if P[i]>P[i-1] and P[i]>P[i+1]:
+              extrema.append({'type':'max','kh':float(kh[i]),'P':float(P[i])})
+            if P[i]<P[i-1] and P[i]<P[i+1]:
+              extrema.append({'type':'min','kh':float(kh[i]),'P':float(P[i])})
+
+          feat=(kh>=0.08)&(kh<=0.15)
+          imax=np.where(feat)[0][np.argmax(P[feat])]
+          imin=np.where(feat)[0][np.argmin(P[feat])]
+          max_anchor_spread=max((v['P_relative_spread'] for v in overlap.values()),default=None)
+
+          report={
+            'classification':'V062_DENSE_FIXED_K_RECONSTRUCTION',
+            'n_unique_k':int(len(kh)),
+            'kh_range_h_per_Mpc':[float(kh.min()),float(kh.max())],
+            'sampling':'0.001 h/Mpc in 0.08-0.17 with 0.002 h/Mpc shoulders',
+            'overlap_anchor_consistency':overlap,
+            'max_anchor_P_relative_spread':max_anchor_spread,
+            'feature_0p08_0p15':{
+              'P_min':float(P[imin]),'P_min_kh':float(kh[imin]),
+              'P_max':float(P[imax]),'P_max_kh':float(kh[imax]),
+              'max_abs_dlnP_dlnk':float(np.max(np.abs(slope[feat]))),
+              'max_abs_d2lnP_dlnk2':float(np.max(np.abs(curvature[feat]))),
+            },
+            'delta_cdm_zero_crossings_kh':zeros,
+            'n_delta_cdm_zero_crossings':len(zeros),
+            'P_local_extrema':extrema,
+            'n_P_local_extrema':len(extrema),
+            'interpretation_rule':(
+              'Consistent overlap anchors plus repeatable local extrema/zero crossings support a resolved fine-k physical transfer structure. '
+              'Large overlap-anchor disagreement would indicate batch/global-grid contamination and invalidate the reconstruction.'
+            ),
+          }
+          (results/'v062_dense_fixed_k_reconstruction.json').write_text(json.dumps(report,indent=2)+'\n')
+
+          with (results/'v062_dense_fixed_k_reconstruction.csv').open('w',newline='') as f:
+            w=csv.DictWriter(f,fieldnames=list(merged[0].keys()))
+            w.writeheader(); w.writerows(merged)
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload dense fixed-k reconstruction
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_dense_fixed_k_reconstruction
+          path: |
+            results/v062_dense_*.json
+            results/v062_dense_*.csv
+            results/v062_dense_batch_*_trace.dat
