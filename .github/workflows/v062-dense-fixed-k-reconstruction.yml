@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m pip install --disable-pip-version-check numpy cython setuptools wheel
+          python3 -m pip install --disable-pip-version-check numpy scipy cython setuptools wheel
           make -C class_v062_dense -j2 classy
 
       - name: Reconstruct exact fixed-k linear spectrum
