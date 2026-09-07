@@ -119,7 +119,7 @@ jobs:
             log=results/f'{label}.log'
             with log.open('w') as f:
               cp=subprocess.run([str(root/'class'),make_ini(label).name,pre.name],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=False)
-            perturb_files=sorted((root/'output').glob(f'{label}_perturbations_k*_s.dat'))
+            perturb_files=sorted((root/'output').glob(f'{label}__perturbations_k*_s.dat'))
             status[label]={
               'returncode':cp.returncode,
               'k_per_decade_for_pk':kpd,
@@ -210,7 +210,7 @@ jobs:
           for i,(kh_i,k_i) in enumerate(zip(kh,kt)):
             key=f'kh={kh_i:.6g}'
             report['perturbation_histories'][key]={}
-            files={lab:root/f'{lab}_perturbations_k{i}_s.dat' for lab in labels}
+            files={lab:root/f'{lab}__perturbations_k{i}_s.dat' for lab in labels}
             arr={lab:load_numeric(p) for lab,p in files.items()}
             report['perturbation_histories'][key]['headers']={lab:comments(p)[-4:] for lab,p in files.items()}
             for a,b in [('kpd10','kpd40'),('kpd40','kpd160'),('kpd10','kpd160')]:
@@ -306,5 +306,5 @@ jobs:
             results/v062_fixed_k*.json
             results/kpd*.log
             results/kpd*_accepted_source_trace.dat
-            class_v062_fixedk/output/kpd*_perturbations_k*_s.dat
+            class_v062_fixedk/output/kpd*__perturbations_k*_s.dat
             class_v062_fixedk/output/kpd*__pk.dat
