@@ -36,6 +36,9 @@ jobs:
       - name: Build CLASS
         run: make -C class_v062_pkdiag -j2 class
 
+      - name: Install diagnostic Python dependency
+        run: python3 -m pip install --disable-pip-version-check numpy
+
       - name: Run linear Pk precision sequence
         shell: bash
         run: |
