@@ -34,6 +34,11 @@ def physical(s):
 def rewrite_ini(text,root,s):
     ch=physical(s); ch['aest_KB']=KB
     out=[]; seen=set(); lens=False; lm=False; nl=False
+    # These verbosity overrides are diagnostic only.  They do not alter any
+    # frozen physics, likelihood, multipole selection, precision, or optimizer
+    # setting.  Keep them until the v0.62 lensing NaN source is resolved.
+    diag_verbose={'fourier_verbose':'2','transfer_verbose':'1','harmonic_verbose':'1','output_verbose':'1'}
+    diag_seen=set()
     for line in text.splitlines():
         st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
         if st.startswith('root ='):
@@ -46,6 +51,8 @@ def rewrite_ini(text,root,s):
             out.append(f'l_max_scalars = {THEORY_LMAX}'); lm=True
         elif key=='non linear':
             out.append('non linear = halofit'); nl=True
+        elif key in diag_verbose:
+            out.append(f'{key} = {diag_verbose[key]}'); diag_seen.add(key)
         elif key in ch:
             out.append(f'{key} = {ch[key]:.17g}'); seen.add(key)
         else:
@@ -55,6 +62,8 @@ def rewrite_ini(text,root,s):
     if not lens: out.append('lensing = yes')
     if not lm: out.append(f'l_max_scalars = {THEORY_LMAX}')
     if not nl: out.append('non linear = halofit')
+    for key,val in diag_verbose.items():
+        if key not in diag_seen: out.append(f'{key} = {val}')
     out += [
         '# v0.62 predeclared ACT DR6 lensing frozen-model test',
         'aest_memory_enabled = no',
@@ -74,6 +83,20 @@ def run_class(cr,text,s,label,envx=None):
         subprocess.run([str(cr/'class'),ini.name,str(ROOT/'v019p/pre/p3.pre')],cwd=cr,env=env,
                        stdout=f,stderr=subprocess.STDOUT,check=True)
     return cr/'output'/f'v062_{label}__cl.dat'
+
+
+def _print_cl_diagnostics(path,arr):
+    names=['ell','TT','EE','TE','BB','phiphi']
+    stats=[]
+    for j in range(arr.shape[1]):
+        x=np.asarray(arr[:,j],dtype=float)
+        fin=np.isfinite(x)
+        label=names[j] if j < len(names) else f'col{j}'
+        item={'column':j,'name':label,'finite':int(fin.sum()),'total':int(x.size)}
+        if np.any(fin):
+            item['finite_min']=float(np.min(x[fin])); item['finite_max']=float(np.max(x[fin]))
+        stats.append(item)
+    print('V062_CLASS_CL_DIAGNOSTIC '+json.dumps({'path':str(path),'shape':list(arr.shape),'columns':stats},sort_keys=True),flush=True)
 
 
 def load_class_ckk(path):
@@ -96,6 +119,7 @@ def load_class_ckk(path):
     ckk=(np.pi/2.0)*ell*(ell+1.0)*dpp
     finite=np.isfinite(ckk)
     if not np.all(finite):
+        _print_cl_diagnostics(path,arr)
         bad_ell=ell[~finite]
         bad_required=bad_ell[bad_ell <= ACT_REQUIRED_LMAX]
         if bad_required.size:
