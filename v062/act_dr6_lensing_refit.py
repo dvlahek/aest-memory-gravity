@@ -13,6 +13,10 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/'v019/ini/aest_exp.ini'
 KB=0.0665; TAUH0=10.0; LAMBDA=10.0; NITER=3
 THEORY_LMAX=4000; TRIM_LMAX=2998
+# The official ACT loader used below returns a binning matrix with trim_lmax+2
+# columns, corresponding to L=0,...,trim_lmax+1.  Only this support enters the
+# likelihood.  THEORY_LMAX remains the predeclared 4000 theory-support choice.
+ACT_REQUIRED_LMAX=TRIM_LMAX+1
 START={'H0':67.3324639084866,'omega_b':0.022377376877682164,'omega_cdm':0.12006705327635288,
        'tau_reio':0.06174082364515668,'n_s':0.9666229454895277,'lnA_s':math.log(2.1308864352626987e-9)}
 STEP={'H0':START['H0']*0.0025,'omega_b':START['omega_b']*0.005,'omega_cdm':START['omega_cdm']*0.005,
@@ -76,15 +80,44 @@ def load_class_ckk(path):
     arr=np.loadtxt(path)
     if arr.ndim!=2 or arr.shape[1] < 6:
         raise RuntimeError(f'CLASS pCl output missing phi-phi column: {path}, shape={arr.shape}')
+    if not np.all(np.isfinite(arr[:,0])):
+        raise RuntimeError(f'non-finite CLASS ell column: {path}')
     ell=arr[:,0].astype(int)
-    # CLASS default format: every spectrum column is D_l=l(l+1)C_l/(2pi).
-    # The sixth file column (zero-based index 5) is phi-phi; index 4 is BB.
-    # Therefore raw convergence C_l is
+    if ell[-1] < ACT_REQUIRED_LMAX:
+        raise RuntimeError(
+            f'CLASS lensing support ends at L={ell[-1]} < ACT required L={ACT_REQUIRED_LMAX}: {path}'
+        )
+    # CLASS class_format ordering for output=tCl,pCl,lCl is
+    # TT, EE, TE, BB, phi-phi, ...; with ell in file column zero, phi-phi is
+    # therefore file column 5.  CLASS writes D_l=l(l+1)C_l/(2pi).
+    # Hence raw convergence C_l is
     # C_l^{kk}=[l(l+1)]^2 C_l^{phi phi}/4 = (pi/2) l(l+1) D_l^{phi phi}.
     dpp=arr[:,5]
     ckk=(np.pi/2.0)*ell*(ell+1.0)*dpp
-    if not np.all(np.isfinite(ckk)):
-        raise RuntimeError('non-finite CLASS lensing convergence spectrum')
+    finite=np.isfinite(ckk)
+    if not np.all(finite):
+        bad_ell=ell[~finite]
+        bad_required=bad_ell[bad_ell <= ACT_REQUIRED_LMAX]
+        if bad_required.size:
+            shown=','.join(str(int(x)) for x in bad_required[:20])
+            raise RuntimeError(
+                'non-finite CLASS lensing convergence spectrum inside frozen ACT support '
+                f'L<= {ACT_REQUIRED_LMAX}: path={path}, count={bad_required.size}, '
+                f'first_bad_L=[{shown}]'
+            )
+        # Values above L=trim_lmax+1 are never multiplied by the official ACT
+        # binning matrix.  Do not let unused high-L numerical output contaminate
+        # the full-array finiteness guards below.  This does not alter the ACT
+        # multipole selection or any value entering the likelihood.
+        print(
+            'V062_UNUSED_HIGH_L_NONFINITE '
+            f'path={path} count={bad_ell.size} '
+            f'Lmin={int(bad_ell.min())} Lmax={int(bad_ell.max())} '
+            f'ACT_required_Lmax={ACT_REQUIRED_LMAX}',
+            flush=True,
+        )
+        ckk=ckk.copy()
+        ckk[~finite]=0.0
     z=np.zeros(int(ell[-1])+1)
     z[ell]=ckk
     return ell,z
@@ -152,8 +185,8 @@ def fit(mode,cr,out):
     text=BASE.read_text(); hist=[]
     for it in range(NITER):
         B,T,D=generate(cr,text,state,it)
-        if len(B)<=TRIM_LMAX:
-            raise RuntimeError(f'CLASS lensing lmax={len(B)-1} < required {TRIM_LMAX}')
+        if len(B)<=ACT_REQUIRED_LMAX:
+            raise RuntimeError(f'CLASS lensing lmax={len(B)-1} < required {ACT_REQUIRED_LMAX}')
         names=PARAMS+(['eta'] if mode=='free' else [])
         bounds=[]
         for n in names:
