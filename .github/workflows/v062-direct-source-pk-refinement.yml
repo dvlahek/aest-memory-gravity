@@ -114,9 +114,10 @@ jobs:
             raise RuntimeError(f'expected {len(k)} scalar modes, got {len(pt)}')
 
           trace_path=Path(os.environ['AEST_OFFLINE_TRACE_FILE'])
-          tr=np.loadtxt(trace_path,comments='#',skiprows=1)
-          if tr.ndim==1: tr=tr[None,:]
-          unique_trace_k=np.unique(tr[:,0])
+          # Only the first column (k) is needed. Trace rows can legitimately
+          # contain different trailing column counts across record types.
+          trace_k=np.loadtxt(trace_path,comments='#',skiprows=1,usecols=(0,))
+          unique_trace_k=np.unique(np.atleast_1d(trace_k).astype(float))
 
           rows=[]
           for i,(kh_i,k_req,mode) in enumerate(zip(kh,k,pt)):
