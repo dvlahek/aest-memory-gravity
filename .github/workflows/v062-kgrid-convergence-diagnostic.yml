@@ -1,0 +1,206 @@
+name: v062 isolated k-grid convergence diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-kgrid-convergence-diagnostic.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_kgrid
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_kgrid
+          python3 v019i/apply_ic_patch.py class_v062_kgrid
+          python3 v019j/apply_memory_patch.py class_v062_kgrid
+          python3 v019w/apply_variational_forcing_patch.py class_v062_kgrid
+          python3 v019y/apply_output_precision_patch.py class_v062_kgrid
+          python3 v023/apply_source_grid_trace_patch.py class_v062_kgrid
+
+      - name: Build CLASS
+        run: make -C class_v062_kgrid -j2 class
+
+      - name: Install diagnostic Python dependency
+        run: python3 -m pip install --disable-pip-version-check numpy
+
+      - name: Run isolated k-grid ladder
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v062_kgrid/output
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, subprocess
+
+          root=Path('class_v062_kgrid').resolve()
+          base=Path('v019/ini/aest_exp.ini').read_text()
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'omega_cdm':0.12006705327635288,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'aest_KB':0.0665,
+          }
+
+          def make_ini(label):
+            out=[]; seen=set(); lens=False
+            for line in base.splitlines():
+              st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
+              if st.startswith('root ='):
+                out.append(f'root = output/{label}_')
+              elif st.startswith('output ='):
+                out.append('output = mPk')
+              elif st.startswith('lensing ='):
+                out.append('lensing = no'); lens=True
+              elif key=='non linear':
+                continue
+              elif key in pars:
+                out.append(f'{key} = {pars[key]:.17g}'); seen.add(key)
+              elif key in ('input_verbose','background_verbose','thermodynamics_verbose','perturbations_verbose','transfer_verbose','primordial_verbose','harmonic_verbose','fourier_verbose','lensing_verbose','output_verbose'):
+                continue
+              else:
+                out.append(line)
+            miss=set(pars)-seen
+            if miss: raise RuntimeError(f'missing parameters: {sorted(miss)}')
+            if not lens: out.append('lensing = no')
+            out += [
+              '# v0.62 data-blind isolated k-grid convergence diagnostic',
+              'aest_memory_enabled = no',
+              'aest_memory_order = 16',
+              'aest_eta = 0',
+              'aest_tau_H0 = 10',
+              'P_k_max_h/Mpc = 10',
+              'z_pk = 0',
+            ]
+            p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
+
+          # Keep ODE tolerance, source sampling, BAO grid and all physics fixed.
+          # The preceding one-factor test showed tolerance/source sampling had no
+          # measurable effect; only k_per_decade_for_pk changed the spectrum.
+          kpds=[10,20,40,80,160]
+          status={}
+          for kpd in kpds:
+            label=f'kpd{kpd}'
+            pre=root/f'{label}.pre'
+            pre.write_text(
+              'tol_perturb_integration = 5e-8\n'
+              'perturb_sampling_stepsize = 0.0025\n'
+              f'k_per_decade_for_pk = {kpd}\n'
+              'k_per_decade_for_bao = 70\n'
+            )
+            env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+            log=Path('results')/f'{label}.log'
+            with log.open('w') as f:
+              cp=subprocess.run([str(root/'class'),make_ini(label).name,pre.name],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=False)
+            status[label]={'returncode':cp.returncode,'k_per_decade_for_pk':kpd,'tol':5e-8,'sampling':0.0025,'k_per_decade_for_bao':70}
+          Path('results/v062_kgrid_status.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status,indent=2))
+          if any(v['returncode'] for v in status.values()):
+            raise SystemExit('k-grid CLASS run failed; inspect logs')
+          PY
+
+      - name: Quantify successive k-grid convergence
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, numpy as np
+
+          root=Path('class_v062_kgrid/output')
+          kpds=[10,20,40,80,160]
+          names=[f'kpd{x}' for x in kpds]
+          data={n:np.loadtxt(root/f'{n}__pk.dat') for n in names}
+          grid=np.geomspace(1e-4,8.0,2400)
+
+          def log_interp(a):
+            k=a[:,0]; P=a[:,1]
+            good=(k>0)&(P>0)&np.isfinite(P)
+            return np.interp(np.log(grid),np.log(k[good]),np.log(P[good]))
+
+          L={n:log_interp(a) for n,a in data.items()}
+          ranges={
+            'very_low':[1e-4,0.01],
+            'low':[0.01,0.03],
+            'pre_feature':[0.03,0.08],
+            'feature':[0.08,0.15],
+            'post_feature':[0.15,0.30],
+            'transition':[0.30,1.0],
+            'high_k':[1.0,8.0],
+          }
+
+          report={
+            'classification':'V062_ISOLATED_KGRID_CONVERGENCE_DIAGNOSTIC',
+            'fixed':{'tol_perturb_integration':5e-8,'perturb_sampling_stepsize':0.0025,'k_per_decade_for_bao':70},
+            'k_per_decade_for_pk':kpds,
+            'spectra':{},
+            'successive':{},
+          }
+
+          for n,kpd in zip(names,kpds):
+            a=data[n]; k=a[:,0]; P=a[:,1]
+            good=(k>0)&(P>0)&np.isfinite(P)
+            kg=k[good]; Pg=P[good]
+            feat=(kg>=0.08)&(kg<=0.15)
+            slope=np.gradient(np.log(Pg),np.log(kg))
+            imax=np.argmax(Pg[feat]); fk=kg[feat]; fP=Pg[feat]
+            report['spectra'][n]={
+              'rows':int(len(a)),
+              'finite_positive_rows':int(good.sum()),
+              'feature_peak_k':float(fk[imax]),
+              'feature_peak_P':float(fP[imax]),
+              'feature_P_min':float(fP.min()),
+              'feature_slope_min':float(slope[feat].min()),
+              'feature_slope_max':float(slope[feat].max()),
+            }
+
+          for i in range(len(names)-1):
+            a=names[i]; b=names[i+1]
+            pair=f'{a}_to_{b}'
+            r={}
+            for rn,(lo,hi) in ranges.items():
+              m=(grid>=lo)&(grid<=hi)
+              d=L[a][m]-L[b][m]
+              r[rn]={
+                'rms_abs_dlnP':float(np.sqrt(np.mean(d*d))),
+                'max_abs_dlnP':float(np.max(np.abs(d))),
+              }
+            report['successive'][pair]=r
+
+          # A descriptive, non-scientific numerical diagnostic: does the
+          # successive difference shrink as the k grid is doubled?
+          for rn in ranges:
+            seq=[report['successive'][f'{names[i]}_to_{names[i+1]}'][rn]['rms_abs_dlnP'] for i in range(len(names)-1)]
+            report.setdefault('rms_sequences',{})[rn]=seq
+            report.setdefault('last_step_ratio',{})[rn]=(seq[-1]/seq[-2] if seq[-2]>0 else None)
+
+          Path('results/v062_kgrid_convergence.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload k-grid audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_kgrid_convergence_diagnostic
+          path: |
+            results/*.json
+            results/*.log
+            class_v062_kgrid/output/*__pk.dat
