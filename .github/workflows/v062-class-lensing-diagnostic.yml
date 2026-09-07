@@ -1,0 +1,158 @@
+name: v062 CLASS lensing NaN diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-class-lensing-diagnostic.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_diag
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_diag
+          python3 v019i/apply_ic_patch.py class_v062_diag
+          python3 v019j/apply_memory_patch.py class_v062_diag
+          python3 v019w/apply_variational_forcing_patch.py class_v062_diag
+          python3 v019y/apply_output_precision_patch.py class_v062_diag
+          python3 v023/apply_source_grid_trace_patch.py class_v062_diag
+
+      - name: Build CLASS
+        run: make -C class_v062_diag -j2 class
+
+      - name: Run data-blind lensing diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v062_diag/output
+          python3 - <<'PY'
+          from pathlib import Path
+          import math, os, subprocess
+
+          root=Path('class_v062_diag').resolve()
+          base=Path('v019/ini/aest_exp.ini').read_text()
+          params={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'omega_cdm':0.12006705327635288,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'aest_KB':0.0665,
+          }
+
+          def make_ini(label, nonlinear, lmax):
+            out=[]; seen=set(); lens=False; lm=False; nl=False
+            for line in base.splitlines():
+              st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
+              if st.startswith('root ='):
+                out.append(f'root = output/{label}_')
+              elif st.startswith('output ='):
+                out.append('output = tCl,pCl,lCl')
+              elif st.startswith('lensing ='):
+                out.append('lensing = yes'); lens=True
+              elif key=='l_max_scalars':
+                out.append(f'l_max_scalars = {lmax}'); lm=True
+              elif key=='non linear':
+                if nonlinear is not None:
+                  out.append(f'non linear = {nonlinear}')
+                nl=True
+              elif key in params:
+                out.append(f'{key} = {params[key]:.17g}'); seen.add(key)
+              elif key in ('fourier_verbose','transfer_verbose','harmonic_verbose','output_verbose'):
+                out.append(f'{key} = 1')
+              else:
+                out.append(line)
+            miss=set(params)-seen
+            if miss: raise RuntimeError(f'missing params: {sorted(miss)}')
+            if not lens: out.append('lensing = yes')
+            if not lm: out.append(f'l_max_scalars = {lmax}')
+            if nonlinear is not None and not nl: out.append(f'non linear = {nonlinear}')
+            out += [
+              '# v0.62 data-blind CLASS-only lensing diagnostic',
+              'aest_memory_enabled = no',
+              'aest_memory_order = 16',
+              'aest_eta = 0',
+              'aest_tau_H0 = 10',
+              'fourier_verbose = 1',
+              'transfer_verbose = 1',
+              'harmonic_verbose = 1',
+              'output_verbose = 1',
+            ]
+            p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
+
+          variants=[
+            ('halofit_l4000','halofit',4000),
+            ('linear_l4000',None,4000),
+            ('halofit_l3000','halofit',3000),
+          ]
+          for label,nl,lmax in variants:
+            ini=make_ini(label,nl,lmax)
+            env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+            log=Path('results')/f'{label}.log'
+            with log.open('w') as f:
+              subprocess.run([str(root/'class'),ini.name,str(Path('v019p/pre/p3.pre').resolve())],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=True)
+          PY
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, math
+          variants=['halofit_l4000','linear_l4000','halofit_l3000']
+          report={}
+          for label in variants:
+            p=Path('class_v062_diag/output')/f'{label}__cl.dat'
+            rows=[]
+            for line in p.read_text().splitlines():
+              s=line.strip()
+              if not s or s.startswith('#'): continue
+              vals=[float(x) for x in s.split()]
+              rows.append(vals)
+            ncol=min(len(r) for r in rows)
+            cols=[]
+            for j in range(ncol):
+              vals=[r[j] for r in rows]
+              fin=[math.isfinite(x) for x in vals]
+              fv=[x for x,f in zip(vals,fin) if f]
+              cols.append({
+                'index':j,
+                'finite':sum(fin),
+                'total':len(vals),
+                'min_finite':min(fv) if fv else None,
+                'max_finite':max(fv) if fv else None,
+              })
+            bad_phi=[int(rows[i][0]) for i in range(len(rows)) if ncol>5 and not math.isfinite(rows[i][5])]
+            report[label]={
+              'rows':len(rows),'columns':ncol,'column_stats':cols,
+              'phi_phi_bad_count':len(bad_phi),
+              'phi_phi_first_bad_ell':bad_phi[:30],
+              'phi_phi_last_bad_ell':bad_phi[-10:] if bad_phi else [],
+            }
+          Path('results/v062_class_lensing_diagnostic.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_class_lensing_diagnostic
+          path: |
+            results/v062_class_lensing_diagnostic.json
+            results/*.log
+            class_v062_diag/output/*__cl.dat
