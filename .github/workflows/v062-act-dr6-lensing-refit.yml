@@ -119,6 +119,7 @@ jobs:
             results/v062_act_lensing_${{ matrix.mode }}.json
             results/v062_it*_forcing.json
             results/v062_*.log
+            class_v062/output/v062_it0_base__cl.dat
 
   compare:
     needs: fit
