@@ -1,0 +1,90 @@
+{
+  "classification": "V066_PREDATA_REDSHIFT_SCALE_MEMORY_FINGERPRINT",
+  "created_before_v066_result": true,
+  "uses_observational_data": false,
+  "purpose": "Test whether the eta=0 memory tangent has a scale- and redshift-dependent shape that cannot be reduced to a pure growth-amplitude rescaling, and quantify the component orthogonal to standard cosmological tangent directions before any joint observational fit.",
+  "dependency": {
+    "required_prior_result": "V062_SMOOTH_LIMIT_CERTIFIED",
+    "policy_if_not_certified": "Do not execute or interpret the fingerprint map on the old/default ODE solution. First resolve the linear perturbation solver limit.",
+    "solver_policy": "Use exactly the solver tolerance, perturbation step-size, and start-time settings certified by the final v0.62 smooth-limit audit."
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9,
+      "N_ur": 2.046,
+      "N_ncdm": 1,
+      "m_ncdm": 0.06,
+      "T_ncdm": 0.7137658555036082,
+      "YHe": 0.2454006
+    },
+    "linear_theory_only": true,
+    "memory_background_correction": 0,
+    "memory_direct_linear_Einstein_stress": 0
+  },
+  "eta_tangent": {
+    "definition": "R_D(k,z)=d ln D(k,z)/d eta at eta=0",
+    "symmetric_numerical_amplifications": [2.5, 1.25, 0.625, 0.3125],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "zero_amplitude_fit": "R(lambda,k,z)=R0(k,z)+c2(k,z) lambda^2",
+    "primary_output": "R0(k,z)"
+  },
+  "fixed_grid": {
+    "k_h_per_Mpc": [0.01, 0.02, 0.03, 0.05, 0.08, 0.1, 0.15, 0.2, 0.3],
+    "z": [0.0, 0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0],
+    "no_post_hoc_point_selection": true
+  },
+  "primary_tests": {
+    "amplitude_only_null": {
+      "model": "R0(k,z)=constant",
+      "residual": "R_amp_perp=R0-mean_weighted(R0)",
+      "purpose": "Reject the interpretation that memory only rescales the overall growth amplitude."
+    },
+    "redshift_shape_null": {
+      "model": "At each k remove the best constant-in-z component.",
+      "residual": "R_z_perp(k,z)=R0(k,z)-mean_z[R0(k,z)]",
+      "purpose": "Measure genuine temporal shape rather than an amplitude shift."
+    },
+    "scale_shape_null": {
+      "model": "At each z remove the best constant-in-k component.",
+      "residual": "R_k_perp(k,z)=R0(k,z)-mean_k[R0(k,z)]",
+      "purpose": "Measure genuine scale dependence."
+    }
+  },
+  "standard_cosmology_tangent_challenge": {
+    "parameters": ["lnA_s", "n_s", "omega_b", "omega_cdm", "H0", "m_ncdm"],
+    "derivative_policy": "Use symmetric finite differences around the frozen cosmology, with fixed predeclared parameter steps stored in the executable before results are read.",
+    "design_matrix": "Columns are d ln D(k,z)/d theta_i evaluated on the same fixed k-z grid.",
+    "projection": "R_eta_perp=(I-P_theta) R0 using an unweighted Euclidean projection on the fixed grid for the theory-only test.",
+    "primary_uniqueness_metric": "orthogonal_fraction=||R_eta_perp||_2/||R0||_2",
+    "secondary_metrics": ["cosine_to_each_standard_tangent", "condition_number_of_standard_tangent_matrix", "best_fit_standard_parameter_coefficients"]
+  },
+  "numerical_gates": {
+    "all_R0_finite": true,
+    "lambda_limit_convergence": "For each fixed grid point, abs[R(0.3125)-R(0.625)] <= abs[R(1.25)-R(2.5)] unless both differences are below 1e-6.",
+    "minimum_fraction_grid_points_stabilizing": 0.9,
+    "repeatability": "The final R0 map must agree under the certified step-size/start-time control at normalized RMS < 1e-3.",
+    "no_root_or_sign_singularity_selection": true
+  },
+  "classification_policy": {
+    "numerical_fail": "V066_MEMORY_FINGERPRINT_NUMERICAL_FAIL",
+    "amplitude_only": "V066_MEMORY_RESPONSE_AMPLITUDE_ONLY",
+    "shape_detected_but_degenerate": "V066_MEMORY_SHAPE_STANDARD_DEGENERATE",
+    "distinct_tangent_shape": "V066_MEMORY_DISTINCT_TANGENT_SHAPE",
+    "note": "No observational significance threshold is claimed in v0.66. This is a theory-only identifiability test."
+  },
+  "observational_followup_if_distinct": {
+    "datasets": ["CMB lensing", "RSD f sigma8(z)", "weak-lensing tomography"],
+    "joint_parameter": "one shared eta across all probes",
+    "goal": "Test whether the same nonzero eta explains the redshift-dependent lensing and growth response after standard cosmological parameters are marginalized."
+  },
+  "anti_tuning": "Do not alter the fixed k-z grid, tangent-amplification sequence, standard-parameter list, projection definition, or classifications after reading the v0.66 result. If the v0.62 smooth-limit dependency fails, v0.66 remains preregistered but is not executed until a certified linear solver configuration exists."
+}
