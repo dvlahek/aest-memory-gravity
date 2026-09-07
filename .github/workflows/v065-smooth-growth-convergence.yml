@@ -1,0 +1,94 @@
+name: v065 data-blind smooth-growth tangent convergence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v065/**'
+      - '.github/workflows/v065-smooth-growth-convergence.yml'
+
+jobs:
+  smooth-growth-convergence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v065
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v065
+          python3 v019i/apply_ic_patch.py class_v065
+          python3 v019j/apply_memory_patch.py class_v065
+          python3 v019w/apply_variational_forcing_patch.py class_v065
+          python3 v019y/apply_output_precision_patch.py class_v065
+          python3 v023/apply_source_grid_trace_patch.py class_v065
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v065
+
+      - name: Build CLASS executable
+        run: make -C class_v065 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v065 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v065/smooth_growth_convergence.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v065/predata_smooth_growth_convergence.json'))
+          assert d['classification']=='V065_PREDATA_SMOOTH_GROWTH_CONVERGENCE'
+          assert d['created_before_v065_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['frozen_model']['KB']==0.0665
+          assert d['frozen_model']['tauH0']==10.0
+          assert d['frozen_model']['p']==0.0
+          assert d['frozen_model']['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['frozen_model']['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          assert d['frozen_model']['lambda_is_numerical_tangent_amplification_not_physical_eta'] is True
+          assert d['primary_observable']['primary_redshifts']==[0.2,0.3,0.4,0.5,0.6,0.7,0.8]
+          assert d['primary_observable']['context_redshifts']==[1.0,1.2,1.5]
+          assert d['gates']['minimum_primary_redshifts_stabilizing']==6
+          assert d['gates']['number_primary_redshifts']==7
+          print('V065_PREDATA_SMOOTH_GROWTH_CONVERGENCE_AUDIT_PASS')
+          PY
+
+      - name: Run zero-amplitude smooth-growth convergence
+        shell: bash
+        run: |
+          set -euo pipefail
+          # v0.65 uses only matter/growth outputs. Remove the inherited CMB
+          # lensing-output request from the old benchmark ini without changing
+          # the perturbation equations or the frozen physical model.
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v065/smooth_growth_convergence.py \
+            --class-root class_v065 \
+            --json-out results/v065_smooth_growth_convergence.json \
+            --npz-out results/v065_smooth_growth_convergence.npz
+
+      - name: Upload v0.65 convergence bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v065_smooth_growth_convergence
+          path: |
+            results/v065_smooth_growth_convergence.json
+            results/v065_smooth_growth_convergence.npz
+            results/v063_theory_forcing.json
+            results/v063_theory_trace.log
