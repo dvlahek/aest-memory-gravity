@@ -74,13 +74,14 @@ def run_class(cr,text,s,label,envx=None):
 
 def load_class_ckk(path):
     arr=np.loadtxt(path)
-    if arr.ndim!=2 or arr.shape[1] < 5:
+    if arr.ndim!=2 or arr.shape[1] < 6:
         raise RuntimeError(f'CLASS pCl output missing phi-phi column: {path}, shape={arr.shape}')
     ell=arr[:,0].astype(int)
-    # CLASS default format: every column is D_l=l(l+1)C_l/(2pi), and for pCl
-    # column 5 is C_l^{phi phi}.  Therefore raw convergence C_l is
+    # CLASS default format: every spectrum column is D_l=l(l+1)C_l/(2pi).
+    # The sixth file column (zero-based index 5) is phi-phi; index 4 is BB.
+    # Therefore raw convergence C_l is
     # C_l^{kk}=[l(l+1)]^2 C_l^{phi phi}/4 = (pi/2) l(l+1) D_l^{phi phi}.
-    dpp=arr[:,4]
+    dpp=arr[:,5]
     ckk=(np.pi/2.0)*ell*(ell+1.0)*dpp
     if not np.all(np.isfinite(ckk)):
         raise RuntimeError('non-finite CLASS lensing convergence spectrum')
