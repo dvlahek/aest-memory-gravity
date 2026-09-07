@@ -1,0 +1,200 @@
+name: v062 AeST Halofit interface diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-halofit-interface-diagnostic.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_halofit_diag
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_halofit_diag
+          python3 v019i/apply_ic_patch.py class_v062_halofit_diag
+          python3 v019j/apply_memory_patch.py class_v062_halofit_diag
+          python3 v019w/apply_variational_forcing_patch.py class_v062_halofit_diag
+          python3 v019y/apply_output_precision_patch.py class_v062_halofit_diag
+          python3 v023/apply_source_grid_trace_patch.py class_v062_halofit_diag
+
+      - name: Add diagnostic-only Halofit finite audits
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root=Path('class_v062_halofit_diag')
+
+          p=root/'source/fourier.c'
+          s=p.read_text()
+          old='''             for (index_k=0; index_k<pfo->k_size; index_k++) {\n               pfo->nl_corr_density[index_pk][index_tau * pfo->k_size + index_k] = sqrt(pk_nl[index_pk][index_k]/exp(lnpk_l[index_pk][index_k]));\n             }'''
+          new='''             for (index_k=0; index_k<pfo->k_size; index_k++) {\n               static int v062_diag_ratio_printed = 0;\n               double v062_pl = exp(lnpk_l[index_pk][index_k]);\n               double v062_ratio = pk_nl[index_pk][index_k]/v062_pl;\n               double v062_corr = sqrt(v062_ratio);\n               if ((!isfinite(v062_pl) || !isfinite(pk_nl[index_pk][index_k]) || !isfinite(v062_ratio) || !isfinite(v062_corr) || v062_ratio < 0.) && v062_diag_ratio_printed < 12) {\n                 fprintf(stderr,\n                         "V062_NL_RATIO_BAD index_tau=%d tau=%.17g index_pk=%d index_k=%d k=%.17g Pl=%.17g Pnl=%.17g ratio=%.17g corr=%.17g\\n",\n                         index_tau,pfo->tau[index_tau],index_pk,index_k,pfo->k[index_k],v062_pl,pk_nl[index_pk][index_k],v062_ratio,v062_corr);\n                 v062_diag_ratio_printed++;\n               }\n               pfo->nl_corr_density[index_pk][index_tau * pfo->k_size + index_k] = v062_corr;\n             }'''
+          if s.count(old) != 1:
+              raise RuntimeError(f'fourier diagnostic anchor count={s.count(old)}')
+          p.write_text(s.replace(old,new,1))
+
+          p=root/'external/Halofit/halofit.c'
+          s=p.read_text()
+          old='''  rknl  = 1./rmid;\n  rneff = -3.-d1;\n  rncur = -d2;\n\n  *k_nl = rknl;'''
+          new='''  rknl  = 1./rmid;\n  rneff = -3.-d1;\n  rncur = -d2;\n\n  if (!isfinite(rknl) || !isfinite(rneff) || !isfinite(rncur) || Omega_m <= 0. || fabs(rneff) > 10. || fabs(rncur) > 10.) {\n    fprintf(stderr,\n            "V062_HALOFIT_SHAPE tau=%.17g z=%.17g index_pk=%d Omega_m=%.17g Omega_v=%.17g w=%.17g sigma=%.17g rknl=%.17g rneff=%.17g rncur=%.17g sum1=%.17g sum2=%.17g sum3=%.17g\\n",\n            tau,1./pvecback[pba->index_bg_a]-1.,index_pk,Omega_m,Omega_v,w,sigma,rknl,rneff,rncur,sum1,sum2,sum3);\n  }\n\n  *k_nl = rknl;'''
+          if s.count(old) != 1:
+              raise RuntimeError(f'halofit shape diagnostic anchor count={s.count(old)}')
+          s=s.replace(old,new,1)
+
+          old='''      pk_nl[index_k] = (pk_halo+pk_quasi)/pow(pfo->k[index_k],3)/anorm;\n\n      /* in original halofit, this is the end of the function halofit() */'''
+          new='''      pk_nl[index_k] = (pk_halo+pk_quasi)/pow(pfo->k[index_k],3)/anorm;\n\n      {\n        static int v062_diag_pnl_printed = 0;\n        if ((!isfinite(pk_nl[index_k]) || pk_nl[index_k] <= 0.) && v062_diag_pnl_printed < 12) {\n          fprintf(stderr,\n                  "V062_HALOFIT_PNL_BAD tau=%.17g z=%.17g index_pk=%d index_k=%d k=%.17g Omega_m=%.17g rknl=%.17g rneff=%.17g rncur=%.17g a=%.17g b=%.17g c=%.17g gam=%.17g alpha=%.17g beta=%.17g f1=%.17g f2=%.17g f3=%.17g pk_lin=%.17g pk_halo=%.17g pk_quasi=%.17g Pnl=%.17g\\n",\n                  tau,1./pvecback[pba->index_bg_a]-1.,index_pk,index_k,rk,Omega_m,rknl,rneff,rncur,a,b,c,gam,alpha,beta,f1,f2,f3,pk_lin,pk_halo,pk_quasi,pk_nl[index_k]);\n          v062_diag_pnl_printed++;\n        }\n      }\n\n      /* in original halofit, this is the end of the function halofit() */'''
+          if s.count(old) != 1:
+              raise RuntimeError(f'halofit Pnl diagnostic anchor count={s.count(old)}')
+          p.write_text(s.replace(old,new,1))
+          PY
+
+      - name: Build CLASS
+        run: make -C class_v062_halofit_diag -j2 class
+
+      - name: Run data-blind AeST and LCDM controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results class_v062_halofit_diag/output
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, math, os, subprocess
+
+          root=Path('class_v062_halofit_diag').resolve()
+          base=Path('v019/ini/aest_exp.ini').read_text()
+          params={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'omega_cdm':0.12006705327635288,
+            'tau_reio':0.06174082364515668,
+            'n_s':0.9666229454895277,
+            'A_s':2.1308864352626987e-9,
+            'aest_KB':0.0665,
+          }
+
+          def make_ini(label, nonlinear, aest_enabled):
+            out=[]; seen=set(); lens=False; lm=False; nl=False; ae=False
+            for line in base.splitlines():
+              st=line.strip(); key=st.split('=',1)[0].strip() if '=' in st else None
+              if st.startswith('root ='):
+                out.append(f'root = output/{label}_')
+              elif st.startswith('output ='):
+                out.append('output = tCl,pCl,lCl,mPk')
+              elif st.startswith('lensing ='):
+                out.append('lensing = yes'); lens=True
+              elif key=='l_max_scalars':
+                out.append('l_max_scalars = 4000'); lm=True
+              elif key=='non linear':
+                if nonlinear is not None: out.append(f'non linear = {nonlinear}')
+                nl=True
+              elif key=='aest_enabled':
+                out.append(f'aest_enabled = {"yes" if aest_enabled else "no"}'); ae=True
+              elif key in params:
+                out.append(f'{key} = {params[key]:.17g}'); seen.add(key)
+              elif key in ('fourier_verbose','transfer_verbose','harmonic_verbose','output_verbose'):
+                continue
+              else:
+                out.append(line)
+            miss=set(params)-seen
+            if miss: raise RuntimeError(f'missing params: {sorted(miss)}')
+            if not lens: out.append('lensing = yes')
+            if not lm: out.append('l_max_scalars = 4000')
+            if nonlinear is not None and not nl: out.append(f'non linear = {nonlinear}')
+            if not ae: out.append(f'aest_enabled = {"yes" if aest_enabled else "no"}')
+            out += [
+              '# v0.62 data-blind Halofit interface diagnostic only',
+              'aest_memory_enabled = no',
+              'aest_memory_order = 16',
+              'aest_eta = 0',
+              'aest_tau_H0 = 10',
+            ]
+            p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
+
+          variants=[
+            ('aest_halofit','halofit',True),
+            ('aest_linear',None,True),
+            ('lcdm_halofit','halofit',False),
+          ]
+          status={}
+          for label,nl,ae in variants:
+            ini=make_ini(label,nl,ae)
+            env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+            log=Path('results')/f'{label}.log'
+            with log.open('w') as f:
+              cp=subprocess.run([str(root/'class'),ini.name,str(Path('v019p/pre/p3.pre').resolve())],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,check=False)
+            status[label]={'returncode':cp.returncode}
+          Path('results/v062_halofit_interface_status.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status,indent=2))
+          if any(x['returncode'] != 0 for x in status.values()):
+            raise SystemExit('one or more CLASS diagnostic controls returned nonzero; inspect uploaded logs')
+          PY
+
+      - name: Summarize spectra
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, math
+          report={}
+          for label in ['aest_halofit','aest_linear','lcdm_halofit']:
+            p=Path('class_v062_halofit_diag/output')/f'{label}__cl.dat'
+            if not p.exists():
+              report[label]={'cl_exists':False}; continue
+            rows=[]
+            for line in p.read_text().splitlines():
+              s=line.strip()
+              if not s or s.startswith('#'): continue
+              rows.append([float(x) for x in s.split()])
+            ncol=min(len(r) for r in rows)
+            bad_phi=[int(r[0]) for r in rows if ncol>5 and not math.isfinite(r[5])]
+            report[label]={
+              'cl_exists':True,
+              'rows':len(rows),
+              'columns':ncol,
+              'phi_phi_finite':len(rows)-len(bad_phi),
+              'phi_phi_nonfinite':len(bad_phi),
+              'first_bad_ell':bad_phi[:20],
+            }
+            pk=Path('class_v062_halofit_diag/output')/f'{label}__pk.dat'
+            if pk.exists():
+              prows=[]
+              for line in pk.read_text().splitlines():
+                s=line.strip()
+                if not s or s.startswith('#'): continue
+                vals=[float(x) for x in s.split()]
+                prows.append(vals)
+              bad=[i for i,r in enumerate(prows) if any(not math.isfinite(x) for x in r)]
+              report[label]['pk_rows']=len(prows)
+              report[label]['pk_nonfinite_rows']=len(bad)
+          Path('results/v062_halofit_interface_summary.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload interface audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_halofit_interface_diagnostic
+          path: |
+            results/*.json
+            results/*.log
+            class_v062_halofit_diag/output/*__cl.dat
+            class_v062_halofit_diag/output/*__pk.dat
