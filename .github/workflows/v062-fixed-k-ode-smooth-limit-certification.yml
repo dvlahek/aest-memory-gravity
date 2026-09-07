@@ -1,0 +1,60 @@
+name: v062 final smooth-limit ODE certification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-fixed-k-ode-smooth-limit-certification.yml'
+      - 'v062/run_fixed_k_ode_smooth_limit_certification.py'
+
+jobs:
+  smooth-limit-certification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_odeconv
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_odeconv
+          python3 v019i/apply_ic_patch.py class_v062_odeconv
+          python3 v019j/apply_memory_patch.py class_v062_odeconv
+          python3 v019w/apply_variational_forcing_patch.py class_v062_odeconv
+          python3 v019y/apply_output_precision_patch.py class_v062_odeconv
+          python3 v023/apply_source_grid_trace_patch.py class_v062_odeconv
+
+      - name: Build patched CLASS Python interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check numpy scipy cython setuptools wheel
+          make -C class_v062_odeconv -j2 classy
+
+      - name: Run final smooth-limit certification
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v062/run_fixed_k_ode_smooth_limit_certification.py
+
+      - name: Upload smooth-limit certification artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_fixed_k_ode_smooth_limit_certification
+          path: |
+            results/v062_fixed_k_ode_smooth_limit_certification.json
+            results/v062_fixed_k_ode_smooth_limit_certification_rows.csv
+            results/v062_odeconv_ndf15_t*.json
+            results/v062_odeconv_ndf15_t*_trace.dat
+          if-no-files-found: warn
