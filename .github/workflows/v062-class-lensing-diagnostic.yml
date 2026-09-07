@@ -76,7 +76,10 @@ jobs:
               elif key in params:
                 out.append(f'{key} = {params[key]:.17g}'); seen.add(key)
               elif key in ('fourier_verbose','transfer_verbose','harmonic_verbose','output_verbose'):
-                out.append(f'{key} = 1')
+                # p3.pre is passed as the second CLASS input file and already
+                # owns diagnostic verbosity where defined.  Do not duplicate
+                # these parser keys in the generated ini.
+                continue
               else:
                 out.append(line)
             miss=set(params)-seen
@@ -90,10 +93,6 @@ jobs:
               'aest_memory_order = 16',
               'aest_eta = 0',
               'aest_tau_H0 = 10',
-              'fourier_verbose = 1',
-              'transfer_verbose = 1',
-              'harmonic_verbose = 1',
-              'output_verbose = 1',
             ]
             p=root/f'{label}.ini'; p.write_text('\n'.join(out)+'\n'); return p
 
