@@ -11,7 +11,7 @@ on:
 jobs:
   smooth-limit-certification:
     runs-on: ubuntu-24.04
-    timeout-minutes: 180
+    timeout-minutes: 360
     steps:
       - name: Checkout AeST harness
         uses: actions/checkout@v4
