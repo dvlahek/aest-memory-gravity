@@ -114,7 +114,7 @@ jobs:
             raise RuntimeError(f'expected {len(k)} scalar modes, got {len(pt)}')
 
           trace_path=Path(os.environ['AEST_OFFLINE_TRACE_FILE'])
-          tr=np.loadtxt(trace_path,comments='#')
+          tr=np.loadtxt(trace_path,comments='#',skiprows=1)
           if tr.ndim==1: tr=tr[None,:]
           unique_trace_k=np.unique(tr[:,0])
 
@@ -167,7 +167,8 @@ jobs:
               by.setdefault(round(r['kh_requested'],7),[]).append(r)
             merged=[]
             for kh_key,rs in sorted(by.items()):
-              base=dict(rs[0]); base['copies']=len(rs)
+              base=dict(rs[0])
+              base['copies']=len(rs)
               if len(rs)>1:
                 p=np.array([x['P_direct_Mpc3'] for x in rs],float)
                 s=np.array([x['delta_m_gi_final'] for x in rs],float)
