@@ -1,0 +1,325 @@
+name: v062 component-exact direct-source P(k) audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-direct-source-pk-component-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_directpk_component
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_directpk_component
+          python3 v019i/apply_ic_patch.py class_v062_directpk_component
+          python3 v019j/apply_memory_patch.py class_v062_directpk_component
+          python3 v019w/apply_variational_forcing_patch.py class_v062_directpk_component
+          python3 v019y/apply_output_precision_patch.py class_v062_directpk_component
+          python3 v023/apply_source_grid_trace_patch.py class_v062_directpk_component
+
+      - name: Build patched CLASS Python interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check numpy scipy cython setuptools wheel
+          make -C class_v062_directpk_component -j2 classy
+
+      - name: Run component-exact coarse map and adaptive refinement
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv, json, math, os, subprocess, sys
+          import numpy as np
+
+          results=Path('results').resolve()
+          h=67.3324639084866/100.0
+          As=2.1308864352626987e-9
+          ns=0.9666229454895277
+          kpivot=0.05
+          anchors=[0.100,0.134,0.148]
+
+          batch_script=results/'_v062_component_directpk_batch.py'
+          batch_script.write_text(r'''
+          import json, math, os, sys
+          from pathlib import Path
+          import numpy as np
+          from classy import Class
+
+          stage=sys.argv[1]
+          batch_id=int(sys.argv[2])
+          kh=[float(x) for x in json.loads(sys.argv[3])]
+          h=67.3324639084866/100.0
+          As=2.1308864352626987e-9
+          ns=0.9666229454895277
+          kpivot=0.05
+          k=[x*h for x in kh]
+
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'N_ur':2.046,
+            'omega_cdm':0.12006705327635288,
+            'N_ncdm':1,
+            'm_ncdm':0.06,
+            'T_ncdm':0.7137658555036082,
+            'YHe':0.2454006,
+            'tau_reio':0.06174082364515668,
+            'n_s':ns,
+            'A_s':As,
+            'gauge':'newtonian',
+            'aest_enabled':'yes',
+            'aest_model':'Exp',
+            'aest_KB':0.0665,
+            'aest_Q0':1e-4,
+            'aest_K2':9500,
+            'aest_Z0':1e-17,
+            'aest_memory_enabled':'no',
+            'aest_memory_order':16,
+            'aest_eta':0,
+            'aest_tau_H0':10,
+            'output':'mPk',
+            'lensing':'no',
+            'P_k_max_h/Mpc':10,
+            'z_pk':0,
+            'k_per_decade_for_pk':40,
+            'k_per_decade_for_bao':70,
+            'k_output_values':', '.join(f'{x:.17g}' for x in k),
+          }
+
+          cosmo=Class(); cosmo.set(pars); cosmo.compute()
+          pt=cosmo.get_perturbations()['scalar']
+          if len(pt)!=len(k):
+            raise RuntimeError(f'expected {len(k)} scalar modes, got {len(pt)}')
+
+          bg=cosmo.get_background()
+          if 'z' not in bg:
+            raise RuntimeError(f'background has no z column; keys={list(bg.keys())}')
+          iz=int(np.argmin(np.abs(np.asarray(bg['z'],float))))
+          def bgv(key):
+            if key not in bg:
+              raise RuntimeError(f'missing background key {key}; available={list(bg.keys())}')
+            return float(np.asarray(bg[key],float)[iz])
+          rho_b=bgv('(.)rho_b')
+          rho_cdm=bgv('(.)rho_cdm')
+          rho_ncdm=bgv('(.)rho_ncdm[0]')
+          p_ncdm=bgv('(.)p_ncdm[0]')
+          H=bgv('H [1/Mpc]')
+
+          # CLASS perturbations.c matter source at z=0:
+          # delta_m = sum rho_i delta_i / sum rho_i
+          # theta_m = sum (rho_i+p_i) theta_i / sum (rho_i+p_i)
+          rho_m=rho_b+rho_cdm+rho_ncdm
+          rho_plus_p_m=rho_b+rho_cdm+rho_ncdm+p_ncdm
+
+          trace_path=Path(os.environ['AEST_OFFLINE_TRACE_FILE'])
+          trace_k=np.loadtxt(trace_path,comments='#',skiprows=1,usecols=(0,))
+          unique_trace_k=np.unique(np.atleast_1d(trace_k).astype(float))
+
+          rows=[]
+          required={'a','delta_b','theta_b','delta_cdm','theta_cdm','delta_ncdm[0]','theta_ncdm[0]'}
+          for i,(kh_i,k_req,mode) in enumerate(zip(kh,k,pt)):
+            keys=set(mode.keys())
+            missing=required-keys
+            if missing:
+              raise RuntimeError(f'missing component keys {sorted(missing)}; available={sorted(keys)}')
+            a=float(np.asarray(mode['a'],float)[-1])
+            db=float(np.asarray(mode['delta_b'],float)[-1])
+            tb=float(np.asarray(mode['theta_b'],float)[-1])
+            dc=float(np.asarray(mode['delta_cdm'],float)[-1])
+            tc=float(np.asarray(mode['theta_cdm'],float)[-1])
+            dn=float(np.asarray(mode['delta_ncdm[0]'],float)[-1])
+            tn=float(np.asarray(mode['theta_ncdm[0]'],float)[-1])
+            k_actual=float(unique_trace_k[np.argmin(np.abs(unique_trace_k-k_req))])
+
+            delta_m=(rho_b*db+rho_cdm*dc+rho_ncdm*dn)/rho_m
+            theta_m=(rho_b*tb+rho_cdm*tc+(rho_ncdm+p_ncdm)*tn)/rho_plus_p_m
+            delta_m_gi=delta_m+3.0*a*H*theta_m/(k_actual*k_actual)
+            PR=As*(k_actual/kpivot)**(ns-1.0)
+            P_direct=(2.0*math.pi**2/k_actual**3)*(delta_m_gi**2)*PR
+            P_class=float(cosmo.pk_lin(k_actual,0.0))
+            rows.append({
+              'stage':stage,'batch':batch_id,'mode_index':i,
+              'kh_requested':kh_i,'k_requested_Mpc':k_req,
+              'kh_actual':k_actual/h,'k_actual_Mpc':k_actual,
+              'k_relative_offset':abs(k_actual-k_req)/max(abs(k_req),1e-300),
+              'a_final':a,
+              'delta_b_final':db,'theta_b_final':tb,
+              'delta_cdm_final':dc,'theta_cdm_final':tc,
+              'delta_ncdm_final':dn,'theta_ncdm_final':tn,
+              'delta_m_current_final':delta_m,
+              'theta_m_current_final':theta_m,
+              'delta_m_gi_final':delta_m_gi,
+              'P_direct_Mpc3':P_direct,
+              'P_class_Mpc3':P_class,
+              'P_direct_over_class':P_direct/P_class if P_class>0 else None,
+              'rho_b_z0':rho_b,'rho_cdm_z0':rho_cdm,
+              'rho_ncdm_z0':rho_ncdm,'p_ncdm_z0':p_ncdm,
+              'H_z0_Mpc_inv':H,
+            })
+
+          out=Path('results')/f'v062_component_directpk_{stage}_batch_{batch_id}.json'
+          out.write_text(json.dumps({'stage':stage,'batch':batch_id,'rows':rows},indent=2)+'\n')
+          cosmo.struct_cleanup(); cosmo.empty()
+          print(json.dumps({'stage':stage,'batch':batch_id,'n':len(rows),'kh_min':min(kh),'kh_max':max(kh)},indent=2))
+          ''')
+
+          def run_stage(stage, targets):
+            payload=[float(x) for x in sorted(set(round(float(v),7) for v in targets)) if round(float(x),7) not in anchors]
+            chunks=[payload[i:i+27] for i in range(0,len(payload),27)]
+            rows=[]
+            for bi,ch in enumerate(chunks):
+              vals=sorted(set(ch+anchors))
+              env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+              env['AEST_OFFLINE_TRACE_FILE']=str(results/f'v062_component_directpk_{stage}_batch_{bi}_trace.dat')
+              cp=subprocess.run([sys.executable,str(batch_script),stage,str(bi),json.dumps(vals)],env=env,check=False)
+              if cp.returncode:
+                raise SystemExit(f'{stage} batch {bi} failed with return code {cp.returncode}')
+              rows.extend(json.loads((results/f'v062_component_directpk_{stage}_batch_{bi}.json').read_text())['rows'])
+            by={}
+            for r in rows:
+              by.setdefault(round(r['kh_requested'],7),[]).append(r)
+            merged=[]
+            for _,rs in sorted(by.items()):
+              base=dict(rs[0]); base['copies']=len(rs)
+              if len(rs)>1:
+                p=np.array([x['P_direct_Mpc3'] for x in rs],float)
+                s=np.array([x['delta_m_gi_final'] for x in rs],float)
+                base['P_direct_relative_spread']=float((p.max()-p.min())/max(abs(p).mean(),1e-300))
+                base['source_relative_spread']=float((s.max()-s.min())/max(abs(s).mean(),1e-300))
+              else:
+                base['P_direct_relative_spread']=0.0
+                base['source_relative_spread']=0.0
+              merged.append(base)
+            return merged
+
+          coarse=[]
+          coarse += list(np.round(np.arange(0.060,0.080,0.002),6))
+          coarse += list(np.round(np.arange(0.080,0.171,0.001),6))
+          coarse += list(np.round(np.arange(0.172,0.202,0.002),6))
+          coarse=sorted(set(float(x) for x in coarse))
+          coarse_rows=run_stage('coarse',coarse)
+
+          kh=np.array([r['kh_requested'] for r in coarse_rows],float)
+          src=np.array([r['delta_m_gi_final'] for r in coarse_rows],float)
+          pd=np.array([r['P_direct_Mpc3'] for r in coarse_rows],float)
+
+          centers=[]
+          for i in range(len(kh)-1):
+            if src[i]==0 or src[i]*src[i+1]<0:
+              centers.append(0.5*(kh[i]+kh[i+1]))
+          for i in range(1,len(kh)-1):
+            if pd[i] < 0.15*min(pd[i-1],pd[i+1]):
+              centers.append(kh[i])
+          centers=sorted(set(round(float(x),6) for x in centers if 0.075 <= x <= 0.180))
+
+          refine=[]
+          for cen in centers:
+            refine += list(np.round(np.arange(cen-0.0004,cen+0.0004001,0.00005),7))
+          refine=[x for x in sorted(set(float(v) for v in refine)) if 0.06 <= x <= 0.202]
+          if len(refine)>500:
+            raise RuntimeError(f'adaptive refinement generated {len(refine)} points > 500 safety cap')
+          refine_rows=run_stage('refine',refine) if refine else []
+
+          all_rows={}
+          for r in coarse_rows+refine_rows:
+            key=round(r['kh_requested'],7)
+            if key not in all_rows or r['stage']=='refine':
+              all_rows[key]=r
+          merged=[all_rows[k] for k in sorted(all_rows)]
+          mk=np.array([r['kh_requested'] for r in merged],float)
+          ms=np.array([r['delta_m_gi_final'] for r in merged],float)
+          mp=np.array([r['P_direct_Mpc3'] for r in merged],float)
+
+          roots=[]
+          for i in range(len(mk)-1):
+            if ms[i]==0:
+              roots.append(float(mk[i]))
+            elif ms[i]*ms[i+1]<0:
+              roots.append(float(mk[i]+(mk[i+1]-mk[i])*(-ms[i])/(ms[i+1]-ms[i])))
+
+          extrema=[]
+          for i in range(1,len(mk)-1):
+            if mp[i]>mp[i-1] and mp[i]>mp[i+1]: extrema.append({'type':'max','kh':float(mk[i]),'P':float(mp[i])})
+            if mp[i]<mp[i-1] and mp[i]<mp[i+1]: extrema.append({'type':'min','kh':float(mk[i]),'P':float(mp[i])})
+
+          anchor_stats={}
+          for a in anchors:
+            vals=[r for r in coarse_rows+refine_rows if abs(r['kh_requested']-a)<5e-8]
+            if vals:
+              p=np.array([r['P_direct_Mpc3'] for r in vals],float)
+              s=np.array([r['delta_m_gi_final'] for r in vals],float)
+              anchor_stats[f'{a:.3f}']={
+                'copies':len(vals),
+                'P_direct_relative_spread':float((p.max()-p.min())/max(abs(p).mean(),1e-300)),
+                'source_relative_spread':float((s.max()-s.min())/max(abs(s).mean(),1e-300)),
+              }
+
+          ratio=np.array([r['P_direct_over_class'] for r in coarse_rows if r['P_direct_over_class'] is not None],float)
+          report={
+            'classification':'V062_COMPONENT_EXACT_DIRECT_SOURCE_PK_AUDIT',
+            'formula_delta_m':'sum rho_i delta_i / sum rho_i for b, cdm, ncdm',
+            'formula_theta_m':'sum (rho_i+p_i) theta_i / sum (rho_i+p_i) for b, cdm, ncdm',
+            'formula_gi':'D_m = delta_m + 3 a H theta_m / k^2',
+            'formula_pk':'P=2*pi^2/k^3 * P_R(k) * D_m^2',
+            'coarse_unique_targets':len(coarse),
+            'refinement_centers':centers,
+            'refinement_unique_targets':len(refine),
+            'combined_unique_targets':len(merged),
+            'max_requested_to_actual_k_relative_offset':float(max(r['k_relative_offset'] for r in coarse_rows+refine_rows)),
+            'anchor_consistency':anchor_stats,
+            'P_direct_vs_CLASS_on_coarse':{
+              'median_ratio':float(np.median(ratio)),
+              'max_abs_fractional_difference':float(np.max(np.abs(ratio-1.0))),
+              'rms_fractional_difference':float(np.sqrt(np.mean((ratio-1.0)**2))),
+            },
+            'n_direct_source_zero_crossings':len(roots),
+            'direct_source_zero_crossings_kh':roots,
+            'n_sampled_local_extrema':len(extrema),
+            'sampled_local_extrema':extrema,
+            'P_direct_min_Mpc3':float(mp.min()),
+            'P_direct_min_kh':float(mk[np.argmin(mp)]),
+            'P_direct_max_Mpc3':float(mp.max()),
+            'P_direct_max_kh':float(mk[np.argmax(mp)]),
+            'decision_rule':(
+              'Near-zero anchor spreads and k offsets certify direct modes. '
+              'Agreement of component-exact P_direct with CLASS at the same sampled k validates the CLASS matter-source reconstruction. '
+              'Refined repeatable zero crossings then certify the fine-k linear transfer structure independently of Fourier interpolation.'
+            ),
+          }
+          (results/'v062_component_exact_direct_source_pk_audit.json').write_text(json.dumps(report,indent=2)+'\n')
+
+          with (results/'v062_component_exact_direct_source_pk_audit.csv').open('w',newline='') as f:
+            fields=['stage','batch','kh_requested','kh_actual','k_relative_offset','delta_m_current_final','theta_m_current_final','delta_m_gi_final','P_direct_Mpc3','P_class_Mpc3','P_direct_over_class','copies','P_direct_relative_spread','source_relative_spread']
+            w=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore'); w.writeheader(); w.writerows(merged)
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload component-exact direct-source audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_component_exact_direct_source_pk_audit
+          path: |
+            results/v062_component_exact_direct_source_pk_audit.json
+            results/v062_component_exact_direct_source_pk_audit.csv
+            results/v062_component_directpk_*.json
+            results/v062_component_directpk_*_trace.dat
