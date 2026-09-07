@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import csv
 import json
 import numpy as np
@@ -139,12 +140,22 @@ def main():
     t = targets()
     rows = {}
     errors = {}
-    for name, overrides in VARIANTS.items():
-        print(f"=== {name} ===", flush=True)
-        rr, ee = core.run_variant(name, overrides, t)
-        errors[name] = ee
-        if rr is not None:
-            rows[name] = rr
+
+    # The four certification variants are scientifically independent CLASS
+    # evaluations. Run them concurrently to reduce wall time only; each call
+    # retains exactly the same k grid, solver, tolerances, start times and gates.
+    with ThreadPoolExecutor(max_workers=len(VARIANTS)) as pool:
+        futures = {}
+        for name, overrides in VARIANTS.items():
+            print(f"=== {name} ===", flush=True)
+            futures[pool.submit(core.run_variant, name, overrides, t)] = name
+        for future in as_completed(futures):
+            name = futures[future]
+            rr, ee = future.result()
+            errors[name] = ee
+            if rr is not None:
+                rows[name] = rr
+            print(f"=== {name} complete ===", flush=True)
 
     diags = {name: diagnostics(rr) for name, rr in rows.items()}
     pairs = {
