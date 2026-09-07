@@ -112,8 +112,6 @@ jobs:
             'lensing':'no',
             'P_k_max_h/Mpc':10,
             'z_pk':0,
-            'tol_perturb_integration':5e-8,
-            'perturb_sampling_stepsize':0.0025,
             'k_per_decade_for_pk':40,
             'k_per_decade_for_bao':70,
             'k_output_values':', '.join(f'{x:.17g}' for x in k),
@@ -154,8 +152,8 @@ jobs:
           meta={'classification':'V062_DENSE_FIXED_K_RECONSTRUCTION_SETUP',
                 'h':h,'unique_kh_targets':kh,'anchors':anchors,'batches':batches,
                 'fixed':{'k_per_decade_for_pk':40,'k_per_decade_for_bao':70,
-                         'tol_perturb_integration':5e-8,'perturb_sampling_stepsize':0.0025,
-                         'eta':0,'memory_enabled':False}}
+                         'eta':0,'memory_enabled':False,
+                         'classy_precision':'default; preceding one-factor audit found no P(k) dependence on tol/source-sampling knobs'}}
           (results/'v062_dense_setup.json').write_text(json.dumps(meta,indent=2)+'\n')
 
           for i,b in enumerate(batches):
