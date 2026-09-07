@@ -1,0 +1,291 @@
+name: v062 direct-source P(k) refinement audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/v062-direct-source-pk-refinement.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v062_directpk
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v062_directpk
+          python3 v019i/apply_ic_patch.py class_v062_directpk
+          python3 v019j/apply_memory_patch.py class_v062_directpk
+          python3 v019w/apply_variational_forcing_patch.py class_v062_directpk
+          python3 v019y/apply_output_precision_patch.py class_v062_directpk
+          python3 v023/apply_source_grid_trace_patch.py class_v062_directpk
+
+      - name: Build patched CLASS Python interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check numpy scipy cython setuptools wheel
+          make -C class_v062_directpk -j2 classy
+
+      - name: Run direct-source coarse map and adaptive refinement
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, math, os, subprocess, sys
+          import numpy as np
+
+          results=Path('results').resolve()
+          h=67.3324639084866/100.0
+          H0_Mpc=67.3324639084866/299792.458
+          As=2.1308864352626987e-9
+          ns=0.9666229454895277
+          kpivot=0.05
+          anchors=[0.100,0.134,0.148]
+
+          batch_script=results/'_v062_directpk_batch.py'
+          batch_script.write_text(r'''
+          import json, math, os, sys
+          from pathlib import Path
+          import numpy as np
+          from classy import Class
+
+          stage=sys.argv[1]
+          batch_id=int(sys.argv[2])
+          kh=[float(x) for x in json.loads(sys.argv[3])]
+          h=67.3324639084866/100.0
+          H0_Mpc=67.3324639084866/299792.458
+          As=2.1308864352626987e-9
+          ns=0.9666229454895277
+          kpivot=0.05
+          k=[x*h for x in kh]
+
+          pars={
+            'H0':67.3324639084866,
+            'omega_b':0.022377376877682164,
+            'N_ur':2.046,
+            'omega_cdm':0.12006705327635288,
+            'N_ncdm':1,
+            'm_ncdm':0.06,
+            'T_ncdm':0.7137658555036082,
+            'YHe':0.2454006,
+            'tau_reio':0.06174082364515668,
+            'n_s':ns,
+            'A_s':As,
+            'gauge':'newtonian',
+            'aest_enabled':'yes',
+            'aest_model':'Exp',
+            'aest_KB':0.0665,
+            'aest_Q0':1e-4,
+            'aest_K2':9500,
+            'aest_Z0':1e-17,
+            'aest_memory_enabled':'no',
+            'aest_memory_order':16,
+            'aest_eta':0,
+            'aest_tau_H0':10,
+            'output':'mPk',
+            'lensing':'no',
+            'P_k_max_h/Mpc':10,
+            'z_pk':0,
+            'k_per_decade_for_pk':40,
+            'k_per_decade_for_bao':70,
+            'k_output_values':', '.join(f'{x:.17g}' for x in k),
+          }
+
+          cosmo=Class(); cosmo.set(pars); cosmo.compute()
+          pt=cosmo.get_perturbations()['scalar']
+          if len(pt)!=len(k):
+            raise RuntimeError(f'expected {len(k)} scalar modes, got {len(pt)}')
+
+          trace_path=Path(os.environ['AEST_OFFLINE_TRACE_FILE'])
+          tr=np.loadtxt(trace_path,comments='#')
+          if tr.ndim==1: tr=tr[None,:]
+          unique_trace_k=np.unique(tr[:,0])
+
+          rows=[]
+          for i,(kh_i,k_req,mode) in enumerate(zip(kh,k,pt)):
+            keys=set(mode.keys())
+            required={'a','delta_m','theta_m'}
+            missing=required-keys
+            if missing:
+              raise RuntimeError(f'missing direct matter keys {sorted(missing)}; available={sorted(keys)}')
+            a=float(np.asarray(mode['a'],float)[-1])
+            dm=float(np.asarray(mode['delta_m'],float)[-1])
+            tm=float(np.asarray(mode['theta_m'],float)[-1])
+            k_actual=float(unique_trace_k[np.argmin(np.abs(unique_trace_k-k_req))])
+            # CLASS default matter source is gauge invariant:
+            # delta_m^GI = delta_m + 3 a H theta_m/k^2.
+            dm_gi=dm + 3.0*a*H0_Mpc*tm/(k_actual*k_actual)
+            PR=As*(k_actual/kpivot)**(ns-1.0)
+            P_direct=(2.0*math.pi**2/k_actual**3)*(dm_gi**2)*PR
+            P_class=float(cosmo.pk_lin(k_actual,0.0))
+            rows.append({
+              'stage':stage,'batch':batch_id,'mode_index':i,
+              'kh_requested':kh_i,'k_requested_Mpc':k_req,
+              'kh_actual':k_actual/h,'k_actual_Mpc':k_actual,
+              'k_relative_offset':abs(k_actual-k_req)/max(abs(k_req),1e-300),
+              'a_final':a,'delta_m_final':dm,'theta_m_final':tm,
+              'delta_m_gi_final':dm_gi,'P_direct_Mpc3':P_direct,
+              'P_class_interp_Mpc3':P_class,
+              'P_direct_over_class':P_direct/P_class if P_class>0 else None,
+            })
+
+          out=Path('results')/f'v062_directpk_{stage}_batch_{batch_id}.json'
+          out.write_text(json.dumps({'stage':stage,'batch':batch_id,'rows':rows},indent=2)+'\n')
+          cosmo.struct_cleanup(); cosmo.empty()
+          print(json.dumps({'stage':stage,'batch':batch_id,'n':len(rows),'kh_min':min(kh),'kh_max':max(kh)},indent=2))
+          ''')
+
+          def run_stage(stage, targets):
+            payload=[float(x) for x in sorted(set(round(float(v),7) for v in targets)) if round(float(x),7) not in anchors]
+            chunks=[payload[i:i+27] for i in range(0,len(payload),27)]
+            rows=[]
+            for bi,ch in enumerate(chunks):
+              vals=sorted(set(ch+anchors))
+              env=os.environ.copy(); env['OMP_NUM_THREADS']='1'
+              env['AEST_OFFLINE_TRACE_FILE']=str(results/f'v062_directpk_{stage}_batch_{bi}_trace.dat')
+              cp=subprocess.run([sys.executable,str(batch_script),stage,str(bi),json.dumps(vals)],env=env,check=False)
+              if cp.returncode:
+                raise SystemExit(f'{stage} batch {bi} failed with return code {cp.returncode}')
+              rows.extend(json.loads((results/f'v062_directpk_{stage}_batch_{bi}.json').read_text())['rows'])
+            # de-duplicate anchors and any repeated points, keeping first copy for map
+            by={}
+            for r in rows:
+              by.setdefault(round(r['kh_requested'],7),[]).append(r)
+            merged=[]
+            for kh_key,rs in sorted(by.items()):
+              base=dict(rs[0])
+              base['copies']=len(rs)
+              if len(rs)>1:
+                p=np.array([x['P_direct_Mpc3'] for x in rs],float)
+                s=np.array([x['delta_m_gi_final'] for x in rs],float)
+                base['P_direct_relative_spread']=float((p.max()-p.min())/max(abs(p).mean(),1e-300))
+                base['source_relative_spread']=float((s.max()-s.min())/max(abs(s).mean(),1e-300))
+              else:
+                base['P_direct_relative_spread']=0.0
+                base['source_relative_spread']=0.0
+              merged.append(base)
+            return merged
+
+          coarse=[]
+          coarse += list(np.round(np.arange(0.060,0.080,0.002),6))
+          coarse += list(np.round(np.arange(0.080,0.171,0.001),6))
+          coarse += list(np.round(np.arange(0.172,0.202,0.002),6))
+          coarse=sorted(set(float(x) for x in coarse))
+          coarse_rows=run_stage('coarse',coarse)
+
+          c=[r for r in coarse_rows if r['copies']>=1]
+          kh=np.array([r['kh_requested'] for r in c],float)
+          src=np.array([r['delta_m_gi_final'] for r in c],float)
+          pd=np.array([r['P_direct_Mpc3'] for r in c],float)
+
+          # Build refinement windows from direct-source sign changes plus very deep sampled minima.
+          centers=[]
+          for i in range(len(kh)-1):
+            if src[i]==0 or src[i]*src[i+1]<0:
+              centers.append(0.5*(kh[i]+kh[i+1]))
+          for i in range(1,len(kh)-1):
+            if pd[i] < 0.15*min(pd[i-1],pd[i+1]):
+              centers.append(kh[i])
+          centers=sorted(set(round(float(x),6) for x in centers if 0.075 <= x <= 0.180))
+
+          refine=[]
+          for cen in centers:
+            refine += list(np.round(np.arange(cen-0.0006,cen+0.0006001,0.00005),7))
+          refine=[x for x in sorted(set(float(v) for v in refine)) if 0.06 <= x <= 0.202]
+          # Keep runtime bounded while retaining deterministic data-blind selection.
+          if len(refine)>600:
+            raise RuntimeError(f'adaptive refinement generated {len(refine)} points > 600 safety cap')
+          refine_rows=run_stage('refine',refine) if refine else []
+
+          all_rows={}
+          for r in coarse_rows+refine_rows:
+            key=round(r['kh_requested'],7)
+            if key not in all_rows or r['stage']=='refine':
+              all_rows[key]=r
+          merged=[all_rows[k] for k in sorted(all_rows)]
+          mk=np.array([r['kh_requested'] for r in merged],float)
+          ms=np.array([r['delta_m_gi_final'] for r in merged],float)
+          mp=np.array([r['P_direct_Mpc3'] for r in merged],float)
+
+          roots=[]
+          for i in range(len(mk)-1):
+            if ms[i]==0:
+              roots.append(float(mk[i]))
+            elif ms[i]*ms[i+1]<0:
+              roots.append(float(mk[i]+(mk[i+1]-mk[i])*(-ms[i])/(ms[i+1]-ms[i])))
+
+          anchor_stats={}
+          for a in anchors:
+            vals=[r for r in coarse_rows+refine_rows if abs(r['kh_requested']-a)<5e-8]
+            if vals:
+              p=np.array([r['P_direct_Mpc3'] for r in vals],float)
+              s=np.array([r['delta_m_gi_final'] for r in vals],float)
+              anchor_stats[f'{a:.3f}']={
+                'copies':len(vals),
+                'P_direct_relative_spread':float((p.max()-p.min())/max(abs(p).mean(),1e-300)),
+                'source_relative_spread':float((s.max()-s.min())/max(abs(s).mean(),1e-300)),
+              }
+
+          coarse_ratio=np.array([r['P_direct_over_class'] for r in coarse_rows if r['P_direct_over_class'] is not None],float)
+          max_k_offset=max(r['k_relative_offset'] for r in coarse_rows+refine_rows)
+          report={
+            'classification':'V062_DIRECT_SOURCE_PK_REFINEMENT',
+            'formula':'P=2*pi^2/k^3 * P_R(k) * [delta_m+3*a*H*theta_m/k^2]^2',
+            'coarse_unique_targets':len(coarse),
+            'refinement_centers':centers,
+            'refinement_unique_targets':len(refine),
+            'combined_unique_targets':len(merged),
+            'max_requested_to_actual_k_relative_offset':float(max_k_offset),
+            'anchor_consistency':anchor_stats,
+            'P_direct_vs_CLASS_on_coarse':{
+              'median_ratio':float(np.median(coarse_ratio)),
+              'max_abs_fractional_difference':float(np.max(np.abs(coarse_ratio-1.0))),
+              'rms_fractional_difference':float(np.sqrt(np.mean((coarse_ratio-1.0)**2))),
+            },
+            'direct_source_zero_crossings_kh':roots,
+            'n_direct_source_zero_crossings':len(roots),
+            'P_direct_min_Mpc3':float(mp.min()),
+            'P_direct_min_kh':float(mk[np.argmin(mp)]),
+            'P_direct_max_Mpc3':float(mp.max()),
+            'P_direct_max_kh':float(mk[np.argmax(mp)]),
+            'decision_rule':(
+              'Near-zero batch spreads and requested-to-actual k offsets certify direct modes. '
+              'If P_direct agrees with CLASS at sampled nodes, the previous Fourier-node extrema are physical linear-spectrum structure rather than interpolation artifacts. '
+              'Refined repeatable source zero crossings certify the fine-k nodes directly.'
+            ),
+          }
+          (results/'v062_direct_source_pk_refinement.json').write_text(json.dumps(report,indent=2)+'\n')
+
+          import csv
+          with (results/'v062_direct_source_pk_refinement.csv').open('w',newline='') as f:
+            fieldnames=['stage','batch','kh_requested','kh_actual','k_relative_offset','delta_m_final','theta_m_final','delta_m_gi_final','P_direct_Mpc3','P_class_interp_Mpc3','P_direct_over_class','copies','P_direct_relative_spread','source_relative_spread']
+            w=csv.DictWriter(f,fieldnames=fieldnames,extrasaction='ignore'); w.writeheader(); w.writerows(merged)
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload direct-source audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v062_direct_source_pk_refinement
+          path: |
+            results/v062_direct_source_pk_refinement.json
+            results/v062_direct_source_pk_refinement.csv
+            results/v062_directpk_*.json
+            results/v062_directpk_*_trace.dat
