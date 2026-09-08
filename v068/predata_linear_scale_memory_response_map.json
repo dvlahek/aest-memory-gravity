@@ -1,0 +1,87 @@
+{
+  "classification": "V068_PREDATA_LINEAR_SCALE_MEMORY_RESPONSE_MAP",
+  "created_before_v068_result": true,
+  "uses_observational_data": false,
+  "motivation": "v0.67 showed that the formal sigma8 tangent response is dominated by high-k support: the 4...8 h/Mpc shell supplied about three quarters of the signed response on the primary redshift grid, the 8...16 h/Mpc shell still supplied about one fifth, and the sigma8 integral was not closed at 16 h/Mpc. v0.68 therefore does not extend sigma8 farther into the UV. Instead it returns to the previously preregistered v0.63 low-k grid and directly maps the matter and Weyl power responses there. This is a result-informed theory follow-up and does not alter the historical v0.65, v0.66, or v0.67 FAIL classifications.",
+  "source_results": {
+    "v063_predata_source": "v063/predata_theory_target_selection.json",
+    "v063_grid_was_fixed_before_v063_result": true,
+    "v067_classification": "V067_GROWTH_KERNEL_CLOSURE_AFFINITY_FAIL",
+    "known_v067_uv_result": "The formal sigma8 response is UV/high-k dominated on the tested linear CLASS spectrum and the 8...16 h/Mpc shell remains non-negligible.",
+    "policy": "v0.68 is not a rescue of the sigma8 result. It asks a different physical question: what does the frozen eta=0 memory tangent do directly to low-k matter and Weyl power on a grid that predates the v0.67 outcome?"
+  },
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "linear_theory_only": true,
+    "nonlinear_corrections": false,
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "memory_forcing_construction": "unchanged v0.39/v0.63 positive-Drude construction with control order 512 and primary order 1024"
+  },
+  "fixed_grid": {
+    "provenance": "Exactly the RSD diagnostic grid preregistered in v063/predata_theory_target_selection.json before the v0.63 result.",
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "n_points": 42,
+    "interpretation": "Low-k/quasi-linear theory diagnostic grid. No claim is made that every point is observationally linear for every survey or redshift."
+  },
+  "response_definitions": {
+    "matter": "g_m(lambda,k,z)=[P_m(+lambda,k,z)-P_m(-lambda,k,z)]/[2 lambda P_m(0,k,z)]",
+    "weyl": "g_W(lambda,k,z)=[P_Weyl(+lambda,k,z)-P_Weyl(-lambda,k,z)]/[2 lambda P_Weyl(0,k,z)]",
+    "lambda_consensus": "Arithmetic mean of g over the four fixed tangent amplitudes, used only after the preregistered lambda-affinity audit.",
+    "matter_evaluation": "CLASS pk_lin evaluated directly at each fixed (k,z) point.",
+    "weyl_evaluation": "CLASS linear Weyl power from get_Weyl_pk_and_k_and_z, interpolated in log power over (log k,z) to the fixed grid. The same interpolation is applied to native matter power and compared with direct pk_lin as a preregistered interpolation audit.",
+    "matter_weyl_difference": "Delta_Wm(k,z)=mean_lambda[g_W]-mean_lambda[g_m], reported without a sign gate."
+  },
+  "lambda_affinity_metric": {
+    "definition": "For field X in {matter,Weyl} and each fixed lambda, epsilon_X(lambda)=sqrt[sum_grid (g_X(lambda)-gbar_X)^2 / sum_grid gbar_X^2], with equal weight for all 42 predeclared grid points. The gate uses max_lambda epsilon_X(lambda).",
+    "reason": "This tests whether the externally forced tangent response is lambda-invariant on the low-k map without selecting favorable k or z points after seeing the result."
+  },
+  "primary_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_values_finite": true,
+    "native_to_fixed_matter_interpolation_max_relative_error": 0.005,
+    "matter_lambda_affinity_max": 0.005,
+    "weyl_lambda_affinity_max": 0.005
+  },
+  "secondary_reports_no_gate": [
+    "mean d ln P_m/d eta and d ln P_Weyl/d eta at all 42 fixed grid points",
+    "response by each of the four fixed tangent amplitudes at every grid point",
+    "per-redshift RMS and maximum absolute matter and Weyl response over the six fixed k values",
+    "per-k RMS and maximum absolute matter and Weyl response over the seven fixed redshifts",
+    "fraction of grid points with positive and negative consensus response for each field",
+    "sign-concordance fraction between matter and Weyl consensus responses",
+    "Pearson correlation between matter and Weyl consensus responses over the fixed grid",
+    "RMS amplitude ratio of Weyl to matter consensus response",
+    "largest absolute matter-Weyl response difference and its fixed-grid location"
+  ],
+  "sign_topology_report": {
+    "no_sign_gate": true,
+    "categories": [
+      "COHERENT_NEGATIVE_BOTH_FIELDS",
+      "COHERENT_POSITIVE_BOTH_FIELDS",
+      "MATTER_WEYL_SIGN_SPLIT_PRESENT",
+      "MIXED_WITHOUT_POINTWISE_SIGN_SPLIT",
+      "EXACT_ZERO_PRESENT"
+    ],
+    "precedence": "EXACT_ZERO_PRESENT first; otherwise MATTER_WEYL_SIGN_SPLIT_PRESENT if any point has opposite signs; otherwise coherent negative or coherent positive if both fields have that sign everywhere; otherwise MIXED_WITHOUT_POINTWISE_SIGN_SPLIT."
+  },
+  "classification_policy": {
+    "pass": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_PASS",
+    "fail": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_FAIL",
+    "meaning": "PASS certifies numerical stability of the data-blind low-k matter/Weyl tangent map on the fixed v0.63 grid. PASS does not require a preferred sign or a large effect, is not an observational detection, and does not change any historical FAIL."
+  },
+  "anti_tuning": "After this predata file is committed, do not change the frozen cosmology, KB, tauH0, p, CLASS commit, Drude forcing orders, lambda set, fixed k grid, fixed z grid, response definitions, interpolation prescription, affinity metric, numerical gates, or sign-topology rules after reading v0.68 results. A FAIL is retained."
+}
