@@ -78,11 +78,16 @@ def main():
     replace_once(src, old, new, 'v072 multi-instance offline trace reload')
 
     txt = src.read_text()
+    start = txt.find('void aest_offline_trace_state(')
+    end = txt.find('\n}\n', start)
+    if start < 0 or end < 0:
+        raise RuntimeError('v072 offline trace helper not found after replacement')
+    helper = txt[start:end + 3]
     checks = {
-        'runtime_path_refresh': 'strcmp(active_path,path) != 0' in txt,
-        'old_permanent_disable_removed': 'if (disabled) return;' not in txt,
-        'flush_after_trace_write': 'k,tau,a,H/H0,chi,Q);\n  fflush(fp);' in txt,
-        'trace_formula_unchanged': 'k,tau,a,H/H0,chi,Q' in txt,
+        'runtime_path_refresh': 'strcmp(active_path,path) != 0' in helper,
+        'old_permanent_disable_removed': 'disabled' not in helper,
+        'flush_after_trace_write': 'k,tau,a,H/H0,chi,Q);\n  fflush(fp);' in helper,
+        'trace_formula_unchanged': 'k,tau,a,H/H0,chi,Q' in helper,
     }
     report = {
         'classification': 'V072_OFFLINE_TRACE_MULTI_INSTANCE_TECHNICAL_FIX',
