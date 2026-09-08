@@ -1,0 +1,98 @@
+name: v068 linear-scale memory response map
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v068/**'
+      - '.github/workflows/v068-linear-scale-memory-response-map.yml'
+
+jobs:
+  linear-scale-memory-response-map:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v068
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v068
+          python3 v019i/apply_ic_patch.py class_v068
+          python3 v019j/apply_memory_patch.py class_v068
+          python3 v019w/apply_variational_forcing_patch.py class_v068
+          python3 v019y/apply_output_precision_patch.py class_v068
+          python3 v023/apply_source_grid_trace_patch.py class_v068
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v068
+
+      - name: Build CLASS executable
+        run: make -C class_v068 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v068 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v068/linear_scale_memory_response_map.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v068/predata_linear_scale_memory_response_map.json'))
+          assert d['classification']=='V068_PREDATA_LINEAR_SCALE_MEMORY_RESPONSE_MAP'
+          assert d['created_before_v068_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['source_results']['v067_classification']=='V067_GROWTH_KERNEL_CLOSURE_AFFINITY_FAIL'
+          assert d['frozen_physical_model']['KB']==0.0665
+          assert d['frozen_physical_model']['tauH0']==10.0
+          assert d['frozen_physical_model']['p']==0.0
+          assert d['frozen_physical_model']['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['frozen_physical_model']['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          assert d['fixed_grid']['k_h_per_Mpc']==[0.03,0.05,0.08,0.10,0.15,0.20]
+          assert d['fixed_grid']['z']==[0.2,0.4,0.6,0.8,1.0,1.2,1.5]
+          assert d['fixed_grid']['n_points']==42
+          g=d['primary_gates']
+          assert g['forcing_control_vs_primary_relative_L2_max']==0.01
+          assert g['forcing_control_vs_primary_cosine_min']==0.9999
+          assert g['native_to_fixed_matter_interpolation_max_relative_error']==0.005
+          assert g['matter_lambda_affinity_max']==0.005
+          assert g['weyl_lambda_affinity_max']==0.005
+          print('V068_PREDATA_LINEAR_SCALE_MEMORY_RESPONSE_MAP_AUDIT_PASS')
+          PY
+
+      - name: Run low-k matter/Weyl tangent map
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v068/linear_scale_memory_response_map.py \
+            --class-root class_v068 \
+            --json-out results/v068_linear_scale_memory_response_map.json \
+            --npz-out results/v068_linear_scale_memory_response_map.npz
+
+      - name: Upload v0.68 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v068_linear_scale_memory_response_map
+          path: |
+            results/v068_linear_scale_memory_response_map.json
+            results/v068_linear_scale_memory_response_map.npz
+            results/v063_theory_forcing.json
+            results/v063_theory_trace.log
+            results/v063_theory_trace.dat
+            results/v063_theory_force.dat
