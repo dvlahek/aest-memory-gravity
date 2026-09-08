@@ -51,6 +51,7 @@ jobs:
           set -euo pipefail
           mkdir -p results
           python3 -m py_compile v075/fourier_k_resolution_closure.py
+          python3 -m py_compile v075/fourier_k_resolution_closure_runtime_trace_fix.py
           python3 - <<'PY'
           import json
           d=json.load(open('v075/predata_fourier_k_resolution_closure.json'))
@@ -92,7 +93,7 @@ jobs:
         run: |
           set -euo pipefail
           sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
-          python3 v075/fourier_k_resolution_closure.py \
+          python3 v075/fourier_k_resolution_closure_runtime_trace_fix.py \
             --class-root class_v075 \
             --json-out results/v075_fourier_k_resolution_closure.json \
             --npz-out results/v075_fourier_k_resolution_closure.npz
