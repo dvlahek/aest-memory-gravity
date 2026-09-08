@@ -1,0 +1,73 @@
+{
+  "classification": "V069_PREDATA_NONLINEAR_ONSET_MEMORY_SHIFT",
+  "created_before_v069_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v067_classification": "V067_GROWTH_KERNEL_CLOSURE_AFFINITY_FAIL",
+    "v068_classification": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_FAIL",
+    "interpretation": "v067 and v068 are preserved unchanged. Their scale dependence motivates testing whether the linear AeST solution approaches conventional nonlinear-power thresholds in the same k region and whether the eta=0 memory tangent shifts that onset."
+  },
+  "scope": "Linear-theory onset diagnostic only. This test does not simulate nonlinear dynamics, nonlinear saturation, halos, screening, or N-body evolution.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "memory_background_correction": 0,
+    "memory_direct_linear_Einstein_stress": 0
+  },
+  "direct_spectrum_grid": {
+    "k_h_per_Mpc_min": 0.005,
+    "k_h_per_Mpc_max": 2.0,
+    "n_log_points": 1201,
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "evaluation": "Direct classy.pk_lin at every requested (k,z). No native-grid P(k) interpolation is used."
+  },
+  "dimensionless_power": {
+    "definition": "Delta_L^2(k,z) = k^3 P_L(k,z)/(2 pi^2), with k in 1/Mpc and P_L in Mpc^3",
+    "thresholds": [0.1, 0.3, 1.0],
+    "crossing_rule": "For each threshold and redshift, take the first upward crossing as k increases from the low-k boundary. Locate it by linear interpolation of ln Delta_L^2 versus ln k between the two direct-evaluation grid points bracketing the threshold.",
+    "physical_labels": {
+      "0.1": "weakly nonlinear approach marker",
+      "0.3": "transition marker",
+      "1.0": "conventional order-unity nonlinear-onset marker"
+    }
+  },
+  "primary_response": {
+    "definition": "d ln k_thr / d eta = [ln k_thr(+lambda) - ln k_thr(-lambda)]/(2 lambda)",
+    "interpretation_if_positive": "Positive eta shifts the fixed Delta_L^2 threshold to larger k (smaller spatial scales), consistent with delaying the onset of nonlinear clustering in the linear diagnostic.",
+    "interpretation_if_negative": "Positive eta shifts the threshold to smaller k, consistent with advancing the onset in the linear diagnostic.",
+    "no_sign_is_required_for_numerical_pass": true
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_spectra_finite_and_positive": true,
+    "all_three_thresholds_bracketed_for_all_7_redshifts_and_all_9_runs": true,
+    "baseline_fine_vs_every_other_grid_crossing_relative_difference_max": 0.005,
+    "crossing_response_lambda_affinity_max": 0.02
+  },
+  "science_classification_after_numerical_pass": {
+    "delay": "V069_MEMORY_DELAYS_LINEAR_NONLINEAR_ONSET if at least 80% of all threshold-redshift mean responses are positive and at least 5/7 Delta_L^2=1 responses are positive.",
+    "advance": "V069_MEMORY_ADVANCES_LINEAR_NONLINEAR_ONSET if at least 80% of all threshold-redshift mean responses are negative and at least 5/7 Delta_L^2=1 responses are negative.",
+    "mixed": "V069_MIXED_LINEAR_NONLINEAR_ONSET_SHIFT otherwise.",
+    "numerical_fail": "V069_NONLINEAR_ONSET_DIAGNOSTIC_FAIL if any primary numerical gate fails."
+  },
+  "secondary_descriptive_tests": {
+    "threshold_ordering": "Report whether the median absolute onset-scale response increases from Delta_L^2=0.1 to 0.3 to 1.0. This is descriptive and is not a PASS gate.",
+    "baseline_onset_scale": "Report baseline k_thr(z) for all three thresholds.",
+    "transition_relation": "Compare the onset scales with the previously observed qualitative increase of memory response toward k approximately 0.08--0.2 h/Mpc. No post-hoc redefinition of thresholds is allowed."
+  },
+  "anti_tuning": "Thresholds, k range, redshift grid, tangent amplitudes, crossing definition, numerical gates, and science-classification rule are committed before the v0.69 result. v0.67 and v0.68 remain historical FAILs under their original preregistered gates."
+}
