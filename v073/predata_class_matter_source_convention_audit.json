@@ -1,0 +1,52 @@
+{
+  "classification": "V073_PREDATA_CLASS_MATTER_SOURCE_CONVENTION_AUDIT",
+  "created_before_v073_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v072_classification": "V072_DIRECT_TRANSFER_TANGENT_AFFINITY_FAIL",
+    "v072_direct_tangent_affinity_max": 0.00999772730403068,
+    "v072_direct_vs_classy_power_relative_error_max": 125.25923344965594
+  },
+  "purpose": "Determine whether the v0.72 direct-power mismatch is caused by reconstructing CLASS total-matter power from raw component perturbations with a convention that differs from the native CLASS delta_m source used by the Fourier module. Audit the native source before any further nonlinear-onset interpretation.",
+  "historical_results_policy": "v0.67-v0.72 classifications remain unchanged. This audit cannot retroactively promote a historical FAIL.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "eta_background": 0.0,
+    "forcing": "same positive-Drude eta=0 variational forcing construction as v0.72"
+  },
+  "fixed_grid": {
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "provenance": "v0.63 preregistered RSD grid; unchanged from v0.72"
+  },
+  "class_definition_audit": {
+    "native_matter_source": "CLASS perturbations source delta_m, which is the source selected by fourier.c for P_m",
+    "native_gauge_policy": "matter_source_in_current_gauge remains at the CLASS default false, so delta_m is converted to the gauge-invariant form delta_m + 3 a H theta_m/k^2",
+    "power_identity": "for the single adiabatic scalar initial condition, P_m = (2 pi^2/k^3) delta_m_source^2 P_R(k)",
+    "raw_component_reconstruction": "the v0.72 Dm reconstruction from delta_b, delta_cdm, delta_ncdm and theta variables is retained only as a diagnostic comparator"
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "requested_vs_actual_k_relative_error_max": 1e-8,
+    "native_source_power_vs_pk_lin_relative_error_max": 0.005,
+    "native_source_tangent_lambda_affinity_global_normalized_RMS_max": 0.005
+  },
+  "manual_component_diagnostic": {
+    "manual_Dm_vs_native_delta_m_source_is_gate": false,
+    "reason": "v0.73 is intended to locate the convention mismatch; the manual reconstruction is not allowed to veto a native-source closure result",
+    "report_max_relative_difference": true
+  },
+  "classification_logic": {
+    "V073_CLASS_MATTER_SOURCE_CONVENTION_CLOSED": "all primary numerical gates pass",
+    "V073_NATIVE_SOURCE_AFFINITY_FAIL": "native source power closes to pk_lin but native tangent affinity fails",
+    "V073_NATIVE_SOURCE_POWER_CLOSURE_FAIL": "native source-derived power does not close to pk_lin",
+    "V073_CLASS_MATTER_SOURCE_AUDIT_FAIL": "forcing, requested-k, finiteness, or another required numerical condition fails"
+  },
+  "interpretation_policy": "A closure result certifies the CLASS matter-source convention and tangent numerics on the fixed theory grid only. It is not an observational detection, does not perform nonlinear evolution, and does not itself certify the v0.67-v0.71 nonlinear-onset interpretation."
+}
