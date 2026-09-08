@@ -1,0 +1,105 @@
+name: v074 native transfer power closure
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v074/**'
+      - 'tools/apply_v072_offline_trace_runtime_reload_patch.py'
+      - 'tools/apply_v063_classy_runtime_reload_patch.py'
+      - '.github/workflows/v074-native-transfer-power-closure.yml'
+
+jobs:
+  native-transfer-power-closure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v074
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v074
+          python3 v019i/apply_ic_patch.py class_v074
+          python3 v019j/apply_memory_patch.py class_v074
+          python3 v019w/apply_variational_forcing_patch.py class_v074
+          python3 v019y/apply_output_precision_patch.py class_v074
+          python3 v023/apply_source_grid_trace_patch.py class_v074
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_v074
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v074
+
+      - name: Build CLASS executable
+        run: make -C class_v074 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v074 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v074/native_transfer_power_closure.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v074/predata_native_transfer_power_closure.json'))
+          assert d['classification']=='V074_PREDATA_NATIVE_TRANSFER_POWER_CLOSURE_AUDIT'
+          assert d['created_before_v074_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['source_results']['v072_classification']=='V072_DIRECT_TRANSFER_TANGENT_AFFINITY_FAIL'
+          assert d['source_results']['v073_classification']=='V073_NATIVE_SOURCE_POWER_CLOSURE_FAIL'
+          m=d['frozen_physical_model']
+          assert m['KB']==0.0665
+          assert m['tauH0']==10.0
+          assert m['p']==0.0
+          assert m['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert m['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          assert d['fixed_grid']['k_h_per_Mpc']==[0.03,0.05,0.08,0.10,0.15,0.20]
+          assert d['fixed_grid']['z']==[0.2,0.4,0.6,0.8,1.0,1.2,1.5]
+          g=d['primary_numerical_gates']
+          assert g['forcing_control_vs_primary_relative_L2_max']==0.01
+          assert g['forcing_control_vs_primary_cosine_min']==0.9999
+          assert g['requested_vs_actual_transfer_k_relative_error_max']==1e-8
+          assert g['transfer_power_vs_pk_lin_relative_error_max']==0.005
+          assert g['transfer_tangent_lambda_affinity_global_normalized_RMS_max']==0.005
+          assert d['primary_observable']['CLASS_call']=="get_transfer(z, output_format='class')"
+          print('V074_PREDATA_NATIVE_TRANSFER_POWER_CLOSURE_AUDIT_PASS')
+          PY
+
+      - name: Run native transfer power closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v074/native_transfer_power_closure.py \
+            --class-root class_v074 \
+            --json-out results/v074_native_transfer_power_closure.json \
+            --npz-out results/v074_native_transfer_power_closure.npz
+
+      - name: Upload v0.74 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v074_native_transfer_power_closure
+          path: |
+            results/v074_native_transfer_power_closure.json
+            results/v074_native_transfer_power_closure.npz
+            results/v072_forcing_summary.json
+            results/v072_forcing_trace.log
+            results/v072_forcing_trace.dat
+            results/v072_forcing_force.dat
+            results/v074_*_trace.dat
+            results/v072_trace_reload_patch.json
