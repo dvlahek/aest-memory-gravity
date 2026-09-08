@@ -6,6 +6,7 @@ on:
     branches: [v053-model-freeze-planck]
     paths:
       - 'v072/**'
+      - 'tools/apply_v072_offline_trace_runtime_reload_patch.py'
       - '.github/workflows/v072-direct-transfer-tangent-affinity.yml'
 
 jobs:
@@ -36,6 +37,7 @@ jobs:
           python3 v019w/apply_variational_forcing_patch.py class_v072
           python3 v019y/apply_output_precision_patch.py class_v072
           python3 v023/apply_source_grid_trace_patch.py class_v072
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_v072
           python3 tools/apply_v063_classy_runtime_reload_patch.py class_v072
 
       - name: Build CLASS executable
@@ -98,3 +100,4 @@ jobs:
             results/v063_theory_trace.dat
             results/v063_theory_force.dat
             results/v072_*_trace.dat
+            results/v072_trace_reload_patch.json
