@@ -1,0 +1,69 @@
+{
+  "classification": "V071_PREDATA_EXACT_BROADBAND_ONSET_TANGENT",
+  "created_before_v071_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v067_classification": "V067_GROWTH_KERNEL_CLOSURE_AFFINITY_FAIL",
+    "v068_classification": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_FAIL",
+    "v069_classification": "V069_NONLINEAR_ONSET_DIAGNOSTIC_FAIL",
+    "v070_classification": "V070_BROADBAND_NONLINEAR_ONSET_TANGENT_FAIL",
+    "motivation": "v070 removed the grid-sensitive first-crossing pathology but failed only its four-lambda affinity gate. After the result, the preregistered finite difference of ln Dbar was recognized to contain intrinsic O(lambda^2) estimator terms even for an affine perturbation-state response. v071 therefore tests the eta=0 odd tangent of Dbar itself before dividing by the baseline Dbar."
+  },
+  "scope": "Linear-theory broadband onset diagnostic only. No nonlinear evolution, nonlinear saturation, halo dynamics, screening, N-body dynamics, or observational likelihood is used.",
+  "historical_results_policy": "v067 through v070 classifications and artifacts remain unchanged. v071 is a new result-informed estimator follow-up and is not a relabeling or rerun of v070.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "memory_background_correction": 0,
+    "memory_direct_linear_Einstein_stress": 0
+  },
+  "direct_spectrum_grid": {
+    "k_h_per_Mpc_min": 0.005,
+    "k_h_per_Mpc_max": 2.0,
+    "n_log_points": 2401,
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "evaluation": "Direct classy.pk_lin at every requested (k,z); no CLASS native-grid P(k) interpolation."
+  },
+  "dimensionless_power": {
+    "definition": "Delta_L^2(k,z)=k^3 P_L(k,z)/(2 pi^2)",
+    "thresholds": [0.1, 0.3, 1.0],
+    "broadband_logk_top_hat_widths": [0.1, 0.2],
+    "broadband_definition": "Same arithmetic centered ln-k top-hat average as v070.",
+    "baseline_crossing_rule": "Same first upward crossing of the baseline broadband Dbar as v070; interpolate ln Dbar linearly versus ln k."
+  },
+  "exact_eta0_tangent_estimator": {
+    "state_affinity_hypothesis": "For an affine eta=0 externally forced perturbation state, any linear transfer amplitude is affine in lambda and the corresponding power/broadband power is at most quadratic: Dbar(lambda)=A+lambda B+lambda^2 C.",
+    "partial_eta_Dbar": "[Dbar(+lambda)-Dbar(-lambda)]/(2 lambda), evaluated at the fixed baseline broadband crossing.",
+    "partial_eta_ln_Dbar": "partial_eta_Dbar / Dbar(0); at the baseline threshold crossing Dbar(0)=the preregistered threshold.",
+    "implicit_shift": "d ln k_thr/d eta = - [partial_eta ln Dbar] / [partial_ln_k ln Dbar] at the fixed baseline broadband crossing.",
+    "why_not_log_finite_difference": "The v070 estimator [ln Dbar(+lambda)-ln Dbar(-lambda)]/(2 lambda) has intrinsic O(lambda^2) dependence for quadratic Dbar(lambda) and is therefore not an exact lambda-affinity test of the odd tangent.",
+    "no_sign_required_for_numerical_pass": true
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_spectra_finite_and_positive": true,
+    "all_broadband_thresholds_bracketed_for_both_widths_and_all_7_redshifts": true,
+    "baseline_fine_vs_every_other_grid_crossing_relative_difference_max": 0.005,
+    "implicit_shift_fine_vs_every_other_grid_global_normalized_RMS_max": 0.05,
+    "exact_odd_tangent_shift_lambda_affinity_global_normalized_RMS_max": 0.05,
+    "minimum_absolute_baseline_log_slope_at_threshold": 0.001
+  },
+  "science_classification_after_numerical_pass": {
+    "delay": "V071_EXACT_BROADBAND_MEMORY_DELAY_SUPPORTED if, for both preregistered widths, at least 5/7 Delta_L^2=1 implicit mean shifts are positive and the two widths agree in sign at least 6/7 redshifts.",
+    "advance": "V071_EXACT_BROADBAND_MEMORY_ADVANCE_SUPPORTED if, for both preregistered widths, at least 5/7 Delta_L^2=1 implicit mean shifts are negative and the two widths agree in sign at least 6/7 redshifts.",
+    "mixed": "V071_EXACT_BROADBAND_ONSET_SHIFT_MIXED otherwise, provided all numerical gates pass.",
+    "numerical_fail": "V071_EXACT_BROADBAND_ONSET_TANGENT_FAIL if any primary numerical gate fails."
+  },
+  "secondary_descriptive_tests": {
+    "compare_v070_estimator": "Report only as context that v071 changes the tangent estimator, not the physical model, grid, thresholds, broadband widths, or science-sign rule.",
+    "transition_overlap": "Report the fraction of baseline broadband threshold crossings in the historical k=0.08--0.20 h/Mpc band.",
+    "width_dependence": "Report both widths without post-hoc preference."
+  },
+  "anti_tuning": "All v071 physical parameters, lambda values, direct grid, thresholds, broadband widths, exact odd-tangent estimator, numerical gates, and science classification are committed before the v071 result."
+}
