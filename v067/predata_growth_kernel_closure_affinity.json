@@ -1,0 +1,90 @@
+{
+  "classification": "V067_PREDATA_GROWTH_KERNEL_CLOSURE_AFFINITY",
+  "created_before_v067_result": true,
+  "uses_observational_data": false,
+  "motivation": "v0.66 retained a negative exact sigma8 tangent response at every primary redshift and every tested tangent amplification, but failed three preregistered consistency gates. Two failures were approximately 20 percent and coincided with the k-kernel peaking at the upper boundary kh=1.999 h/Mpc, suggesting unresolved high-k support. A third failure was lambda dependence of the sigma8-squared estimator. v0.67 is a result-informed numerical/theory follow-up. It does not alter the v0.66 FAIL. It extends only the numerical k support and directly audits tangent affinity on the extended power-spectrum response before any further physical interpretation.",
+  "source_results": {
+    "v066_classification": "V066_EXACT_TANGENT_GROWTH_KERNEL_FAIL",
+    "known_v066_sign_result": "R_exact(lambda,z)<0 for all four tested lambda values and all seven primary redshifts z=0.2...0.8.",
+    "known_v066_failures": {
+      "baseline_sigma8_squared_reconstruction_max_relative_error": 0.21124926255263382,
+      "lambda_invariance_max_relative_spread_primary": 0.09893413079484642,
+      "kernel_integral_vs_sigma8_squared_estimator_max_relative_error_primary": 0.2221346691569216
+    },
+    "known_v066_boundary_fact": "For every primary redshift the largest absolute mean kernel density occurred at the upper sampled boundary kh=1.999 h/Mpc; the 0.5...1.999 h/Mpc bin supplied most of the absolute kernel weight.",
+    "policy": "v0.67 is a new post-v0.66 follow-up and must not be described as retroactively converting v0.66 into a PASS."
+  },
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "linear_theory_only": true,
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "primary_redshifts": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+    "context_redshifts": [1.0, 1.2, 1.5],
+    "memory_forcing_construction": "unchanged v0.39/v0.63 positive-Drude construction with control order 512 and primary order 1024; the accepted source-grid trace is extended only in k coverage so that the k-dependent forcing file covers the diagnostic range"
+  },
+  "numerical_k_extension": {
+    "physical_parameters_changed": false,
+    "reason": "The v0.66 kernel peaked at its numerical upper boundary. The k extension is therefore a result-informed numerical-domain diagnostic, not a new physical parameter choice.",
+    "CLASS_P_k_max_h_per_Mpc": 16.1,
+    "kh_min_h_per_Mpc": 0.0001,
+    "kh_max_h_per_Mpc": 16.0,
+    "n_log_points": 4096,
+    "nested_nominal_caps_h_per_Mpc": [2.0, 4.0, 8.0, 16.0],
+    "R8_h_inverse_Mpc": 8.0,
+    "fixed_bins_h_per_Mpc": [
+      [0.0001, 0.03],
+      [0.03, 0.08],
+      [0.08, 0.20],
+      [0.20, 0.50],
+      [0.50, 2.0],
+      [2.0, 4.0],
+      [4.0, 8.0],
+      [8.0, 16.0]
+    ]
+  },
+  "estimators": {
+    "baseline_sigma8_squared_integrand": "I0(k,z)=k^3 P0(k,z) W_TH^2(k R8)/(2 pi^2), integrated in d ln k.",
+    "exact_sigma8_tangent": "R_exact(lambda,z)=[sigma8^2(+lambda,z)-sigma8^2(-lambda,z)]/[4 lambda sigma8^2(0,z)].",
+    "power_tangent": "g_lambda(k,z)=[P(+lambda)-P(-lambda)]/[2 lambda P0]=d ln Pm/d eta in an affine transfer family.",
+    "growth_kernel": "K_lambda(k,z)=0.5 I0(k,z) g_lambda(k,z)/sigma8^2(0,z).",
+    "weighted_affinity_metric": "For each primary z and lambda, epsilon_aff=sqrt[int I0 (g_lambda-gbar)^2 dlnk / int I0 gbar^2 dlnk], with gbar the arithmetic mean over the four preregistered lambda values. The reported gate is the maximum epsilon_aff over primary z and lambda.",
+    "tail_fraction": "For each z, f_8_16=int_8^16 I0 dlnk / int_kmin^16 I0 dlnk. This is a direct measure of unresolved sigma8 support in the final preregistered shell."
+  },
+  "primary_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_values_finite": true,
+    "baseline_sigma8_squared_reconstruction_at_16_max_relative_error": 0.005,
+    "baseline_8_to_16_shell_fraction_max": 0.005,
+    "all_primary_R_exact_negative_for_all_four_lambdas": true,
+    "R_exact_lambda_invariance_max_relative_spread_about_mean": 0.005,
+    "weighted_power_tangent_affinity_max": 0.005,
+    "kernel_integral_vs_R_exact_max_relative_error": 0.005
+  },
+  "secondary_reports_no_gate": [
+    "nested baseline sigma8-squared reconstruction at nominal caps 2, 4, 8, and 16 h/Mpc",
+    "signed and absolute kernel contribution in every fixed k bin",
+    "R_exact and g_lambda at context redshifts 1.0, 1.2, and 1.5",
+    "location of the largest absolute mean kernel density at each redshift",
+    "per-lambda weighted affinity metric at each redshift",
+    "the 8...16 h/Mpc baseline sigma8 support fraction at each redshift"
+  ],
+  "classification_policy": {
+    "pass": "V067_GROWTH_KERNEL_CLOSURE_AFFINITY_PASS",
+    "fail": "V067_GROWTH_KERNEL_CLOSURE_AFFINITY_FAIL",
+    "meaning": "PASS certifies, within the preregistered k range, that the sigma8 integral is numerically closed, the last high-k shell is negligible, the externally forced tangent response is lambda-affine in the sigma8-weighted sense, the k-kernel reproduces the direct sigma8-squared tangent estimator, and the primary growth derivative remains negative. It is not an observational detection and does not change v0.65 or v0.66 historical classifications."
+  },
+  "anti_tuning": "After this predata file is committed, do not change the frozen cosmology, KB, tauH0, p, CLASS commit, Drude forcing orders, lambda set, redshift sets, numerical k extension, nested caps, fixed bins, estimators, weighting, or numerical gates after reading v0.67 results. A FAIL is retained."
+}
