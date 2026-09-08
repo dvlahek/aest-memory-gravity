@@ -1,0 +1,74 @@
+{
+  "classification": "V066_PREDATA_EXACT_TANGENT_GROWTH_KERNEL",
+  "created_before_v066_result": true,
+  "uses_observational_data": false,
+  "motivation": "v0.65 found a persistent negative sigma8 response over the tested tangent-amplitude and redshift grid but failed its stronger finite-amplitude convergence gate at 3 of 7 primary redshifts. v0.66 does not alter or reinterpret that FAIL. Instead it tests a separate linear-theory identity: because the eta=0 variational source enters a linear perturbation system additively, each matter transfer mode is affine in the numerical tangent amplification lambda, while sigma8^2 is therefore exactly quadratic in lambda. A symmetric difference of sigma8^2 isolates the eta=0 tangent coefficient without a lambda-to-zero extrapolation. The same coefficient is reconstructed as a signed k-space kernel to identify the scales that generate the growth response.",
+  "source_results": {
+    "v065_classification": "V065_SMOOTH_GROWTH_TANGENT_LIMIT_FAIL",
+    "known_v065_sign_result": "R_sigma(lambda,z)<0 for all four tested lambda values and all seven primary redshifts; extrapolated R0(z)<0 at all seven primary redshifts.",
+    "known_v065_failure_mode": "The preregistered stabilization inequality passed at 4 of 7 primary redshifts instead of the required 6 of 7.",
+    "policy": "v0.66 is a new post-v0.65 theory test. It must not be described as retroactively converting the v0.65 FAIL into a PASS."
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "linear_theory_only": true,
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "primary_redshifts": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+    "context_redshifts": [1.0, 1.2, 1.5]
+  },
+  "theory_identity": {
+    "transfer_affinity": "For every linear matter transfer mode D(k,z;lambda)=D0(k,z)+lambda D1(k,z).",
+    "sigma8_squared_form": "sigma8^2(lambda,z)=A(z)+2 lambda B(z)+lambda^2 C(z).",
+    "exact_tangent_estimator": "R_exact(lambda,z)=[sigma8^2(+lambda,z)-sigma8^2(-lambda,z)]/[4 lambda sigma8^2(0,z)]=B(z)/A(z)=d ln sigma8/d eta at eta=0 in exact arithmetic.",
+    "reason_no_lambda_extrapolation_is_needed": "The lambda^2 term cancels identically in the symmetric difference of sigma8^2.",
+    "memory_entry_point": "At eta=0 the variational memory perturbation enters only as the additive E-equation source dE'/deta|0=-a Q Bchi_raw/(2 KB); the memory patch has no background correction and no direct linear Einstein stress.",
+    "causal_chain_to_test": "memory tangent source -> E and alpha -> Pi_aest and dark density/velocity -> metric response -> total matter transfer -> sigma8"
+  },
+  "k_kernel": {
+    "kh_min_h_per_Mpc": 0.0001,
+    "kh_max_h_per_Mpc": 1.999,
+    "n_log_points": 2048,
+    "R8_h_inverse_Mpc": 8.0,
+    "definition": "K(k,z)=0.5 I0(k,z) [d ln Pm(k,z)/d eta]/sigma8^2(z), with I0=k^3 P0 W_TH^2(k R8)/(2 pi^2), so integral K d ln k = d ln sigma8/d eta.",
+    "fixed_bins_h_per_Mpc": [
+      [0.0001, 0.03],
+      [0.03, 0.08],
+      [0.08, 0.20],
+      [0.20, 0.50],
+      [0.50, 1.999]
+    ],
+    "bin_policy": "Report the signed contribution to d ln sigma8/d eta and the fraction of the absolute kernel in every fixed bin. Do not select bins after seeing the result."
+  },
+  "primary_gates": {
+    "baseline_sigma8_reconstruction_max_relative_error": 0.005,
+    "all_primary_R_exact_negative_for_all_four_lambdas": true,
+    "lambda_invariance_max_relative_spread_about_mean": 0.005,
+    "kernel_integral_vs_sigma8_squared_estimator_max_relative_error": 0.005,
+    "all_values_finite": true
+  },
+  "secondary_reports_no_gate": [
+    "R_exact at context redshifts 1.0, 1.2, 1.5",
+    "signed k-bin contributions at every primary and context redshift",
+    "fraction of absolute k-kernel in every fixed bin",
+    "location of the largest absolute kernel density at each redshift",
+    "d ln Pm/d eta on the fixed k grid"
+  ],
+  "classification_policy": {
+    "pass": "V066_EXACT_TANGENT_GROWTH_KERNEL_PASS",
+    "fail": "V066_EXACT_TANGENT_GROWTH_KERNEL_FAIL",
+    "meaning": "PASS certifies a data-blind linear-theory tangent identity and a negative exact growth derivative on the frozen model. It is not an observational detection and does not change the historical v0.65 classification."
+  },
+  "anti_tuning": "After this predata file is committed, do not change the frozen cosmology, KB, tauH0, p, CLASS commit, lambda set, redshift sets, k-grid bounds/resolution, fixed k bins, exact sigma8-squared estimator, kernel definition, or numerical gates after reading v0.66 results. A FAIL is retained."
+}
