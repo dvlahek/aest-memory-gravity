@@ -1,0 +1,64 @@
+{
+  "classification": "V072_PREDATA_DIRECT_TRANSFER_TANGENT_AFFINITY_AUDIT",
+  "created_before_v072_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v068_classification": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_FAIL",
+    "v071_classification": "V071_EXACT_BROADBAND_ONSET_TANGENT_FAIL",
+    "motivation": "v071 retained a strong broadband delay sign pattern but failed the preregistered lambda-affinity gate. v068 had already shown that CLASS spectrum interpolation can be problematic for the structured AeST spectrum. v072 isolates this issue by reconstructing matter power directly from requested perturbation modes on the pre-v063 fixed linear-scale grid and comparing the direct tangent with classy.pk_lin at the same k,z."
+  },
+  "scope": "Theory-only eta=0 tangent numerical audit. No observational likelihood, survey data, nonlinear evolution, halo model, N-body simulation, or parameter refit is used.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "memory_background_correction": 0,
+    "memory_direct_linear_Einstein_stress": 0
+  },
+  "fixed_grid": {
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "provenance": "Exactly the v063 preregistered RSD k,z grid; not selected from v068-v071 outcomes."
+  },
+  "direct_reconstruction": {
+    "requested_modes": "Set CLASS k_output_values to the six fixed physical k values k=(k_h)h in 1/Mpc.",
+    "matter_density": "delta_m=(rho_b delta_b + rho_cdm delta_cdm + rho_ncdm delta_ncdm)/rho_m",
+    "matter_velocity": "theta_m=(rho_b theta_b + rho_cdm theta_cdm + (rho_ncdm+p_ncdm) theta_ncdm)/(rho_b+rho_cdm+rho_ncdm+p_ncdm)",
+    "gauge_invariant_density": "D_m=delta_m+3 a H theta_m/k^2",
+    "primordial_power": "P_R(k)=A_s (k/k_pivot)^(n_s-1), k_pivot=0.05 1/Mpc",
+    "direct_power": "P_direct=(2 pi^2/k^3) D_m^2 P_R(k)",
+    "comparison": "Compare to classy.pk_lin(k,z) at the same actual requested mode k."
+  },
+  "tangent_estimators": {
+    "direct": "g_direct=[P_direct(+lambda)-P_direct(-lambda)]/[2 lambda P_direct(0)]",
+    "classy": "g_pk_lin=[P_pk_lin(+lambda)-P_pk_lin(-lambda)]/[2 lambda P_pk_lin(0)]",
+    "affinity_metric": "For each lambda, normalized RMS distance from the four-lambda mean response map; report the maximum over lambdas."
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_direct_and_classy_powers_finite_and_positive": true,
+    "requested_vs_actual_k_relative_error_max": 1e-8,
+    "direct_vs_classy_power_relative_error_max": 1e-8,
+    "direct_tangent_lambda_affinity_global_normalized_RMS_max": 0.005
+  },
+  "diagnostic_classification_after_primary_gates": {
+    "pass": "V072_DIRECT_TRANSFER_TANGENT_AFFINITY_PASS if all primary numerical gates pass.",
+    "fail": "V072_DIRECT_TRANSFER_TANGENT_AFFINITY_FAIL otherwise.",
+    "interpolation_path_implicated": "If direct affinity passes 0.005 while pk_lin affinity exceeds 0.005, report that the CLASS spectrum interpolation/output path is implicated as the source of the previous non-affinity.",
+    "deeper_nonaffinity": "If direct affinity itself exceeds 0.005, report that the v071 non-affinity survives direct mode reconstruction and must be sought in tangent evolution/numerics rather than attributed only to pk_lin interpolation."
+  },
+  "anti_tuning": "The physical model, CLASS commit, tangent amplitudes, fixed k/z grid, direct reconstruction formulae, affinity definition, and all primary gates are committed before the v072 result. Historical v068-v071 classifications remain unchanged."
+}
