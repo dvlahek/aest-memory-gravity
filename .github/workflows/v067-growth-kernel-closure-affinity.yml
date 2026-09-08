@@ -1,0 +1,104 @@
+name: v067 growth kernel closure affinity
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v067/**'
+      - '.github/workflows/v067-growth-kernel-closure-affinity.yml'
+
+jobs:
+  growth-kernel-closure-affinity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v067
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v067
+          python3 v019i/apply_ic_patch.py class_v067
+          python3 v019j/apply_memory_patch.py class_v067
+          python3 v019w/apply_variational_forcing_patch.py class_v067
+          python3 v019y/apply_output_precision_patch.py class_v067
+          python3 v023/apply_source_grid_trace_patch.py class_v067
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v067
+
+      - name: Build CLASS executable
+        run: make -C class_v067 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v067 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v067/growth_kernel_closure_affinity.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v067/predata_growth_kernel_closure_affinity.json'))
+          assert d['classification']=='V067_PREDATA_GROWTH_KERNEL_CLOSURE_AFFINITY'
+          assert d['created_before_v067_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['source_results']['v066_classification']=='V066_EXACT_TANGENT_GROWTH_KERNEL_FAIL'
+          assert d['frozen_physical_model']['KB']==0.0665
+          assert d['frozen_physical_model']['tauH0']==10.0
+          assert d['frozen_physical_model']['p']==0.0
+          assert d['frozen_physical_model']['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['frozen_physical_model']['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          assert d['frozen_physical_model']['primary_redshifts']==[0.2,0.3,0.4,0.5,0.6,0.7,0.8]
+          assert d['frozen_physical_model']['context_redshifts']==[1.0,1.2,1.5]
+          assert d['numerical_k_extension']['CLASS_P_k_max_h_per_Mpc']==16.1
+          assert d['numerical_k_extension']['kh_min_h_per_Mpc']==0.0001
+          assert d['numerical_k_extension']['kh_max_h_per_Mpc']==16.0
+          assert d['numerical_k_extension']['n_log_points']==4096
+          assert d['numerical_k_extension']['nested_nominal_caps_h_per_Mpc']==[2.0,4.0,8.0,16.0]
+          g=d['primary_gates']
+          assert g['forcing_control_vs_primary_relative_L2_max']==0.01
+          assert g['forcing_control_vs_primary_cosine_min']==0.9999
+          assert g['baseline_sigma8_squared_reconstruction_at_16_max_relative_error']==0.005
+          assert g['baseline_8_to_16_shell_fraction_max']==0.005
+          assert g['R_exact_lambda_invariance_max_relative_spread_about_mean']==0.005
+          assert g['weighted_power_tangent_affinity_max']==0.005
+          assert g['kernel_integral_vs_R_exact_max_relative_error']==0.005
+          print('V067_PREDATA_GROWTH_KERNEL_CLOSURE_AFFINITY_AUDIT_PASS')
+          PY
+
+      - name: Run growth-kernel closure and tangent-affinity audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v067/growth_kernel_closure_affinity.py \
+            --class-root class_v067 \
+            --json-out results/v067_growth_kernel_closure_affinity.json \
+            --npz-out results/v067_growth_kernel_closure_affinity.npz
+
+      - name: Upload v0.67 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v067_growth_kernel_closure_affinity
+          path: |
+            results/v067_growth_kernel_closure_affinity.json
+            results/v067_growth_kernel_closure_affinity.npz
+            results/v067_theory_forcing.json
+            results/v067_theory_trace.log
+            results/v067_theory_trace.dat
+            results/v067_theory_force.dat
