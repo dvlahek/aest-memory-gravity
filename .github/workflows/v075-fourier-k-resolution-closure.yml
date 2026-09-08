@@ -1,0 +1,114 @@
+name: v075 Fourier k-resolution closure audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v075/**'
+      - '.github/workflows/v075-fourier-k-resolution-closure.yml'
+
+jobs:
+  fourier-k-resolution-closure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v075
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v075
+          python3 v019i/apply_ic_patch.py class_v075
+          python3 v019j/apply_memory_patch.py class_v075
+          python3 v019w/apply_variational_forcing_patch.py class_v075
+          python3 v019y/apply_output_precision_patch.py class_v075
+          python3 v023/apply_source_grid_trace_patch.py class_v075
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_v075
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v075
+
+      - name: Build CLASS executable
+        run: make -C class_v075 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v075 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v075/fourier_k_resolution_closure.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v075/predata_fourier_k_resolution_closure.json'))
+          assert d['classification']=='V075_PREDATA_FOURIER_K_RESOLUTION_CLOSURE_AUDIT'
+          assert d['created_before_v075_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['historical_classifications_must_remain_unchanged'] is True
+          assert d['source_results']['v072_classification']=='V072_DIRECT_TRANSFER_TANGENT_AFFINITY_FAIL'
+          assert d['source_results']['v073_classification']=='V073_NATIVE_SOURCE_POWER_CLOSURE_FAIL'
+          assert d['source_results']['v074_classification']=='V074_NATIVE_TRANSFER_POWER_CLOSURE_FAIL'
+          m=d['frozen_physical_model']
+          assert m['KB']==0.0665
+          assert m['tauH0']==10.0
+          assert m['p']==0.0
+          assert m['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert m['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          assert d['fixed_grid']['k_h_per_Mpc']==[0.03,0.05,0.08,0.10,0.15,0.20]
+          assert d['fixed_grid']['z']==[0.2,0.4,0.6,0.8,1.0,1.2,1.5]
+          seq=d['resolution_sequence']
+          assert seq==[
+            {'label':'r1','k_per_decade_for_pk':10.0,'k_per_decade_for_bao':70.0},
+            {'label':'r2','k_per_decade_for_pk':20.0,'k_per_decade_for_bao':140.0},
+            {'label':'r3','k_per_decade_for_pk':40.0,'k_per_decade_for_bao':280.0},
+            {'label':'r4','k_per_decade_for_pk':80.0,'k_per_decade_for_bao':560.0},
+          ]
+          g=d['primary_numerical_gates']
+          assert g['forcing_control_vs_primary_relative_L2_max_each_resolution']==0.01
+          assert g['forcing_control_vs_primary_cosine_min_each_resolution']==0.9999
+          assert g['requested_vs_actual_transfer_k_relative_error_max_each_resolution']==1e-8
+          assert g['transfer_tangent_lambda_affinity_global_normalized_RMS_max_each_resolution']==0.005
+          assert g['highest_resolution_transfer_power_vs_pk_lin_relative_error_max']==0.005
+          assert g['highest_resolution_pk_lin_tangent_lambda_affinity_global_normalized_RMS_max']==0.005
+          assert g['r4_vs_r3_pk_lin_all_runs_global_normalized_RMS_max']==0.005
+          print('V075_PREDATA_FOURIER_K_RESOLUTION_CLOSURE_AUDIT_PASS')
+          PY
+
+      - name: Run Fourier k-resolution closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v075/fourier_k_resolution_closure.py \
+            --class-root class_v075 \
+            --json-out results/v075_fourier_k_resolution_closure.json \
+            --npz-out results/v075_fourier_k_resolution_closure.npz
+
+      - name: Upload v0.75 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v075_fourier_k_resolution_closure
+          path: |
+            results/v075_fourier_k_resolution_closure.json
+            results/v075_fourier_k_resolution_closure.npz
+            results/v075_r*_forcing_summary.json
+            results/v075_r*_forcing_trace.log
+            results/v075_r*_forcing_trace.dat
+            results/v075_r*_forcing_force.dat
+            results/v075_r*_*_trace.dat
+            results/v072_trace_reload_patch.json
+          if-no-files-found: warn
