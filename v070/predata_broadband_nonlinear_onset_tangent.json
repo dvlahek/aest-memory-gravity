@@ -1,0 +1,76 @@
+{
+  "classification": "V070_PREDATA_BROADBAND_NONLINEAR_ONSET_TANGENT",
+  "created_before_v070_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v067_classification": "V067_GROWTH_KERNEL_CLOSURE_AFFINITY_FAIL",
+    "v068_classification": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_FAIL",
+    "v069_classification": "V069_NONLINEAR_ONSET_DIAGNOSTIC_FAIL",
+    "motivation": "v069 showed that the naive first upward crossing is highly grid-sensitive, while many Delta_L^2 threshold locations overlap the k~0.08--0.20 h/Mpc response-transition region. v070 therefore replaces the pointwise first-crossing observable by a preregistered broadband log-k band average and evaluates its eta=0 threshold tangent implicitly at the baseline crossing."
+  },
+  "scope": "Linear-theory broadband onset diagnostic only. No nonlinear evolution, nonlinear saturation, halo dynamics, screening, N-body dynamics, or observational likelihood is used.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "omega_b": 0.022377376877682164,
+      "omega_cdm": 0.12006705327635288,
+      "tau_reio": 0.06174082364515668,
+      "n_s": 0.9666229454895277,
+      "A_s": 2.1308864352626987e-9
+    },
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "lambda_is_numerical_tangent_amplification_not_physical_eta": true,
+    "memory_background_correction": 0,
+    "memory_direct_linear_Einstein_stress": 0
+  },
+  "direct_spectrum_grid": {
+    "k_h_per_Mpc_min": 0.005,
+    "k_h_per_Mpc_max": 2.0,
+    "n_log_points": 2401,
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "evaluation": "Direct classy.pk_lin at every requested (k,z); no CLASS native-grid P(k) interpolation."
+  },
+  "dimensionless_power": {
+    "definition": "Delta_L^2(k,z)=k^3 P_L(k,z)/(2 pi^2), with k in 1/Mpc and P_L in Mpc^3",
+    "thresholds": [0.1, 0.3, 1.0],
+    "broadband_logk_top_hat_widths": [0.1, 0.2],
+    "broadband_definition": "For x=ln k and width W, Dbar_W(x,z)=(1/W) integral_{x-W/2}^{x+W/2} Delta_L^2(exp(u),z) du. Only centers whose full top-hat window lies inside the direct k range are used.",
+    "baseline_crossing_rule": "For each W, threshold, and redshift, take the first upward crossing of Dbar_W as x increases; interpolate ln Dbar_W linearly versus ln k between neighboring evaluated centers.",
+    "reason_for_broadband_definition": "A nonlinear regime is a broadband statement. The fixed top-hat average reduces sensitivity to isolated narrow excursions that made the v069 first-point crossing grid-dependent. Two widths are fixed before the result and both are reported."
+  },
+  "implicit_tangent": {
+    "definition": "At each baseline broadband threshold crossing, d ln k_thr/d eta = - [partial_eta ln Dbar_W] / [partial_ln_k ln Dbar_W].",
+    "partial_eta_ln_Dbar": "[ln Dbar_W(+lambda)-ln Dbar_W(-lambda)]/(2 lambda), evaluated at the baseline crossing.",
+    "partial_ln_k_ln_Dbar": "Derivative of the baseline broadband ln Dbar_W with respect to ln k, evaluated at the baseline crossing.",
+    "interpretation_if_positive": "Positive eta shifts the broadband threshold to larger k, consistent with delaying the linear-theory approach to a broadband nonlinear regime.",
+    "interpretation_if_negative": "Positive eta shifts the broadband threshold to smaller k, consistent with advancing that linear-theory approach.",
+    "no_sign_is_required_for_numerical_pass": true
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_spectra_finite_and_positive": true,
+    "all_broadband_thresholds_bracketed_for_both_widths_and_all_7_redshifts": true,
+    "baseline_fine_vs_every_other_grid_crossing_relative_difference_max": 0.005,
+    "implicit_shift_fine_vs_every_other_grid_global_normalized_RMS_max": 0.05,
+    "implicit_shift_lambda_affinity_global_normalized_RMS_max": 0.05,
+    "minimum_absolute_baseline_log_slope_at_threshold": 0.001
+  },
+  "science_classification_after_numerical_pass": {
+    "delay": "V070_BROADBAND_MEMORY_DELAY_SUPPORTED if, for both preregistered widths, at least 5/7 Delta_L^2=1 implicit mean shifts are positive and the two widths agree in sign at least 6/7 redshifts.",
+    "advance": "V070_BROADBAND_MEMORY_ADVANCE_SUPPORTED if, for both preregistered widths, at least 5/7 Delta_L^2=1 implicit mean shifts are negative and the two widths agree in sign at least 6/7 redshifts.",
+    "mixed": "V070_BROADBAND_ONSET_SHIFT_MIXED otherwise, provided all numerical gates pass.",
+    "numerical_fail": "V070_BROADBAND_NONLINEAR_ONSET_TANGENT_FAIL if any primary numerical gate fails."
+  },
+  "secondary_descriptive_tests": {
+    "transition_overlap": "Report the fraction of baseline broadband threshold crossings in k=0.08--0.20 h/Mpc, preserving the v068 transition band only as historical context.",
+    "threshold_dependence": "Report median absolute implicit shift for Delta_L^2=0.1, 0.3, and 1.0 for each broadband width.",
+    "width_dependence": "Report sign concordance and amplitude differences between W=0.1 and W=0.2; neither width may be selected post hoc as preferred."
+  },
+  "anti_tuning": "The physical model, tangent amplitudes, direct k/z grid, thresholds, broadband widths, implicit-derivative definition, numerical gates, and science-classification rule are committed before the v070 result. Historical v067--v069 classifications and artifacts remain unchanged."
+}
