@@ -1,0 +1,78 @@
+{
+  "classification": "V075_PREDATA_FOURIER_K_RESOLUTION_CLOSURE_AUDIT",
+  "created_before_v075_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v072_classification": "V072_DIRECT_TRANSFER_TANGENT_AFFINITY_FAIL",
+    "v073_classification": "V073_NATIVE_SOURCE_POWER_CLOSURE_FAIL",
+    "v074_classification": "V074_NATIVE_TRANSFER_POWER_CLOSURE_FAIL",
+    "v074_key_result": "CLASS-native transfer tangent affinity passed strongly (~2.9e-4 max) while transfer power failed to close pk_lin, with disagreement concentrated at the structured higher-k part of the fixed grid."
+  },
+  "historical_classifications_must_remain_unchanged": true,
+  "question": "Does increasing the CLASS scalar/Fourier k sampling density make pk_lin converge to the CLASS-native transfer reconstruction and recover lambda-affine tangent response on the unchanged v0.63 fixed grid?",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "cosmology": "unchanged from v0.63/v0.72-v0.74",
+    "eta0_variational_forcing": "same positive-Drude source-grid construction with control order 512 and primary order 1024; rebuilt separately at each preregistered k-resolution so the strict force table has support on that resolution's CLASS k grid"
+  },
+  "fixed_grid": {
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "provenance": "v063 preregistered fixed RSD grid",
+    "no_scale_selection_after_v074": true
+  },
+  "resolution_sequence": [
+    {"label": "r1", "k_per_decade_for_pk": 10.0, "k_per_decade_for_bao": 70.0},
+    {"label": "r2", "k_per_decade_for_pk": 20.0, "k_per_decade_for_bao": 140.0},
+    {"label": "r3", "k_per_decade_for_pk": 40.0, "k_per_decade_for_bao": 280.0},
+    {"label": "r4", "k_per_decade_for_pk": 80.0, "k_per_decade_for_bao": 560.0}
+  ],
+  "resolution_policy": {
+    "reason_for_pairs": "CLASS uses separate outside-BAO and BAO k densities. Each level multiplies both default densities by the same factor 1,2,4,8 so the audit is a genuine global k-resolution sequence rather than changing only one sampling region.",
+    "highest_resolution_is_primary": "r4",
+    "penultimate_resolution_for_convergence_check": "r3"
+  },
+  "primary_observables": {
+    "transfer_path": "Class.get_transfer(z, output_format='class') using d_m at the exact requested k modes",
+    "pk_path": "Class.pk_lin(k,z)",
+    "transfer_power_identity": "P_transfer=(2*pi^2/k^3)*d_m^2*P_R(k), with k in 1/Mpc and P_R=A_s*(k/k_pivot)^(n_s-1)",
+    "tangent_estimator": "[P(+lambda)-P(-lambda)]/[2 lambda P(0)]",
+    "lambda_affinity_metric": "global normalized RMS deviation of each lambda response from the four-lambda consensus"
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max_each_resolution": 0.01,
+    "forcing_control_vs_primary_cosine_min_each_resolution": 0.9999,
+    "requested_vs_actual_transfer_k_relative_error_max_each_resolution": 1e-8,
+    "all_transfer_and_pk_lin_powers_finite_positive": true,
+    "transfer_tangent_lambda_affinity_global_normalized_RMS_max_each_resolution": 0.005,
+    "highest_resolution_transfer_power_vs_pk_lin_relative_error_max": 0.005,
+    "highest_resolution_pk_lin_tangent_lambda_affinity_global_normalized_RMS_max": 0.005,
+    "r4_vs_r3_pk_lin_all_runs_global_normalized_RMS_max": 0.005
+  },
+  "descriptive_not_gates": {
+    "closure_max_by_resolution": true,
+    "baseline_closure_max_by_resolution": true,
+    "pk_lin_affinity_by_resolution": true,
+    "pk_lin_vs_transfer_response_global_normalized_RMS_by_resolution": true,
+    "closure_monotonicity": true,
+    "per_k_z_closure_maps": true
+  },
+  "anti_tuning": {
+    "do_not_change_resolution_levels_after_result": true,
+    "do_not_change_fixed_k_z_grid_after_result": true,
+    "do_not_change_tangent_amplitudes_after_result": true,
+    "do_not_relax_gates_after_result": true,
+    "do_not_reclassify_v072_v073_v074": true
+  },
+  "classification_policy": {
+    "pass": "V075_FOURIER_K_RESOLUTION_CLOSURE_PASS",
+    "fail": "V075_FOURIER_K_RESOLUTION_CLOSURE_FAIL",
+    "meaning_of_pass": "At the preregistered highest k resolution, pk_lin closes the CLASS-native transfer power and its eta=0 tangent is lambda-affine, while r4 is also converged against r3. This is a numerical CLASS-resolution certification only; it is not observational evidence and does not simulate nonlinear evolution.",
+    "meaning_of_fail": "Keep the failure and report which preregistered gate failed. Do not extend the resolution sequence, change the physical model, grid, tangent amplitudes, or thresholds as a rescue of v0.75. Any later follow-up must be separately preregistered."
+  }
+}
