@@ -3,6 +3,9 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import csv
 import json
+import os
+import subprocess
+import sys
 import numpy as np
 
 import run_fixed_k_ode_convergence as core
@@ -56,6 +59,15 @@ SOURCE_RMS_MAX = 1e-3
 MIN_SHIFT_MAX = DKH
 DIRECT_CLASS_MAX = 1e-10
 ROOT_SHIFT_MAX = DKH
+
+# Execution-only settings. These do not change the k grid, physics, solver
+# settings, tolerances, start times, comparisons or science gates.
+# The 24 non-anchor k values are split into four checkpointed batches of six.
+# Both locked window centres are repeated in every batch so cross-batch copy
+# spread remains explicitly measurable.
+BATCH_PAYLOAD_SIZE = 6
+DEFAULT_MAX_WORKERS = min(16, os.cpu_count() or 1)
+MAX_WORKERS = max(1, int(os.environ.get("V062_MAX_WORKERS", DEFAULT_MAX_WORKERS)))
 
 
 def targets():
@@ -136,26 +148,129 @@ def pair_report(a_name, b_name, rows, diags):
     }
 
 
+def batch_specs(t):
+    anchors = list(CENTERS)
+    payload = [x for x in t if all(abs(x-a) > 1e-10 for a in anchors)]
+    chunks = [payload[i:i+BATCH_PAYLOAD_SIZE] for i in range(0, len(payload), BATCH_PAYLOAD_SIZE)]
+    specs = []
+    for name, overrides in VARIANTS.items():
+        for batch_id, chunk in enumerate(chunks):
+            vals = sorted(set(chunk + anchors))
+            specs.append((name, overrides, batch_id, vals))
+    return specs
+
+
+def batch_json_valid(path, variant_name, batch_id, vals):
+    if not path.exists():
+        return False
+    try:
+        obj = json.loads(path.read_text())
+        if obj.get("variant") != variant_name or int(obj.get("batch")) != int(batch_id):
+            return False
+        rows = obj.get("rows", [])
+        got = sorted(round(float(r["kh_requested"]), 8) for r in rows)
+        expected = sorted(round(float(v), 8) for v in vals)
+        return got == expected
+    except Exception:
+        return False
+
+
+def run_batch(spec):
+    variant_name, overrides, batch_id, vals = spec
+    out = RESULTS / f"v062_odeconv_{variant_name}_batch_{batch_id}.json"
+    trace = RESULTS / f"v062_odeconv_{variant_name}_batch_{batch_id}_trace.dat"
+
+    if batch_json_valid(out, variant_name, batch_id, vals):
+        rows = json.loads(out.read_text())["rows"]
+        print(f"=== reuse {variant_name} batch {batch_id} ({len(rows)} rows) ===", flush=True)
+        return variant_name, batch_id, rows, None, True
+
+    # Never mix an interrupted trace with a restarted batch.
+    if out.exists():
+        out.unlink()
+    if trace.exists():
+        trace.unlink()
+
+    env = os.environ.copy()
+    env["OMP_NUM_THREADS"] = "1"
+    env["AEST_OFFLINE_TRACE_FILE"] = str(trace)
+    cp = subprocess.run(
+        [
+            sys.executable,
+            str(Path(core.__file__).resolve()),
+            "--worker",
+            variant_name,
+            json.dumps(overrides),
+            str(batch_id),
+            json.dumps(vals),
+        ],
+        env=env,
+        check=False,
+    )
+    if cp.returncode != 0:
+        return variant_name, batch_id, [], {"batch": batch_id, "returncode": cp.returncode}, False
+    if not batch_json_valid(out, variant_name, batch_id, vals):
+        return variant_name, batch_id, [], {"batch": batch_id, "returncode": 0, "error": "missing_or_invalid_batch_json"}, False
+    rows = json.loads(out.read_text())["rows"]
+    return variant_name, batch_id, rows, None, False
+
+
+def merge_rows(raw_rows):
+    by_k = {}
+    for row in raw_rows:
+        by_k.setdefault(round(row["kh_requested"], 8), []).append(row)
+    merged = []
+    for _, copies in sorted(by_k.items()):
+        base = dict(copies[0])
+        base["copies"] = len(copies)
+        pp = np.asarray([r["P_direct_Mpc3"] for r in copies], float)
+        ss = np.asarray([r["delta_m_gi_final"] for r in copies], float)
+        base["P_direct_relative_spread"] = float((pp.max()-pp.min()) / max(np.mean(np.abs(pp)), 1e-300))
+        base["source_relative_spread"] = float((ss.max()-ss.min()) / max(np.mean(np.abs(ss)), 1e-300))
+        merged.append(base)
+    return merged
+
+
+def run_checkpointed(t):
+    specs = batch_specs(t)
+    print(json.dumps({
+        "execution_only": {
+            "batch_payload_size": BATCH_PAYLOAD_SIZE,
+            "n_tasks": len(specs),
+            "max_workers": min(MAX_WORKERS, len(specs)),
+            "omp_num_threads_per_worker": 1,
+            "resume_valid_batch_json": True,
+            "science_settings_changed": False,
+        }
+    }, indent=2), flush=True)
+
+    raw = {name: [] for name in VARIANTS}
+    errors = {name: [] for name in VARIANTS}
+    reused = {name: [] for name in VARIANTS}
+
+    with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, len(specs))) as pool:
+        futures = {pool.submit(run_batch, spec): spec for spec in specs}
+        for future in as_completed(futures):
+            name, batch_id, rr, err, was_reused = future.result()
+            if err is not None:
+                errors[name].append(err)
+                print(f"=== {name} batch {batch_id} FAILED ===", flush=True)
+            else:
+                raw[name].extend(rr)
+                if was_reused:
+                    reused[name].append(batch_id)
+                print(f"=== {name} batch {batch_id} complete ===", flush=True)
+
+    rows = {}
+    for name in VARIANTS:
+        if raw[name]:
+            rows[name] = merge_rows(raw[name])
+    return rows, errors, reused, specs
+
+
 def main():
     t = targets()
-    rows = {}
-    errors = {}
-
-    # The four certification variants are scientifically independent CLASS
-    # evaluations. Run them concurrently to reduce wall time only; each call
-    # retains exactly the same k grid, solver, tolerances, start times and gates.
-    with ThreadPoolExecutor(max_workers=len(VARIANTS)) as pool:
-        futures = {}
-        for name, overrides in VARIANTS.items():
-            print(f"=== {name} ===", flush=True)
-            futures[pool.submit(core.run_variant, name, overrides, t)] = name
-        for future in as_completed(futures):
-            name = futures[future]
-            rr, ee = future.result()
-            errors[name] = ee
-            if rr is not None:
-                rows[name] = rr
-            print(f"=== {name} complete ===", flush=True)
+    rows, errors, reused, specs = run_checkpointed(t)
 
     diags = {name: diagnostics(rr) for name, rr in rows.items()}
     pairs = {
@@ -200,6 +315,16 @@ def main():
         "n_unique_target_k": len(t),
         "variants": VARIANTS,
         "variant_errors": errors,
+        "execution": {
+            "checkpointed_batches": True,
+            "batch_payload_size": BATCH_PAYLOAD_SIZE,
+            "anchors_repeated_in_every_batch": CENTERS,
+            "n_batch_tasks": len(specs),
+            "max_workers": min(MAX_WORKERS, len(specs)),
+            "omp_num_threads_per_worker": 1,
+            "reused_completed_batches": reused,
+            "science_settings_changed": False,
+        },
         "diagnostics": diags,
         "predeclared_gate": {
             "source_rms_normalized": f"<{SOURCE_RMS_MAX}",
