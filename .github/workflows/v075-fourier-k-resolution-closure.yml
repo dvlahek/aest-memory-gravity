@@ -6,6 +6,7 @@ on:
     branches: [v053-model-freeze-planck]
     paths:
       - 'v075/**'
+      - 'tools/apply_v075_force_path_reload_patch.py'
       - '.github/workflows/v075-fourier-k-resolution-closure.yml'
 
 jobs:
@@ -38,6 +39,7 @@ jobs:
           python3 v023/apply_source_grid_trace_patch.py class_v075
           python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_v075
           python3 tools/apply_v063_classy_runtime_reload_patch.py class_v075
+          python3 tools/apply_v075_force_path_reload_patch.py class_v075
 
       - name: Build CLASS executable
         run: make -C class_v075 -j2 class
@@ -51,7 +53,7 @@ jobs:
           set -euo pipefail
           mkdir -p results
           python3 -m py_compile v075/fourier_k_resolution_closure.py
-          python3 -m py_compile v075/fourier_k_resolution_closure_runtime_trace_fix.py
+          python3 -m py_compile tools/apply_v075_force_path_reload_patch.py
           python3 - <<'PY'
           import json
           d=json.load(open('v075/predata_fourier_k_resolution_closure.json'))
@@ -93,7 +95,7 @@ jobs:
         run: |
           set -euo pipefail
           sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
-          python3 v075/fourier_k_resolution_closure_runtime_trace_fix.py \
+          python3 v075/fourier_k_resolution_closure.py \
             --class-root class_v075 \
             --json-out results/v075_fourier_k_resolution_closure.json \
             --npz-out results/v075_fourier_k_resolution_closure.npz
@@ -112,4 +114,5 @@ jobs:
             results/v075_r*_forcing_force.dat
             results/v075_r*_*_trace.dat
             results/v072_trace_reload_patch.json
+            results/v075_force_path_reload_patch.json
           if-no-files-found: warn
