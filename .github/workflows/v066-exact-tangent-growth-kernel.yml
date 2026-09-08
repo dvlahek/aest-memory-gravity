@@ -1,0 +1,95 @@
+name: v066 exact tangent growth kernel
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v066/**'
+      - '.github/workflows/v066-exact-tangent-growth-kernel.yml'
+
+jobs:
+  exact-tangent-growth-kernel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v066
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v066
+          python3 v019i/apply_ic_patch.py class_v066
+          python3 v019j/apply_memory_patch.py class_v066
+          python3 v019w/apply_variational_forcing_patch.py class_v066
+          python3 v019y/apply_output_precision_patch.py class_v066
+          python3 v023/apply_source_grid_trace_patch.py class_v066
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v066
+
+      - name: Build CLASS executable
+        run: make -C class_v066 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v066 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v066/exact_tangent_growth_kernel.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v066/predata_exact_tangent_growth_kernel.json'))
+          assert d['classification']=='V066_PREDATA_EXACT_TANGENT_GROWTH_KERNEL'
+          assert d['created_before_v066_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['source_results']['v065_classification']=='V065_SMOOTH_GROWTH_TANGENT_LIMIT_FAIL'
+          assert d['frozen_model']['KB']==0.0665
+          assert d['frozen_model']['tauH0']==10.0
+          assert d['frozen_model']['p']==0.0
+          assert d['frozen_model']['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['frozen_model']['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          assert d['frozen_model']['primary_redshifts']==[0.2,0.3,0.4,0.5,0.6,0.7,0.8]
+          assert d['frozen_model']['context_redshifts']==[1.0,1.2,1.5]
+          assert d['k_kernel']['kh_min_h_per_Mpc']==0.0001
+          assert d['k_kernel']['kh_max_h_per_Mpc']==1.999
+          assert d['k_kernel']['n_log_points']==2048
+          assert d['primary_gates']['baseline_sigma8_reconstruction_max_relative_error']==0.005
+          assert d['primary_gates']['lambda_invariance_max_relative_spread_about_mean']==0.005
+          assert d['primary_gates']['kernel_integral_vs_sigma8_squared_estimator_max_relative_error']==0.005
+          print('V066_PREDATA_EXACT_TANGENT_GROWTH_KERNEL_AUDIT_PASS')
+          PY
+
+      - name: Run exact tangent growth-kernel test
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v066/exact_tangent_growth_kernel.py \
+            --class-root class_v066 \
+            --json-out results/v066_exact_tangent_growth_kernel.json \
+            --npz-out results/v066_exact_tangent_growth_kernel.npz
+
+      - name: Upload v0.66 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v066_exact_tangent_growth_kernel
+          path: |
+            results/v066_exact_tangent_growth_kernel.json
+            results/v066_exact_tangent_growth_kernel.npz
+            results/v063_theory_forcing.json
+            results/v063_theory_trace.log
