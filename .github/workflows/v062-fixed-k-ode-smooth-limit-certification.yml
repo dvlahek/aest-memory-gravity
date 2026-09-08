@@ -2,11 +2,6 @@ name: v062 final smooth-limit ODE certification
 
 on:
   workflow_dispatch:
-  push:
-    branches: [v053-model-freeze-planck]
-    paths:
-      - '.github/workflows/v062-fixed-k-ode-smooth-limit-certification.yml'
-      - 'v062/run_fixed_k_ode_smooth_limit_certification.py'
 
 jobs:
   smooth-limit-certification:
