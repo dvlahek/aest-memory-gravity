@@ -2,16 +2,18 @@
 """Fast execution-only timing probe for the v0.62 fixed-k ODE path.
 
 This script is deliberately NOT a scientific certification and its outputs must
-not be used for the preregistered v0.62 classification.  It exists only to
+not be used for the preregistered v0.62 classification. It exists only to
 measure how expensive the patched CLASS path is on the current machine before
-launching another long convergence run.
+launching another convergence run.
 
 Modes:
   quick   : default NDF15 integration, two locked centre k values.
-  medium  : modestly tighter 3e-6 tolerance, six nearby k values.
+  medium  : 3e-6 tolerance, six nearby k values.
+  strong  : 1e-7 tolerance, ten nearby k values.
+  tight   : 3e-8 tolerance with the frozen early-start settings, ten nearby k values.
 
 The physical AeST background/model parameters are inherited unchanged from
-run_fixed_k_ode_convergence.py.  The numerical settings below are diagnostic
+run_fixed_k_ode_convergence.py. The numerical settings below are diagnostic
 runtime settings only and are intentionally kept separate from the final
 certification script.
 """
@@ -43,6 +45,28 @@ PROBES = {
             0.126475, 0.12650, 0.126525,
         ],
         "description": "3e-6 NDF15 tolerance, six local modes; runtime probe only",
+    },
+    "strong": {
+        "overrides": {
+            "tol_perturbations_integration": 1e-7,
+        },
+        "kh_values": [
+            0.091950, 0.091975, 0.092000, 0.092025, 0.092050,
+            0.126450, 0.126475, 0.126500, 0.126525, 0.126550,
+        ],
+        "description": "1e-7 NDF15 tolerance, ten local modes; runtime probe only",
+    },
+    "tight": {
+        "overrides": {
+            "tol_perturbations_integration": 3e-8,
+            "start_small_k_at_tau_c_over_tau_h": 5e-4,
+            "start_large_k_at_tau_h_over_tau_k": 0.03,
+        },
+        "kh_values": [
+            0.091950, 0.091975, 0.092000, 0.092025, 0.092050,
+            0.126450, 0.126475, 0.126500, 0.126525, 0.126550,
+        ],
+        "description": "3e-8 NDF15 tolerance with frozen early starts, ten local modes; runtime probe only",
     },
 }
 
