@@ -1,0 +1,70 @@
+name: NL1C3 screened-resummed dynamical bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'nl1c3/**'
+      - 'docs/nl1c3_predata_screened_resummed_dynamical_bridge.md'
+      - '.github/workflows/nl1c3-screened-resummed-dynamical-bridge.yml'
+
+jobs:
+  nl1c3-screened-resummed-dynamical-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c3_predata_screened_resummed_dynamical_bridge.md').read_text()
+          required=[
+            'NL1C3_PREDATA_SCREENED_RESUMMED_DYNAMICAL_BRIDGE',
+            'NL1C2_SCREENED_ASYMPTOTIC_RECLOSURE_PASS',
+            'NL1C3_SCREENED_RESUMMED_DYNAMICAL_BRIDGE_PASS',
+            'NL1C3_SCREENED_RESUMMED_DYNAMICAL_BRIDGE_FAIL',
+            'NL1C3_SCREENED_RESUMMED_DYNAMICAL_BRIDGE_INCOMPLETE',
+            'No GR/Poisson toy closure is allowed',
+            'additional eta-linear terms forced by variation of the covariant memory action around a nonzero finite-amplitude reference'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C3_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c3/screened_resummed_dynamical_bridge_audit.py
+
+      - name: Run NL1C3 bridge audit
+        run: python3 nl1c3/screened_resummed_dynamical_bridge_audit.py
+
+      - name: Verify honest classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c3_screened_resummed_dynamical_bridge_audit.json'))
+          assert d['classification']=='NL1C3_SCREENED_RESUMMED_DYNAMICAL_BRIDGE_INCOMPLETE'
+          assert d['component_level_solver_ready'] is False
+          assert all(d['quantitative_checks'].values())
+          assert d['historical_results_unchanged'] is True
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1C3 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c3_screened_resummed_dynamical_bridge
+          path: |
+            results/nl1c3_screened_resummed_dynamical_bridge_audit.json
+            docs/nl1c3_predata_screened_resummed_dynamical_bridge.md
+            nl1c3/screened_resummed_dynamical_bridge_audit.py
+          if-no-files-found: warn
