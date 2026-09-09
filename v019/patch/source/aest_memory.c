@@ -69,9 +69,9 @@ static int aest_eval_from_Z(int model,double Q0,double K2,double Z0,double Z,
     double zz=Z*Z;
     double ex=exp(zz);
     if (!isfinite(ex)) return 3;
-    k=2.*K2*Z0*Z0*(ex-1.);
-    kq=4.*K2*Z0*Z*ex;
-    kqq=4.*K2*ex*(1.+2.*zz);
+    k=K2*Z0*Z0*(ex-1.);
+    kq=2.*K2*Z0*Z*ex;
+    kqq=2.*K2*ex*(1.+2.*zz);
   }
   else return 4;
   if (!(q>0.) || !(kqq>0.) || !isfinite(k) || !isfinite(kq)) return 5;
@@ -140,7 +140,7 @@ int aest_background_eval(int model,double Q0,double K2,double Z0,double I0,
     Z=asinh(x);
   }
   else if (model==_AEST_MODEL_EXP_) {
-    double x=kq/(4.*K2*Z0);
+    double x=kq/(2.*K2*Z0);
     if (aest_exp_Z_from_x(x,&Z)) return 3;
   }
   else return 4;
