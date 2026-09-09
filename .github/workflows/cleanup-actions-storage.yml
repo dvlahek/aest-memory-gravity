@@ -1,0 +1,74 @@
+name: Cleanup Actions storage
+
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - '.github/workflows/cleanup-actions-storage.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Delete disposable Actions artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Keep only the small set of artifacts that anchor the current
+          # scientific chain. Historical classifications/results are preserved
+          # in the repository itself, so old CI bundles are disposable.
+          keep_regex='^(results_bundle_v076_|results_bundle_v077_|results_bundle_v078_|results_bundle_nl1a_|results_bundle_nl1c0_|results_bundle_nl1c1_|results_bundle_nl1c2_|results_bundle_nl1c3a_)'
+
+          before_bytes=0
+          kept_bytes=0
+          deleted_bytes=0
+          deleted_count=0
+          kept_count=0
+          page=1
+
+          while :; do
+            data=$(gh api "/repos/$REPO/actions/artifacts?per_page=100&page=$page")
+            count=$(jq '.artifacts | length' <<<"$data")
+            [ "$count" -eq 0 ] && break
+
+            while IFS=$'\t' read -r id name size expired; do
+              before_bytes=$((before_bytes + size))
+              if [[ "$name" =~ $keep_regex ]] && [[ "$expired" == "false" ]]; then
+                echo "KEEP   $id  $size  $name"
+                kept_bytes=$((kept_bytes + size))
+                kept_count=$((kept_count + 1))
+              else
+                echo "DELETE $id  $size  $name"
+                gh api --method DELETE "/repos/$REPO/actions/artifacts/$id"
+                deleted_bytes=$((deleted_bytes + size))
+                deleted_count=$((deleted_count + 1))
+              fi
+            done < <(jq -r '.artifacts[] | [.id,.name,.size_in_bytes,.expired] | @tsv' <<<"$data")
+
+            page=$((page + 1))
+          done
+
+          echo "Deleted artifacts: $deleted_count"
+          echo "Kept artifacts:    $kept_count"
+          echo "Deleted bytes:     $deleted_bytes"
+          echo "Kept bytes:        $kept_bytes"
+          echo "Seen bytes:        $before_bytes"
+
+      - name: Delete Actions caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Caches are reproducible and are safe to rebuild.
+          gh cache delete --all --repo "$REPO" || true
