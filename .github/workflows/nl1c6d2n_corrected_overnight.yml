@@ -68,6 +68,15 @@ jobs:
             --json-out results/nl1c6d2n_old_vs_corrected_no_refit.json \
             2>&1 | tee results/nl1c6d2n_old_vs_corrected_no_refit.log
 
+      - name: Grid-align transfer comparison
+        run: |
+          python nl1c6d2n/compare_old_corrected_aligned.py \
+            --historical results/nl1c6d2n_historical_no_refit.npz \
+            --corrected results/nl1c6d2n_corrected_class_baseline_r1.npz \
+            --raw-json results/nl1c6d2n_old_vs_corrected_no_refit.json \
+            --json-out results/nl1c6d2n_old_vs_corrected_grid_aligned.json \
+            2>&1 | tee results/nl1c6d2n_old_vs_corrected_grid_aligned.log
+
       - name: Write compact job summary
         if: always()
         shell: bash
@@ -86,10 +95,25 @@ jobs:
           p='results/nl1c6d2n_old_vs_corrected_no_refit.json'
           d=json.load(open(p))
           print('```text')
-          print('max_transfer_metric_relative_L2=', d.get('max_transfer_metric_relative_L2'))
+          print('raw_max_transfer_metric_relative_L2=', d.get('max_transfer_metric_relative_L2'))
           print('max_spectra_relative_L2=', d.get('max_spectra_relative_L2'))
           print('background_rho_relative_L2=', d.get('background',{}).get('rho_cdm',{}).get('relative_L2'))
           print('background_H_relative_L2=', d.get('background',{}).get('H',{}).get('relative_L2'))
+          print('```')
+          PY
+          fi
+          if [[ -f results/nl1c6d2n_old_vs_corrected_grid_aligned.json ]]; then
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+            echo '### Grid-aligned transfer diagnostic' >> "$GITHUB_STEP_SUMMARY"
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          p='results/nl1c6d2n_old_vs_corrected_grid_aligned.json'
+          d=json.load(open(p))
+          print('```text')
+          print('max_grid_aligned_transfer_relative_L2=', d.get('max_grid_aligned_transfer_relative_L2'))
+          for k,v in d.get('transfer_metric_fields',{}).items():
+              if v.get('present'):
+                  print(f"{k}=", v.get('symmetric_conservative_relative_L2'))
           print('```')
           PY
           fi
