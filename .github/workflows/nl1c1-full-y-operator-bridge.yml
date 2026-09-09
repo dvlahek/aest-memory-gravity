@@ -30,7 +30,7 @@ jobs:
           s=p.read_text()
           required=[
             'NL1C1_PREDATA_FULL_Y_OPERATOR_BRIDGE',
-            'NL1C1_LINEAR_STATE_HIGH_GRADIENT_REGIME',
+            'NL1C0_LINEAR_STATE_HIGH_GRADIENT_REGIME',
             "j_{\\rm S}(x)=\\frac{x}{1+\\beta_0+\\beta_0x}",
             "j_{\\rm E}(x)=\\frac1{\\beta_0}",
             "j_{\\rm H}(x)=",
