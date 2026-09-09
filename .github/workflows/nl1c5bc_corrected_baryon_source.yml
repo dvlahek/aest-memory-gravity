@@ -1,0 +1,56 @@
+name: NL1C5BC corrected baryon source freeze
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c5bc_corrected_baryon_source.yml'
+      - 'nl1c5bc/**'
+      - 'nl1c6d2n/setup_corrected_class_local.sh'
+      - 'v019/patch/source/aest_memory.c'
+      - 'docs/nl1c5bc_*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nl1c5bc-corrected-baryon-source
+  cancel-in-progress: false
+
+jobs:
+  source-freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated corrected CLASS
+        run: bash nl1c6d2n/setup_corrected_class_local.sh
+
+      - name: Freeze corrected baryon source
+        run: bash nl1c5bc/run_local.sh
+
+      - name: Write compact summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## NL1C5BC corrected baryon source freeze' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/nl1c5bc_corrected_baryon_source_freeze.log ]]; then
+            grep -E '^(C[1-5]_|CLASSIFICATION=)' results/nl1c5bc_corrected_baryon_source_freeze.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
