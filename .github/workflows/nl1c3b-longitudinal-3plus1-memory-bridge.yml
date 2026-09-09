@@ -1,0 +1,79 @@
+name: NL1C3B longitudinal 3+1 memory bridge
+
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'docs/nl1c3b_predata_longitudinal_3plus1_memory_bridge.md'
+      - 'nl1c3b/**'
+      - '.github/workflows/nl1c3b-longitudinal-3plus1-memory-bridge.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONHASHSEED: '0'
+
+jobs:
+  nl1c3b-longitudinal-3plus1-memory-bridge:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --disable-pip-version-check numpy sympy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c3b_predata_longitudinal_3plus1_memory_bridge.md').read_text()
+          required=[
+            'NL1C3B_PREDATA_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE',
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_PASS',
+            'maximum relative error `<=1e-6`',
+            'absolute error `<=1e-12`',
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_PASS',
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_FAIL',
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_INCOMPLETE',
+            'No new physical coefficient or interpolation function is allowed'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C3B_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c3b/longitudinal_3plus1_memory_bridge.py
+
+      - name: Run NL1C3B bridge
+        run: python3 nl1c3b/longitudinal_3plus1_memory_bridge.py
+
+      - name: Verify honest classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c3b_longitudinal_3plus1_memory_bridge.json'))
+          allowed={
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_PASS',
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_FAIL',
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_INCOMPLETE',
+          }
+          assert d['classification'] in allowed
+          assert d['historical_results_unchanged'] is True
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1C3B bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c3b_longitudinal_3plus1_memory_bridge
+          path: |
+            results/nl1c3b_longitudinal_3plus1_memory_bridge.json
+            docs/nl1c3b_predata_longitudinal_3plus1_memory_bridge.md
+            nl1c3b/longitudinal_3plus1_memory_bridge.py
