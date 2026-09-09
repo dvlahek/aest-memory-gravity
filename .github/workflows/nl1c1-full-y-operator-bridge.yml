@@ -1,0 +1,83 @@
+name: NL1C1 full Y-operator bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'nl1c1/**'
+      - 'docs/nl1c1_predata_full_y_operator_bridge.md'
+      - '.github/workflows/nl1c1-full-y-operator-bridge.yml'
+
+jobs:
+  nl1c1-full-y-operator-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install numerical dependency
+        run: python3 -m pip install --user numpy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/nl1c1_predata_full_y_operator_bridge.md')
+          s=p.read_text()
+          required=[
+            'NL1C1_PREDATA_FULL_Y_OPERATOR_BRIDGE',
+            'NL1C1_LINEAR_STATE_HIGH_GRADIENT_REGIME',
+            "j_{\\rm S}(x)=\\frac{x}{1+\\beta_0+\\beta_0x}",
+            "j_{\\rm E}(x)=\\frac1{\\beta_0}",
+            "j_{\\rm H}(x)=",
+            '\\beta_0\\in\\{1,0.5,0.1\\}',
+            'x\\in\\{10^{-8},10^{-6},10^{-4},10^{-2},1,10^2,10^4,10^8,10^{10}\\}',
+            'Deep-limit relative error at `x=1e-8` must be `<1e-7`',
+            'high-limit relative error at `x=1e10` must be `<2e-9`',
+            'Relative error gate: `<1e-10`.',
+            'Global normalized RMS gate: `<5e-4`',
+            'Global normalized RMS gate: `<1e-4`',
+            'NL1C1_FULL_Y_OPERATOR_BRIDGE_PASS',
+            'No GR/Poisson toy closure is allowed'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C1_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c1/full_y_operator_bridge.py
+
+      - name: Run NL1C1 full Y-operator bridge
+        run: python3 nl1c1/full_y_operator_bridge.py
+
+      - name: Verify classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c1_full_y_operator_bridge.json'))
+          assert d['classification']=='NL1C1_FULL_Y_OPERATOR_BRIDGE_PASS'
+          assert d['numerical_pass'] is True
+          assert all(d['gates'].values())
+          assert d['co_primary_interpolations']==['simple','exponential','sharp']
+          assert d['co_primary_beta0']==[1.0,0.5,0.1]
+          assert d['historical_results_unchanged'] is True
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1C1 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c1_full_y_operator_bridge
+          path: |
+            results/nl1c1_full_y_operator_bridge.json
+            docs/nl1c1_predata_full_y_operator_bridge.md
+            nl1c1/full_y_operator_bridge.py
+          if-no-files-found: warn
