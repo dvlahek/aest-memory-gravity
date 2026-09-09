@@ -246,7 +246,11 @@ def launch_case(script: Path, input_npz: str, outdir: Path, kind: str, beta: flo
             data["status"] = "ERROR"
             data["success"] = False
             data["reason"] = f"worker_exit_{rc}"
-    data["log"] = str(log_path.relative_to(ROOT))
+    # Keep this diagnostic robust for both relative and absolute --outdir values.
+    try:
+        data["log"] = str(log_path.resolve().relative_to(ROOT))
+    except ValueError:
+        data["log"] = str(log_path.resolve())
     return data
 
 
