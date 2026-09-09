@@ -82,13 +82,20 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p results
+          set +e
           python3 nl1c6r/solver_globalization_repair.py \
             --input-npz "$NL1C5B_NPZ" \
             --input-zip-sha256 "$NL1C5B_ARTIFACT_SHA256" \
             --json-out results/nl1c6r_full_j_baryonic_reclosure.json \
             --npz-out results/nl1c6r_full_j_baryonic_reclosure.npz \
             > results/nl1c6r_stdout.log 2>&1
+          status=$?
+          set -e
           cat results/nl1c6r_stdout.log
+          if [ "$status" -ne 0 ]; then
+            echo "NL1C6R_TECHNICAL_EXIT_CODE=$status"
+            exit "$status"
+          fi
           test -s results/nl1c6r_full_j_baryonic_reclosure.json
           test -s results/nl1c6r_full_j_baryonic_reclosure.npz
 
