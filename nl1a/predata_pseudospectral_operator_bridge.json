@@ -1,0 +1,54 @@
+{
+  "campaign": "NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE",
+  "status": "PREDATA",
+  "scope": "Deterministic theory/operator implementation audit only. No observational data, no likelihood, no nonlinear matter-power claim, no parameter fit, and no post-result retuning.",
+  "historical_results_preserved": [
+    "v0.77 PASS",
+    "v0.78 PASS",
+    "NL0B_COVARIANT_MEMORY_COMPLETION_PASS",
+    "NL0C_Y_SECTOR_WEAKLY_NONLINEAR_PASS"
+  ],
+  "frozen_theory_inputs": {
+    "KB": 0.0665,
+    "a0_m_s2": 1.2e-10,
+    "beta0_co_primary": [1.0, 0.5, 0.1],
+    "leading_Y_operator_physical": "2(2-KB)/[(1+beta0)a0] * div_phys(|grad_phys chi| grad_phys chi)",
+    "normalized_operator_used_for_dimensionless_box_tests": "O_beta[chi]=(1/(1+beta0))*div(|grad chi| grad chi)",
+    "note": "The common dimensional prefactor 2(2-KB)/a0 is factored out of the numerical box audit because the box is dimensionless. No physical amplitude is inferred from NL1A."
+  },
+  "numerics": {
+    "domain": "periodic box with L=2*pi",
+    "derivatives": "FFT pseudospectral",
+    "nonlinear_product": "pointwise real-space |grad chi| grad chi",
+    "dealiasing": "2/3 rule applied to nonlinear flux before divergence",
+    "one_dimensional_resolutions": [256, 512, 1024],
+    "three_dimensional_resolution": 32,
+    "one_dimensional_seed": "0.7*cos(3x)+0.2*sin(5x)+0.11*cos(11x)",
+    "three_dimensional_seed": "0.4*cos(2x+y)+0.23*sin(3y-z)+0.12*cos(x+2z)",
+    "translation_shift_gridpoints": 37,
+    "homogeneity_amplitudes": [0.25, 0.5, 2.0, 4.0],
+    "spectral_convergence_comparison": "low Fourier modes m=0..32 of N=512 against N=1024",
+    "single_mode_test": "chi=cos(3x); even/non-3-odd harmonics below mode 40 are forbidden up to numerical leakage"
+  },
+  "primary_gates": {
+    "all_outputs_finite": true,
+    "constant_field_null_max_abs": 1e-12,
+    "one_d_variational_identity_relative_error_max": 1e-10,
+    "one_d_positive_homogeneity_relative_error_max": 1e-12,
+    "one_d_integer_translation_relative_error_max": 1e-10,
+    "one_d_512_vs_1024_low_mode_relative_error_max": 5e-4,
+    "one_d_single_mode_forbidden_harmonic_ratio_max": 1e-4,
+    "beta0_scaling_relative_error_max": 1e-12,
+    "three_d_variational_identity_relative_error_max": 1e-10,
+    "three_d_axis_permutation_relative_error_max": 1e-10
+  },
+  "classification_rule": {
+    "pass": "NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE_PASS if and only if every primary gate passes.",
+    "fail": "NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE_FAIL otherwise."
+  },
+  "interpretation_rule": {
+    "if_pass": "The exact NL0C leading Y-sector operator is implemented reproducibly in the pseudospectral infrastructure, including its variational sign, degree-two homogeneity, beta0 scaling, translation/axis invariance, and resolution control. This is not yet a physical nonlinear-growth prediction.",
+    "if_fail": "Do not run a nonlinear-growth calculation. Repair only implementation errors without changing the preregistered theory inputs or gates, or preserve the failure if the discrepancy is scientific/numerical rather than technical."
+  },
+  "next_step_if_pass": "NL1B must freeze the actual second-order dynamical closure from the covariant AeST+memory equations before any claim that memory changes nonlinear structure growth. A toy GR/Poisson closure must not be substituted and labelled AeST+memory."
+}
