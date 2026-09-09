@@ -1,0 +1,105 @@
+name: NL1C4 expanding memory-source trajectory
+
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'docs/nl1c4_predata_expanding_memory_source_trajectory.md'
+      - 'nl1c4/**'
+      - '.github/workflows/nl1c4-expanding-memory-source-trajectory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PYTHONHASHSEED: '0'
+  V077_ARTIFACT_ID: '10090367181'
+  V077_ARTIFACT_SHA256: '24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378'
+
+jobs:
+  nl1c4-expanding-memory-source-trajectory:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c4_predata_expanding_memory_source_trajectory.md').read_text()
+          required=[
+            'NL1C4_PREDATA_EXPANDING_MEMORY_SOURCE_TRAJECTORY',
+            'NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_PASS',
+            'artifact ID `10090367181`',
+            '24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378',
+            'Primary quadrature order: `1024`',
+            'Control quadrature order: `512`',
+            '`Nx={256,512}`',
+            'NL1C4_EXPANDING_MEMORY_SOURCE_TRAJECTORY_PASS',
+            'NL1C4_EXPANDING_MEMORY_SOURCE_TRAJECTORY_FAIL',
+            'does **not** solve the screened-resummed AeST state equations'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C4_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Download and verify preserved v0.77 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/v077
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPO/actions/artifacts/$V077_ARTIFACT_ID/zip" \
+            -o input/v077.zip
+          echo "$V077_ARTIFACT_SHA256  input/v077.zip" | sha256sum -c -
+          unzip -q input/v077.zip -d input/v077
+          test -s input/v077/v076_v077_base_trace.dat
+          echo V077_ARTIFACT_AUDIT_PASS
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --disable-pip-version-check numpy scipy pandas
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c4/expanding_memory_source_trajectory.py
+
+      - name: Run NL1C4 source trajectory
+        run: |
+          python3 nl1c4/expanding_memory_source_trajectory.py \
+            --trace input/v077/v076_v077_base_trace.dat \
+            --json-out results/nl1c4_expanding_memory_source_trajectory.json
+
+      - name: Verify honest classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c4_expanding_memory_source_trajectory.json'))
+          assert d['classification'] in {
+            'NL1C4_EXPANDING_MEMORY_SOURCE_TRAJECTORY_PASS',
+            'NL1C4_EXPANDING_MEMORY_SOURCE_TRAJECTORY_FAIL'
+          }
+          assert d['physical_eta']==0.0
+          assert d['uses_observational_data'] is False
+          assert d['historical_results_unchanged'] is True
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1C4 bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c4_expanding_memory_source_trajectory
+          path: |
+            results/nl1c4_expanding_memory_source_trajectory.json
+            docs/nl1c4_predata_expanding_memory_source_trajectory.md
+            nl1c4/expanding_memory_source_trajectory.py
