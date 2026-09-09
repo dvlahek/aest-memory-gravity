@@ -1,12 +1,6 @@
 name: NL1C6R3 fixed-source constitutive homotopy repair
 
 on:
-  push:
-    branches: [v053-model-freeze-planck]
-    paths:
-      - 'docs/nl1c6r3_predata_fixed_source_constitutive_homotopy.md'
-      - 'nl1c6r3/**'
-      - '.github/workflows/nl1c6r3-fixed-source-constitutive-homotopy.yml'
   workflow_dispatch:
 
 permissions:
