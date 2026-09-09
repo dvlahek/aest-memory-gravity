@@ -1,0 +1,81 @@
+name: NL1A pseudospectral operator bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'nl1a/**'
+      - '.github/workflows/nl1a-pseudospectral-operator-bridge.yml'
+
+jobs:
+  nl1a-pseudospectral-operator-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install numerical dependency
+        run: python3 -m pip install --user numpy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('nl1a/predata_pseudospectral_operator_bridge.json'))
+          assert d['campaign']=='NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE'
+          assert d['status']=='PREDATA'
+          t=d['frozen_theory_inputs']
+          assert t['KB']==0.0665
+          assert t['a0_m_s2']==1.2e-10
+          assert t['beta0_co_primary']==[1.0,0.5,0.1]
+          n=d['numerics']
+          assert n['one_dimensional_resolutions']==[256,512,1024]
+          assert n['three_dimensional_resolution']==32
+          assert n['translation_shift_gridpoints']==37
+          assert n['homogeneity_amplitudes']==[0.25,0.5,2.0,4.0]
+          g=d['primary_gates']
+          assert g['constant_field_null_max_abs']==1e-12
+          assert g['one_d_variational_identity_relative_error_max']==1e-10
+          assert g['one_d_positive_homogeneity_relative_error_max']==1e-12
+          assert g['one_d_integer_translation_relative_error_max']==1e-10
+          assert g['one_d_512_vs_1024_low_mode_relative_error_max']==5e-4
+          assert g['one_d_single_mode_forbidden_harmonic_ratio_max']==1e-4
+          assert g['beta0_scaling_relative_error_max']==1e-12
+          assert g['three_d_variational_identity_relative_error_max']==1e-10
+          assert g['three_d_axis_permutation_relative_error_max']==1e-10
+          print('NL1A_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1a/pseudospectral_operator_bridge.py
+
+      - name: Run NL1A operator bridge
+        run: python3 nl1a/pseudospectral_operator_bridge.py
+
+      - name: Verify classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1a_pseudospectral_operator_bridge.json'))
+          assert d['classification']=='NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE_PASS'
+          assert d['numerical_pass'] is True
+          assert all(d['gates'].values())
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1A bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1a_pseudospectral_operator_bridge
+          path: |
+            results/nl1a_pseudospectral_operator_bridge.json
+            results/nl1a_pseudospectral_operator_bridge.npz
+            nl1a/predata_pseudospectral_operator_bridge.json
+          if-no-files-found: warn
