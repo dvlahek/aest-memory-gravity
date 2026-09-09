@@ -24,27 +24,64 @@ python "$ROOT/v019w/apply_variational_forcing_patch.py" "$CLASS_ROOT"
 python "$ROOT/v019y/apply_output_precision_patch.py" "$CLASS_ROOT"
 python "$ROOT/v023/apply_source_grid_trace_patch.py" "$CLASS_ROOT"
 
+# Restore only the Exp branch to the historical factor-2 normalization.
+# Use whole-block anchors so the identical Cosh inverse denominator is never touched.
 python - "$CLASS_ROOT/source/aest_memory.c" <<'PY'
 from pathlib import Path
 import sys
 p=Path(sys.argv[1])
 s=p.read_text()
-repl=[
-('k=K2*Z0*Z0*(ex-1.);','k=2.*K2*Z0*Z0*(ex-1.);'),
-('kq=2.*K2*Z0*Z*ex;','kq=4.*K2*Z0*Z*ex;'),
-('kqq=2.*K2*ex*(1.+2.*zz);','kqq=4.*K2*ex*(1.+2.*zz);'),
-('double x=kq/(2.*K2*Z0);','double x=kq/(4.*K2*Z0);'),
-]
-for old,new in repl:
+
+old_exp='''  else if (model==_AEST_MODEL_EXP_) {
+    double zz=Z*Z;
+    double ex=exp(zz);
+    if (!isfinite(ex)) return 3;
+    k=K2*Z0*Z0*(ex-1.);
+    kq=2.*K2*Z0*Z*ex;
+    kqq=2.*K2*ex*(1.+2.*zz);
+  }
+'''
+new_exp='''  else if (model==_AEST_MODEL_EXP_) {
+    double zz=Z*Z;
+    double ex=exp(zz);
+    if (!isfinite(ex)) return 3;
+    k=2.*K2*Z0*Z0*(ex-1.);
+    kq=4.*K2*Z0*Z*ex;
+    kqq=4.*K2*ex*(1.+2.*zz);
+  }
+'''
+old_inv='''  else if (model==_AEST_MODEL_EXP_) {
+    double x=kq/(2.*K2*Z0);
+    if (aest_exp_Z_from_x(x,&Z)) return 3;
+  }
+'''
+new_inv='''  else if (model==_AEST_MODEL_EXP_) {
+    double x=kq/(4.*K2*Z0);
+    if (aest_exp_Z_from_x(x,&Z)) return 3;
+  }
+'''
+
+for label, old, new in (
+    ('Exp evaluator', old_exp, new_exp),
+    ('Exp inverse', old_inv, new_inv),
+):
     n=s.count(old)
     if n != 1:
-        raise RuntimeError(f'historical normalization anchor {old!r}: expected 1, found {n}')
+        raise RuntimeError(f'historical {label} block: expected exactly 1 corrected block, found {n}')
     s=s.replace(old,new,1)
-for old,_ in repl:
-    if old in s:
-        raise RuntimeError(f'corrected anchor remains after historical restoration: {old}')
+
+checks={
+    'historical_K':'k=2.*K2*Z0*Z0*(ex-1.);' in s,
+    'historical_KQ':'kq=4.*K2*Z0*Z*ex;' in s,
+    'historical_KQQ':'kqq=4.*K2*ex*(1.+2.*zz);' in s,
+    'historical_inverse':'else if (model==_AEST_MODEL_EXP_) {\n    double x=kq/(4.*K2*Z0);' in s,
+    'cosh_inverse_preserved':'if (model==_AEST_MODEL_COSH_) {\n    double x=kq/(2.*K2*Z0);' in s,
+}
+if not all(checks.values()):
+    raise RuntimeError('historical Exp restoration source audit failed: '+repr(checks))
+
 p.write_text(s)
-print('HISTORICAL_EXP_NORMALIZATION_RESTORED')
+print('HISTORICAL_EXP_NORMALIZATION_RESTORED', checks)
 PY
 
 rm -rf "$PYTARGET"
