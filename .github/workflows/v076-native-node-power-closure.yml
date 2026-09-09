@@ -1,0 +1,117 @@
+name: v076 native-node source-to-Fourier closure audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'v076/**'
+      - '.github/workflows/v076-native-node-power-closure.yml'
+
+jobs:
+  native-node-power-closure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_v076
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_v076
+          python3 v019i/apply_ic_patch.py class_v076
+          python3 v019j/apply_memory_patch.py class_v076
+          python3 v019w/apply_variational_forcing_patch.py class_v076
+          python3 v019y/apply_output_precision_patch.py class_v076
+          python3 v023/apply_source_grid_trace_patch.py class_v076
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_v076
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_v076
+          python3 tools/apply_v075_force_path_reload_patch.py class_v076
+
+      - name: Build CLASS executable
+        run: make -C class_v076 -j2 class
+
+      - name: Build and install patched classy
+        run: make -C class_v076 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile v076/native_node_power_closure.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('v076/predata_native_node_power_closure.json'))
+          assert d['classification']=='V076_PREDATA_NATIVE_NODE_POWER_CLOSURE_AUDIT'
+          assert d['created_before_v076_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['result_informed_followup'] is True
+          assert d['historical_classifications_must_remain_unchanged'] is True
+          assert d['source_results']['v074_classification']=='V074_NATIVE_TRANSFER_POWER_CLOSURE_FAIL'
+          assert d['source_results']['v075_classification']=='V075_FOURIER_K_RESOLUTION_CLOSURE_FAIL'
+          m=d['frozen_physical_model']
+          assert m['KB']==0.0665
+          assert m['tauH0']==10.0
+          assert m['p']==0.0
+          assert m['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert m['tangent_amplitudes']==[10.0,5.0,2.5,1.25]
+          n=d['fixed_numerical_configuration']
+          assert n['k_per_decade_for_pk']==80.0
+          assert n['k_per_decade_for_bao']==560.0
+          assert n['P_k_max_h_per_Mpc']==2.0
+          assert n['z_max_pk']==5.0
+          assert n['nonlinear_corrections'] is False
+          assert d['fixed_target_grid']['k_h_per_Mpc']==[0.03,0.05,0.08,0.10,0.15,0.20]
+          assert d['fixed_target_grid']['z']==[0.2,0.4,0.6,0.8,1.0,1.2,1.5]
+          g=d['primary_numerical_gates']
+          assert g['forcing_control_vs_primary_relative_L2_max']==0.01
+          assert g['forcing_control_vs_primary_cosine_min']==0.9999
+          assert g['native_transfer_vs_fourier_k_relative_error_max']==1e-12
+          assert g['native_transfer_vs_fourier_z_absolute_error_max']==1e-12
+          assert g['native_node_source_power_vs_fourier_power_relative_error_max']==0.00005
+          assert g['native_node_source_tangent_lambda_affinity_global_normalized_RMS_max']==0.005
+          assert g['native_node_fourier_tangent_lambda_affinity_global_normalized_RMS_max']==0.005
+          assert g['target_requested_vs_actual_transfer_k_relative_error_max']==1e-8
+          assert g['target_source_tangent_lambda_affinity_global_normalized_RMS_max']==0.005
+          print('V076_PREDATA_NATIVE_NODE_POWER_CLOSURE_AUDIT_PASS')
+          PY
+
+      - name: Run native-node source-to-Fourier closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 v076/native_node_power_closure.py \
+            --class-root class_v076 \
+            --json-out results/v076_native_node_power_closure.json \
+            --npz-out results/v076_native_node_power_closure.npz
+
+      - name: Upload v0.76 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_v076_native_node_power_closure
+          path: |
+            results/v076_native_node_power_closure.json
+            results/v076_native_node_power_closure.npz
+            results/v075_r4_forcing_summary.json
+            results/v075_r4_forcing_trace.log
+            results/v075_r4_forcing_trace.dat
+            results/v075_r4_forcing_force.dat
+            results/v076_*_trace.dat
+            results/v072_trace_reload_patch.json
+            results/v075_force_path_reload_patch.json
+          if-no-files-found: warn
