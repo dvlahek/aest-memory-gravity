@@ -19,15 +19,15 @@ def grid_err(a,b):
     return float(np.max(np.abs(a-b)/np.maximum(np.abs(b),1e-300)))
 
 
-def bg_compare(c,o,key):
+def bg_compare(c,o,key_c,key_o):
     zc=np.asarray(c['bg_z'],float); zo=np.asarray(o['bg_z'],float)
-    vc=np.asarray(c[key],float); vo=np.asarray(o[key],float)
+    vc=np.asarray(c[key_c],float); vo=np.asarray(o[key_o],float)
     oc=np.argsort(zc); oo=np.argsort(zo)
     zc=zc[oc]; vc=vc[oc]; zo=zo[oo]; vo=vo[oo]
     lo=max(0.0,float(zc[0]),float(zo[0])); hi=min(6.0,float(zc[-1]),float(zo[-1]))
     m=(zc>=lo)&(zc<=hi)
     if np.count_nonzero(m)<8:
-        raise RuntimeError(f'insufficient common background samples for {key}')
+        raise RuntimeError(f'insufficient common background samples for {key_c}/{key_o}')
     oi=np.interp(zc[m],zo,vo)
     return {
       'relative_L2':rel_l2(vc[m],oi),
@@ -69,9 +69,15 @@ def main():
             ell=np.asarray(cor['ell'],int); m=(ell>=2)&(ell<=2500)
             spectra[key]={'shape_match':True,'relative_L2_ell2_2500':rel_l2(cor[key][m],old[key][m])}
 
+    if 'bg_rho_CLASS' in cor.files:
+        rho_cor='bg_rho_CLASS'
+    elif 'bg_rho_cdm' in cor.files:
+        rho_cor='bg_rho_cdm'
+    else:
+        raise RuntimeError('corrected NPZ lacks background rho')
     background={
-      'rho_cdm':bg_compare(cor,old,'bg_rho_CLASS') if 'bg_rho_CLASS' in cor.files else bg_compare(cor,old,'bg_rho_cdm'),
-      'H':bg_compare(cor,old,'bg_H'),
+      'rho_cdm':bg_compare(cor,old,rho_cor,'bg_rho_cdm'),
+      'H':bg_compare(cor,old,'bg_H','bg_H'),
     }
 
     vals=[v.get('relative_L2') for v in fields.values() if isinstance(v,dict) and 'relative_L2' in v]
