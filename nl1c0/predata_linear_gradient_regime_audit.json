@@ -1,0 +1,90 @@
+{
+  "classification": "NL1C0_PREDATA_LINEAR_GRADIENT_REGIME_AUDIT",
+  "created_before_nl1c0_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "historical_classifications_must_remain_unchanged": true,
+  "motivation": "Historical v0.77 accepted-source traces show very large dimensionless chi transfer amplitudes in the certified k window. Before interpreting the NL0C deep-MOND Y^(3/2) operator at the actual primordial cosmological amplitude, test whether the corresponding physical spatial-gradient RMS is actually in the deep-MOND, transition, or high-gradient regime. This audit is explicitly result-informed by the preserved v0.77 trace and does not treat that observation as blinded.",
+  "source_results": {
+    "linear_chain": "CLOSED_V077_V078",
+    "nl0b": "NL0B_COVARIANT_MEMORY_COMPLETION_PASS",
+    "nl0c": "NL0C_Y_SECTOR_WEAKLY_NONLINEAR_PASS",
+    "nl1a": "NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE_PASS",
+    "nl1b": "NL1B_SECOND_ORDER_DYNAMICAL_CLOSURE_INCOMPLETE",
+    "nl1b2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS"
+  },
+  "frozen_physical_model": {
+    "aest_model": "Exp",
+    "KB": 0.0665,
+    "Q0_Mpc_inv": 0.0001,
+    "K2": 9500.0,
+    "Z0_Mpc_inv": 1e-17,
+    "tauH0": 10.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "H0_km_s_Mpc": 67.3324639084866,
+    "A_s": 2.1308864352626987e-9,
+    "n_s": 0.9666229454895277,
+    "k_pivot_Mpc_inv": 0.05,
+    "a0_m_s2": 1.2e-10,
+    "memory_enabled": false,
+    "eta": 0.0,
+    "nonlinear_corrections": false
+  },
+  "numerical_configuration": {
+    "k_per_decade_for_pk": 80.0,
+    "k_per_decade_for_bao": 560.0,
+    "P_k_max_h_per_Mpc": 2.0,
+    "z_max_pk": 5.0,
+    "OMP_NUM_THREADS": 1,
+    "time_sampling": "unchanged CLASS accepted perturbations_sources native sampling; no off-native time interpolation in the primary audit"
+  },
+  "primary_k_grid_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+  "primary_redshift_window": [0.2, 1.5],
+  "band_integral": {
+    "observable": "x_rms(z) = sqrt(<|grad_phys chi|^2>_band) * c^2 / a0",
+    "formula": "x_rms^2 = sum_i w_i [c^2 k_i/(a a0)]^2 P_R(k_i) chi_i(z)^2",
+    "P_R": "A_s (k/0.05 Mpc^-1)^(n_s-1)",
+    "k_i": "comoving physical wavenumber in 1/m = (k_h h)/Mpc_to_m",
+    "chi_normalization": "CLASS scalar perturbations are transfer functions normalized to primordial curvature R=1; multiply by primordial dimensionless curvature power P_R for RMS",
+    "integration": "trapezoidal rule in ln k over exactly [0.03,0.20] h/Mpc",
+    "physical_gradient": "X_hat_i^(1)=a^-1 partial_i chi, hence the explicit 1/a factor",
+    "constants": {
+      "c_m_s": 299792458.0,
+      "Mpc_m": 3.0856775814913673e22
+    }
+  },
+  "primary_numerical_gates": {
+    "all_requested_k_modes_found_relative_error_max": 1e-12,
+    "common_native_time_grid_relative_mismatch_max": 1e-12,
+    "minimum_common_native_times_inside_redshift_window": 6,
+    "all_chi_Q_a_z_finite": true,
+    "all_primordial_power_positive_finite": true,
+    "trapezoid_log_width_sum_relative_error_max": 1e-12
+  },
+  "regime_thresholds": {
+    "physical_transition": "x = sqrt(Y)/a0 = 1",
+    "deep_MOND_safety_band": "x_rms <= 0.1",
+    "transition_band": "0.1 < x_rms < 10",
+    "high_gradient_safety_band": "x_rms >= 10",
+    "note": "0.1 and 10 are fixed decade safety bands around the physical transition x=1, not fitted thresholds"
+  },
+  "classification_rule": {
+    "numerical_fail": "any primary numerical gate fails -> NL1C0_LINEAR_GRADIENT_REGIME_AUDIT_NUMERICAL_FAIL",
+    "deep": "all primary native times have x_rms <= 0.1 -> NL1C0_LINEAR_STATE_DEEP_MOND_REGIME",
+    "high": "all primary native times have x_rms >= 10 -> NL1C0_LINEAR_STATE_HIGH_GRADIENT_REGIME",
+    "mixed": "otherwise -> NL1C0_LINEAR_STATE_MIXED_OR_TRANSITION_REGIME"
+  },
+  "continuation_rule": {
+    "if_deep": "the NL0C deep-MOND directional operator is amplitude-consistent for the tested linear state; proceed to directional NL1C implementation",
+    "if_high": "do not promote the deep-MOND NL0C operator to a physical-amplitude nonlinear prediction; preregister the full published J(Y) interpolation family as co-primary before physical nonlinear evolution",
+    "if_mixed": "do not use a single asymptotic branch globally; preregister a full-interpolation or regime-separated continuation before physical nonlinear evolution"
+  },
+  "forbidden_claims": [
+    "do not alter historical PASS or FAIL classifications",
+    "do not infer nonlinear saturation from this linear-amplitude regime audit",
+    "do not claim observational detection",
+    "do not choose a preferred beta0 or interpolation function after seeing the result",
+    "do not remove the physical 1/a gradient factor",
+    "do not use pk_lin off-native interpolation for the primary audit"
+  ]
+}
