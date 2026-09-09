@@ -26,7 +26,10 @@ def jfun(x,beta,kind):
         y=beta*x/A
         return -np.expm1(-y)/beta
     if kind=='sharp':
-        return (beta*x+A-np.abs(beta*x-A))/(2.0*beta*A)
+        # Algebraically identical to
+        # (beta*x+A-|beta*x-A|)/(2*beta*A), but evaluated piecewise to
+        # avoid catastrophic cancellation for x >> A/beta.
+        return np.minimum(x/A,1.0/beta)
     raise ValueError(kind)
 
 
