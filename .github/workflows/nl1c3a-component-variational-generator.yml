@@ -1,0 +1,82 @@
+name: NL1C3A component variational generator
+
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'docs/nl1c3a_predata_component_variational_generator.md'
+      - 'nl1c3a/**'
+      - '.github/workflows/nl1c3a-component-variational-generator.yml'
+  workflow_dispatch:
+
+jobs:
+  nl1c3a-component-variational-generator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --disable-pip-version-check numpy sympy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c3a_predata_component_variational_generator.md').read_text()
+          required=[
+            'NL1C3A_PREDATA_COMPONENT_VARIATIONAL_GENERATOR',
+            'NL1C3_SCREENED_RESUMMED_DYNAMICAL_BRIDGE_INCOMPLETE',
+            'relative error `<=1e-6`',
+            'normalized absolute error `<=1e-12`',
+            'normalized residual `<=1e-8`',
+            'relative L2 `<=1e-10`',
+            'normalized scalar constraint residual `<=1e-6`',
+            'beta0={1,0.5,0.1}',
+            'relative L2 `<=5e-3`',
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_PASS',
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_FAIL',
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_INCOMPLETE',
+            'No GR/Poisson modified-gravity closure may be substituted'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C3A_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c3a/component_variational_generator.py
+
+      - name: Run NL1C3A component generator audit
+        run: python3 nl1c3a/component_variational_generator.py
+
+      - name: Verify honest classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          p='results/nl1c3a_component_variational_generator.json'
+          d=json.load(open(p))
+          allowed={
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_PASS',
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_FAIL',
+            'NL1C3A_COMPONENT_VARIATIONAL_GENERATOR_INCOMPLETE',
+          }
+          assert d['classification'] in allowed
+          assert d['historical_results_unchanged'] is True
+          assert set(d['frozen_inputs']['beta0_co_primary']) == {1.0,0.5,0.1}
+          # A scientific FAIL/INCOMPLETE is a valid completed audit.  Do not force PASS.
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1C3A bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c3a_component_variational_generator
+          path: |
+            results/nl1c3a_component_variational_generator.json
+            docs/nl1c3a_predata_component_variational_generator.md
+            nl1c3a/component_variational_generator.py
