@@ -26,7 +26,7 @@ jobs:
           # Keep only artifacts that anchor the current scientific chain.
           # Historical classifications and numerical summaries are preserved
           # in the repository, so older CI bundles are disposable.
-          keep_regex='^(results_bundle_v076_|results_bundle_v077_|results_bundle_v078_|results_bundle_nl1a_|results_bundle_nl1c0_|results_bundle_nl1c1_|results_bundle_nl1c2_|results_bundle_nl1c3a_|results_bundle_nl1c3b_|results_bundle_nl1c4_|results_bundle_nl1c5_|results_bundle_nl1c5b_)'
+          keep_regex='^(results_bundle_v076_|results_bundle_v077_|results_bundle_v078_|results_bundle_nl1a_|results_bundle_nl1c0_|results_bundle_nl1c1_|results_bundle_nl1c2_|results_bundle_nl1c3a_|results_bundle_nl1c3b_|results_bundle_nl1c4_|results_bundle_nl1c5_|results_bundle_nl1c5b_|results_bundle_nl1c6_)'
 
           snapshot=$(mktemp)
           # Snapshot the complete artifact list before deleting anything so
