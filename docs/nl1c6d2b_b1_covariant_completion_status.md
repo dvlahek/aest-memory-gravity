@@ -121,70 +121,82 @@ and fixes the additive normalization
 J(0)=0.
 \]
 
-NL1C6/D1A then certify the corresponding full-`J` static spatial operator. This fixes the relevant `Y`-sector information on the quasistatic/tracking slice used for that construction.
+The quasistatic convention is
+
+\[
+J(Y)=\frac{F(Y,Q_0)}{2-K_B},
+\]
+
+with the frozen `Exp` background satisfying `K(Q0)=0`. NL1C6/D1A then certify the corresponding full-`J` static spatial operator.
 
 Neither freeze specifies the full mixed dependence of `F(Y,Q)` away from those slices.
 
-## 4. Non-uniqueness proof
+## 4. Strong non-uniqueness proof preserving the full linear trajectory
 
-Let `Q_*` denote the tracking/quasistatic value at which the frozen full-`J` spatial slice is defined, and let `F_*(Y,Q)` be any completion consistent with all already frozen background, linear and static information.
+Let `Q_* = Q0` denote the tracking/quasistatic value at which the frozen full-`J` spatial slice is defined, and let `F_*(Y,Q)` be any completion consistent with all already frozen background, linear and static information.
 
-For any sufficiently regular function `C(Y,Q)`, define
+For any sufficiently regular function `C(Y,Q)` with the required dimensions, define
 
 \[
-F_C(Y,Q)=F_*(Y,Q)+Y(Q-Q_*)C(Y,Q).
+F_C(Y,Q)=F_*(Y,Q)+Y^2(Q-Q_*)C(Y,Q).
 \]
 
 Then
 
 \[
-F_C(0,Q)=F_*(0,Q),
+F_C(0,Q)=F_*(0,Q)
 \]
 
-so the complete homogeneous background slice is unchanged, and
+for every `Q`, so the complete homogeneous background slice is unchanged, and
 
 \[
-F_C(Y,Q_*)=F_*(Y,Q_*),
+F_C(Y,Q_*)=F_*(Y,Q_*)
 \]
 
-so the complete frozen quasistatic/full-`J` spatial slice is unchanged.
+for every `Y`, so the complete frozen quasistatic/full-`J` spatial slice is unchanged.
 
-At the intersection,
+Moreover, because the deformation starts at quadratic order in `Y`,
 
 \[
-\left.\frac{\partial F_C}{\partial Y}\right|_{(0,Q_*)}
+\left.\frac{\partial F_C}{\partial Y}\right|_{Y=0,Q}
 =
-\left.\frac{\partial F_*}{\partial Y}\right|_{(0,Q_*)},
+\left.\frac{\partial F_*}{\partial Y}\right|_{Y=0,Q}
 \]
 
-so the already certified linear tracking `Y` coefficient is unchanged as well.
+for every `Q` on the homogeneous FLRW trajectory. Hence the already frozen linear `Y` coefficient and the quadratic action for linear scalar perturbations are unchanged along the full background history, not merely at the point `Q=Q_*`.
 
-However,
+Nevertheless the nonlinear mixed sector changes. In particular,
 
 \[
-\left.\frac{\partial^2 F_C}{\partial Y\,\partial Q}\right|_{(0,Q_*)}
+\left.\frac{\partial^3 F_C}{\partial Y^2\partial Q}\right|_{(0,Q_*)}
 =
-\left.\frac{\partial^2 F_*}{\partial Y\,\partial Q}\right|_{(0,Q_*)}
-+C(0,Q_*),
+\left.\frac{\partial^3 F_*}{\partial Y^2\partial Q}\right|_{(0,Q_*)}
++2C(0,Q_*).
 \]
 
-and away from the two frozen slices both `F_Y` and `F_Q` generally differ.
+Away from the two frozen slices, higher nonlinear `Y-Q` derivatives generally differ as well.
 
-Therefore the existing background, linear-cosmology and full-`J` static information does **not** uniquely determine the mixed `Y-Q` couplings required by nonlinear FLRW dynamics.
+Therefore the existing background, full linear cosmology and full-`J` static information does **not** uniquely determine the mixed nonlinear `Y-Q` couplings required by nonlinear FLRW dynamics.
 
 This is a structural underdetermination, not a numerical solver problem.
 
 ## 5. Consequence for a separable completion
 
-A natural candidate is an additive/separable completion of schematic form
+A natural candidate is the additive/separable completion
 
 \[
-F_{\rm sep}(Y,Q)=F_Q(Q)+F_Y(Y)+\text{constant},
+F_{\rm sep}(Y,Q)=(2-K_B)J(Y)-2K(Q),
 \]
 
-chosen so that it reproduces the already frozen `K(Q)` and `J(Y)` slices.
+using the already frozen `J(0)=0` and `K(Q0)=0` conventions. It exactly reproduces
 
-Such a completion is mathematically admissible, but it sets the unfrozen mixed `Y-Q` couplings by choice. It is therefore a **new theory/model-completion assumption** relative to the current frozen repository. It cannot be silently inserted into D2B and called a derivation of the already frozen model.
+\[
+F_{\rm sep}(0,Q)=-2K(Q),
+\qquad
+F_{\rm sep}(Y,Q_0)=(2-K_B)J(Y).
+\]
+
+Such a completion is mathematically admissible, but it sets the unfrozen nonlinear mixed `Y-Q` couplings to zero by choice. It is therefore a **new theory/model-completion assumption** relative to the current frozen repository. It cannot be silently inserted into D2B and called a derivation of the already frozen model.
 
 The same applies to any nonseparable completion: its mixed sector must be declared before inspecting nonlinear branch-evolution outputs.
 
@@ -198,12 +210,12 @@ Q=\bar Q+\gamma+\cdots,
 Y=a^{-2}|\nabla\chi|^2+\cdots,
 \]
 
-but the repository does not freeze enough information to evaluate the required nonlinear FLRW equations uniquely because the mixed `F(Y,Q)` sector remains unspecified.
+but the repository does not freeze enough information to evaluate the required nonlinear FLRW equations uniquely because the nonlinear mixed `F(Y,Q)` sector remains unspecified even after demanding exact preservation of the frozen background and full linear trajectory.
 
 Hence
 
 \[
-\boxed{\text{B1 = INCOMPLETE: MIXED }F(Y,Q)\text{ COMPLETION NOT FROZEN}.}
+\boxed{\text{B1 = INCOMPLETE: NONLINEAR MIXED }F(Y,Q)\text{ COMPLETION NOT FROZEN}.}
 \]
 
 This strengthens the interpretation of the existing D2B result: B1 cannot be closed merely by more algebra on the currently frozen model. A model-completion choice is required first.
@@ -219,18 +231,6 @@ This result does not change any earlier classification:
 - The exact fixed-`a` full-`J` identity remains certified.
 - The frozen linear CLASS AeST trajectory remains certified within its stated scope.
 
-## 8. Stop rule and next legitimate phase
+## 8. Correction provenance
 
-Do not run nonlinear D2 branch evolution and do not reopen NL1C7 from the current frozen model.
-
-The next legitimate phase must be a preregistered **covariant mixed-sector completion**. Before any nonlinear output it must:
-
-1. specify a complete `F(Y,Q)` consistent with the frozen `Exp` background and all co-primary full-`J` interpolations;
-2. state whether the completion is separable or contains mixed `Y-Q` terms;
-3. freeze every new mixed-sector parameter or function before nonlinear results;
-4. derive the FLRW longitudinal first-order/canonical equations from that completed action;
-5. recover the frozen CLASS linear system in the linear limit;
-6. recover D1A/R3 in the zero-expansion/fixed-`a` quasistatic limit;
-7. only then permit physical nonlinear branch evolution.
-
-No additional GMRES, continuation, pseudo-time, damping or tolerance repair can resolve this B1 theory ambiguity.
+The first version of this note used the illustrative deformation `Y(Q-Q_*)C`. That is sufficient to preserve the homogeneous and static slices but can alter `F_Y(0,Q)` away from `Q_*`, and therefore is not the strongest proof when the full frozen linear FLRW trajectory is also to be preserved. The corrected deformation `Y^2(Q-Q_*)C` preserves `F_Y(0,Q)` for every background `Q`. The B1 classification is unchanged; only the non-uniqueness proof has been strengthened.
