@@ -1,0 +1,51 @@
+{
+  "classification": "V078_PREDATA_TIME_INTERPOLATION_OPERATOR_CLOSURE_AUDIT",
+  "created_before_v078_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "historical_classifications_must_remain_unchanged": true,
+  "source_results": {
+    "v075_classification": "V075_FOURIER_K_RESOLUTION_CLOSURE_FAIL",
+    "v076_classification": "V076_NATIVE_NODE_POWER_CLOSURE_FAIL",
+    "v077_classification": "V077_NATIVE_STATE_TANGENT_AFFINITY_PASS"
+  },
+  "question": "Does the source-derived matter power disagree with CLASS pk_lin even when both are evaluated at exactly the same native Fourier k nodes at off-native times, while agreeing on common native (k,tau) nodes?",
+  "hypothesis": "If native-node source-to-Fourier closure remains exact but an off-native-time discrepancy survives at exact native k, the remaining discrepancy is localized to the different time-interpolation operators: CLASS source interpolation of d_m followed by squaring versus CLASS interpolation of stored ln P.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25]
+  },
+  "fixed_numerical_configuration": {
+    "k_per_decade_for_pk": 80.0,
+    "k_per_decade_for_bao": 560.0,
+    "P_k_max_h_per_Mpc": 2.0,
+    "z_max_pk": 5.0,
+    "nonlinear_corrections": false,
+    "native_k_window_h_per_Mpc": [0.03, 0.20],
+    "off_native_target_z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5]
+  },
+  "operators": {
+    "source_path": "CLASS get_transfer(z, class format): spline d_m in time, then reconstruct P_source=(2 pi^2/k^3) d_m^2 P_R",
+    "fourier_path": "CLASS pk_lin(k,z): interpolate stored ln P in time and evaluate at the same native Fourier k node",
+    "k_interpolation_control": "Only native Fourier k values inside 0.03-0.20 h/Mpc are used for the primary off-native comparison."
+  },
+  "primary_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "native_transfer_vs_fourier_k_relative_error_max": 1e-12,
+    "native_node_source_power_vs_fourier_power_relative_error_max": 0.00005,
+    "baseline_exact_native_k_offnative_source_vs_pk_lin_relative_error_max_min": 0.01,
+    "minimum_number_of_baseline_offnative_points_above_0p5_percent": 1,
+    "all_compared_powers_finite_positive": true
+  },
+  "classification_rule": {
+    "pass": "All numerical controls pass, native-node closure passes, and the baseline off-native-time source-vs-pk_lin discrepancy survives at exact native k above the preregistered diagnostic floor.",
+    "pass_classification": "V078_TIME_INTERPOLATION_OPERATOR_CLOSURE_PASS",
+    "pass_diagnosis": "V078_TIME_INTERPOLATION_OPERATOR_DISCREPANCY_LOCALIZED",
+    "fail_classification": "V078_TIME_INTERPOLATION_OPERATOR_CLOSURE_FAIL"
+  },
+  "interpretation_policy": "A PASS localizes the v0.72-v0.76 source/pk_lin discrepancy to the time-interpolation stage under the frozen linear AeST model, because source and Fourier power agree on common native nodes and differ at off-native times even at exact native k. It does not alter historical FAIL/PASS labels, simulate nonlinear evolution, or constitute observational evidence. After a PASS, the linear numerical-chain debugging is considered closed and subsequent work should move to nonlinear physics using the certified state/native-source representation."
+}
