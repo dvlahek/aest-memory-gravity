@@ -1,0 +1,72 @@
+{
+  "classification": "V077_PREDATA_NATIVE_STATE_TANGENT_AFFINITY_AUDIT",
+  "created_before_v077_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "historical_classifications_must_remain_unchanged": true,
+  "source_results": {
+    "v075_classification": "V075_FOURIER_K_RESOLUTION_CLOSURE_FAIL",
+    "v076_classification": "V076_NATIVE_NODE_POWER_CLOSURE_FAIL"
+  },
+  "motivation": "v0.76 showed source-to-Fourier power closure at common native nodes to near machine precision, while a fractional/log tangent-affinity gate was degraded by nodes near deep matter-transfer minima. v0.77 tests the additive eta=0 state tangent directly, without division by local d_m or P_m.",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "cosmology_source": "v063.theory_response_map.START/class_params",
+    "nonlinear_corrections": false
+  },
+  "numerical_configuration": {
+    "k_per_decade_for_pk": 80.0,
+    "k_per_decade_for_bao": 560.0,
+    "P_k_max_h_per_Mpc": 2.0,
+    "z_max_pk": 5.0,
+    "forcing_control_order": 512,
+    "forcing_primary_order": 1024,
+    "OMP_NUM_THREADS": 1
+  },
+  "primary_native_window": {
+    "k_h_per_Mpc_min": 0.03,
+    "k_h_per_Mpc_max": 0.20,
+    "z_min": 0.2,
+    "z_max": 1.5,
+    "selection_rule": "all common native CLASS transfer nodes inside the closed k-z window"
+  },
+  "fixed_context_grid": {
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "role": "context only; not used to select or remove native nodes"
+  },
+  "primary_state_observable": {
+    "field": "CLASS native total-matter transfer source d_m",
+    "odd_tangent": "T_lambda(k,z) = [d_m(+lambda)-d_m(-lambda)]/(2 lambda)",
+    "lambda_affinity_metric": "epsilon_lambda = ||T_lambda-mean_lambda(T_lambda)||_2 / ||mean_lambda(T_lambda)||_2 over all native nodes in the primary window",
+    "even_residual_metric": "e_lambda = ||d_m(+lambda)+d_m(-lambda)-2 d_m(0)||_2 / [2 |lambda| ||mean_lambda(T_lambda)||_2] over the same native nodes",
+    "local_fractional_division_used": false
+  },
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_native_state_values_finite": true,
+    "native_k_grid_relative_mismatch_max": 1e-12,
+    "native_z_grid_absolute_mismatch_max": 1e-12,
+    "native_state_tangent_lambda_affinity_global_normalized_RMS_max": 0.005,
+    "native_state_even_residual_global_normalized_RMS_max": 0.005
+  },
+  "classification_rule": {
+    "pass": "all primary numerical gates pass -> V077_NATIVE_STATE_TANGENT_AFFINITY_PASS",
+    "fail": "otherwise -> V077_NATIVE_STATE_TANGENT_AFFINITY_FAIL"
+  },
+  "interpretation_rule": {
+    "if_pass": "supports that the native eta=0 perturbation-state tangent is numerically affine without local fractional normalization; together with v0.76 native power closure, the v0.76 fractional-affinity excursion is consistent with conditioning near transfer minima rather than a failure of the additive state tangent",
+    "if_fail": "native state-tangent non-affinity survives global L2 normalization and requires further numerical/implementation diagnosis",
+    "forbidden_claims": [
+      "do not retroactively change v0.72-v0.76 classifications",
+      "do not claim nonlinear evolution was simulated",
+      "do not claim observational evidence",
+      "do not retune physical parameters or gates after seeing the result"
+    ]
+  }
+}
