@@ -1,0 +1,82 @@
+{
+  "classification": "V076_PREDATA_NATIVE_NODE_POWER_CLOSURE_AUDIT",
+  "created_before_v076_result": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "source_results": {
+    "v074_classification": "V074_NATIVE_TRANSFER_POWER_CLOSURE_FAIL",
+    "v075_classification": "V075_FOURIER_K_RESOLUTION_CLOSURE_FAIL",
+    "v075_key_result": "Increasing the preregistered CLASS k sampling from 10/70 to 80/560 left the native-transfer tangent strongly lambda-affine but did not change the transfer-power versus pk_lin discrepancy or the pk_lin tangent non-affinity."
+  },
+  "historical_classifications_must_remain_unchanged": true,
+  "question": "Does the matter power reconstructed from CLASS d_m close the CLASS Fourier power on the native common (k,tau) nodes, with the previously observed discrepancy appearing only after the two different off-node time-interpolation operators are applied?",
+  "frozen_physical_model": {
+    "KB": 0.0665,
+    "tauH0": 10.0,
+    "p": 0.0,
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "tangent_amplitudes": [10.0, 5.0, 2.5, 1.25],
+    "cosmology": "unchanged from v0.63/v0.72-v0.75",
+    "eta0_variational_forcing": "same positive-Drude source-grid construction with control order 512 and primary order 1024"
+  },
+  "fixed_numerical_configuration": {
+    "k_per_decade_for_pk": 80.0,
+    "k_per_decade_for_bao": 560.0,
+    "provenance": "v0.75 preregistered highest-resolution level r4",
+    "P_k_max_h_per_Mpc": 2.0,
+    "z_max_pk": 5.0,
+    "nonlinear_corrections": false
+  },
+  "fixed_target_grid": {
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "z": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5],
+    "provenance": "v0.63 preregistered fixed RSD grid",
+    "no_scale_or_redshift_selection_after_v075": true
+  },
+  "native_node_definition": {
+    "matter_source": "Class.get_transfer_and_k_and_z(output_format='class', h_units=False), field d_m",
+    "fourier_power": "Class.get_pk_and_k_and_z(nonlinear=False, only_clustering_species=False, h_units=False)",
+    "required_grid_identity": "native transfer and native Fourier k and z arrays must agree elementwise within fixed numerical tolerances",
+    "primary_native_window": "all common native nodes with 0.03 <= k/(h Mpc^-1) <= 0.20 and 0.2 <= z <= 1.5",
+    "source_power_identity": "P_source_node=(2*pi^2/k^3)*d_m^2*P_R(k), with k in 1/Mpc and P_R=A_s*(k/0.05 Mpc^-1)^(n_s-1)"
+  },
+  "off_node_target_paths": {
+    "source_then_square": "Class.get_transfer(z, output_format='class') interpolates d_m in time; reconstruct P_source_target from that d_m and the same primordial identity",
+    "fourier_log_power": "Class.pk_lin(k,z) returns the CLASS Fourier linear matter spectrum after its stored log-power interpolation",
+    "status": "diagnostic localization only; the off-node discrepancy itself is not a science pass gate because it is already historically observed in v0.74-v0.75"
+  },
+  "tangent_estimator": "[P(+lambda)-P(-lambda)]/[2 lambda P(0)]",
+  "lambda_affinity_metric": "global normalized RMS deviation of each lambda response from the four-lambda consensus over the specified node/window",
+  "primary_numerical_gates": {
+    "forcing_control_vs_primary_relative_L2_max": 0.01,
+    "forcing_control_vs_primary_cosine_min": 0.9999,
+    "all_native_and_target_powers_finite_positive": true,
+    "native_transfer_vs_fourier_k_relative_error_max": 1e-12,
+    "native_transfer_vs_fourier_z_absolute_error_max": 1e-12,
+    "native_node_source_power_vs_fourier_power_relative_error_max": 0.00005,
+    "native_node_source_tangent_lambda_affinity_global_normalized_RMS_max": 0.005,
+    "native_node_fourier_tangent_lambda_affinity_global_normalized_RMS_max": 0.005,
+    "target_requested_vs_actual_transfer_k_relative_error_max": 1e-8,
+    "target_source_tangent_lambda_affinity_global_normalized_RMS_max": 0.005
+  },
+  "diagnostic_labels": {
+    "native_pass_target_discrepant": "V076_TIME_INTERPOLATION_OPERATOR_DISCREPANCY_LOCALIZED",
+    "native_node_closure_fail": "V076_SOURCE_TO_FOURIER_NATIVE_NODE_MISMATCH",
+    "native_and_target_close": "V076_NATIVE_AND_OFFNODE_PATHS_CLOSE"
+  },
+  "classification_policy": {
+    "pass": "V076_NATIVE_NODE_POWER_CLOSURE_PASS",
+    "fail": "V076_NATIVE_NODE_POWER_CLOSURE_FAIL",
+    "pass_meaning": "The CLASS matter source and Fourier power close, and their eta=0 tangents are lambda-affine, on the common native nodes in the fixed scale/redshift window. This is a numerical source-to-Fourier closure certificate only.",
+    "fail_meaning": "At least one preregistered native-node/control gate fails. Keep the failure and report the failed gate; do not change the model, grid, tangent amplitudes, numerical thresholds, or interpolation operators as a rescue."
+  },
+  "anti_tuning": {
+    "do_not_change_r4_resolution_after_result": true,
+    "do_not_change_fixed_target_grid_after_result": true,
+    "do_not_change_native_window_after_result": true,
+    "do_not_change_tangent_amplitudes_after_result": true,
+    "do_not_relax_gates_after_result": true,
+    "do_not_reclassify_v072_through_v075": true
+  },
+  "interpretation_policy": "Even if the diagnostic localizes the discrepancy to different off-node interpolation operators, this is not observational evidence, does not simulate nonlinear evolution, and does not retroactively rescue any prior version."
+}
