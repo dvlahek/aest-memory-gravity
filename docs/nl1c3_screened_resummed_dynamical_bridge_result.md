@@ -1,0 +1,212 @@
+# NL1C3 result — screened-resummed dynamical bridge
+
+Final classification: **NL1C3_SCREENED_RESUMMED_DYNAMICAL_BRIDGE_INCOMPLETE**
+
+Predata: `docs/nl1c3_predata_screened_resummed_dynamical_bridge.md`.
+
+Implementation commit: `2be15d1a141a4fc22b489aa21aa3a87e00653227`.
+
+Workflow commit: `5c917656ef21ad7d4e7cfe047f2f87c50a26337d`.
+
+GitHub Actions run: `34336160119` — technical SUCCESS.
+
+Artifact: `results_bundle_nl1c3_screened_resummed_dynamical_bridge`, artifact ID `10097781283`, SHA256 `15c674bca55d84bcabfd4ea9b6d601c1fc914351fc72d8f1ed15c57cce053bf1`.
+
+Scope: analytic/structural bridge audit only. No screened-resummed memory-survival result, finite physical eta, halo calculation, likelihood or observational data were used.
+
+## 1. D1 — saturated Y-sector tangent closes
+
+For the finite-amplitude reference, write
+
+\[
+j(x)=\mathcal J_{\mathcal Y},\qquad x=\sqrt{\mathcal Y}/a_0.
+\]
+
+The linearized spatial current around a nonzero reference `X_0` has the local principal coefficient
+
+\[
+\delta(jX^\mu)
+=j_0\,\delta X^\mu
++\frac{j_x}{x}\,(X_0\cdot\delta X)\,\frac{X_0^\mu}{a_0^2 x}
+\]
+
+up to the standard projector/metric variations that belong to the full covariant field variation. Equivalently, the parallel correction relative to the saturated coefficient is controlled by
+
+\[
+s_j=\left|\frac{d\ln j}{d\ln x}\right|.
+\]
+
+Across all frozen Simple/Exponential/Sharp controls and all `beta0={1,0.5,0.1}` at the three preserved physical-gradient checkpoints, the audit finds
+
+\[
+\max |j-j_\infty|/j_\infty
+=1.0081558896\times10^{-6},
+\]
+
+and
+
+\[
+\max s_j=1.0081558895\times10^{-6}.
+\]
+
+Therefore the leading Y-sector tangent is, to the preserved NL1C2 accuracy,
+
+\[
+\delta\!\left[\nabla_\mu(jX^\mu)\right]
+=\frac1{\beta_0}\,\delta\!\left[\nabla_\mu X^\mu\right]
++O(10^{-6})
+\]
+
+around the screened finite-amplitude reference. D1 closes at the operator-coefficient level.
+
+## 2. D2 — FLRW background remains unchanged
+
+The exact covariant theory is not modified. On homogeneous FLRW,
+
+\[
+X_\mu=0,
+\]
+
+so the small-amplitude background still samples the original `J_Y(0)=0` branch. The replacement `J_Y -> 1/beta0` is used only for the tangent around a distinct finite-amplitude screened reference with `x >> 1`.
+
+Hence no new homogeneous source is generated and the frozen Exp background is preserved exactly.
+
+## 3. D3 — static screened control remains valid
+
+The frozen mass scale remains
+
+\[
+\mu^2=\frac{2K_2Q_0^2}{2-K_B}
+=9.8267390742\times10^{-5}\ {\rm Mpc}^{-2},
+\]
+
+with
+
+\[
+\mu=9.9129910089\times10^{-3}\ {\rm Mpc}^{-1},
+\qquad \mu^{-1}=100.8777269\ {\rm Mpc}.
+\]
+
+The screened static limit is therefore the already frozen AeST Helmholtz system
+
+\[
+\nabla^2\Phi+(1+\beta_0)\mu^2\Phi=4\pi G_N\rho,
+\]
+
+\[
+\chi=\frac{\beta_0}{1+\beta_0}\Phi+\mathrm{constant},
+\]
+
+under the same curl-free/static assumptions used in the prior control.
+
+## 4. D4 — Y and memory sources must enter through action variation
+
+The screened Y term is not inserted into `delta_m`, `P(k)` or a Poisson equation. It is the finite-reference tangent of the frozen AeST scalar/aether action.
+
+Likewise the memory sector remains the frozen NL0B local conservative action. After the normalized response substitution
+
+\[
+U_j=\sqrt\eta\,q_j,
+\]
+
+the memory action has the exact bookkeeping form
+
+\[
+S_{\rm mem}=\eta\,\widehat S_{\rm mem}[g,A,\phi,q].
+\]
+
+Thus the eta=0 tangent of every physical field equation is the corresponding Euler-Lagrange derivative of `S_hat_mem` evaluated on the eta=0 finite-amplitude reference.
+
+## 5. D5 — Noether/Bianchi structure closes functionally
+
+Both the AeST action and the NL0B completion are diffeomorphism invariant. Therefore the exact Noether identity may be differentiated around any reference that itself satisfies the memory-off equations.
+
+This means the screened tangent scalar, aether and metric sources cannot be chosen independently. They are related by the same differentiated covariant identity. A numerical implementation must still monitor a constraint residual, but no new physical coefficient is required.
+
+## 6. D6 — critical memory result
+
+The historical v0.77 forcing
+
+\[
+\left.\partial_\eta E'\right|_0
+=-\frac{aQ}{2K_B}B_{\chi,\rm raw}
+\]
+
+was complete for the first-order scalar expansion around FLRW because there
+
+\[
+X_0=0,\qquad q_0=0,
+\]
+
+and the direct memory stress starts quadratically in those fields.
+
+That simplification does **not** survive a finite-amplitude screened reference.
+
+For `X_0 != 0` and its retarded normalized response `q_0 != 0`, the eta derivative samples
+
+\[
+\frac{\delta\widehat S_{\rm mem}}{\delta\phi},
+\qquad
+\frac{\delta\widehat S_{\rm mem}}{\delta A_\mu},
+\qquad
+-\frac{2}{\sqrt{-g}}\frac{\delta\widehat S_{\rm mem}}{\delta g^{\mu\nu}},
+\]
+
+all evaluated on the finite reference.
+
+Consequently the screened eta=0 tangent contains
+
+1. the longitudinal/aether force whose FLRW reduction gives `-Q B_raw/2`;
+2. the scalar-field partner of that force;
+3. projector and projected-aether-derivative terms generated by the nonzero reference;
+4. a **direct eta-linear metric stress tensor**, which was absent in the original FLRW linear audit but is generically nonzero at finite reference amplitude.
+
+Therefore the old `E`-closure forcing alone cannot be reused as the physical screened-resummed memory tangent.
+
+This is the main NL1C3 result.
+
+## 7. D7 — why the bridge is INCOMPLETE
+
+The frozen action defines these sources uniquely at the functional level, so there is no missing physical interpolation parameter. However the repository does not yet contain the explicit gauge-fixed 3+1/component Euler-Lagrange equations for
+
+\[
+(g_{\mu\nu},A_\mu,\phi,q_j,\mathrm{matter})
+\]
+
+around a finite inhomogeneous screened reference, including the direct memory metric source and the associated scalar/aether terms.
+
+Because the reference is inhomogeneous, the nonlinear projectors, metric contractions and retarded auxiliary fields still couple Fourier modes even though `J_Y` itself is saturated. Thus exact independent-k mode locality is **not** established.
+
+The justified numerical route is a real-space / pseudo-spectral finite-amplitude evolution with constraints, not a hand-modified CLASS transfer system.
+
+D7 is therefore not closed, so the preregistered classification is
+
+\[
+\boxed{\mathrm{NL1C3\_SCREENED\_RESUMMED\_DYNAMICAL\_BRIDGE\_INCOMPLETE}}.
+\]
+
+This is a theory-completion result, not a numerical failure.
+
+## 8. D8 — validation gates frozen for the component implementation
+
+Before any screened-resummed memory-survival outcome is inspected, the next component implementation must use the following gates:
+
+- static Helmholtz control: normalized residual `<= 1e-8`;
+- homogeneous-background preservation: induced homogeneous Y/memory source `<= 1e-12` in normalized audit units;
+- action-to-component finite-difference variation check for scalar, aether and metric memory sources: relative error `<= 1e-6`;
+- normalized Hamiltonian/momentum-or-equivalent scalar constraint residual: `<= 1e-6` over the tested evolution interval;
+- `beta0={1,0.5,0.1}` all retained as co-primary;
+- interpolation-shape saturation control: coefficient/stiffness deviation `<= 2e-6` at the preserved physical-amplitude checkpoints;
+- exact eta=0 memory-off identity: state difference relative L2 `<= 1e-10` when memory backreaction is disabled;
+- spatial resolution convergence: low-mode/state-observable relative L2 between the two finest preregistered resolutions `<= 5e-3`;
+- no finite physical eta is introduced before the eta=0 tangent system itself passes these controls.
+
+These tolerances are frozen before any screened-resummed memory-survival result.
+
+## Consequence
+
+NL1C3 prevents an incorrect shortcut. The screened Y-sector is simple, but the memory tangent around a finite screened state is **not** just the old FLRW `E` forcing. The additional metric/scalar/aether memory terms are fixed by the already frozen NL0B action and must be generated explicitly.
+
+The next task is therefore a component/3+1 variational generator and its action-level finite-difference audit. Only after that passes can a self-consistent screened baseline and memory-survival calculation be run.
+
+Historical v0.77/v0.78 PASS results, NL1C0-NL1C2, and all historical FAIL/INCOMPLETE classifications remain unchanged.
