@@ -1,0 +1,74 @@
+name: NL1C2 screened asymptotic reclosure
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'nl1c2/**'
+      - 'docs/nl1c2_predata_screened_asymptotic_reclosure.md'
+      - '.github/workflows/nl1c2-screened-asymptotic-reclosure.yml'
+
+jobs:
+  nl1c2-screened-asymptotic-reclosure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c2_predata_screened_asymptotic_reclosure.md').read_text()
+          required=[
+            'NL1C2_PREDATA_SCREENED_ASYMPTOTIC_RECLOSURE',
+            'NL1C0_LINEAR_STATE_HIGH_GRADIENT_REGIME',
+            'NL1C1_FULL_Y_OPERATOR_BRIDGE_PASS',
+            '1.0911\\times 10^7',
+            '\\mu^2=\\frac{2K_2Q_0^2}{2-K_B}',
+            'epsilon_sat <= 2e-6',
+            's_j <= 2e-6',
+            '0.08 <= k_h <= 0.20 h/Mpc',
+            '|R_H-1| <= 0.10',
+            'NL1C2_SCREENED_ASYMPTOTIC_RECLOSURE_PASS',
+            'No GR/Poisson toy closure may be used'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C2_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c2/screened_asymptotic_reclosure.py
+
+      - name: Run NL1C2 audit
+        run: python3 nl1c2/screened_asymptotic_reclosure.py
+
+      - name: Verify classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c2_screened_asymptotic_reclosure.json'))
+          assert d['classification']=='NL1C2_SCREENED_ASYMPTOTIC_RECLOSURE_PASS'
+          assert d['numerical_pass'] is True
+          assert all(d['gates'].values())
+          assert d['historical_results_unchanged'] is True
+          print(d['classification'])
+          PY
+
+      - name: Upload NL1C2 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c2_screened_asymptotic_reclosure
+          path: |
+            results/nl1c2_screened_asymptotic_reclosure.json
+            docs/nl1c2_predata_screened_asymptotic_reclosure.md
+            nl1c2/screened_asymptotic_reclosure.py
+          if-no-files-found: warn
