@@ -1,0 +1,145 @@
+name: NL1C5B baryon source freeze
+
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'docs/nl1c5b_predata_baryon_source_freeze.md'
+      - 'nl1c5b/**'
+      - '.github/workflows/nl1c5b-baryon-source-freeze.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PYTHONHASHSEED: '0'
+  CLASS_SHA: 'e85808324f51fc694d12e3ed7439552a3c3f9540'
+  V077_ARTIFACT_ID: '10090367181'
+  V077_ARTIFACT_SHA256: '24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378'
+
+jobs:
+  nl1c5b-baryon-source-freeze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_nl1c5b
+
+      - name: Verify pinned CLASS identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C class_nl1c5b rev-parse HEAD)" = "$CLASS_SHA"
+          echo NL1C5B_CLASS_IDENTITY_PASS
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_nl1c5b
+          python3 v019i/apply_ic_patch.py class_nl1c5b
+          python3 v019j/apply_memory_patch.py class_nl1c5b
+          python3 v019w/apply_variational_forcing_patch.py class_nl1c5b
+          python3 v019y/apply_output_precision_patch.py class_nl1c5b
+          python3 v023/apply_source_grid_trace_patch.py class_nl1c5b
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_nl1c5b
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_nl1c5b
+          python3 tools/apply_v075_force_path_reload_patch.py class_nl1c5b
+
+      - name: Build CLASS executable and patched classy
+        run: |
+          make -C class_nl1c5b -j2 class
+          make -C class_nl1c5b -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c5b_predata_baryon_source_freeze.md').read_text()
+          required=[
+            'NL1C5B_PREDATA_BARYON_SOURCE_FREEZE',
+            'NL1C5_SCREENED_RECLOSURE_TRANSITION_REQUIRES_FULL_J',
+            'd_b',
+            'd_m',
+            'e85808324f51fc694d12e3ed7439552a3c3f9540',
+            '10090367181',
+            '24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378',
+            'NL1C5B_BARYON_SOURCE_FREEZE_PASS',
+            'NL1C5B_BARYON_SOURCE_FREEZE_FAIL'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C5B_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Download and verify preserved v0.77 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/v077
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPO/actions/artifacts/$V077_ARTIFACT_ID/zip" \
+            -o input/v077.zip
+          echo "$V077_ARTIFACT_SHA256  input/v077.zip" | sha256sum -c -
+          unzip -q input/v077.zip -d input/v077
+          test -s input/v077/v077_native_state_tangent_affinity.npz
+          echo NL1C5B_V077_IDENTITY_PASS
+
+      - name: Syntax check
+        run: python3 -m py_compile nl1c5b/baryon_source_freeze.py
+
+      - name: Run NL1C5B baryon-source freeze
+        run: |
+          mkdir -p results
+          python3 nl1c5b/baryon_source_freeze.py \
+            --v077-npz input/v077/v077_native_state_tangent_affinity.npz \
+            --json-out results/nl1c5b_baryon_source_freeze.json \
+            --npz-out results/nl1c5b_baryon_source_freeze.npz
+
+      - name: Verify honest classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c5b_baryon_source_freeze.json'))
+          assert d['classification'] in {
+            'NL1C5B_BARYON_SOURCE_FREEZE_PASS',
+            'NL1C5B_BARYON_SOURCE_FREEZE_FAIL'
+          }
+          assert d['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['historical_results_unchanged'] is True
+          print(d['classification'])
+          print(json.dumps(d['gates'],sort_keys=True))
+          PY
+
+      - name: Upload NL1C5B bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c5b_baryon_source_freeze
+          path: |
+            results/nl1c5b_baryon_source_freeze.json
+            results/nl1c5b_baryon_source_freeze.npz
+            docs/nl1c5b_predata_baryon_source_freeze.md
+            nl1c5b/baryon_source_freeze.py
+          if-no-files-found: warn
