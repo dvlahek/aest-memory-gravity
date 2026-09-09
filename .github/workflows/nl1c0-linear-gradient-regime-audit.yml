@@ -1,0 +1,115 @@
+name: NL1C0 linear gradient-regime audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'nl1c0/**'
+      - '.github/workflows/nl1c0-linear-gradient-regime-audit.yml'
+
+jobs:
+  linear-gradient-regime-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_nl1c0
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply unchanged validated AeST trace stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_nl1c0
+          python3 v019i/apply_ic_patch.py class_nl1c0
+          python3 v019j/apply_memory_patch.py class_nl1c0
+          python3 v019w/apply_variational_forcing_patch.py class_nl1c0
+          python3 v019y/apply_output_precision_patch.py class_nl1c0
+          python3 v023/apply_source_grid_trace_patch.py class_nl1c0
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_nl1c0
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_nl1c0
+          python3 tools/apply_v075_force_path_reload_patch.py class_nl1c0
+
+      - name: Build CLASS executable and classy
+        run: |
+          make -C class_nl1c0 -j2 class
+          make -C class_nl1c0 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile nl1c0/linear_gradient_regime_audit.py
+          python3 - <<'PY'
+          import json, math
+          p='nl1c0/predata_linear_gradient_regime_audit.json'
+          d=json.load(open(p))
+          assert d['classification']=='NL1C0_PREDATA_LINEAR_GRADIENT_REGIME_AUDIT'
+          assert d['created_before_nl1c0_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['result_informed_followup'] is True
+          assert d['historical_classifications_must_remain_unchanged'] is True
+          s=d['source_results']
+          assert s['nl1b']=='NL1B_SECOND_ORDER_DYNAMICAL_CLOSURE_INCOMPLETE'
+          assert s['nl1b2']=='NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS'
+          m=d['frozen_physical_model']
+          assert m['aest_model']=='Exp'
+          assert m['KB']==0.0665
+          assert m['Q0_Mpc_inv']==1e-4
+          assert m['K2']==9500.0
+          assert m['Z0_Mpc_inv']==1e-17
+          assert m['tauH0']==10.0
+          assert m['CLASS_commit']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert m['eta']==0.0 and m['memory_enabled'] is False
+          assert m['nonlinear_corrections'] is False
+          assert d['primary_k_grid_h_per_Mpc']==[0.03,0.05,0.08,0.10,0.15,0.20]
+          assert d['primary_redshift_window']==[0.2,1.5]
+          n=d['numerical_configuration']
+          assert n['k_per_decade_for_pk']==80.0
+          assert n['k_per_decade_for_bao']==560.0
+          assert n['OMP_NUM_THREADS']==1
+          r=d['regime_thresholds']
+          assert r['deep_MOND_safety_band']=='x_rms <= 0.1'
+          assert r['high_gradient_safety_band']=='x_rms >= 10'
+          g=d['primary_numerical_gates']
+          assert g['all_requested_k_modes_found_relative_error_max']==1e-12
+          assert g['common_native_time_grid_relative_mismatch_max']==1e-12
+          assert g['minimum_common_native_times_inside_redshift_window']==6
+          assert g['trapezoid_log_width_sum_relative_error_max']==1e-12
+          print('NL1C0_PREDATA_LINEAR_GRADIENT_REGIME_AUDIT_PASS')
+          PY
+
+      - name: Run native linear gradient-regime audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 nl1c0/linear_gradient_regime_audit.py \
+            --class-root class_nl1c0 \
+            --json-out results/nl1c0_linear_gradient_regime_audit.json \
+            --csv-out results/nl1c0_linear_gradient_regime_audit.csv \
+            --trace-out results/nl1c0_accepted_source_trace.dat
+
+      - name: Upload NL1C0 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c0_linear_gradient_regime_audit
+          path: |
+            results/nl1c0_linear_gradient_regime_audit.json
+            results/nl1c0_linear_gradient_regime_audit.csv
+            results/nl1c0_accepted_source_trace.dat
+            results/v023_trace_patch.json
+            results/v072_trace_reload_patch.json
+            results/v075_force_path_reload_patch.json
+          if-no-files-found: warn
