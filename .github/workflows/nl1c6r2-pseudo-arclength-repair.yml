@@ -1,0 +1,145 @@
+name: NL1C6R2 pseudo-arclength continuation repair
+
+on:
+  push:
+    branches: [v053-model-freeze-planck]
+    paths:
+      - 'docs/nl1c6r2_predata_pseudo_arclength_repair.md'
+      - 'nl1c6r2/**'
+      - '.github/workflows/nl1c6r2-pseudo-arclength-repair.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  NL1C5B_ARTIFACT_ID: '10101422385'
+  NL1C5B_ARTIFACT_SHA256: '0ab60cbc32210ad3fb75c881f91a9db11148280e9223ea644680ed8cdfbaa590'
+
+jobs:
+  nl1c6r2-pseudo-arclength-repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('docs/nl1c6r2_predata_pseudo_arclength_repair.md').read_text()
+          required=[
+            'NL1C6R2_PREDATA_PSEUDO_ARCLENGTH_REPAIR',
+            'NL1C6R_FULL_J_BARYONIC_RECLOSURE_FAIL',
+            'pseudo-arclength',
+            '2^-34',
+            '2^-33',
+            'initial `ds = 2e-8`',
+            'minimum `ds = 1e-10`',
+            'maximum `ds = 0.10`',
+            '10101422385',
+            '0ab60cbc32210ad3fb75c881f91a9db11148280e9223ea644680ed8cdfbaa590',
+            '10103396065',
+            '6233521bf8e5f6af7a7587ba03f081159a3b725aae5dea9cdb52696fb5eefdb9',
+            'NL1C6R2_FULL_J_BARYONIC_RECLOSURE_PASS',
+            'NL1C6R2_FULL_J_MULTIBRANCH_REQUIRES_BOUNDARY_SELECTION',
+            'NL1C6R2_FULL_J_BARYONIC_RECLOSURE_FAIL'
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, missing
+          print('NL1C6R2_PREDATA_AUDIT_PASS')
+          PY
+
+      - name: Download and verify NL1C5B baryon-source artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/nl1c5b
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPO/actions/artifacts/$NL1C5B_ARTIFACT_ID/zip" \
+            -o input/nl1c5b.zip
+          echo "$NL1C5B_ARTIFACT_SHA256  input/nl1c5b.zip" | sha256sum -c -
+          unzip -q input/nl1c5b.zip -d input/nl1c5b
+          npz=$(find input/nl1c5b -type f -name 'nl1c5b_baryon_source_freeze.npz' -print -quit)
+          test -n "$npz"
+          test -s "$npz"
+          echo "NL1C5B_NPZ=$npz" >> "$GITHUB_ENV"
+          echo NL1C6R2_NL1C5B_IDENTITY_PASS
+
+      - name: Syntax check
+        run: |
+          python3 -m py_compile nl1c6/full_j_baryonic_reclosure.py
+          python3 -m py_compile nl1c6r2/pseudo_arclength_repair.py
+
+      - name: Run preregistered NL1C6R2 repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          set +e
+          python3 nl1c6r2/pseudo_arclength_repair.py \
+            --input-npz "$NL1C5B_NPZ" \
+            --input-zip-sha256 "$NL1C5B_ARTIFACT_SHA256" \
+            --json-out results/nl1c6r2_full_j_baryonic_reclosure.json \
+            --npz-out results/nl1c6r2_full_j_baryonic_reclosure.npz \
+            > results/nl1c6r2_stdout.log 2>&1
+          status=$?
+          set -e
+          cat results/nl1c6r2_stdout.log
+          if [ "$status" -ne 0 ]; then
+            echo "NL1C6R2_TECHNICAL_EXIT_CODE=$status"
+            exit "$status"
+          fi
+          test -s results/nl1c6r2_full_j_baryonic_reclosure.json
+          test -s results/nl1c6r2_full_j_baryonic_reclosure.npz
+
+      - name: Verify honest classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c6r2_full_j_baryonic_reclosure.json'))
+          allowed={
+            'NL1C6R2_FULL_J_BARYONIC_RECLOSURE_PASS',
+            'NL1C6R2_FULL_J_MULTIBRANCH_REQUIRES_BOUNDARY_SELECTION',
+            'NL1C6R2_FULL_J_BARYONIC_RECLOSURE_FAIL'
+          }
+          assert d['classification'] in allowed, d['classification']
+          assert d['historical_results_unchanged'] is True
+          assert d['repair']['physical_equations_changed'] is False
+          assert d['repair']['physical_gates_changed'] is False
+          assert d['repair']['historical_NL1C6R_classification']=='NL1C6R_FULL_J_BARYONIC_RECLOSURE_FAIL'
+          assert d['physical_eta']==0.0
+          assert d['memory_source_evaluated'] is False
+          print(d['classification'])
+          print(json.dumps(d['gates'],sort_keys=True))
+          print(json.dumps(d['global_metrics'],sort_keys=True))
+          PY
+
+      - name: Upload NL1C6R2 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c6r2_pseudo_arclength_repair
+          path: |
+            results/nl1c6r2_full_j_baryonic_reclosure.json
+            results/nl1c6r2_full_j_baryonic_reclosure.npz
+            results/nl1c6r2_stdout.log
+            docs/nl1c6r2_predata_pseudo_arclength_repair.md
+            docs/nl1c6r_solver_globalization_repair_result.md
+            nl1c6r2/pseudo_arclength_repair.py
+            nl1c6/full_j_baryonic_reclosure.py
+          if-no-files-found: warn
