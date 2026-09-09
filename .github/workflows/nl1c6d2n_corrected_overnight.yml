@@ -1,0 +1,95 @@
+name: NL1C6D2N corrected Exp overnight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2n_corrected_overnight.yml'
+      - 'nl1c6d2n/**'
+      - 'v019/patch/source/aest_memory.c'
+      - 'docs/nl1c6d2n_*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nl1c6d2n-corrected-overnight
+  cancel-in-progress: false
+
+jobs:
+  corrected-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Re-run corrected normalization audit
+        run: bash nl1c6d2n/run_local.sh
+
+      - name: Build isolated corrected CLASS
+        run: bash nl1c6d2n/setup_corrected_class_local.sh
+
+      - name: Run corrected CLASS baseline R1
+        run: bash nl1c6d2n/run_corrected_class_baseline_r1_local.sh
+
+      - name: Build isolated historical factor-2 CLASS
+        run: bash nl1c6d2n/setup_historical_class_local.sh
+
+      - name: Export regenerated historical no-refit baseline
+        shell: bash
+        run: |
+          source results/nl1c6d2n_historical_class_env.sh
+          python nl1c6d2n/export_no_refit_baseline.py \
+            --tag historical_factor2_no_refit \
+            --npz-out results/nl1c6d2n_historical_no_refit.npz \
+            --json-out results/nl1c6d2n_historical_no_refit.json \
+            2>&1 | tee results/nl1c6d2n_historical_no_refit.log
+
+      - name: Compare historical and corrected baselines
+        run: |
+          python nl1c6d2n/compare_old_corrected_no_refit.py \
+            --historical results/nl1c6d2n_historical_no_refit.npz \
+            --corrected results/nl1c6d2n_corrected_class_baseline_r1.npz \
+            --json-out results/nl1c6d2n_old_vs_corrected_no_refit.json \
+            2>&1 | tee results/nl1c6d2n_old_vs_corrected_no_refit.log
+
+      - name: Write compact job summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## NL1C6D2N overnight regression' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/nl1c6d2n_corrected_class_baseline_r1.log ]]; then
+            echo '### Corrected R1' >> "$GITHUB_STEP_SUMMARY"
+            grep -E '^(B[1-6]_|CLASSIFICATION=)' results/nl1c6d2n_corrected_class_baseline_r1.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+          if [[ -f results/nl1c6d2n_old_vs_corrected_no_refit.json ]]; then
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+            echo '### Old vs corrected diagnostic' >> "$GITHUB_STEP_SUMMARY"
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          p='results/nl1c6d2n_old_vs_corrected_no_refit.json'
+          d=json.load(open(p))
+          print('```text')
+          print('max_transfer_metric_relative_L2=', d.get('max_transfer_metric_relative_L2'))
+          print('max_spectra_relative_L2=', d.get('max_spectra_relative_L2'))
+          print('background_rho_relative_L2=', d.get('background',{}).get('rho_cdm',{}).get('relative_L2'))
+          print('background_H_relative_L2=', d.get('background',{}).get('H',{}).get('relative_L2'))
+          print('```')
+          PY
+          fi
