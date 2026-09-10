@@ -1,0 +1,45 @@
+name: NL1C6D2C5 action-level FLRW reduction
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2c5_action_level_flrw.yml'
+      - 'nl1c6d2c5/**'
+      - 'docs/nl1c6d2c5_*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nl1c6d2c5-action-level-flrw
+  cancel-in-progress: false
+
+jobs:
+  derivation-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install numpy scipy
+      - name: Run preregistered D2C5 action-level audit
+        run: bash nl1c6d2c5/run_local.sh
+      - name: Write compact summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## NL1C6D2C5 action-level FLRW reduction' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/nl1c6d2c5_action_level_flrw_longitudinal_audit.log ]]; then
+            grep -E '^(A5_|CLASSIFICATION=|NONLINEAR_BRANCH_)' results/nl1c6d2c5_action_level_flrw_longitudinal_audit.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
