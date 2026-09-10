@@ -141,20 +141,75 @@ def main() -> int:
                 ])
                 if tau.size < 100 or not np.all(np.diff(tau) > 0):
                     raise RuntimeError(f"mode {imode} dense history is not usable")
-                if not (np.all(np.isfinite(q)) and np.all(np.isfinite(p))):
-                    raise RuntimeError(f"mode {imode} has nonfinite CLASS bath states")
 
+                raw_tau_first = float(tau[0])
                 k = float(m.K_MPC[imode])
-                Q = np.asarray(data["bg"]["Q"](aa), float)
-                chi = Q * (aa * theta / (k * k) + alpha)
-                source = chi / aa
+
+                # R1 technical repair: the dense CLASS history can start before
+                # the independent D2C6C background interpolation domain. Find
+                # the earliest suffix on which every quantity needed by the
+                # bridge comparison is finite. No extrapolation is permitted.
+                Q_probe = np.asarray(data["bg"]["Q"](aa), float)
+                chi_probe = Q_probe * (aa * theta / (k * k) + alpha)
+                source_probe = chi_probe / aa
+                common = (
+                    np.isfinite(tau)
+                    & np.isfinite(aa)
+                    & np.isfinite(alpha)
+                    & np.isfinite(theta)
+                    & np.isfinite(force)
+                    & np.isfinite(Q_probe)
+                    & np.isfinite(chi_probe)
+                    & np.isfinite(source_probe)
+                    & np.all(np.isfinite(q), axis=1)
+                    & np.all(np.isfinite(p), axis=1)
+                )
+                bad = np.flatnonzero(~common)
+                start = int(bad[-1] + 1) if bad.size else 0
+                if start >= tau.size:
+                    raise RuntimeError(f"mode {imode} has no finite common-domain suffix")
+
+                tau = tau[start:]
+                aa = aa[start:]
+                alpha = alpha[start:]
+                theta = theta[start:]
+                force = force[start:]
+                q = q[start:]
+                p = p[start:]
+                Q = Q_probe[start:]
+                chi = chi_probe[start:]
+                source = source_probe[start:]
+
+                if tau.size < 100 or not np.all(np.diff(tau) > 0):
+                    raise RuntimeError(f"mode {imode} finite common-domain history is not usable")
+                if not (
+                    np.all(np.isfinite(Q))
+                    and np.all(np.isfinite(chi))
+                    and np.all(np.isfinite(source))
+                    and np.all(np.isfinite(q))
+                    and np.all(np.isfinite(p))
+                ):
+                    raise RuntimeError(f"mode {imode} retained common-domain history is nonfinite")
+                if not (float(tau[0]) < float(data["tau_check"][0])):
+                    raise RuntimeError(
+                        f"mode {imode} finite common-domain start is not before z=6: tau={tau[0]}"
+                    )
+
+                print(
+                    f"BATH_DOMAIN mode={imode} k_mpc={k:.12e} "
+                    f"raw_tau_first={raw_tau_first:.12e} common_tau_first={tau[0]:.12e} "
+                    f"discarded_prefix={start} retained_rows={tau.size}",
+                    flush=True,
+                )
+
                 source_spline = PchipInterpolator(tau, source, extrapolate=False)
 
                 factor = omega / (k * np.sqrt(weights))
                 z_class_all = q * factor[None, :]
                 zp_class_all = p * factor[None, :]
 
-                # Common-state initialization: no prehistory ambiguity remains after tau_first.
+                # Common-state initialization: no prehistory ambiguity remains after the
+                # retained finite common-domain start.
                 z = z_class_all[0].copy()[:, None]
                 zp = zp_class_all[0].copy()[:, None]
                 current = float(tau[0])
@@ -232,16 +287,18 @@ def main() -> int:
                     global_max[key] = max(global_max[key], mode_max[key])
                 print(
                     f"BATH_MODE mode={imode} k_mpc={k:.12e} rows={tau.size} "
-                    f"tau_first={tau[0]:.12e} max_Z={mode_max['z']:.12e} "
-                    f"max_ZP={mode_max['zp']:.12e} max_B={mode_max['B']:.12e} "
-                    f"max_CHI={mode_max['chi']:.12e}",
+                    f"raw_tau_first={raw_tau_first:.12e} tau_first={tau[0]:.12e} "
+                    f"max_Z={mode_max['z']:.12e} max_ZP={mode_max['zp']:.12e} "
+                    f"max_B={mode_max['B']:.12e} max_CHI={mode_max['chi']:.12e}",
                     flush=True,
                 )
                 mode_reports.append({
                     "mode": imode,
                     "k_mpc": k,
                     "rows": int(tau.size),
+                    "raw_tau_first": raw_tau_first,
                     "tau_first": float(tau[0]),
+                    "discarded_prefix": start,
                     "tau_last": float(tau[-1]),
                     "max": mode_max,
                     "points": cp_rows,
@@ -279,7 +336,7 @@ def main() -> int:
             "tauH0": TAUH0,
             "bath_order": ORDER,
             "mapping": "z_j = omega_j q_j / (k sqrt(w_j))",
-            "offline_initialization": "transformed CLASS q_j,p_j at each mode tau_first",
+            "offline_initialization": "transformed CLASS q_j,p_j at each mode earliest finite common-domain start",
             "offline_step": "existing D2C6C bath_advance with main-step scale Nx128/Nstep4096",
             "global_max": global_max,
             "source_bridge_pass": source_pass,
