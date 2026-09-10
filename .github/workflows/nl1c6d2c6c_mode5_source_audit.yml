@@ -1,0 +1,65 @@
+name: C3 mode5 source-term audit
+
+on:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - 'nl1c6d2c6c_sourceaudit/**'
+      - '.github/workflows/nl1c6d2c6c_mode5_source_audit.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: nl1c6d2c6c-mode5-source-audit
+  cancel-in-progress: false
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated diagnostic CLASS
+        run: bash nl1c6d2c6c_bathaudit/setup_bath_bridge_class.sh
+
+      - name: Run preregistered mode5 source-term audit
+        shell: bash
+        run: |
+          set -o pipefail
+          source results/c3_bath_bridge_class_env.sh
+          python -u nl1c6d2c6c_sourceaudit/mode5_source_terms.py \
+            2>&1 | tee results/c3_mode5_source_terms.log
+
+      - name: Write compact summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## C3 mode5 source-term audit' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/c3_mode5_source_terms.log ]]; then
+            grep -E '^(MATCH_BEST|MODE5_POINT|MODE5_SUMMARY|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=)' \
+              results/c3_mode5_source_terms.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Upload source-audit bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c3_mode5_source_terms
+          path: |
+            results/c3_mode5_source_terms*
+          if-no-files-found: warn
