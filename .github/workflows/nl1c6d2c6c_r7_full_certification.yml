@@ -1,0 +1,86 @@
+name: D2C6C R7 full all27 certification
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2c6c_r7_full_certification.yml'
+      - 'nl1c6d2c6c_r7/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: d2c6c-r7-full-all27-certification
+  cancel-in-progress: true
+
+jobs:
+  r7-full-certification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated R5 zero-safe CLASS
+        run: bash nl1c6d2c6c_r5/setup_zero_safe_class.sh
+
+      - name: Run formal D2C6C R7 all27 certification
+        id: cert
+        shell: bash
+        run: |
+          set +e
+          bash nl1c6d2c6c_r7/run_full_certification.sh
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Write compact R7 summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## D2C6C R7 full all27 certification' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/nl1c6d2c6c_r7_reference.log ]]; then
+            echo '### Corrected C3 reference' >> "$GITHUB_STEP_SUMMARY"
+            grep -E '^(R5_FORCE_MODE|R6_MODE|R6_BACKGROUND|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=)' \
+              results/nl1c6d2c6c_r7_reference.log >> "$GITHUB_STEP_SUMMARY" || true
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -f results/nl1c6d2c6c_r7_full_certification.log ]]; then
+            echo '### Full C1-C8 all27 certification' >> "$GITHUB_STEP_SUMMARY"
+            grep -E '^(C2_BRIDGE|C3_LINEAR|MEMBER |WORST_|GATES=|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=)' \
+              results/nl1c6d2c6c_r7_full_certification.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Upload R7 result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nl1c6d2c6c_r7_full_certification
+          path: |
+            results/nl1c6d2c6c_r7_*
+          if-no-files-found: warn
+
+      - name: Propagate scientific result
+        if: always()
+        shell: bash
+        run: |
+          code='${{ steps.cert.outputs.exit_code }}'
+          echo "cert_exit=$code"
+          if [[ -z "$code" ]]; then exit 13; fi
+          exit "$code"
