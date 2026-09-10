@@ -6,6 +6,27 @@ cd "$ROOT"
 mkdir -p results
 export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
 
+# WSL/Ubuntu often ships python3 without a `python` command. The shared CLASS
+# setup script intentionally remains untouched; provide a local shim only for
+# this D2C6E runner so no historical GitHub workflow path is modified.
+if ! command -v python >/dev/null 2>&1; then
+  if command -v python3 >/dev/null 2>&1; then
+    PYSHIM="$ROOT/.local/d2c6e_python_shim"
+    mkdir -p "$PYSHIM"
+    ln -sf "$(command -v python3)" "$PYSHIM/python"
+    export PATH="$PYSHIM:$PATH"
+    echo "D2C6E: using python3 via local python shim ($(command -v python3))"
+  else
+    echo "D2C6E: neither python nor python3 is installed" >&2
+    exit 2
+  fi
+fi
+
+if ! python -m pip --version >/dev/null 2>&1; then
+  echo "D2C6E: Python is available but pip is missing. Install python3-pip and rerun." >&2
+  exit 2
+fi
+
 # Reuse a valid local zero-safe CLASS build when available. The generated
 # environment file contains absolute paths, so a file copied from another
 # machine is deliberately treated as invalid.
