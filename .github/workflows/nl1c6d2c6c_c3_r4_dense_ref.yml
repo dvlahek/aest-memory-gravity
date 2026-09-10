@@ -1,0 +1,87 @@
+name: C3-R4 dense full-history reference
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2c6c_c3_r4_dense_ref.yml'
+      - 'nl1c6d2c6c_r4ref/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: c3-r4-dense-fullhistory-reference
+  cancel-in-progress: false
+
+jobs:
+  c3-r4-dense-reference:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated R4 corrected CLASS
+        run: bash nl1c6d2c6c_r4ref/setup_r4_dense_reference_class.sh
+
+      - name: Build dense full-history CLASS tangent reference
+        run: |
+          source results/c3_r4_class_env.sh
+          python -u nl1c6d2c6c_r4ref/build_dense_fullhistory_reference.py \
+            --out results/c3_r4_dense_linear_reference.npz \
+            --force-out results/c3_r4_dense_force39.dat \
+            --meta-out results/c3_r4_dense_linear_reference.json \
+            2>&1 | tee results/c3_r4_dense_reference.log
+
+      - name: Run frozen per-mode forensic audit on R4 reference
+        run: |
+          source results/c3_r4_class_env.sh
+          python -u nl1c6d2c6c_c3audit/c3_forensic_linear_bridge.py \
+            --reference results/c3_r4_dense_linear_reference.npz \
+            --json-out results/c3_r4_forensic.json \
+            2>&1 | tee results/c3_r4_forensic.log
+
+      - name: Evaluate unchanged original D2C6C C3 gate
+        run: |
+          source results/c3_r4_class_env.sh
+          python -u nl1c6d2c6c_r4ref/evaluate_original_c3_gate.py \
+            --reference results/c3_r4_dense_linear_reference.npz \
+            --reference-meta results/c3_r4_dense_linear_reference.json \
+            --json-out results/c3_r4_original_c3_gate.json \
+            2>&1 | tee results/c3_r4_original_c3_gate.log
+
+      - name: Write compact R4 summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## C3-R4 dense full-history reference repair' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          for f in results/c3_r4_dense_reference.log results/c3_r4_forensic.log results/c3_r4_original_c3_gate.log; do
+            if [[ -f "$f" ]]; then
+              grep -E '^(R4_DENSE_MODE|RECONSTRUCTION_AUDIT|CHECKPOINT |MODE |FIELD |COMMON_SCALE_COMPATIBLE=|R4_C3 |CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=|C3_R4_)' "$f" >> "$GITHUB_STEP_SUMMARY" || true
+            fi
+          done
+
+      - name: Upload C3-R4 result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c3_r4_dense_fullhistory_reference
+          path: |
+            results/c3_r4_*
+          if-no-files-found: warn
