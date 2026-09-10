@@ -15,7 +15,7 @@ if [[ ! -f results/c3_r5_class_env.sh ]]; then
 else
   # shellcheck disable=SC1091
   source results/c3_r5_class_env.sh
-  if [[ -z "${PYTARGET:-}" || ! -d "${PYTARGET}" || -z "${CLASS_ROOT:-}" || ! -d "${CLASS_ROOT}" ]]; then
+  if [[ -z "${C3_R5_PYTARGET:-}" || ! -d "${C3_R5_PYTARGET}" || -z "${C3_R5_CLASS_ROOT:-}" || ! -d "${C3_R5_CLASS_ROOT}" ]]; then
     need_setup=1
   fi
 fi
@@ -26,7 +26,7 @@ if [[ "$need_setup" -eq 1 ]]; then
   # shellcheck disable=SC1091
   source results/c3_r5_class_env.sh
 else
-  echo "D2C6E: reusing local zero-safe CLASS at ${CLASS_ROOT}"
+  echo "D2C6E: reusing local zero-safe CLASS at ${C3_R5_CLASS_ROOT}"
 fi
 
 python -m py_compile nl1c6d2c6e/larger_eta_retained.py
