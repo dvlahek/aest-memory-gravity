@@ -23,6 +23,7 @@ python "$ROOT/v019j/apply_memory_patch.py" "$CLASS_ROOT"
 python "$ROOT/v019w/apply_variational_forcing_patch.py" "$CLASS_ROOT"
 python "$ROOT/v019y/apply_output_precision_patch.py" "$CLASS_ROOT"
 python "$ROOT/v023/apply_source_grid_trace_patch.py" "$CLASS_ROOT"
+python "$ROOT/nl1c6d2c6a/apply_aest_state_output_patch.py" "$CLASS_ROOT"
 
 rm -rf "$PYTARGET"
 mkdir -p "$PYTARGET"
