@@ -143,6 +143,7 @@ def make_force_table(data, path: Path):
 def run_signed_case(lam: float, force: Path, out: Path):
     env = os.environ.copy()
     env["OMP_NUM_THREADS"] = "1"
+    env["AEST_TANGENT_ALLOW_K_MISS"] = "1"
     subprocess.run(
         [
             sys.executable,
