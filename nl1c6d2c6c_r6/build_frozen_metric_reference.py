@@ -75,8 +75,9 @@ def fluid_background(data, tau: float):
 
 
 def force_at(tau: float, tt: np.ndarray, ff: np.ndarray):
+    # Match the existing CLASS external-force loader exactly at the lower edge.
     if tau <= tt[0]:
-        return 0.0 if tau < tt[0]-1e-12 else float(ff[0])
+        return 0.0
     if tau >= tt[-1]:
         return float(ff[-1])
     j = int(np.searchsorted(tt, tau, side="right") - 1)
