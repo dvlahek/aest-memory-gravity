@@ -3,29 +3,41 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-mkdir -p results
+mkdir -p results .local
 export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
 
-# WSL/Ubuntu often ships python3 without a `python` command. The shared CLASS
-# setup script intentionally remains untouched; provide a local shim only for
-# this D2C6E runner so no historical GitHub workflow path is modified.
-if ! command -v python >/dev/null 2>&1; then
-  if command -v python3 >/dev/null 2>&1; then
-    PYSHIM="$ROOT/.local/d2c6e_python_shim"
-    mkdir -p "$PYSHIM"
-    ln -sf "$(command -v python3)" "$PYSHIM/python"
-    export PATH="$PYSHIM:$PATH"
-    echo "D2C6E: using python3 via local python shim ($(command -v python3))"
-  else
-    echo "D2C6E: neither python nor python3 is installed" >&2
+# Use an isolated local Python environment so WSL/system Python packaging does
+# not affect reproducibility. This also guarantees that the shared CLASS setup
+# sees the same interpreter containing Cython/numpy/scipy.
+BASE_PY=""
+if command -v python3 >/dev/null 2>&1; then
+  BASE_PY="$(command -v python3)"
+elif command -v python >/dev/null 2>&1; then
+  BASE_PY="$(command -v python)"
+else
+  echo "D2C6E: neither python3 nor python is installed" >&2
+  exit 2
+fi
+
+VENV="$ROOT/.local/d2c6e_venv"
+if [[ ! -x "$VENV/bin/python" ]]; then
+  echo "D2C6E: creating isolated Python environment..."
+  if ! "$BASE_PY" -m venv "$VENV"; then
+    echo "D2C6E: Python venv support is missing. On Ubuntu/WSL run: sudo apt install python3-venv" >&2
     exit 2
   fi
 fi
 
-if ! python -m pip --version >/dev/null 2>&1; then
-  echo "D2C6E: Python is available but pip is missing. Install python3-pip and rerun." >&2
-  exit 2
-fi
+export PATH="$VENV/bin:$PATH"
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install numpy scipy cython
+python - <<'PY'
+import Cython, numpy, scipy
+print("D2C6E_PYTHON_ENV_PASS")
+print("Cython=", Cython.__version__)
+print("numpy=", numpy.__version__)
+print("scipy=", scipy.__version__)
+PY
 
 # Reuse a valid local zero-safe CLASS build when available. The generated
 # environment file contains absolute paths, so a file copied from another
