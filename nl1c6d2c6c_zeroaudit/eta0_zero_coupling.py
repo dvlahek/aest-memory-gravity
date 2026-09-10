@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+# Workflow trigger only; audit logic remains exactly as preregistered.
 import json
 import os
 from pathlib import Path
