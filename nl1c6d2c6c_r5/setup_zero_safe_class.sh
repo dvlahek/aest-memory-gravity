@@ -26,10 +26,12 @@ python "$ROOT/v019y/apply_output_precision_patch.py" "$CLASS_ROOT"
 python "$ROOT/v023/apply_source_grid_trace_patch.py" "$CLASS_ROOT"
 python "$ROOT/nl1c6d2c6a/apply_aest_state_output_patch.py" "$CLASS_ROOT"
 python "$ROOT/nl1c6d2c6c_r5/apply_eta0_passive_bath_decoupling.py" "$CLASS_ROOT"
+python "$ROOT/nl1c6d2c6c_r5/apply_sparse_k_force_patch.py" "$CLASS_ROOT"
 
 grep -q 'pba->aest_memory_enabled && (pba->aest_eta != 0.)' "$CLASS_ROOT/source/perturbations.c"
 grep -q 'dy\[pv->index_pt_E_aest\] += aest_tangent_external_force(k,tau)' "$CLASS_ROOT/source/perturbations.c"
 grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest' "$CLASS_ROOT/source/perturbations.c"
+grep -q 'AEST_TANGENT_ALLOW_K_MISS' "$CLASS_ROOT/source/aest_memory.c"
 
 rm -rf "$PYTARGET"
 mkdir -p "$PYTARGET"
