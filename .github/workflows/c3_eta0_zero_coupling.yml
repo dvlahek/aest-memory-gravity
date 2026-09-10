@@ -9,6 +9,10 @@ on:
       - '.github/workflows/c3_eta0_zero_coupling.yml'
       - 'nl1c6d2c6c_zeroaudit/**'
 
+concurrency:
+  group: c3-class-eta0-zero-coupling
+  cancel-in-progress: true
+
 jobs:
   zero-coupling:
     runs-on: ubuntu-24.04
