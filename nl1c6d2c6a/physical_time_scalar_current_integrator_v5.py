@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from nl1c6d2c6a import physical_time_scalar_current_integrator_v4 as v4
 from nl1c6d2n import exp_normalization_audit as norm
