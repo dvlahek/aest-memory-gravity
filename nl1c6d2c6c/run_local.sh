@@ -16,7 +16,7 @@ python -u nl1c6d2c6c/build_linear_reference.py \
   --meta-out results/nl1c6d2c6c_linear_tangent_reference.json \
   2>&1 | tee results/nl1c6d2c6c_linear_reference.log
 
-python -u nl1c6d2c6c/eta0_nonlinear_memory_tangent.py \
+python -u nl1c6d2c6c/r1_tau1_parser_compat.py \
   --linear-reference results/nl1c6d2c6c_linear_tangent_reference.npz \
   --json-out results/nl1c6d2c6c_eta0_nonlinear_memory_tangent.json \
   2>&1 | tee results/nl1c6d2c6c_eta0_nonlinear_memory_tangent.log
