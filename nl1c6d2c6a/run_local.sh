@@ -3,6 +3,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 mkdir -p results
+# Instrumented corrected CLASS now exports alpha_aest/E_aest; physics and gates unchanged.
 if [[ ! -f results/nl1c6d2n_corrected_class_env.sh ]]; then
   echo "missing corrected CLASS environment; run bash nl1c6d2n/setup_corrected_class_local.sh first" >&2
   exit 2
