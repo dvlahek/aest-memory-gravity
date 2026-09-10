@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 # D2C6C-R1 technical compatibility shim.
 # The validated v0.19u tau1 parser accepts only memory orders 39/47 even when
 # memory is disabled. The inherited D2C6B base CLASS helper still emits 16.
