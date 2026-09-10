@@ -133,7 +133,7 @@ def make_force_table(data, path: Path):
         "step_no_larger_than_frozen_main": all(x["h_max"] <= hmain * (1.0 + 1e-12) for x in modes),
         "memory_off_core": True,
         "physical_eta_zero": True,
-        "signed_lambda_is_physical_eta": False,
+        "signed_lambda_not_physical_eta": True,
     }
     if not all(audits.values()):
         raise RuntimeError(f"R5 force audits failed: {audits}")
