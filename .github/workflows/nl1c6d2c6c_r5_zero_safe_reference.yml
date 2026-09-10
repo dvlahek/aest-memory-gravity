@@ -71,16 +71,28 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
+      - name: Diagnose R5 scale and sign
+        id: scale
+        if: steps.zero.outputs.exit_code == '0' && steps.ref.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set +e
+          source results/c3_r5_class_env.sh
+          python -u diagnostics/c3_r5_scale_sign_audit.py 2>&1 | tee results/c3_r5_scale_sign.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
       - name: Write R5 summary
         if: always()
         shell: bash
         run: |
           echo '## C3 R5 zero-coupling-safe tangent repair' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
-          for f in results/c3_r5_zero_coupling.log results/c3_r5_reference.log results/c3_r5_gate.log; do
+          for f in results/c3_r5_zero_coupling.log results/c3_r5_reference.log results/c3_r5_gate.log results/c3_r5_scale_sign.log; do
             if [[ -f "$f" ]]; then
               echo "### $f" >> "$GITHUB_STEP_SUMMARY"
-              grep -E '^(ZERO_MODE|ZERO_GLOBAL|ZERO_COUPLING_PASS=|R5_FORCE_MODE|R5_C3|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=|C3_R5_)' "$f" >> "$GITHUB_STEP_SUMMARY" || true
+              grep -E '^(ZERO_MODE|ZERO_GLOBAL|ZERO_COUPLING_PASS=|R5_FORCE_MODE|R5_C3|SCALE_MODE|SCALE_GLOBAL|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=|C3_R5_)' "$f" >> "$GITHUB_STEP_SUMMARY" || true
               echo '' >> "$GITHUB_STEP_SUMMARY"
             fi
           done
@@ -101,7 +113,7 @@ jobs:
           z='${{ steps.zero.outputs.exit_code }}'
           r='${{ steps.ref.outputs.exit_code }}'
           g='${{ steps.gate.outputs.exit_code }}'
-          echo "zero_exit=$z ref_exit=$r gate_exit=$g"
+          echo "zero_exit=$z ref_exit=$r gate_exit=$g scale_exit='${{ steps.scale.outputs.exit_code }}'"
           if [[ "$z" != '0' ]]; then exit 11; fi
           if [[ "$r" != '0' ]]; then exit 12; fi
           if [[ "$g" != '0' ]]; then exit "$g"; fi
