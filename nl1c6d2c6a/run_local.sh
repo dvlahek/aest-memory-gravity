@@ -8,6 +8,6 @@ if [[ ! -f results/nl1c6d2n_corrected_class_env.sh ]]; then
   exit 2
 fi
 source results/nl1c6d2n_corrected_class_env.sh
-python -u nl1c6d2c6a/physical_time_scalar_current_integrator.py \
+python -u nl1c6d2c6a/physical_time_scalar_current_integrator_r1.py \
   --json-out results/nl1c6d2c6a_physical_time_scalar_current_integrator.json \
   2>&1 | tee results/nl1c6d2c6a_physical_time_scalar_current_integrator.log
