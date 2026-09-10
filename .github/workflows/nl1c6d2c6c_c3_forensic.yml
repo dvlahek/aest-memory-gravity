@@ -1,0 +1,79 @@
+name: C3 forensic linear bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2c6c_c3_forensic.yml'
+      - 'nl1c6d2c6c_c3audit/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nl1c6d2c6c-c3-forensic-linear-bridge
+  cancel-in-progress: false
+
+jobs:
+  c3-forensic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated corrected tau1 CLASS
+        run: bash nl1c6d2c6c/setup_corrected_class_tau1.sh
+
+      - name: Rebuild frozen D2C6C linear eta0 reference
+        shell: bash
+        run: |
+          source results/nl1c6d2c6c_class_env.sh
+          python -u nl1c6d2c6c/build_linear_reference.py \
+            --out results/c3_forensic_linear_reference.npz \
+            --force-out results/c3_forensic_eta0_force39.dat \
+            --meta-out results/c3_forensic_linear_reference.json \
+            2>&1 | tee results/c3_forensic_reference.log
+
+      - name: Run preregistered C3 forensic audit
+        shell: bash
+        run: |
+          source results/nl1c6d2c6c_class_env.sh
+          python -u nl1c6d2c6c_c3audit/c3_forensic_linear_bridge.py \
+            --reference results/c3_forensic_linear_reference.npz \
+            --json-out results/c3_forensic_linear_bridge.json \
+            2>&1 | tee results/c3_forensic_linear_bridge.log
+
+      - name: Write compact forensic summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## C3 forensic linear bridge' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/c3_forensic_linear_bridge.log ]]; then
+            grep -E '^(RECONSTRUCTION_AUDIT|CHECKPOINT |MODE |FIELD |COMMON_SCALE_COMPATIBLE=|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=)' \
+              results/c3_forensic_linear_bridge.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Upload C3 forensic bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c3_forensic_linear_bridge
+          path: |
+            results/c3_forensic_*
+          if-no-files-found: warn
