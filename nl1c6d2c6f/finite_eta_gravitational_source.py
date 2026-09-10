@@ -24,6 +24,7 @@ d2b = d.d2b
 PARENT_D2C6E_COMPUTE = "e51748d58c9cb43340e2ad583c5985641fa9aad6"
 PARENT_D2C6E_RESULT = "dd49c48fb540109610bbfcb417701f97ee98554b"
 PREREG_HEAD = "c23966efccbe310d35e1c45a069bf0370d7dd4bc"
+CLARIFICATION_HEAD = "8b7cb2123e529409c4aea941aabdd6f3bb9f1ecd"
 
 ETAS = (1.0 / 32.0, 1.0 / 16.0, 1.0 / 8.0)
 ETA_MAX = ETAS[-1]
@@ -364,12 +365,14 @@ def main():
         parent_compute_ok = is_ancestor(PARENT_D2C6E_COMPUTE)
         parent_result_ok = is_ancestor(PARENT_D2C6E_RESULT)
         prereg_ok = is_ancestor(PREREG_HEAD)
+        clarification_ok = is_ancestor(CLARIFICATION_HEAD)
 
         print("NL1C6D2C6F_FINITE_ETA_DIRECT_GRAVITATIONAL_SOURCE_START", flush=True)
         print(f"D2C6F_HEAD={head}", flush=True)
         print(f"D2C6F_PARENT_COMPUTE_ANCESTOR={parent_compute_ok}", flush=True)
         print(f"D2C6F_PARENT_RESULT_ANCESTOR={parent_result_ok}", flush=True)
         print(f"D2C6F_PREREG_ANCESTOR={prereg_ok}", flush=True)
+        print(f"D2C6F_CLARIFICATION_ANCESTOR={clarification_ok}", flush=True)
 
         audit = action_fd_audit()
         f2 = bool(
@@ -528,7 +531,7 @@ def main():
                 flush=True,
             )
 
-        f1 = bool(parent_compute_ok and parent_result_ok and prereg_ok and coverage and len(records) == 81)
+        f1 = bool(parent_compute_ok and parent_result_ok and prereg_ok and clarification_ok and coverage and len(records) == 81)
         f3 = bool(energy_ok and control_energy_ok)
         f5 = bool(health_ok and control_health_ok)
         f6 = bool(worst_bath <= BATH_GATE)
@@ -596,6 +599,7 @@ def main():
             "classification": classification,
             "head": head,
             "predata_commit": PREREG_HEAD,
+            "predata_clarification_commit": CLARIFICATION_HEAD,
             "parent_D2C6E_compute": PARENT_D2C6E_COMPUTE,
             "parent_D2C6E_result": PARENT_D2C6E_RESULT,
             "eta_values": list(ETAS),
