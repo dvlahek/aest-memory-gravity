@@ -1,0 +1,37 @@
+name: NL1C6D2C2 corrected covariant A1
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2c2_corrected_a1.yml'
+      - 'nl1c6d2c2/a1_derivative_preservation_audit.py'
+      - 'nl1c6d2c2/run_a1_local.sh'
+      - 'docs/nl1c6d2c2_predata_a1_derivative_preservation.md'
+
+permissions:
+  contents: read
+
+jobs:
+  derivative-preservation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run preregistered A1 derivative preservation audit
+        run: bash nl1c6d2c2/run_a1_local.sh
+      - name: Write compact summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## NL1C6D2C2 A1 derivative preservation' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/nl1c6d2c2_a1_derivative_preservation.log ]]; then
+            grep -E '^(A1_|CLASSIFICATION=)' results/nl1c6d2c2_a1_derivative_preservation.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
