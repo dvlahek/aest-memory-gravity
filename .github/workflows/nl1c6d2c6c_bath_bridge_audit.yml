@@ -1,0 +1,66 @@
+name: C3 direct bath bridge audit
+
+on:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - 'nl1c6d2c6c_bathaudit/**'
+      - '.github/workflows/nl1c6d2c6c_bath_bridge_audit.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: nl1c6d2c6c-bath-bridge-audit
+  cancel-in-progress: false
+
+jobs:
+  bath-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated bath-bridge CLASS
+        run: bash nl1c6d2c6c_bathaudit/setup_bath_bridge_class.sh
+
+      - name: Run preregistered direct bath bridge audit
+        shell: bash
+        run: |
+          set -o pipefail
+          source results/c3_bath_bridge_class_env.sh
+          python -u nl1c6d2c6c_bathaudit/direct_bath_bridge_audit.py \
+            2>&1 | tee results/c3_direct_bath_bridge.log
+
+      - name: Write compact bath-bridge summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## C3 direct bath bridge audit' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/c3_direct_bath_bridge.log ]]; then
+            grep -E '^(BATH_POINT|BATH_MODE|BATH_GLOBAL|SOURCE_BRIDGE_PASS=|BATH_STATE_BRIDGE_PASS=|B_RESIDUAL_BRIDGE_PASS=|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=|C3_BATH_BRIDGE_ERROR)' \
+              results/c3_direct_bath_bridge.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Upload bath-bridge bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c3_direct_bath_bridge
+          path: |
+            results/c3_direct_bath_bridge*
+            results/c3_bath_state_output_patch.json
+          if-no-files-found: warn
