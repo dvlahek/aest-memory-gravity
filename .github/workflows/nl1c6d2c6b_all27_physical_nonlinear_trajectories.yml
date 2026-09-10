@@ -1,0 +1,54 @@
+name: NL1C6D2C6B all-27 physical nonlinear trajectories
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v053-exp-normalization-corrected
+    paths:
+      - '.github/workflows/nl1c6d2c6b_all27_physical_nonlinear_trajectories.yml'
+      - 'nl1c6d2c6b/**'
+      - 'docs/nl1c6d2c6b_*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nl1c6d2c6b-all27-physical-nonlinear-trajectories
+  cancel-in-progress: false
+
+jobs:
+  all27-physical-nonlinear-trajectories:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout corrected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy scipy cython setuptools wheel
+
+      - name: Build isolated corrected CLASS
+        run: bash nl1c6d2n/setup_corrected_class_local.sh
+
+      - name: Run D2C6B all-27 physical nonlinear trajectories
+        run: bash nl1c6d2c6b/run_local.sh
+
+      - name: Write compact summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## NL1C6D2C6B all-27 physical nonlinear trajectories' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f results/nl1c6d2c6b_all27_physical_nonlinear_trajectories.log ]]; then
+            grep -E '^(B2_SHARED|MEMBER |RESPONSE_SUMMARY|WORST_|GATES=|CLASSIFICATION=|NEXT_NONLINEAR_MEMORY_STEP_LICENSED=)' results/nl1c6d2c6b_all27_physical_nonlinear_trajectories.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
