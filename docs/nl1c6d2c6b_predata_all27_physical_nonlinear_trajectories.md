@@ -200,9 +200,15 @@ A failure in any co-primary member fails the conjunctive D2C6B numerical gate. I
 
 ### B4. Per-member timestep convergence
 
-For each member compare the complete stored `alpha`, `E`, and `chi` checkpoint arrays between the 4096-step and 8192-step runs at `Nx=128`.
+Retain the inherited D2C6A/R1 convergence metric exactly. For each member compare the complete stored canonical state arrays
 
-The maximum relative L2 discrepancy over the three fields must satisfy
+```text
+(alpha, chi, P_chi, P_alpha)
+```
+
+between the `Nx=128, 4096` primary run and the `Nx=128, 8192` time-control run. Here `P_alpha` is the reconstructed historical canonical variable `S_c-Q P_chi` used by the inherited R1 output/comparison convention.
+
+For each of the four states compute the inherited full-array relative L2 discrepancy over all nine checkpoints and spatial samples. The maximum over the four states must satisfy
 
 ```text
 <= 2e-3
@@ -212,9 +218,15 @@ for every one of the 27 members.
 
 ### B5. Per-member spatial convergence
 
-For each member compare the low Fourier modes common to `Nx=128` and `Nx=256` for `alpha`, `E`, and `chi` at all nine checkpoints, using the same D2C6A-R1 comparison convention.
+Retain the inherited D2C6A/R1 spatial comparison exactly. For each member, for each stored canonical state
 
-The maximum normalized discrepancy must satisfy
+```text
+(alpha, chi, P_chi, P_alpha),
+```
+
+spectrally resample every `Nx=256` checkpoint field to `Nx=128` using the already frozen `static.spectral_resample` routine, then compute the same full-array relative L2 discrepancy against the `Nx=128` primary run.
+
+The maximum over the four canonical states must satisfy
 
 ```text
 <= 5e-3
@@ -246,12 +258,12 @@ C_f^{\pm}=\frac{\|f_{\sigma=\pm1}-f_{\sigma=0}\|_2}
 {\|f_{\sigma=0}\|_2}.
 \]
 
-Define the corresponding numerical floor `N_f` as the largest of the preregistered timestep and spatial discrepancies among the three sigma members for that `(kind,beta0,field)` block.
+For each fixed `(kind,beta0)` define a conservative block numerical floor `N_block` as the largest inherited B4 timestep maximum or B5 spatial maximum among the three `sigma` members in that block. This deliberately uses the already frozen canonical convergence gate rather than introducing a new post hoc field-specific tolerance.
 
 A completion displacement is labelled **resolved** only when
 
 \[
-C_f^{\pm}>10N_f.
+C_f^{\pm}>10N_{\rm block}.
 \]
 
 This label is diagnostic and does not affect D2C6B PASS/FAIL. Resolved differences are reported as completion dependence; unresolved differences are reported as completion-insensitive at the achieved numerical resolution. No favorable completion is selected.
