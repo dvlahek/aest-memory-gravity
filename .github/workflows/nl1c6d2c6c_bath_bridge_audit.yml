@@ -36,6 +36,9 @@ jobs:
       - name: Build isolated bath-bridge CLASS
         run: bash nl1c6d2c6c_bathaudit/setup_bath_bridge_class.sh
 
+      - name: Apply R2 common-domain guard repair
+        run: python nl1c6d2c6c_bathaudit/apply_r2_common_domain_guard.py
+
       - name: Run preregistered direct bath bridge audit
         shell: bash
         run: |
@@ -51,7 +54,7 @@ jobs:
           echo '## C3 direct bath bridge audit' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
           if [[ -f results/c3_direct_bath_bridge.log ]]; then
-            grep -E '^(BATH_POINT|BATH_MODE|BATH_GLOBAL|SOURCE_BRIDGE_PASS=|BATH_STATE_BRIDGE_PASS=|B_RESIDUAL_BRIDGE_PASS=|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=|C3_BATH_BRIDGE_ERROR)' \
+            grep -E '^(BATH_DOMAIN|BATH_CHECKPOINT_SKIPPED|BATH_POINT|BATH_MODE|BATH_GLOBAL|SOURCE_BRIDGE_PASS=|BATH_STATE_BRIDGE_PASS=|B_RESIDUAL_BRIDGE_PASS=|CLASSIFICATION=|FINITE_POSITIVE_ETA_NONLINEAR_MEMORY_LICENSED=|C3_BATH_BRIDGE_ERROR)' \
               results/c3_direct_bath_bridge.log >> "$GITHUB_STEP_SUMMARY" || true
           fi
 
