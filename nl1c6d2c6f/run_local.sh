@@ -82,6 +82,7 @@ paths = [
     Path(sys.argv[2]),
     Path(sys.argv[3]),
     Path("docs/nl1c6d2c6f_finite_eta_gravitational_source_predata.md"),
+    Path("docs/nl1c6d2c6f_predata_clarification.md"),
     Path("nl1c6d2c6f/finite_eta_gravitational_source.py"),
     Path("nl1c6d2c6f/run_local.sh"),
     Path("nl1c6d2c6f/README_LOCAL.md"),
