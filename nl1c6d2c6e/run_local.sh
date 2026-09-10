@@ -4,8 +4,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 mkdir -p results
+export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
 
-# Reuse a valid local zero-safe CLASS build when available.  The generated
+# Reuse a valid local zero-safe CLASS build when available. The generated
 # environment file contains absolute paths, so a file copied from another
 # machine is deliberately treated as invalid.
 need_setup=0
