@@ -11,7 +11,7 @@ VENV="$ROOT/.local/fstate_kmax_diag_venv"
 if [[ ! -x "$VENV/bin/python" ]]; then "$BASE_PY" -m venv "$VENV" || { echo "KDIAG: install python3-venv" >&2; exit 2; }; fi
 export PATH="$VENV/bin:$PATH"
 python -m pip install --upgrade pip setuptools wheel >/dev/null
-python -m pip install numpy cython >/dev/null
+python -m pip install numpy scipy cython >/dev/null
 
 echo "KDIAG: preparing isolated nonredundant F-state CLASS tree..."
 bash act_fstate/setup_fstate_class.sh
