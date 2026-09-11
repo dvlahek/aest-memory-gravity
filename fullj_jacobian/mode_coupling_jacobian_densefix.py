@@ -2,15 +2,21 @@
 """Regression wrapper for the preregistered full-J mode-coupling Jacobian.
 
 This does not change any physics equation, Jacobian definition, or preregistered
-support threshold.  It only enforces that the three Jacobian snapshots are
+support threshold. It only enforces that the three Jacobian snapshots are
 extracted from the *same full z_pk request* used by the completed dense-map run,
-then filters to z={0.25,0.5,1}.  Hard regression checks prevent a different
+then filters to z={0.25,0.5,1}. Hard regression checks prevent a different
 CLASS transfer realization from being analysed silently.
 """
 from __future__ import annotations
 
 import math
+import sys
+from pathlib import Path
+
 import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from fullj_jacobian import mode_coupling_jacobian as jac
 
@@ -29,7 +35,7 @@ _ORIGINAL_EXTRACT = jac.poc.extract_baryon_transfers
 
 def _fixed_configure() -> None:
     # This is the key regression fix: dense.configure_upstream() installs the
-    # original ten-redshift dense request.  Do NOT replace poc.ZS by jac.ZS
+    # original ten-redshift dense request. Do NOT replace poc.ZS by jac.ZS
     # before CLASS extraction.
     jac.dense.configure_upstream()
     if int(jac.MODE_NUM.max()) > int(np.floor(jac.NX / 3.0)):
@@ -48,7 +54,7 @@ def _select_exact_dense_transfers():
             )
         selected.append(matches[0])
 
-    # Hard regression against the already completed dense run.  These checks
+    # Hard regression against the already completed dense run. These checks
     # happen before any nonlinear/Jacobian solve, so a background mismatch can
     # never be misclassified as a physical node/coupling result.
     for tr in selected:
@@ -96,7 +102,7 @@ def _select_exact_dense_transfers():
     return selected, classy_module
 
 
-# Patch only orchestration.  The preregistered tangent solver, metrics, gates,
+# Patch only orchestration. The preregistered tangent solver, metrics, gates,
 # and classifications remain those in mode_coupling_jacobian.py.
 jac.configure = _fixed_configure
 jac.poc.extract_baryon_transfers = _select_exact_dense_transfers
