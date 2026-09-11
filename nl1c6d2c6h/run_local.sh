@@ -79,7 +79,7 @@ zip_path=Path(sys.argv[1])
 paths=[
     Path(sys.argv[2]), Path(sys.argv[3]),
     Path("docs/nl1c6d2c6h_final_self_consistent_metric_feedback_predata.md"),
-    Path("docs/nl1c6d2c6g_eta0_direct_metric_tangent_result.md"),
+    Path("docs/nl1c6d2c6g_eta0_metric_tangent_result.md"),
     Path("docs/nl1c6d2c6g_eta0_metric_tangent_predata.md"),
     Path("docs/nl1c6d2c6f_r2_vector_phase_source_result.md"),
     Path("nl1c6d2c6h/final_self_consistent_metric_feedback_tangent.py"),
