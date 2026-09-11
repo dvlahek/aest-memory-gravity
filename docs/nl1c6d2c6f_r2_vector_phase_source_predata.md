@@ -117,12 +117,31 @@ No gate depends on source sign, minimum amplitude, completion ranking, metric/le
 Report for all 27 primary members:
 
 - corrected source RMS by checkpoint;
-- ratio of corrected-source RMS to the historical old-phase source RMS when an old reconstruction is evaluated on the same trajectory;
+- ratio of corrected-source RMS to the historical old-phase source RMS when the old reconstruction is evaluated on the same trajectory;
 - completed-square kinetic and potential contributions;
 - density/momentum/spatial/shear source hierarchy;
 - completion-family min/median/max spread.
 
-Additionally project the corrected source **one way** through the exact frozen Newtonian-gauge metric constraints using the action normalization fixed by NL0B, solely as a non-gating diagnostic. Report `delta_phi_mem`, `delta_psi_mem`, and `delta(phi+psi)_mem`, but do not feed them back into the trajectory in R2.
+Additionally project the corrected source **one way** through the exact frozen Newtonian-gauge metric constraints, solely as a non-gating diagnostic. The normalization is frozen here before implementation.
+
+The NL0B memory action carries the same overall `1/(16 pi G_tilde)` prefactor as the AeST gravitational action. Defining the raw tensor from the memory Lagrangian bracket, its contribution to the Einstein equation is one half of that raw tensor. CLASS geometric stress sums use the scalar-constraint coefficient `3/2`. Therefore the equivalent direct-memory contribution to CLASS stress sums is the raw action stress divided by six.
+
+Use
+
+- `delta_rho_mem = -S_N/(6 a^3)`;
+- `T0x_mem = S_b/(6 a^3)`;
+- `q_mem = d_x T0x_mem`;
+- `rho_plus_p_shear_mem = -S_shear/(9 a^2)`.
+
+For `1<=|n|<=32`, with `Hconf=a H`, use
+
+`delta_phi_k = -(3/2) a^2/k^4 [k^2 delta_rho_mem,k + 3 Hconf q_mem,k]`,
+
+`delta_psi_k = delta_phi_k - (9/2) a^2/k^2 rho_plus_p_shear_mem,k`.
+
+Set the zero mode to zero and omit modes above `|n|=32` from this one-way diagnostic because the source comparison band was frozen at `n=0..32`.
+
+Report `delta_phi_mem`, `delta_psi_mem`, and `delta(phi+psi)_mem`, but do not feed them back into the trajectory in R2. Their amplitudes and signs are not R2 gates.
 
 ## Classification
 
