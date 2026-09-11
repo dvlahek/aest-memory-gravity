@@ -25,6 +25,7 @@ python -m pip install numpy scipy cython >/dev/null
 
 python -m py_compile \
   fullj_jacobian/mode_coupling_jacobian.py \
+  fullj_jacobian/mode_coupling_jacobian_densefix.py \
   fullj_dense/dense_reclosure_map.py \
   fullj_poc/cosmological_reclosure_poc.py \
   nl1c6/full_j_baryonic_reclosure.py
@@ -58,7 +59,7 @@ export OMP_NUM_THREADS=1
 unset AEST_TANGENT_FORCE_FILE AEST_TANGENT_LAMBDA AEST_TANGENT_TRACE_FILE AEST_OFFLINE_TRACE_FILE AEST_TANGENT_ALLOW_K_MISS || true
 
 set +e
-python -u fullj_jacobian/mode_coupling_jacobian.py \
+python -u fullj_jacobian/mode_coupling_jacobian_densefix.py \
   --json-out "$JSON" \
   --npz-out "$NPZ" \
   --matrix-csv-out "$MCSV" \
@@ -72,7 +73,9 @@ import sys, zipfile
 zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:]] + [
     Path('docs/fullj_mode_coupling_jacobian_predata.md'),
+    Path('docs/fullj_mode_coupling_jacobian_dense_background_fix.md'),
     Path('fullj_jacobian/mode_coupling_jacobian.py'),
+    Path('fullj_jacobian/mode_coupling_jacobian_densefix.py'),
     Path('fullj_jacobian/run_local_fullj_mode_coupling_jacobian.sh'),
     Path('fullj_dense/dense_reclosure_map.py'),
     Path('docs/fullj_dense_reclosure_map_predata.md'),
