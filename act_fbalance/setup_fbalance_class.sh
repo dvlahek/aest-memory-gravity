@@ -29,13 +29,16 @@ python "$ROOT/nl1c6d2c6c_r5/apply_eta0_passive_bath_decoupling.py" "$CLASS_ROOT"
 python "$ROOT/nl1c6d2c6c_r5/apply_sparse_k_force_patch.py" "$CLASS_ROOT"
 python "$ROOT/act_fbalance/apply_fbalance_patch.py" "$CLASS_ROOT"
 
-grep -q 'index_pt_F_aest' "$CLASS_ROOT/include/perturbations.h"
-grep -q 'KQ_aest-2.\*B_aest\*Q_aest/pba->aest_KB' "$CLASS_ROOT/source/perturbations.c"
-grep -q 'cad2_aest\*k2/(3.\*a.\*a\*rho_aest)\*F_aest' "$CLASS_ROOT/source/perturbations.c"
-grep -q 'F_memory_force_aest = -0.5\*a\*Q_aest\*Bchi_aest' "$CLASS_ROOT/source/perturbations.c"
-grep -q 'pba->aest_KB\*F_external_force_aest' "$CLASS_ROOT/source/perturbations.c"
+# Literal post-patch source audit. Fixed-string matching is intentional here:
+# these checks validate exact C fragments rather than regular expressions.
+grep -Fq 'index_pt_F_aest' "$CLASS_ROOT/include/perturbations.h"
+grep -Fq 'KQ_aest-2.*B_aest*Q_aest/pba->aest_KB' "$CLASS_ROOT/source/perturbations.c"
+grep -Fq 'cad2_aest*k2/(3.*a*a*rho_aest)*F_aest' "$CLASS_ROOT/source/perturbations.c"
+grep -Fq 'F_memory_force_aest = -0.5*a*Q_aest*Bchi_aest' "$CLASS_ROOT/source/perturbations.c"
+grep -Fq 'pba->aest_KB*F_external_force_aest' "$CLASS_ROOT/source/perturbations.c"
+echo "FBALANCE_SOURCE_AUDIT_PASS"
 
-make -C "$CLASS_ROOT" -j2 class >/dev/null
+make -C "$CLASS_ROOT" -j2 class
 
 test -x "$CLASS_ROOT/class"
 
