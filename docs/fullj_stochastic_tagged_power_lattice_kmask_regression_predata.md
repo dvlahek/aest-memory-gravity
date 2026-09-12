@@ -4,7 +4,7 @@
 
 The historical stochastic tagged power-lattice campaign completed all 176 integrations with clean solver, metric-constraint, stochastic-background and constitutive diagnostics, but failed the two radial power gates. A subsequent same-k box-doubling audit isolated a deterministic implementation defect in the evolving-Weyl metric projection: the historical integer mask `1<=|n|<=32` was retained after the periodic box changed, so its physical cutoff changed with `kF`. The preregistered physical-k repair restored the original R2 meaning `0<|k|/h<=0.32` and then passed direct A/B box invariance at numerical precision.
 
-This milestone is a bounded regression between that repair PASS and a full from-scratch repaired power-lattice production campaign. It tests the two previously failed observable-facing power gates under the repaired metric projection while avoiding unnecessary recomputation of Stage-A nodes whose historical geometry is certified unchanged.
+This milestone is a bounded regression between that repair PASS and a full from-scratch repaired power-lattice production campaign. It tests the two previously failed observable-facing power gates under the repaired metric projection while using a narrowly certified subset of historical Stage-A data only as a regression accelerator.
 
 No threshold from the historical power-lattice declaration is relaxed. Historical FAIL classifications remain historical FAILs.
 
@@ -34,7 +34,7 @@ Identical to the historical power-lattice campaign:
 
 The only implementation change relative to the historical campaign is the already validated physical-k metric projection mask `0<|k|/h<=0.32`.
 
-## Historical Stage-A reuse boundary
+## Historical Stage-A reuse boundary and certification
 
 The historical Stage-A geometry was
 
@@ -42,13 +42,13 @@ The historical Stage-A geometry was
 - `NX=256`
 - `box=2*pi/(kF*h)`.
 
-Under the historical integer mask `|n|<=32`, this geometry included physical modes through exactly `k/h=0.16`. Therefore nodes `k/h<=0.16` had the same metric-projection membership as the repaired physical-k mask. Nodes above `0.16` did not and are not reused in this regression.
+Under the historical integer mask `|n|<=32`, this geometry projected metric-correction modes only through `k/h=0.16`. The repaired mask instead retains metric-correction modes through the original physical R2 cutoff `k/h=0.32`. Therefore even a tagged target with `k/h<=0.16` can in principle change through higher-harmonic or broadband coupling in the reconstructed metric/effective-fluid evolution. Historical low-k Stage-A data are **not** assumed unchanged by construction.
 
-Before any historical Stage-A response is reused, certify the reuse assumption directly at
+For this bounded regression only, historical Stage-A responses at `k/h<=0.16` may be reused if a fresh repaired overlap test demonstrates negligible change at three preregistered domain probes:
 
 `K_overlap={0.060,0.095,0.160} h Mpc^-1`.
 
-Each overlap node is freshly recomputed for B2 and both signs under the repaired mask. Compare the resulting tagged response and power with the corresponding historical Stage-A B2 entries.
+These probe the low/mid region, the previously problematic late-time region, and the old mask boundary. Each overlap node is freshly recomputed for B2 and both signs under the repaired mask and compared with the corresponding historical Stage-A B2 entry.
 
 Frozen reuse-certification gates:
 
@@ -57,11 +57,11 @@ Frozen reuse-certification gates:
 - power global relative L2 `<=2e-6`
 - power per-node maximum relative L2 `<=2e-5`.
 
-If any overlap gate fails, historical Stage-A reuse is not permitted and the regression FAILs. Do not substitute fresh nodes silently.
+This three-node test is an empirical regression certification only. It does not license the reused lattice as final production data. If any overlap gate fails, historical Stage-A reuse is not permitted and the regression FAILs. Do not substitute fresh nodes silently. A later full production campaign must recompute the complete lattice under the repaired mask regardless of this regression outcome.
 
 ## Stage A-R: repaired high-k completion
 
-Freshly recompute all complete-lattice nodes above the historical Stage-A physical cutoff:
+Freshly recompute all complete-lattice target nodes above the old Stage-A cutoff:
 
 `K_repair={0.165,0.170,0.175,0.180,0.185,0.190,0.195,0.200} h Mpc^-1`.
 
@@ -75,7 +75,7 @@ Construct a hybrid repaired B2 complete lattice on
 
 `K_full={0.030,0.035,...,0.200} h Mpc^-1`
 
-by using the immutable historical Stage-A B2 responses for `k/h<=0.16` and replacing every node `k/h>0.16` with the fresh repaired response. This hybrid object is a regression diagnostic only and is not the final production lattice.
+by using the historical Stage-A B2 responses for `k/h<=0.16` only if KR-G2 passes and replacing every node `k/h>0.16` with the fresh repaired response. This hybrid object is a regression diagnostic only and is not the final production lattice.
 
 ## Stage B-R: repaired half-lattice validation
 
@@ -169,7 +169,7 @@ Use `INCOMPLETE` only for missing provenance/runtime/input artifacts that preven
 
 ## Scope
 
-A PASS establishes only that the previously failed bounded power-lattice gates pass after the independently validated physical-k projection repair and that historical Stage-A reuse below/equal to `k/h=0.16` is directly certified.
+A PASS establishes only that the previously failed bounded power-lattice gates pass after the independently validated physical-k projection repair and that limited historical Stage-A reuse is empirically adequate for this regression diagnostic.
 
 A PASS licenses only:
 
