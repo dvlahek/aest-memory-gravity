@@ -19,6 +19,7 @@ python -m pip install --upgrade pip setuptools wheel >/dev/null
 python -m pip install numpy scipy cython >/dev/null
 
 python -m py_compile \
+  fullj_weyl/apply_class_kfile_limit_patch.py \
   fullj_weyl/dense_radial_class_residual_r2.py \
   fullj_weyl/dense_radial_class_residual_r2_r1.py \
   fullj_weyl/dense_radial_weyl_extension.py \
@@ -50,23 +51,36 @@ if [[ ! -f results/fullj_dense_radial_weyl_extension.json ]]; then
   echo "FULLJ_DENSE_RESIDUAL_R2: missing completed dense FAIL JSON" >&2; exit 3
 fi
 
-ENVFILE="$ROOT/results/nl1c6d2n_corrected_class_env.sh"
+# This milestone needs 41 perturbation-output histories. Use an isolated CLASS
+# build with only the compile-time output-capacity macro raised from 30 to 64.
+ENVFILE="$ROOT/results/nl1c6d2n_corrected_class_densek64_env.sh"
 reuse=0
 if [[ -f "$ENVFILE" ]]; then
   # shellcheck disable=SC1090
   source "$ENVFILE"
   if [[ -n "${NL1C6D2N_CLASS_ROOT:-}" && -d "$NL1C6D2N_CLASS_ROOT/.git" \
         && -f "$NL1C6D2N_CLASS_ROOT/source/aest_memory.c" \
-        && -n "${NL1C6D2N_PYTARGET:-}" && -f "$NL1C6D2N_PYTARGET/classy/__init__.py" ]]; then reuse=1; fi
+        && -f "$NL1C6D2N_CLASS_ROOT/include/perturbations.h" \
+        && -n "${NL1C6D2N_PYTARGET:-}" && -f "$NL1C6D2N_PYTARGET/classy/__init__.py" \
+        && "${FULLJ_DENSE_RESIDUAL_R2_CLASS_KFILE_LIMIT:-}" == "64" ]] \
+        && grep -Eq '^#define[[:space:]]+_MAX_NUMBER_OF_K_FILES_[[:space:]]+64[[:space:]]*$' \
+             "$NL1C6D2N_CLASS_ROOT/include/perturbations.h"; then
+    reuse=1
+  fi
 fi
 if [[ "$reuse" -eq 1 ]]; then
-  echo "FULLJ_DENSE_RESIDUAL_R2: reusing existing D2C6-certified corrected CLASS environment..."
+  echo "FULLJ_DENSE_RESIDUAL_R2: reusing isolated corrected CLASS dense-k64 environment..."
 else
-  echo "FULLJ_DENSE_RESIDUAL_R2: preparing D2C6-certified corrected CLASS environment..."
-  bash nl1c6d2n/setup_corrected_class_local.sh
-  # shellcheck disable=SC1091
+  echo "FULLJ_DENSE_RESIDUAL_R2: preparing isolated corrected CLASS dense-k64 environment..."
+  bash fullj_weyl/setup_corrected_class_dense_k64_local.sh
+  # shellcheck disable=SC1090
   source "$ENVFILE"
 fi
+
+grep -Eq '^#define[[:space:]]+_MAX_NUMBER_OF_K_FILES_[[:space:]]+64[[:space:]]*$' \
+  "$NL1C6D2N_CLASS_ROOT/include/perturbations.h"
+[[ "${FULLJ_DENSE_RESIDUAL_R2_CLASS_KFILE_LIMIT:-}" == "64" ]]
+echo "FULLJ_DENSE_RESIDUAL_R2_CLASS_KFILE_LIMIT_PASS value=64"
 
 python - <<'PY'
 import os, numpy, scipy, classy
@@ -76,6 +90,7 @@ print('numpy='+numpy.__version__)
 print('scipy='+scipy.__version__)
 print('classy_module='+str(classy.__file__))
 print('NL1C6D2N_CLASS_ROOT='+os.environ['NL1C6D2N_CLASS_ROOT'])
+print('FULLJ_DENSE_RESIDUAL_R2_CLASS_KFILE_LIMIT='+os.environ['FULLJ_DENSE_RESIDUAL_R2_CLASS_KFILE_LIMIT'])
 c=Class(); c.empty()
 PY
 
@@ -103,12 +118,15 @@ paths=[Path(x) for x in sys.argv[2:]] + [
     Path('docs/fullj_dense_radial_weyl_extension_result.md'),
     Path('docs/fullj_dense_radial_class_residual_r2_predata.md'),
     Path('docs/fullj_dense_radial_class_residual_r2_provenance_repair.md'),
+    Path('docs/fullj_dense_radial_class_residual_r2_kfile_limit_repair.md'),
+    Path('fullj_weyl/apply_class_kfile_limit_patch.py'),
+    Path('fullj_weyl/setup_corrected_class_dense_k64_local.sh'),
     Path('fullj_weyl/dense_radial_class_residual_r2.py'),
     Path('fullj_weyl/dense_radial_class_residual_r2_r1.py'),
     Path('fullj_weyl/dense_radial_weyl_extension_r1.py'),
     Path('fullj_weyl/run_local_dense_radial_class_residual_r2.sh'),
     Path('results/fullj_dense_radial_weyl_extension.json'),
-    Path('results/nl1c6d2n_corrected_class_env.sh'),
+    Path('results/nl1c6d2n_corrected_class_densek64_env.sh'),
 ]
 with zipfile.ZipFile(zp,'w',compression=zipfile.ZIP_DEFLATED) as zf:
     seen=set()
