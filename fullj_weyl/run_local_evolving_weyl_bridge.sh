@@ -73,6 +73,7 @@ import sys, zipfile
 zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:]] + [
     Path('docs/fullj_evolving_weyl_bridge_predata.md'),
+    Path('docs/fullj_evolving_weyl_bridge_source_map.md'),
     Path('docs/fullj_phase_robustness_LOCKED_RESULT.md'),
     Path('docs/nl1c6d2c5_action_level_flrw_longitudinal_derivation.md'),
     Path('fullj_weyl/evolving_flrw_weyl_bridge.py'),
