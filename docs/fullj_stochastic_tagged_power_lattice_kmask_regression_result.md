@@ -70,9 +70,45 @@ Two direct repaired midpoint spike violations remain:
 
 Therefore KR-G7 also fails.
 
+## NPZ forensic audit
+
+The complete NPZ was inspected after the frozen classification. This forensic audit does not change any preregistered gate or classification.
+
+The two direct Gaussian backgrounds agree extremely closely on the newly computed half-lattice response:
+
+- response background-0/background-1 global relative L2: approximately `4.19e-08`
+- power background-0/background-1 global relative L2: approximately `3.31e-08`
+- at `z=0.2`, response relative L2: approximately `1.27e-07`
+- at `z=0.2`, power relative L2: approximately `1.22e-07`
+
+Thus the late-time features are not explained by B2 stochastic sampling noise.
+
+The response is also essentially real:
+
+- repaired half-lattice global `||Im T||/||Re T||`: approximately `4.99e-09`
+- repaired half-lattice `z=0.2` `||Im T||/||Re T||`: approximately `1.51e-08`
+
+Thus the narrow power structure is not a phase-projection artifact.
+
+At `z=0.2`, the direct signed response around the dominant `k/h≈0.10` structure is
+
+- `T(0.0950)=+0.0272820`
+- `T(0.0975)=+0.0966481`
+- `T(0.1000)=+0.0061745`
+- `T(0.1025)=-0.0018173`
+- `T(0.1050)=-0.0157082`
+- `T(0.1075)=-0.0212935`
+- `T(0.1100)=+0.1170900`
+- `T(0.1125)=-0.0325616`
+- `T(0.1150)=+0.0755897`
+
+Additional late-time sign-changing structure is directly resolved around `k/h≈0.155--0.170`, while the largest contributions to the `z=0.2` interpolation-error norm include the high-k controls near `0.1925`, `0.1975`, `0.1675`, and `0.1625`.
+
+The dominant `k/h=0.0975` midpoint evolves smoothly from an ordinary interpolation point at high redshift to a narrow late-time feature: its midpoint/end-point power ratio is about `0.93` at `z=6`, `1.03` at `z=1`, `1.58` at `z=0.5`, and `12.55` at `z=0.2`. This is consistent with a late-time radial feature emerging dynamically rather than a static grid or phase defect.
+
 ## Interpretation
 
-The independently validated physical-k repair was necessary and removes the box-dependent projection artifact, but it is not sufficient to make a `Delta k/h=0.005` radial power lattice adequate at late times. The repaired overlap regression is essentially exact, so stale low-k reuse is not the origin of the remaining failure. The direct repaired half-lattice measurements show real sub-0.005 radial structure within the frozen tagged broadband construction.
+The independently validated physical-k repair was necessary and removes the box-dependent projection artifact, but it is not sufficient to make a `Delta k/h=0.005` radial power lattice adequate at late times. The repaired overlap regression is essentially exact, so stale low-k reuse is not the origin of the remaining failure. The direct repaired half-lattice measurements show sub-0.005 radial structure within the frozen tagged broadband construction.
 
 Compared with the historical power-lattice FAIL, the repaired aggregate late-time interpolation errors improve somewhat (`max power L2: 0.30864 -> 0.25928`; `max peak error: 0.18662 -> 0.14626`), but the dominant `k/h=0.0975, z=0.2` midpoint feature remains and its endpoint spike ratio is still very large. Hence the correct next step is radial refinement, not another metric-projection repair and not a relaxation of the power gates.
 
@@ -92,3 +128,13 @@ Still not licensed:
 - `OBSERVATIONAL_CLAIM_LICENSED=False`
 
 No threshold is relaxed and no historical FAIL is reclassified.
+
+## Next bounded step
+
+Do not launch the full repaired production lattice yet. The shortest informative next experiment is a preregistered local quarter-lattice refinement with `Delta k/h=0.00125` in three windows already complete at `Delta k/h=0.0025` from the repaired regression:
+
+- `0.0925 <= k/h <= 0.1125`
+- `0.1550 <= k/h <= 0.1700`
+- `0.1900 <= k/h <= 0.2000`
+
+Only the 18 quarter-offset nodes are new. With `B2={0,1}` and both signs this costs 72 integrations. The purpose is to determine if the direct repaired response converges to a resolved oscillatory radial function or if even the 0.0025 grid is under-resolved. No science threshold should be relaxed.
