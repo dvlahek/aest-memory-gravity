@@ -267,7 +267,6 @@ def main():
     T4=np.mean(A,axis=0); T2=np.mean(A[:2],axis=0)
     P4=np.mean(P,axis=0); P2=np.mean(P[:2],axis=0)
 
-    # Regression to locked POC: background-major, target-major order, targets [0.0375,0.10,0.175].
     reg_rows=[]; reg_err=[]
     for bg in (0,1,2):
         for kh,poc_ik in ((0.10,1),(0.175,2)):
@@ -302,7 +301,6 @@ def main():
         hold_rows.append({"z":float(z),"transfer_L2":float(qt),"power_L2":float(qp),"power_peak":float(qpeak)})
         for kmid in H1:
             j=idx(K1,kmid)
-            # H1 nodes are exact midpoints of consecutive K0 intervals.
             right=int(np.searchsorted(K0,kmid)); left=right-1
             den=max(abs(T4[idx(K1,K0[left]),iz]),abs(T4[idx(K1,K0[right]),iz]),1e-12)
             ratio=float(abs(T4[j,iz])/den)
@@ -313,11 +311,17 @@ def main():
     kfine=np.exp(np.linspace(np.log(float(K1[0])),np.log(float(K1[-1])),401))
     fine_rows=[]; fine_t=[]; fine_p=[]; fine_peak=[]
     fine_T1=[]; fine_P1=[]
+    fine_power_ok=True
     for iz,z in enumerate(CHECK_Z):
         t0=interp_complex(K0,T4[i0,iz],kfine)
         t1=interp_complex(K1,T4[:,iz],kfine)
         p0=interp_power(K0,P4[i0,iz],kfine)
         p1=interp_power(K1,P4[:,iz],kfine)
+        fine_power_ok = fine_power_ok and bool(
+            np.all(np.isfinite(t0)) and np.all(np.isfinite(t1))
+            and np.all(np.isfinite(p0)) and np.all(np.isfinite(p1))
+            and np.all(p0>=0.0) and np.all(p1>=0.0)
+        )
         qt=rel(t0,t1)
         qp=float(np.linalg.norm(p0-p1)/max(float(np.linalg.norm(p0)),float(np.linalg.norm(p1)),1e-300))
         qpeak=float(np.max(np.abs(p0-p1))/max(float(np.max(p1)),1e-300))
@@ -353,7 +357,7 @@ def main():
         "STR_G5_common_geometry_regression_to_POC":bool(reg_med<=REG_MED_GATE and reg_max<=REG_MAX_GATE),
         "STR_G6_background_convergence_B2_to_B4":bool(bg_t_global<=BG_T_GLOBAL_GATE and bg_t_max<=BG_T_PERK_GATE and bg_p_global<=BG_P_GLOBAL_GATE and bg_p_max<=BG_P_PERK_GATE),
         "STR_G7_direct_K0_to_K1_holdout_accuracy":bool(max(hold_t)<=HOLD_T_GATE and max(hold_p)<=HOLD_P_GATE and max(hold_peak)<=HOLD_PEAK_GATE),
-        "STR_G8_K0_to_K1_continuous_radial_convergence":bool(max(fine_t)<=FINE_T_GATE and max(fine_p)<=FINE_P_GATE and max(fine_peak)<=FINE_PEAK_GATE and np.median(fine_t)<=FINE_T_MED_GATE and np.median(fine_p)<=FINE_P_MED_GATE),
+        "STR_G8_K0_to_K1_continuous_radial_convergence":bool(fine_power_ok and max(fine_t)<=FINE_T_GATE and max(fine_p)<=FINE_P_GATE and max(fine_peak)<=FINE_PEAK_GATE and np.median(fine_t)<=FINE_T_MED_GATE and np.median(fine_p)<=FINE_P_MED_GATE),
         "STR_G9_direct_radial_smoothness_spike_veto":bool(smooth_ok),
         "STR_G10_preserved_lowk_broadband_regime":bool(all(v<=SAT_GATE for v in lowk_sat.values())),
     }
@@ -369,6 +373,7 @@ def main():
         "holdout_transfer_L2_max":float(max(hold_t)),"holdout_power_L2_max":float(max(hold_p)),"holdout_power_peak_max":float(max(hold_peak)),
         "fine_transfer_L2_median":float(np.median(fine_t)),"fine_transfer_L2_max":float(max(fine_t)),
         "fine_power_L2_median":float(np.median(fine_p)),"fine_power_L2_max":float(max(fine_p)),"fine_power_peak_max":float(max(fine_peak)),
+        "fine_power_finite_nonnegative":bool(fine_power_ok),
         "smoothness_max_midpoint_to_endpoint_ratio":float(smooth_max_ratio),
         "lowk_saturation_max":lowk_sat,
         "ensemble_scatter_over_rms_max":float(max(r["scatter_over_rms"] for r in ensemble_rows)),
