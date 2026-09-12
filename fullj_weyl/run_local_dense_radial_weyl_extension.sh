@@ -32,12 +32,18 @@ python -m py_compile \
   nl1c6d2c6b/all27_physical_nonlinear_trajectories.py
 
 python - <<'PY'
+import inspect
 from fullj_weyl import dense_radial_weyl_extension_r1 as fix
 from fullj_weyl import evolving_flrw_weyl_bridge_r2 as r2
 assert fix.mod.r2 is r2
 assert len(fix.mod.nested_grids()[2]) == 21
 assert fix.mod.N_EMBED == 10
+assert fix.DENSE_HISTORY_LOADER_REPAIR_ACTIVE is True
+src = inspect.getsource(fix.mod.m.prepare_class_data)
+assert 'len(histories)!=len(K_MPC)' in src
+assert 'expected {len(K_MPC)} dense scalar histories' in src
 print('FULLJ_DENSE_RADIAL_IMPORT_CHAIN_PASS')
+print('FULLJ_DENSE_RADIAL_HISTORY_LOADER_REPAIR_PASS expected_from_K_MPC=True')
 PY
 
 if [[ ! -f results/fullj_isotropic_weyl_transfer_nodes.json ]]; then
@@ -106,6 +112,7 @@ zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:]] + [
     Path('docs/fullj_isotropic_weyl_transfer_nodes_r1_phase_audit_result.md'),
     Path('docs/fullj_dense_radial_weyl_extension_predata.md'),
+    Path('docs/fullj_dense_radial_weyl_extension_loader_repair.md'),
     Path('fullj_weyl/dense_radial_weyl_extension.py'),
     Path('fullj_weyl/dense_radial_weyl_extension_r1.py'),
     Path('fullj_weyl/run_local_dense_radial_weyl_extension.sh'),
