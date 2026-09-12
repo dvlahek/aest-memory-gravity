@@ -66,4 +66,30 @@ Still not licensed:
 - ACT likelihood use
 - observational claims
 
-The next bounded step is a repaired tagged-power regression/power-lattice rerun with the physical-k metric projection used consistently in both geometries. Only after that should the 3D/isotropic Weyl-power lift be reconsidered.
+## 2026-09-12 — repaired tagged power-lattice regression preregistered
+
+After the physical-k repair PASS, the next bounded milestone was fixed before new repaired power-lattice data were inspected. The goal is to retest the two historical power-lattice failure gates under the validated physical-k metric projection without immediately paying for a full from-scratch production campaign.
+
+The regression uses 108 new integrations:
+
+- 12 repaired Stage-A overlap runs at `k/h={0.060,0.095,0.160}` to empirically certify limited historical Stage-A reuse;
+- 32 repaired Stage-A high-k runs at `k/h={0.165,0.170,0.175,0.180,0.185,0.190,0.195,0.200}`;
+- 64 fresh repaired Stage-B runs at 16 half-lattice controls selected by the unchanged historical adaptive power-curvature algorithm.
+
+The overlap certification is explicitly empirical. Although target modes at or below `k/h=0.16` were themselves inside the historical Stage-A integer mask, the repaired metric projection also retains higher metric-correction harmonics through `k/h=0.32`. Therefore historical low-k responses are not assumed identical by construction. They may be reused for this regression only if the preregistered overlap response/power thresholds pass. A final production campaign must recompute the complete lattice under the repaired mask regardless of the regression outcome.
+
+All historical PL-G6/PL-G7 numerical thresholds remain unchanged. A PASS licenses only the repaired regression diagnostic, not the bounded production interpolant, 3D/evolving Weyl power, LOS lensing, ACT likelihood use, or observational claims.
+
+Regression preparation chain:
+
+- `bef9e1304ebd838954635e624290696f08d33293` — initial regression preregistration draft
+- `46397135c70f20ddb88900016d66836f66495b0e` — regression implementation
+- `dde7ae43d974451b49f73df7473025812e906e83` — prereg wording clarified before data; no grid, threshold, equation or classification rule changed
+- `49f4c25988ee8e1a28e08280eb27f58ecff82826` — implementation wrapper locks the clarified preregistration
+- `a7278040ee869c5b7f30f4fcd73451004a4a0efd` — local 108-run regression runner
+
+Target classification:
+
+`FULLJ_STOCHASTIC_TAGGED_POWER_LATTICE_KMASK_REGRESSION_PASS`.
+
+If the regression passes, the next milestone is a full from-scratch repaired power-lattice production campaign with no stale historical response reuse. If it fails, preserve the FAIL and diagnose the repaired direct controls without relaxing gates.
