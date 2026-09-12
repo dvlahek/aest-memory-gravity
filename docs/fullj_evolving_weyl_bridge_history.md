@@ -120,3 +120,25 @@ Result lock: `docs/fullj_stochastic_tagged_power_lattice_kmask_regression_result
 Interpretation: the physical-k repair solved the box-dependent implementation defect, but the repaired `Delta k/h=0.005` observable-facing power lattice remains genuinely under-resolved at late time within the frozen tagged construction. Do not relax the power gates and do not start the full repaired production lattice yet.
 
 The next bounded diagnostic should be a local quarter-lattice refinement at `Delta k/h=0.00125` in the already half-lattice-complete windows `0.0925--0.1125`, `0.155--0.170`, and `0.190--0.200`. Only 18 quarter-offset nodes are new, so B2 and both signs require 72 integrations. This test should determine if the direct repaired response converges to a resolved oscillatory radial function before any full production campaign is attempted.
+
+## 2026-09-13 — local quarter-lattice win-or-stop test preregistered
+
+The bounded 72-run local refinement is now frozen before any quarter-lattice result is inspected.
+
+Three repaired-regression windows are tested: `0.0925--0.1125`, `0.155--0.170`, and `0.190--0.200`. Their complete existing local parent spacing is `Delta k/h=0.0025`. Eighteen new quarter-offset nodes are inserted at `Delta k/h=0.00125`, using `kF/h=0.00125` and `NX=1024`; the box and grid size are both doubled relative to the previous half-lattice geometry, preserving physical `dx`.
+
+The parent regression NPZ is frozen by SHA256 `83fb7462ec970bfef953e3804d11a81fd5843745347fe77c318c9e39b8e6e82d`. No parent response is regenerated or modified inside this diagnostic.
+
+The absolute power gates remain the prior thresholds: maximum local-window/redshift power L2 `<=0.05`, median `<=0.025`, peak-normalized error `<=0.10`, plus the same factor-2 unresolved-spike veto. An additional refinement gate requires the `0.0025` prediction to be no worse than the repaired `0.005` prediction at every redshift and strictly better at `z=0.5` and `z=0.2`.
+
+The stop rule is explicit: if the quarter-lattice test still materially fails the interpolation or spike gate, do not automatically continue to `Delta k/h=0.000625`; pivot to a targeted resonance/response-origin audit of the offending window(s).
+
+Preparation chain:
+
+- `3d309b51e44eb38569a7be263dbb14963ba4bd17` — preregister local quarter-lattice test
+- `8ad36d4df4b4d20c981f7b475e558a5a1400a354` — implement 72-run quarter-lattice diagnostic
+- `4a26681601da46d52aaa1b2105138024a1005f31` — local runner with parent-NPZ hash and physical-mask guards
+
+Target classification:
+
+`FULLJ_STOCHASTIC_TAGGED_POWER_QUARTER_LATTICE_PASS`.
