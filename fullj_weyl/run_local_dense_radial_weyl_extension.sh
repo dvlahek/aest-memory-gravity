@@ -32,14 +32,13 @@ python -m py_compile \
   nl1c6d2c6b/all27_physical_nonlinear_trajectories.py
 
 python - <<'PY'
-import inspect
 from fullj_weyl import dense_radial_weyl_extension_r1 as fix
 from fullj_weyl import evolving_flrw_weyl_bridge_r2 as r2
 assert fix.mod.r2 is r2
 assert len(fix.mod.nested_grids()[2]) == 21
 assert fix.mod.N_EMBED == 10
 assert fix.DENSE_HISTORY_LOADER_REPAIR_ACTIVE is True
-src = inspect.getsource(fix.mod.m.prepare_class_data)
+src = fix.DENSE_HISTORY_LOADER_RUNTIME_SOURCE
 assert 'len(histories)!=len(K_MPC)' in src
 assert 'expected {len(K_MPC)} dense scalar histories' in src
 print('FULLJ_DENSE_RADIAL_IMPORT_CHAIN_PASS')
