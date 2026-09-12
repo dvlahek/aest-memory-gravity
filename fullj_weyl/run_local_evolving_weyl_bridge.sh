@@ -32,13 +32,11 @@ python -m py_compile \
   nl1c6d2a/baryon_matter_sector_audit.py \
   nl1c6/full_j_baryonic_reclosure.py
 
-echo "FULLJ_WEYL: preparing pinned corrected/F-state CLASS environment..."
-bash act_fstate/setup_fstate_class.sh
+echo "FULLJ_WEYL: preparing D2C6-certified corrected CLASS environment..."
+bash nl1c6d2n/setup_corrected_class_local.sh
 # shellcheck disable=SC1091
-source results/act_fstate_class_env.sh
+source results/nl1c6d2n_corrected_class_env.sh
 
-# D2C6 expects the corrected CLASS root under this historical variable name.
-export NL1C6D2N_CLASS_ROOT="$FSTATE_CLASS_ROOT"
 test -x "$NL1C6D2N_CLASS_ROOT/class"
 
 python - <<'PY'
@@ -82,7 +80,7 @@ paths=[Path(x) for x in sys.argv[2:]] + [
     Path('nl1c6d2c6b/all27_physical_nonlinear_trajectories.py'),
     Path('nl1c6d2c6ar1/stable_canonical_integrator.py'),
     Path('nl1c6d2c6g/eta0_metric_tangent_calibration.py'),
-    Path('results/act_fstate_apply_report.json'),
+    Path('results/nl1c6d2n_corrected_class_env.sh'),
 ]
 with zipfile.ZipFile(zp,'w',compression=zipfile.ZIP_DEFLATED) as zf:
     seen=set()
