@@ -1,4 +1,4 @@
-# Full-J evolving Weyl project history — locked chain through stochastic tagged K2 refinement
+# Full-J evolving Weyl project history — locked chain through stochastic response-kernel POC
 
 This file records the active reproducibility chain for the evolving-Weyl branch. It is intentionally chronological and preserves all historical PASS/FAIL classifications. No historical result is reinterpreted here.
 
@@ -127,16 +127,43 @@ The refinement was genuinely monotonic: K1->K2 improved both direct transfer and
 
 Interpretation lock: repeated nested refinement confirms that the scalar diagonal tagged response contains real late-time sign-changing/local radial structure. This is not explained by solver failure, broadband constitutive desaturation, background sampling, finite tag amplitude, CLASS history cardinality, or changing box geometry. Do not continue K3/K4 scalar-grid densification merely to force smooth interpolation. The next bounded milestone is a full tagged response-kernel diagnostic that measures `K(k_out,k_in,z)` and quantifies off-diagonal mode coupling around the same frozen Gaussian broadband backgrounds.
 
-## Current scope after K2 tagged radial FAIL
+## Stochastic full response-kernel POC
+
+- K2 FAIL result lock: `a293ff5d02824ba170fcf46251df1e480682386c`.
+- Kernel preregistration: `d9814ecfa8e9cccf23dbd4d3ec7139b92b490039`.
+- Kernel implementation: `93acd28a8b4283813e0309f309c4ac12e693de35`.
+- Kernel runner: `c367c42c24ba63e52ddbd563ff1cf44be889e90f`.
+- Locked kernel POC PASS: `2a5f884a50b7b30b90ddff01721914626dbde20f`.
+
+The kernel POC measured the full positive-frequency output spectrum for five deliberately difficult late-time input modes `k_in/h={0.095,0.110,0.135,0.160,0.185}` across four common-random Gaussian backgrounds. It added an epsilon-halving control and an `NX=512` resolution/aliasing control. All 44/44 runs were finite and constraint-clean and all seven preregistered gates passed.
+
+Key results:
+
+- `broadband_saturation_max = 5.5238424290437937e-05`.
+- diagonal regression to the locked K2 scalar response: median `0.0`, max `0.0`.
+- epsilon control global `8.733718515039043e-08`, per-z max `3.916889802689913e-07`.
+- NX=512 resolution control global `6.568005311156747e-08`, per-z max `2.945743728175932e-07`.
+- B2->B4 bounded-kernel convergence global `4.08544238306091e-08`, per-input max `6.261265961317079e-08`.
+- maximum bounded off-diagonal response-energy fraction `1.7917824294299406e-12`.
+- maximum total off-diagonal response-energy fraction `1.7989942441170814e-12`.
+- maximum leakage outside the bounded radial interval `7.865977813732887e-15`.
+
+Interpretation lock: the tagged tangent response is diagonal to extremely high precision in the tested broadband saturated regime. The late-time radial zero crossings and spikes seen in K1/K2 are therefore not projections of hidden off-diagonal mode coupling. The scalar diagonal tagged response is the correct reduced response object for this branch. The remaining unresolved issue is radial sampling/resolution of that sharply structured diagonal response.
+
+## Current scope after kernel POC PASS
 
 True/tested:
 
 - `STOCHASTIC_BROADBAND_TAGGED_RESPONSE_POC_TESTED=True`
 - `STOCHASTIC_BROADBAND_LOWK_SATURATION_TESTED=True`
+- `STOCHASTIC_RESPONSE_KERNEL_POC_TESTED=True`
+- `STOCHASTIC_SCALAR_DIAGONAL_REDUCTION_SUPPORTED=True`
+- `STOCHASTIC_MODE_COUPLING_KERNEL_REQUIRED=False`
 - dense CLASS cardinality artefact excluded
 - common-geometry tagged response reproduced the POC
-- B2->B4 tagged background convergence established across both K1 and K2 nodes
-- broadband saturation preserved across all tagged radial nodes
+- B2->B4 tagged/background convergence established
+- broadband saturation preserved across all tested tagged radial nodes
+- finite epsilon and tested NX aliasing controls passed
 - K1->K2 refinement improved transfer and power error at every redshift.
 
 Still false/unlicensed:
@@ -151,4 +178,4 @@ Still false/unlicensed:
 
 ## Next milestone
 
-Do not loosen radial interpolation thresholds and do not launch K3/K4 scalar interpolation. Measure the full symmetric finite-difference response spectrum to selected input tags on common Gaussian broadband backgrounds. The next diagnostic must quantify diagonal response, off-diagonal response energy, leakage outside the bounded radial interval, background convergence, epsilon/tangent stability where needed, and a resolution/aliasing control. The outcome determines if the scalar tagged transfer is a valid reduced object or if subsequent Weyl-power construction must retain a genuine mode-coupling kernel.
+Do not build a full off-diagonal kernel and do not loosen the failed radial interpolation gates. Because the full response is demonstrably diagonal, return to the scalar object but change the question from arbitrary nested PCHIP smoothness to radial sampling adequacy. First complete the exact `kF/h=0.005` lattice across `0.03<=k/h<=0.20` by filling all missing lattice nodes. Then use a preregistered half-lattice control with `kF/h=0.0025` and `NX=512` at selected late-time high-curvature intervals. The goal is to establish if the `0.005` lattice resolves the diagonal response sufficiently for bounded interpolation; only then may the stochastic tagged radial continuum be licensed.
