@@ -51,6 +51,7 @@ prepare_globals = prepare.__globals__
 exec(compile(prepare_src, inspect.getsourcefile(prepare) or "<dense-loader-repair>", "exec"), prepare_globals)
 
 DENSE_HISTORY_LOADER_REPAIR_ACTIVE = True
+DENSE_HISTORY_LOADER_RUNTIME_SOURCE = prepare_src
 
 # Technical runtime repairs only. No equations, physical parameters, radial
 # nodes, interpolation choices, tolerances, gates, or classification rules are
