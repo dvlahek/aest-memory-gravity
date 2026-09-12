@@ -20,6 +20,7 @@ python -m pip install numpy scipy cython >/dev/null
 
 python -m py_compile \
   fullj_weyl/dense_radial_class_residual_r2.py \
+  fullj_weyl/dense_radial_class_residual_r2_r1.py \
   fullj_weyl/dense_radial_weyl_extension.py \
   fullj_weyl/dense_radial_weyl_extension_r1.py \
   fullj_weyl/evolving_flrw_weyl_bridge_r2.py \
@@ -28,15 +29,21 @@ python -m py_compile \
   nl1c6d2c6b/all27_physical_nonlinear_trajectories.py
 
 python - <<'PY'
+import json
 from fullj_weyl import dense_radial_weyl_extension_r1 as fix
-from fullj_weyl import dense_radial_class_residual_r2 as x
+from fullj_weyl import dense_radial_class_residual_r2_r1 as prov
+x = prov.base
 assert fix.DENSE_HISTORY_LOADER_REPAIR_ACTIVE
 assert 'len(histories)!=len(K_MPC)' in fix.DENSE_HISTORY_LOADER_RUNTIME_SOURCE
+assert prov.DENSE_RESIDUAL_R2_GAUSS_PROVENANCE_REPAIR_ACTIVE
+status = prov.gaussian_provenance_status()
+assert status['pass']
 k1,k2,k3,h3=x.grids()
 assert (len(k1),len(k2),len(k3),len(h3)) == (11,21,41,20)
 assert x.N_EMBED == 10
 print('FULLJ_DENSE_RESIDUAL_R2_IMPORT_CHAIN_PASS')
 print('FULLJ_DENSE_RESIDUAL_R2_HISTORY_LOADER_REPAIR_PASS expected_from_K_MPC=True')
+print('FULLJ_DENSE_RESIDUAL_R2_GAUSS_PROVENANCE_REPAIR_PRECHECK='+json.dumps(status,sort_keys=True))
 PY
 
 if [[ ! -f results/fullj_dense_radial_weyl_extension.json ]]; then
@@ -83,7 +90,7 @@ export OMP_NUM_THREADS=1
 unset AEST_TANGENT_FORCE_FILE AEST_TANGENT_LAMBDA AEST_TANGENT_TRACE_FILE AEST_OFFLINE_TRACE_FILE AEST_TANGENT_ALLOW_K_MISS || true
 
 set +e
-python -u fullj_weyl/dense_radial_class_residual_r2.py \
+python -u fullj_weyl/dense_radial_class_residual_r2_r1.py \
   --json-out "$JSON" --npz-out "$NPZ" --csv-out "$CSV" 2>&1 | tee "$LOG"
 code=${PIPESTATUS[0]}
 set -e
@@ -95,7 +102,9 @@ zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:]] + [
     Path('docs/fullj_dense_radial_weyl_extension_result.md'),
     Path('docs/fullj_dense_radial_class_residual_r2_predata.md'),
+    Path('docs/fullj_dense_radial_class_residual_r2_provenance_repair.md'),
     Path('fullj_weyl/dense_radial_class_residual_r2.py'),
+    Path('fullj_weyl/dense_radial_class_residual_r2_r1.py'),
     Path('fullj_weyl/dense_radial_weyl_extension_r1.py'),
     Path('fullj_weyl/run_local_dense_radial_class_residual_r2.sh'),
     Path('results/fullj_dense_radial_weyl_extension.json'),
