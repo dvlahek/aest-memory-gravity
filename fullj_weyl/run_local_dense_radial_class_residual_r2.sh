@@ -90,7 +90,7 @@ export OMP_NUM_THREADS=1
 unset AEST_TANGENT_FORCE_FILE AEST_TANGENT_LAMBDA AEST_TANGENT_TRACE_FILE AEST_OFFLINE_TRACE_FILE AEST_TANGENT_ALLOW_K_MISS || true
 
 set +e
-python -u fullj_weyl/dense_radial_class_residual_r2_r1.py \
+python -u -m fullj_weyl.dense_radial_class_residual_r2_r1 \
   --json-out "$JSON" --npz-out "$NPZ" --csv-out "$CSV" 2>&1 | tee "$LOG"
 code=${PIPESTATUS[0]}
 set -e
