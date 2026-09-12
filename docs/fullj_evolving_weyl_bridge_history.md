@@ -93,3 +93,30 @@ Target classification:
 `FULLJ_STOCHASTIC_TAGGED_POWER_LATTICE_KMASK_REGRESSION_PASS`.
 
 If the regression passes, the next milestone is a full from-scratch repaired power-lattice production campaign with no stale historical response reuse. If it fails, preserve the FAIL and diagnose the repaired direct controls without relaxing gates.
+
+## 2026-09-13 — repaired tagged power-lattice regression FAIL
+
+The 108-run repaired regression completed and is formally classified
+
+`FULLJ_STOCHASTIC_TAGGED_POWER_LATTICE_KMASK_REGRESSION_FAIL`.
+
+All 108/108 integrations were finite. KR-G1 through KR-G5 pass. The overlap reuse certification is at numerical precision, with response global relative L2 `8.5653e-15` and power global relative L2 `1.6815e-14`. Solver, metric, constitutive, and power-algebra diagnostics are all clean: canonical max `1.8981e-14`, broadband saturation max `4.3492e-05`, Hamiltonian max `1.8575e-16`, momentum max `1.7753e-16`, and tagged-power identity residual `1.5145e-17`.
+
+Only the two radial adequacy gates fail:
+
+- KR-G6: repaired half-lattice power interpolation accuracy
+- KR-G7: unresolved selected-interval power spike veto
+
+The late-time power interpolation errors are localized in time: `E_P=0.02938` at `z=1`, `0.09314` at `z=0.5`, and `0.25928` at `z=0.2`. The median over all redshifts remains only `0.00331`.
+
+Two direct spike-veto failures remain. The dominant one is `k/h=0.0975`, `z=0.2`, where direct power `0.00934086` lies between endpoint powers `0.000744306` and `3.81243e-05`, giving ratio `12.5498`. The second is `k/h=0.1975`, `z=1`, ratio `2.13737`.
+
+The complete NPZ was then inspected without changing any frozen gate. The two direct Gaussian backgrounds agree on the repaired half-lattice response at approximately `4.19e-08` global relative L2 and on power at approximately `3.31e-08`; at `z=0.2` the corresponding differences are about `1.27e-07` and `1.22e-07`. The response is almost purely real, with half-lattice `||Im T||/||Re T||≈4.99e-09` globally and `1.51e-08` at `z=0.2`. The remaining late-time radial structure is therefore not explained by B2 sampling noise or phase projection.
+
+At `z=0.2`, direct signed responses near the strongest structure are `T(0.095)=+0.027282`, `T(0.0975)=+0.096648`, `T(0.100)=+0.0061745`, `T(0.1025)=-0.0018173`, `T(0.105)=-0.015708`, `T(0.1075)=-0.021294`, `T(0.110)=+0.117090`, `T(0.1125)=-0.032562`, and `T(0.115)=+0.075590`. Additional direct sign-changing structure occurs near `0.155--0.170`, and high-k interpolation errors near `0.190--0.200` materially contribute to the `z=0.2` error norm.
+
+Result lock: `docs/fullj_stochastic_tagged_power_lattice_kmask_regression_result.md`; formal FAIL locked in commit `9f5218629901643574373e32c84d137c9cda2494`, with NPZ forensic addendum in commit `97d72584aa5ed26028e8e60e1e6ef0ccd1919a21`.
+
+Interpretation: the physical-k repair solved the box-dependent implementation defect, but the repaired `Delta k/h=0.005` observable-facing power lattice remains genuinely under-resolved at late time within the frozen tagged construction. Do not relax the power gates and do not start the full repaired production lattice yet.
+
+The next bounded diagnostic should be a local quarter-lattice refinement at `Delta k/h=0.00125` in the already half-lattice-complete windows `0.0925--0.1125`, `0.155--0.170`, and `0.190--0.200`. Only 18 quarter-offset nodes are new, so B2 and both signs require 72 integrations. This test should determine if the direct repaired response converges to a resolved oscillatory radial function before any full production campaign is attempted.
