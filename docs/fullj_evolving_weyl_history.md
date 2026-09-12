@@ -1,4 +1,4 @@
-# Full-J evolving Weyl project history — locked chain through stochastic tagged-mode POC
+# Full-J evolving Weyl project history — locked chain through stochastic tagged radial convergence
 
 This file records the active reproducibility chain for the evolving-Weyl branch. It is intentionally chronological and preserves all historical PASS/FAIL classifications. No historical result is reinterpreted here.
 
@@ -89,17 +89,45 @@ The previously anomalous isolated `k/h=0.0375` node, with isolated-mode saturati
 
 Interpretation lock: the isolated finite-amplitude single-mode transfer is not an adequate nonlinear continuum object. The physically motivated next object is the directional tangent/tagged response around a broadband stochastic background.
 
-## Current scope after the tagged POC
+## Stochastic tagged radial convergence K0->K1
+
+- History lock before campaign: `60fe83c37b74fea60d62df8fbe7a429218108af5`.
+- Pre-data: `26571f4e2fadab7bccfd1c42c2c1f4fd7881e624`.
+- Implementation: `5f1993a0716f4c7b521f94f62a897cb5ce759f94`.
+- Runner: `00eb5cdda1986d075db0052a5fc9a2801e70638d`.
+- Final prereg implementation audit: `d2de0af35724f2129ac1d1a2f3d676cb9de93bc6`.
+- Locked result FAIL: `2531a10772f97958ab221bd1f39ceffc23e964a5`.
+
+Frozen campaign: 11 K1 radial nodes over `0.03<=k/h<=0.20`, four common-random Gaussian backgrounds, symmetric `epsilon=0.05` tags, both signs, 88 nonlinear R2 runs, common geometry `kF/h=0.005`, `NX=256`.
+
+The tagged construction itself was extremely robust:
+
+- 88/88 finite and constraint-clean.
+- `broadband_saturation_max = 4.711176043473348e-05`.
+- POC common-geometry regression max `7.636652146293406e-15`.
+- B2->B4 response global difference `5.703906201175753e-09`.
+- B2->B4 power global difference `2.3328648804301455e-09`.
+- tagged-power algebra residual `6.2227342453784706e-18`.
+
+The formal FAIL was entirely radial: K0 was too coarse to reconstruct K1 at late time. K0->K1 direct holdout errors reached transfer/power L2 about `0.456/0.431` at `z=0.2`; continuous K0->K1 maxima were transfer `0.245` and power `0.148`. The same metrics are small at high redshift and grow when the direct tagged response develops late-time zero crossings and sign reversals. The direct spike veto still passed, and interpolated power remained finite/nonnegative.
+
+Interpretation lock: stochastic background sampling, common geometry, nonlinear saturation, finite-tag amplitude, and solver health are not the source of the radial failure. The bounded radial continuum is not yet licensed because the six-node K0 grid under-resolves genuine late-time radial structure.
+
+## Current scope after K0->K1 tagged radial FAIL
 
 True/tested:
 
 - `STOCHASTIC_BROADBAND_TAGGED_RESPONSE_POC_TESTED=True`
 - `STOCHASTIC_BROADBAND_LOWK_SATURATION_TESTED=True`
-- dense CLASS cardinality artefact excluded.
+- dense CLASS cardinality artefact excluded
+- common-geometry tagged response reproduced the POC
+- B2->B4 tagged background convergence established on K1
+- broadband saturation preserved across all K1 nodes.
 
 Still false/unlicensed:
 
 - `STOCHASTIC_TAGGED_RADIAL_CONTINUUM_LICENSED=False`
+- `STOCHASTIC_TAGGED_BOUNDED_RESPONSE_TESTED=False`
 - `THREE_D_BOUNDED_CONTINUOUS_WEYL_POWER_LICENSED=False`
 - `THREE_D_CONTINUOUS_WEYL_POWER_LICENSED=False`
 - `EVOLVING_WEYL_POWER_LICENSED=False`
@@ -108,4 +136,4 @@ Still false/unlicensed:
 
 ## Next milestone
 
-The next bounded milestone is a preregistered stochastic tagged radial convergence campaign over `0.03 <= k/h <= 0.20 Mpc^-1`, using common-random Gaussian backgrounds and symmetric tagging, with explicit radial refinement, background convergence, saturation, phase, solver and tagged-power gates. Only a PASS of that milestone may license a bounded tagged radial continuum for subsequent Weyl-power/LOS work.
+Do not loosen K0->K1 thresholds. The next bounded milestone is a nested K1->K2 stochastic tagged-response refinement on the same common geometry. Reuse the locked 11 K1 responses unchanged and compute only the ten new midpoint nodes needed for the 21-node K2 grid. Test direct K1 midpoint holdouts and continuous K1->K2 convergence with the same frozen transfer/power thresholds. Only a genuine K1->K2 PASS may license the bounded stochastic tagged radial continuum for subsequent response-kernel/Weyl-power work.
