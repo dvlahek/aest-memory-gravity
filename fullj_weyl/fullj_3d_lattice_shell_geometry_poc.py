@@ -165,9 +165,8 @@ def operator1d(field: np.ndarray, a: float):
     return out
 
 
-def shell_power_and_m2(field: np.ndarray, vecs: np.ndarray):
-    N = field.shape[0]
-    hn = np.fft.fftn(np.asarray(field, float)) / float(N ** 3)
+def shell_power_and_m2_from_hat(hn: np.ndarray, vecs: np.ndarray):
+    N = hn.shape[0]
     weights = []
     units = []
     for v in np.asarray(vecs, int):
@@ -229,7 +228,7 @@ def coefficient_draw(shell_halves: list[np.ndarray]):
 
 def build_field(N: int, shell_vecs: list[np.ndarray], shell_halves: list[np.ndarray], draws, V: np.ndarray, ir: int):
     h = np.zeros((N, N, N), complex)
-    for js, (vecs, half) in enumerate(zip(shell_vecs, shell_halves)):
+    for js, (_vecs, half) in enumerate(zip(shell_vecs, shell_halves)):
         pair_count = len(half)
         scale = math.sqrt(max(float(V[js]), 0.0)) / math.sqrt(2.0 * float(pair_count))
         gv = draws[js][ir]
@@ -323,10 +322,13 @@ def main() -> int:
                 finite = bool(all(np.all(np.isfinite(v)) for v in (field, l3, l0, x, j)))
                 finite_all = finite_all and finite
                 min_onepj = min(min_onepj, float(np.min(1.0 + j)))
+                h3 = np.fft.fftn(l3) / float(N ** 3)
+                h0 = np.fft.fftn(l0) / float(N ** 3)
+                he = np.fft.fftn(l3 - l0) / float(N ** 3)
                 for js, vv in enumerate(shell_vecs):
-                    p3, M = shell_power_and_m2(l3, vv)
-                    p0, _ = shell_power_and_m2(l0, vv)
-                    pe, _ = shell_power_and_m2(l3 - l0, vv)
+                    p3, M = shell_power_and_m2_from_hat(h3, vv)
+                    p0, _ = shell_power_and_m2_from_hat(h0, vv)
+                    pe, _ = shell_power_and_m2_from_hat(he, vv)
                     powers[N][iz, js, ir] = p3
                     linear_powers[N][iz, js, ir] = p0
                     excess_powers[N][iz, js, ir] = pe
