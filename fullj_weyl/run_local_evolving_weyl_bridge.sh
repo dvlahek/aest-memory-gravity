@@ -24,9 +24,9 @@ python -m pip install --upgrade pip setuptools wheel >/dev/null
 python -m pip install numpy scipy cython >/dev/null
 
 # The historical D2C6A base source intentionally retains one malformed
-# diagnostic line.  The certified D2C6 lineage loads it through v4, which
+# diagnostic line. The certified D2C6 lineage loads it through v4, which
 # repairs exactly that source line before compile(), then v5/v6 inherit the
-# repaired module.  Do not py_compile the historical base directly here.
+# repaired module. Do not py_compile the historical base directly here.
 python -m py_compile \
   fullj_weyl/evolving_flrw_weyl_bridge.py \
   nl1c6d2c6b/all27_physical_nonlinear_trajectories.py \
@@ -47,12 +47,39 @@ assert bridge.m is d2b.m
 print('FULLJ_WEYL_IMPORT_CHAIN_PASS')
 PY
 
-echo "FULLJ_WEYL: preparing D2C6-certified corrected CLASS environment..."
-bash nl1c6d2n/setup_corrected_class_local.sh
-# shellcheck disable=SC1091
-source results/nl1c6d2n_corrected_class_env.sh
+ENV_FILE="$ROOT/results/nl1c6d2n_corrected_class_env.sh"
+reuse=false
+if [[ -f "$ENV_FILE" ]]; then
+  # Historical env files may reference an unset PYTHONPATH; source without
+  # nounset, then restore strict mode immediately.
+  set +u
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set -u
+  if [[ -d "${NL1C6D2N_CLASS_ROOT:-}/.git" \
+        && -f "${NL1C6D2N_CLASS_ROOT:-}/source/aest_memory.c" \
+        && -f "${NL1C6D2N_PYTARGET:-}/classy/__init__.py" ]]; then
+    reuse=true
+  fi
+fi
 
-test -x "$NL1C6D2N_CLASS_ROOT/class"
+if [[ "$reuse" == true ]]; then
+  echo "FULLJ_WEYL: reusing existing D2C6-certified corrected CLASS environment..."
+else
+  echo "FULLJ_WEYL: preparing D2C6-certified corrected CLASS environment..."
+  bash nl1c6d2n/setup_corrected_class_local.sh
+  set +u
+  # shellcheck disable=SC1091
+  source "$ENV_FILE"
+  set -u
+fi
+
+# The bridge uses the Python CLASS interface and patched source tree. A
+# standalone CLASS executable is not required by this workflow and is not a
+# reliable artifact of a pip/classy wheel build.
+test -d "$NL1C6D2N_CLASS_ROOT/.git"
+test -f "$NL1C6D2N_CLASS_ROOT/source/aest_memory.c"
+test -f "$NL1C6D2N_PYTARGET/classy/__init__.py"
 
 python - <<'PY'
 import numpy, scipy
