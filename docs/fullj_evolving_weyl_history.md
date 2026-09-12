@@ -1,4 +1,4 @@
-# Full-J evolving Weyl project history — locked chain through stochastic tagged radial convergence
+# Full-J evolving Weyl project history — locked chain through stochastic tagged K2 refinement
 
 This file records the active reproducibility chain for the evolving-Weyl branch. It is intentionally chronological and preserves all historical PASS/FAIL classifications. No historical result is reinterpreted here.
 
@@ -113,7 +113,21 @@ The formal FAIL was entirely radial: K0 was too coarse to reconstruct K1 at late
 
 Interpretation lock: stochastic background sampling, common geometry, nonlinear saturation, finite-tag amplitude, and solver health are not the source of the radial failure. The bounded radial continuum is not yet licensed because the six-node K0 grid under-resolves genuine late-time radial structure.
 
-## Current scope after K0->K1 tagged radial FAIL
+## Stochastic tagged radial refinement K1->K2
+
+- K1 FAIL result lock: `2531a10772f97958ab221bd1f39ceffc23e964a5`.
+- K2 preregistration: `acb6d26c0778d9bffa27248b26ffc55a99558ddd`.
+- K2 implementation: `4299d464b58aa6931620426848c3a422f3713973`.
+- K2 runner: `58285c9ee48cfc6a9d2b593c426ae97838c4caa2`.
+- Locked K2 result FAIL: `a293ff5d02824ba170fcf46251df1e480682386c`.
+
+The 21-node K2 grid reused all 11 locked K1 nodes and added ten new lattice-valid interior nodes on the same `kF/h=0.005`, `NX=256` geometry. All 80/80 new nonlinear R2 runs were finite and constraint-clean. The broadband saturation maximum remained only `4.685341037108981e-05`. B2->B4 background convergence remained extremely tight, with global response/power differences `8.37e-09/6.40e-09` and maximum per-k differences `4.41e-08/1.06e-07`.
+
+The refinement was genuinely monotonic: K1->K2 improved both direct transfer and direct power holdout L2 error at all nine redshifts. Nevertheless the frozen absolute gates remained failed at late time. At `z=0.2`, direct holdout transfer/power L2 remained approximately `0.331/0.202`; continuous K1->K2 transfer/power L2 were approximately `0.195/0.093`. The direct radial smoothness spike veto also failed with maximum interior-to-endpoint ratio `2.687`.
+
+Interpretation lock: repeated nested refinement confirms that the scalar diagonal tagged response contains real late-time sign-changing/local radial structure. This is not explained by solver failure, broadband constitutive desaturation, background sampling, finite tag amplitude, CLASS history cardinality, or changing box geometry. Do not continue K3/K4 scalar-grid densification merely to force smooth interpolation. The next bounded milestone is a full tagged response-kernel diagnostic that measures `K(k_out,k_in,z)` and quantifies off-diagonal mode coupling around the same frozen Gaussian broadband backgrounds.
+
+## Current scope after K2 tagged radial FAIL
 
 True/tested:
 
@@ -121,8 +135,9 @@ True/tested:
 - `STOCHASTIC_BROADBAND_LOWK_SATURATION_TESTED=True`
 - dense CLASS cardinality artefact excluded
 - common-geometry tagged response reproduced the POC
-- B2->B4 tagged background convergence established on K1
-- broadband saturation preserved across all K1 nodes.
+- B2->B4 tagged background convergence established across both K1 and K2 nodes
+- broadband saturation preserved across all tagged radial nodes
+- K1->K2 refinement improved transfer and power error at every redshift.
 
 Still false/unlicensed:
 
@@ -136,4 +151,4 @@ Still false/unlicensed:
 
 ## Next milestone
 
-Do not loosen K0->K1 thresholds. The next bounded milestone is a nested K1->K2 stochastic tagged-response refinement on the same common geometry. Reuse the locked 11 K1 responses unchanged and compute only the ten new midpoint nodes needed for the 21-node K2 grid. Test direct K1 midpoint holdouts and continuous K1->K2 convergence with the same frozen transfer/power thresholds. Only a genuine K1->K2 PASS may license the bounded stochastic tagged radial continuum for subsequent response-kernel/Weyl-power work.
+Do not loosen radial interpolation thresholds and do not launch K3/K4 scalar interpolation. Measure the full symmetric finite-difference response spectrum to selected input tags on common Gaussian broadband backgrounds. The next diagnostic must quantify diagonal response, off-diagonal response energy, leakage outside the bounded radial interval, background convergence, epsilon/tangent stability where needed, and a resolution/aliasing control. The outcome determines if the scalar tagged transfer is a valid reduced object or if subsequent Weyl-power construction must retain a genuine mode-coupling kernel.
