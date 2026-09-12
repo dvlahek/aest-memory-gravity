@@ -23,14 +23,29 @@ export PATH="$VENV/bin:$PATH"
 python -m pip install --upgrade pip setuptools wheel >/dev/null
 python -m pip install numpy scipy cython >/dev/null
 
+# The historical D2C6A base source intentionally retains one malformed
+# diagnostic line.  The certified D2C6 lineage loads it through v4, which
+# repairs exactly that source line before compile(), then v5/v6 inherit the
+# repaired module.  Do not py_compile the historical base directly here.
 python -m py_compile \
   fullj_weyl/evolving_flrw_weyl_bridge.py \
   nl1c6d2c6b/all27_physical_nonlinear_trajectories.py \
   nl1c6d2c6ar1/stable_canonical_integrator.py \
-  nl1c6d2c6a/physical_time_scalar_current_integrator.py \
+  nl1c6d2c6a/physical_time_scalar_current_integrator_v4.py \
+  nl1c6d2c6a/physical_time_scalar_current_integrator_v5.py \
+  nl1c6d2c6a/physical_time_scalar_current_integrator_v6.py \
   nl1c6d2n/corrected_class_baseline.py \
   nl1c6d2a/baryon_matter_sector_audit.py \
   nl1c6/full_j_baryonic_reclosure.py
+
+python - <<'PY'
+from nl1c6d2c6b import all27_physical_nonlinear_trajectories as d2b
+from nl1c6d2c6ar1 import stable_canonical_integrator as r1
+from fullj_weyl import evolving_flrw_weyl_bridge as bridge
+assert d2b.m is r1.m
+assert bridge.m is d2b.m
+print('FULLJ_WEYL_IMPORT_CHAIN_PASS')
+PY
 
 echo "FULLJ_WEYL: preparing D2C6-certified corrected CLASS environment..."
 bash nl1c6d2n/setup_corrected_class_local.sh
