@@ -27,6 +27,7 @@ echo "FULLJ_AEST_ULP_E_RHS_IMPORT_PASS"
 
 for f in \
   docs/fullj_aest_ulp_E_rhs_decomposition_predata.md \
+  docs/fullj_aest_ulp_E_rhs_trace_newline_repair.md \
   results/fullj_aest_ulp_initial_amplitude_localization.json \
   results/fullj_aest_ulp_initial_amplitude_localization.npz \
   results/nl1c6d2n_corrected_class_densek64_env.sh; do
@@ -46,7 +47,6 @@ PREDATA_LOCK="0c8dce2022626e194fa90aafe45242f2ed1fc8a7"
 git merge-base --is-ancestor "$PREDATA_LOCK" HEAD
 echo "FULLJ_AEST_ULP_E_RHS_SCIENCE_LOCK_PASS predata=$PREDATA_LOCK"
 
-# Original certified runtime.
 source results/nl1c6d2n_corrected_class_densek64_env.sh
 ORIG_ROOT="$NL1C6D2N_CLASS_ROOT"
 EXPECTED_CLASS_HEAD="e85808324f51fc694d12e3ed7439552a3c3f9540"
@@ -56,13 +56,12 @@ EXPECTED_MEMORY_SHA="4d5ab5dc7066d4880f06fcfc731d6534ed0ff992e3cc15fb473dddccb25
 grep -Eq '^#define[[:space:]]+_MAX_NUMBER_OF_K_FILES_[[:space:]]+64[[:space:]]*$' "$ORIG_ROOT/include/perturbations.h"
 echo "FULLJ_AEST_ULP_E_RHS_ORIGINAL_PROVENANCE_PASS head=$EXPECTED_CLASS_HEAD"
 
-# Separate diagnostic copy: read-only tracing is the only additional source change.
 DIAG_ROOT="$ROOT/.local/class_corrected_e8580832_densek64_erhsdiag"
 DIAG_PYTARGET="$ROOT/.local/classy_corrected_e8580832_densek64_erhsdiag"
 need_build=1
 if [[ -d "$DIAG_ROOT/.git" && -f "$DIAG_ROOT/source/perturbations.c" \
       && -f "$DIAG_PYTARGET/classy/__init__.py" ]] \
-   && grep -q 'FULLJ_AEST_ERHS_TRACE_V1' "$DIAG_ROOT/source/perturbations.c"; then
+   && grep -q 'FULLJ_AEST_ERHS_TRACE_V2' "$DIAG_ROOT/source/perturbations.c"; then
   if [[ "$(git -C "$DIAG_ROOT" rev-parse HEAD)" == "$EXPECTED_CLASS_HEAD" \
         && "$(sha256sum "$DIAG_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]; then
     need_build=0
@@ -81,10 +80,9 @@ else
   echo "FULLJ_AEST_ULP_E_RHS: reusing diagnostic CLASS copy"
 fi
 
-grep -q 'FULLJ_AEST_ERHS_TRACE_V1' "$DIAG_ROOT/source/perturbations.c"
+grep -q 'FULLJ_AEST_ERHS_TRACE_V2' "$DIAG_ROOT/source/perturbations.c"
 [[ "$(sha256sum "$DIAG_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]
 
-# Put diagnostic classy first while preserving the rest of the environment.
 export PYTHONPATH="$DIAG_PYTARGET${PYTHONPATH:+:$PYTHONPATH}"
 python - <<PY
 from classy import Class
@@ -95,12 +93,11 @@ print('FULLJ_AEST_ULP_E_RHS_DIAGNOSTIC_CLASSY_PASS module='+p)
 c=Class(); c.empty()
 PY
 
-# Save the exact source-level instrumentation excerpt used in this run.
 python - "$DIAG_ROOT/source/perturbations.c" results/fullj_aest_ulp_E_rhs_source_excerpt.txt <<'PY'
 from pathlib import Path
 import sys
 p=Path(sys.argv[1]); out=Path(sys.argv[2]); lines=p.read_text().splitlines()
-i=next(i for i,s in enumerate(lines) if 'FULLJ_AEST_ERHS_TRACE_V1' in s)
+i=next(i for i,s in enumerate(lines) if 'FULLJ_AEST_ERHS_TRACE_V2' in s)
 lo=max(0,i-28); hi=min(len(lines),i+75)
 out.write_text('\n'.join(f'{j+1}: {lines[j]}' for j in range(lo,hi))+'\n')
 print('FULLJ_AEST_ULP_E_RHS_SOURCE_TRACE_PASS file='+str(out))
@@ -131,6 +128,7 @@ import sys, zipfile
 zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:]] + [
     Path('docs/fullj_aest_ulp_E_rhs_decomposition_predata.md'),
+    Path('docs/fullj_aest_ulp_E_rhs_trace_newline_repair.md'),
     Path('fullj_weyl/apply_aest_E_rhs_trace_patch.py'),
     Path('fullj_weyl/aest_ulp_E_rhs_decomposition.py'),
     Path('fullj_weyl/run_local_aest_ulp_E_rhs_decomposition.sh'),
