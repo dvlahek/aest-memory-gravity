@@ -121,24 +121,18 @@ Interpretation: the physical-k repair solved the box-dependent implementation de
 
 The next bounded diagnostic should be a local quarter-lattice refinement at `Delta k/h=0.00125` in the already half-lattice-complete windows `0.0925--0.1125`, `0.155--0.170`, and `0.190--0.200`. Only 18 quarter-offset nodes are new, so B2 and both signs require 72 integrations. This test should determine if the direct repaired response converges to a resolved oscillatory radial function before any full production campaign is attempted.
 
-## 2026-09-13 — local quarter-lattice win-or-stop test preregistered
+## 2026-09-13 — local quarter-lattice refinement FAIL
 
-The bounded 72-run local refinement is now frozen before any quarter-lattice result is inspected.
+The preregistered 72-run quarter-lattice campaign completed with all 72/72 integrations finite and is formally classified
 
-Three repaired-regression windows are tested: `0.0925--0.1125`, `0.155--0.170`, and `0.190--0.200`. Their complete existing local parent spacing is `Delta k/h=0.0025`. Eighteen new quarter-offset nodes are inserted at `Delta k/h=0.00125`, using `kF/h=0.00125` and `NX=1024`; the box and grid size are both doubled relative to the previous half-lattice geometry, preserving physical `dx`.
+`FULLJ_STOCHASTIC_TAGGED_POWER_QUARTER_LATTICE_FAIL`.
 
-The parent regression NPZ is frozen by SHA256 `83fb7462ec970bfef953e3804d11a81fd5843745347fe77c318c9e39b8e6e82d`. No parent response is regenerated or modified inside this diagnostic.
+The geometry was `kF/h=0.00125`, `NX=1024`, with the same physical real-space spacing as the preceding tagged geometries. QL-G1 through QL-G4 pass. Numerical health remains excellent: canonical residual max `1.6311e-14`, broadband saturation max `4.2619e-05`, Hamiltonian residual max `1.8564e-16`, momentum residual max `1.8152e-16`, power identity residual `6.7944e-17`, B0/B1 response relative L2 `8.3460e-08`, and B0/B1 power relative L2 `2.0164e-07`.
 
-The absolute power gates remain the prior thresholds: maximum local-window/redshift power L2 `<=0.05`, median `<=0.025`, peak-normalized error `<=0.10`, plus the same factor-2 unresolved-spike veto. An additional refinement gate requires the `0.0025` prediction to be no worse than the repaired `0.005` prediction at every redshift and strictly better at `z=0.5` and `z=0.2`.
+The refinement hypothesis is decisively rejected. QL-G5, QL-G6 and QL-G7 all fail. Maximum quarter-point power L2 error is `0.99279`, maximum peak-normalized error is `1.68052`, and seven direct quarter-point spike-veto violations appear. The strongest is at `k/h=0.16375`, `z=0.2`, where the direct power is `0.0349055` between neighboring `0.0025`-grid powers about `3.65e-4`, giving a spike ratio `95.50`. Another major violation occurs at `k/h=0.10125`, `z=0.2`, with ratio `79.77`.
 
-The stop rule is explicit: if the quarter-lattice test still materially fails the interpolation or spike gate, do not automatically continue to `Delta k/h=0.000625`; pivot to a targeted resonance/response-origin audit of the offending window(s).
+The `0.0025` representation does not converge monotonically toward the quarter controls. It improves over `0.005` at `z=0.5` but is worse at `z=0.2` (`E_0025=0.66875` versus `E_005=0.55675`) and is not non-worse at all redshifts.
 
-Preparation chain:
+Formal result lock: `docs/fullj_stochastic_tagged_power_quarter_lattice_result.md`, created in commit `c1dd14b2d15fcd48519c328eb4906ef5d1b265b4`.
 
-- `3d309b51e44eb38569a7be263dbb14963ba4bd17` — preregister local quarter-lattice test
-- `8ad36d4df4b4d20c981f7b475e558a5a1400a354` — implement 72-run quarter-lattice diagnostic
-- `4a26681601da46d52aaa1b2105138024a1005f31` — local runner with parent-NPZ hash and physical-mask guards
-
-Target classification:
-
-`FULLJ_STOCHASTIC_TAGGED_POWER_QUARTER_LATTICE_PASS`.
+Interpretation: blind radial grid halving stops here. The remaining structure is not explained by solver failure, metric-constraint failure, broadband closure failure, stochastic-background scatter, the repaired physical-k mask, or simple interpolation. The next step must isolate the response mechanism at fixed k. A particularly strong hypothesis is suggested by the already locked saturated-closure result: in this regime `div[(1+j_eff) grad chi]` is within about `4e-5` of `2 lap chi`, while the full response kernel is essentially diagonal and B0/B1 dependence is negligible. Thus the sharp k-dependence may be phase structure of an effectively diagonal saturated constitutive mode rather than unresolved nonlinear mode coupling. This must be tested directly before any further radial refinement.
