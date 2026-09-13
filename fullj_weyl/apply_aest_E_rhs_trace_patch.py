@@ -4,11 +4,11 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-MARKER = "FULLJ_AEST_ERHS_TRACE_V1"
+MARKER = "FULLJ_AEST_ERHS_TRACE_V2"
 
 ANCHOR = '''        dy[pv->index_pt_E_aest] = a*E_rhs_aest/pba->aest_KB-a_prime_over_a*E_aest;\n        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);'''
 
-INJECT = r'''        /* FULLJ_AEST_ERHS_TRACE_V1: read-only source diagnostic. */
+INJECT = r'''        /* FULLJ_AEST_ERHS_TRACE_V2: read-only source diagnostic. */
         {
           static FILE *aest_erhs_trace_fp = NULL;
           static char aest_erhs_trace_path[4096] = "";
@@ -25,7 +25,7 @@ INJECT = r'''        /* FULLJ_AEST_ERHS_TRACE_V1: read-only source diagnostic. *
                 aest_erhs_trace_fp = fopen(trace_path,"w");
                 if (aest_erhs_trace_fp != NULL) {
                   fprintf(aest_erhs_trace_fp,
-                    "# k tau a alpha E delta theta Q KQ H cad2 w rho chi Pi pi_delta pi_E pi_chi T1 T2 T3 T4 E_rhs D1 D2 dyE\\n");
+                    "# k tau a alpha E delta theta Q KQ H cad2 w rho chi Pi pi_delta pi_E pi_chi T1 T2 T3 T4 E_rhs D1 D2 dyE\n");
                 }
               }
               if (aest_erhs_trace_fp != NULL) {
@@ -40,7 +40,7 @@ INJECT = r'''        /* FULLJ_AEST_ERHS_TRACE_V1: read-only source diagnostic. *
                 double D2 = -a_prime_over_a*E_aest;
                 double dyE = D1+D2;
                 fprintf(aest_erhs_trace_fp,
-                  "%.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g\\n",
+                  "%.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g\n",
                   k,tau,a,alpha_aest,E_aest,y[pv->index_pt_delta_cdm],theta_div_aest,
                   Q_aest,KQ_aest,H_aest,cad2_aest,w_aest,rho_aest,chi_aest,Pi_aest,
                   pi_delta,pi_E,pi_chi,T1,T2,T3,T4,E_rhs_aest,D1,D2,dyE);
@@ -63,7 +63,7 @@ def main() -> int:
         raise SystemExit(f"missing perturbations.c: {p}")
     text = p.read_text()
     if MARKER in text:
-        print("FULLJ_AEST_ERHS_TRACE_PATCH already=1")
+        print("FULLJ_AEST_ERHS_TRACE_PATCH already=2")
         return 0
     if text.count(ANCHOR) != 1:
         raise SystemExit(f"expected one E-RHS assignment anchor, found {text.count(ANCHOR)}")
@@ -73,7 +73,9 @@ def main() -> int:
     required = [MARKER, 'AEST_ERHS_TRACE_FILE', 'AEST_ERHS_TRACE_K', 'double T1 = KQ_aest*chi_aest;', 'double dyE = D1+D2;']
     if not all(x in final for x in required):
         raise SystemExit("E-RHS trace patch verification failed")
-    print("FULLJ_AEST_ERHS_TRACE_PATCH_PASS")
+    if '\\\\n' in final[final.index(MARKER):final.index(MARKER)+5000]:
+        raise SystemExit("E-RHS trace patch still contains literal-backslash newline formatting")
+    print("FULLJ_AEST_ERHS_TRACE_PATCH_PASS version=2")
     return 0
 
 
