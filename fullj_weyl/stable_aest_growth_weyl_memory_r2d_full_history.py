@@ -34,20 +34,25 @@ CLS_SEP="STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_FULL_HISTORY_SEPARATION_CERTIFIED"
 CLS_MISMATCH="STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_NON_HISTORY_NORMALIZATION_MISMATCH_CERTIFIED"
 CLS_UNRES="STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_FULL_HISTORY_UNRESOLVED"
 
+
 def ancestor(sha):
     return subprocess.run(["git","merge-base","--is-ancestor",sha,"HEAD"],cwd=ROOT,
                           stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
 
+
 def rel(a,b):
     a=np.asarray(a,float); b=np.asarray(b,float)
     return float(np.linalg.norm(a-b)/max(float(np.linalg.norm(a)),float(np.linalg.norm(b)),1e-300))
+
 
 def cosine(a,b):
     a=np.asarray(a,float); b=np.asarray(b,float)
     na=float(np.linalg.norm(a)); nb=float(np.linalg.norm(b))
     return float(np.dot(a,b)/(na*nb)) if na>0 and nb>0 else float("nan")
 
+
 def tag(kh): return r2.pc.tag_of(kh)
+
 
 def source_ok():
     root=os.environ.get("AEST_STABLE_R2D_CLASS_ROOT","")
@@ -59,8 +64,10 @@ def source_ok():
          "FULLJ_STABLE_AEST_R2D_FULL_HISTORY_V1",
          "aest_r2d_trace_force(k,pba->h,tau,-0.5*a*Q_aest*Bchi_aest/pba->aest_KB);",
          "Bchi_aest *= pba->aest_eta;","E_rhs_aest -= 0.5*Q_aest*Bchi_aest;",
-         "AEST_R2D_TRACE_FILE","AEST_R2D_TRACE_KH","AEST_TANGENT_FORCE_FILE","AEST_TANGENT_LAMBDA")
+         "AEST_R2D_TRACE_FILE","AEST_R2D_TRACE_KH","AEST_R2D_TRACE_ALL_K",
+         "AEST_TANGENT_FORCE_FILE","AEST_TANGENT_LAMBDA")
     return all(x in p+a for x in req)
+
 
 def run_transfer(kh):
     from classy import Class
@@ -89,6 +96,7 @@ def run_transfer(kh):
     finally:
         c.struct_cleanup(); c.empty()
 
+
 def worker(args):
     v=run_transfer(float(args.kh))
     np.savez_compressed(args.out,D=v["D"],W=v["W"],redshifts=Z,h=np.asarray([v["h"]]),
@@ -96,10 +104,12 @@ def worker(args):
     print(json.dumps({"k_h":float(args.kh),"h":v["h"],"finite":v["finite"],"basis_pass":v["basis_pass"]},sort_keys=True))
     return 0 if v["basis_pass"] else 2
 
+
 def load_case(path):
     q=np.load(path)
     return {"D":np.asarray(q["D"],float),"W":np.asarray(q["W"],float),"h":float(q["h"][0]),
             "finite":bool(int(q["finite"][0])),"basis_pass":bool(int(q["basis"][0]))}
+
 
 def read_force(path):
     rows=[]
@@ -111,7 +121,18 @@ def read_force(path):
         if np.isfinite(k) and np.isfinite(t) and np.isfinite(f): rows.append((k,t,f))
     return rows
 
-def normalize_rhs(raw,out):
+
+def target_block(rows,kh,h):
+    if not rows: return [],float("nan"),float("inf")
+    kvals=np.asarray(sorted({x[0] for x in rows}),float)
+    kt=float(kh*h)
+    kk=float(kvals[int(np.argmin(np.abs(kvals-kt)))])
+    krel=abs(kk-kt)/max(abs(kt),1e-300)
+    block=[x for x in rows if x[0]==kk]
+    return block,kk,krel
+
+
+def normalize_rhs(raw,out,kh,h):
     rows=read_force(raw)
     if not rows: raise RuntimeError(f"no valid RHS trace rows in {raw}")
     acc=defaultdict(list)
@@ -125,25 +146,25 @@ def normalize_rhs(raw,out):
     Path(out).parent.mkdir(parents=True,exist_ok=True)
     with open(out,"w") as fp:
         for k,t,f in clean: fp.write(f"{k:.17g} {t:.17g} {f:.17g}\n")
-    taus=np.asarray([x[1] for x in clean],float); fs=np.asarray([x[2] for x in clean],float)
-    return {"raw_rows":len(rows),"unique_rows":len(clean),"tau_min":float(np.min(taus)),
-            "tau_max":float(np.max(taus)),"force_l2":float(np.linalg.norm(fs)),
-            "force_max_abs":float(np.max(np.abs(fs))),"max_duplicate_relative_spread":max_dup_rel}
+    block,kk,krel=target_block(clean,kh,h)
+    if not block or krel>2e-10:
+        raise RuntimeError(f"target k block missing after full-grid normalization kh={kh} krel={krel}")
+    taus=np.asarray([x[1] for x in block],float); fs=np.asarray([x[2] for x in block],float)
+    kvals={x[0] for x in clean}
+    return {"raw_rows":len(rows),"unique_rows":len(clean),"k_count":len(kvals),
+            "target_k_Mpc":kk,"target_k_relative_error":krel,
+            "target_tau_count":len(block),"tau_min":float(np.min(taus)),"tau_max":float(np.max(taus)),
+            "force_l2":float(np.linalg.norm(fs)),"force_max_abs":float(np.max(np.abs(fs))),
+            "max_duplicate_relative_spread":max_dup_rel}
 
-def overlap_metrics(rhs_path,src_path):
+
+def overlap_metrics(rhs_path,src_path,kh,h):
     rr=read_force(rhs_path); ss=read_force(src_path)
     if not rr or not ss: return {"pass":False,"E_force":float("inf"),"C_force":float("nan")}
-    # R2d RHS trace is target-k only; R2c source-grid tables contain all k modes.
-    # Select the R2c physical-k block nearest to the unique R2d target k before
-    # comparing the forcing on their common tau interval.
-    kr=float(np.median([x[0] for x in rr]))
-    sk=np.asarray(sorted({x[0] for x in ss}),float)
-    ks=float(sk[int(np.argmin(np.abs(sk-kr)))])
-    krel=abs(ks-kr)/max(abs(kr),1e-300)
-    if krel>2e-10:
+    rr,kr,krelr=target_block(rr,kh,h); ss,ks,krels=target_block(ss,kh,h)
+    krel=max(krelr,krels,abs(ks-kr)/max(abs(kr),1e-300))
+    if not rr or not ss or krel>2e-10:
         return {"pass":False,"E_force":float("inf"),"C_force":float("nan"),"relative_k_error":krel}
-    rr=[x for x in rr if abs(x[0]-kr)<=2e-13*(1.+abs(kr))]
-    ss=[x for x in ss if x[0]==ks]
     tr=np.asarray([x[1] for x in rr],float); fr=np.asarray([x[2] for x in rr],float)
     ts=np.asarray([x[1] for x in ss],float); fs=np.asarray([x[2] for x in ss],float)
     order=np.argsort(tr); tr=tr[order]; fr=fr[order]
@@ -157,6 +178,7 @@ def overlap_metrics(rhs_path,src_path):
     e=rel(fi,fsrc); c=cosine(fi,fsrc)
     return {"pass":bool(e<=.02 and c>=.999),"E_force":e,"C_force":c,
             "overlap_points":int(np.count_nonzero(good)),"relative_k_error":krel}
+
 
 def main():
     ap=argparse.ArgumentParser()
@@ -192,17 +214,19 @@ def main():
         t=tag(kh); raw=work/f"rhs_force_{t}_raw.dat"; clean=work/f"rhs_force_{t}.dat"; trace_out=work/f"trace_{t}.npz"
         env=os.environ.copy()
         for key in ("AEST_TANGENT_FORCE_FILE","AEST_TANGENT_LAMBDA","AEST_TANGENT_TRACE_FILE"): env.pop(key,None)
-        env["AEST_R2D_TRACE_FILE"]=str(raw.resolve()); env["AEST_R2D_TRACE_KH"]=str(kh)
+        env["AEST_R2D_TRACE_FILE"]=str(raw.resolve()); env["AEST_R2D_TRACE_KH"]=str(kh); env["AEST_R2D_TRACE_ALL_K"]="1"
         subprocess.run([py,"-m",mod,"--worker","--kh",str(kh),"--out",str(trace_out)],cwd=ROOT,env=env,check=True)
         base=load_case(trace_out); baselines[kh]=base
-        fs=normalize_rhs(raw,clean)
+        fs=normalize_rhs(raw,clean,kh,base["h"])
         coverage=bool(fs["tau_min"]<=.25*SOURCE_TAU_MIN and fs["tau_max"]>=.995*SOURCE_TAU_MAX
-                      and fs["unique_rows"]>489 and np.isfinite(fs["force_l2"]))
+                      and fs["target_tau_count"]>489 and np.isfinite(fs["force_l2"]))
         trace_rows.append({"k_h":kh,**fs,"coverage_pass":coverage})
-        print(f"STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_TRACE k_h={kh:.5f} pass={coverage} n={fs['unique_rows']} tau=[{fs['tau_min']:.6g},{fs['tau_max']:.6g}]",flush=True)
+        print(f"STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_TRACE k_h={kh:.5f} pass={coverage} "
+              f"target_n={fs['target_tau_count']} all_n={fs['unique_rows']} k_count={fs['k_count']} "
+              f"tau=[{fs['tau_min']:.6g},{fs['tau_max']:.6g}]",flush=True)
 
         src=R2C_WORK/f"force_{t}_s0p005.dat"
-        ov=overlap_metrics(clean,src) if src.exists() else {"pass":False,"E_force":float("inf"),"C_force":float("nan")}
+        ov=overlap_metrics(clean,src,kh,base["h"]) if src.exists() else {"pass":False,"E_force":float("inf"),"C_force":float("nan")}
         overlap_rows.append({"k_h":kh,**ov})
         print("STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_OVERLAP "+json.dumps(overlap_rows[-1],sort_keys=True),flush=True)
 
@@ -214,7 +238,7 @@ def main():
         for lam in (30.0,-30.0,10.0,-10.0):
             lt=("p" if lam>0 else "m")+str(int(abs(lam))); out=work/f"case_{t}_{lt}.npz"
             env=os.environ.copy()
-            for key in ("AEST_R2D_TRACE_FILE","AEST_R2D_TRACE_KH","AEST_TANGENT_TRACE_FILE"): env.pop(key,None)
+            for key in ("AEST_R2D_TRACE_FILE","AEST_R2D_TRACE_KH","AEST_R2D_TRACE_ALL_K","AEST_TANGENT_TRACE_FILE"): env.pop(key,None)
             env["AEST_TANGENT_FORCE_FILE"]=str(clean.resolve()); env["AEST_TANGENT_LAMBDA"]=str(lam)
             subprocess.run([py,"-m",mod,"--worker","--kh",str(kh),"--out",str(out)],cwd=ROOT,env=env,check=True)
             v=load_case(out); cases[(kh,lam)]=v
@@ -278,7 +302,8 @@ def main():
     out={"classification":cls,"diagnostic_complete":True,"predata_lock":PREDATA_LOCK,
          "r2c_parent_classification":r2c.get("classification"),"settings":{"anchors":ANCHORS,"tau_H0":TAU,
          "memory_order":ORDER,"physical_eta":0.0,"tol_perturbations_integration":TOL,
-         "source_tau_min_reference":SOURCE_TAU_MIN,"source_tau_max_reference":SOURCE_TAU_MAX},
+         "source_tau_min_reference":SOURCE_TAU_MIN,"source_tau_max_reference":SOURCE_TAU_MAX,
+         "force_transport":"full_CLASS_k_grid; science metrics target-k only"},
          "trace":trace_rows,"overlap":overlap_rows,"patch_neutrality":neutral_rows,"cells":rows,
          "gates":gates,"summary":summary,
          "interpretation":{"r2b_reclassified":False,"r2c_reclassified":False,
@@ -293,6 +318,7 @@ def main():
     print("STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_SUMMARY="+json.dumps(summary,sort_keys=True),flush=True)
     print("STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_CLASSIFICATION="+cls,flush=True)
     return 0 if cls in (CLS_COMMON,CLS_SEP,CLS_MISMATCH) else 1
+
 
 if __name__=="__main__":
     raise SystemExit(main())
