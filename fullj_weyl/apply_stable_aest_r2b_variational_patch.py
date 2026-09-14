@@ -9,6 +9,38 @@ from pathlib import Path
 MARKER = "FULLJ_STABLE_AEST_R2B_VARIATIONAL_V1"
 
 
+def canonicalize_legacy_include_anchor(root: Path) -> None:
+    """Prepare only the include header expected by the historical v0.19w helper.
+
+    This operates on the dedicated temporary R2b CLASS copy. It changes no
+    equations or runtime physics. The historical helper itself remains
+    unchanged and will immediately expand this three-line anchor to the full
+    set of headers it needs.
+    """
+    src = root / "source" / "aest_memory.c"
+    text = src.read_text()
+    expected = '#include <math.h>\n#include <stddef.h>\n#include "aest_memory.h"\n'
+    if expected in text:
+        return
+
+    removable = {
+        '#include <math.h>',
+        '#include <stddef.h>',
+        '#include <stdio.h>',
+        '#include <stdlib.h>',
+        '#include <string.h>',
+        '#include "aest_memory.h"',
+    }
+    lines = text.splitlines(keepends=True)
+    kept = [line for line in lines if line.strip() not in removable]
+    src.write_text(expected + ''.join(kept))
+
+    check = src.read_text()
+    if check.count(expected) != 1:
+        raise RuntimeError("failed to prepare unique historical variational include anchor")
+    print("STABLE_AEST_R2B_VARIATIONAL_INCLUDE_COMPAT_PASS")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("class_root")
@@ -28,6 +60,12 @@ def main() -> int:
     old_patch = repo / "v019w" / "apply_variational_forcing_patch.py"
     if not old_patch.is_file():
         raise RuntimeError("missing historical v0.19w variational patch")
+
+    # Technical compatibility repair only: the historical helper keys on a
+    # literal include block that is arranged differently in the current
+    # stable finite-memory source. Canonicalize only those include lines in
+    # this disposable R2b CLASS copy, then call the unchanged historical patch.
+    canonicalize_legacy_include_anchor(root)
     subprocess.run([sys.executable, str(old_patch), str(root)], check=True)
 
     text = pc.read_text()
@@ -53,6 +91,7 @@ def main() -> int:
         "runtime_lambda": "AEST_TANGENT_LAMBDA" in atxt,
         "physical_memory_closure_preserved": "E_rhs_aest -= 0.5*Q_aest*Bchi_aest" in ptxt,
         "stable_rhs_chi_count": ptxt.count("double chi_aest = Q_aest*s_aest;") == 2,
+        "variational_io_headers": all(x in atxt for x in ("#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>")),
     }
     if not all(checks.values()):
         raise RuntimeError("R2b stable variational source audit failed: "+repr(checks))
