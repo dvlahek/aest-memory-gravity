@@ -2,6 +2,12 @@
 
 Date: 2026-09-14
 
+## Pre-result metadata amendment
+
+The original R6a pre-data declaration was committed at `e0ab169dac5fe06f261929544a701891511055a7` before any R6a implementation or result.
+
+During the pre-implementation audit, the official `v1.2.1` tag was found to retain the upstream internal string `__version__ = "1.2.0"`. This amendment is committed before implementation/results and changes only the provenance check: the release identity is frozen by the exact git commit, while the upstream internal version string is recorded as `1.2.0`. No science setting, observable definition, threshold, or classification rule is changed.
+
 ## Parent result
 
 R6a is licensed only by the completed R5b result
@@ -30,8 +36,9 @@ R6a is deliberately a fixed-baseline template-projection stage. It is not a cosm
 Use the official repository/package only:
 
 - repository: `ACTCollaboration/act_dr6_lenslike`
-- release: `v1.2.1`
+- release tag: `v1.2.1`
 - release commit: `b386ddbb5821c1216c709f051c9289292f174d30`
+- expected upstream internal metadata string at that commit: `__version__ = "1.2.0"`
 - likelihood data version: `v1.2`
 - variant: `act_baseline`
 - `lens_only = True`
@@ -42,7 +49,9 @@ Use the official repository/package only:
 - ACT only; no Planck lensing combination
 - no primary-CMB likelihood
 
-The runner must install the likelihood from the exact release commit into a dedicated R6a environment and obtain the official v1.2 data through the package data-download interface if they are not already present. It must record package/module version information and SHA-256 hashes of every ACT data file directly consumed by the R6a calculation.
+The runner must clone/check out the exact release commit into a dedicated R6a source directory, verify its git HEAD, install that source into a dedicated R6a environment, and obtain the official v1.2 data through the package data-download interface if they are not already present. It must record the package/module internal version string and SHA-256 hashes of every ACT data file directly consumed by the R6a calculation.
+
+The exact git commit, not the stale upstream `__version__` string, identifies the `v1.2.1` likelihood release used by R6a.
 
 No historical local ACT/v0.62/v0.65 result or script is a parent of R6a.
 
@@ -160,7 +169,7 @@ PASS iff:
 
 ### R6a-G2 official ACT likelihood provenance
 
-PASS iff the installed likelihood identifies as version 1.2.1 from the pinned release-commit installation, the v1.2 data are available, `variant=act_baseline`, `lens_only=True`, `like_corrections=False`, `apply_hartlap=True`, `nsims_act=796`, and `trim_lmax=2998`, with a complete runtime SHA-256 manifest of consumed likelihood/data files.
+PASS iff the likelihood source git HEAD is exactly `b386ddbb5821c1216c709f051c9289292f174d30`, its internal metadata string is the expected upstream value `1.2.0`, the v1.2 data are available, `variant=act_baseline`, `lens_only=True`, `like_corrections=False`, `apply_hartlap=True`, `nsims_act=796`, and `trim_lmax=2998`, with a complete runtime SHA-256 manifest of consumed likelihood/data files.
 
 ### R6a-G3 official-interface control
 
