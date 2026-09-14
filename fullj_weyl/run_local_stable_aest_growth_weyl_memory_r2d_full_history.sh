@@ -20,6 +20,7 @@ echo STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_IMPORT_PASS
 
 for f in \
  docs/stable_aest_growth_weyl_memory_r2d_full_history_predata.md \
+ docs/stable_aest_growth_weyl_memory_r2d_runtime_repair_01.md \
  docs/stable_aest_growth_weyl_memory_r2c_normalization_postdata.md \
  results/stable_aest_growth_weyl_memory_r2c_normalization.json \
  results/stable_aest_growth_weyl_memory_r2b_variational.json \
@@ -86,12 +87,14 @@ grep -q 'aest_r2d_trace_force(k,pba->h,tau,-0.5\*a\*Q_aest\*Bchi_aest/pba->aest_
 grep -q 'Bchi_aest \*= pba->aest_eta;' "$R2D_ROOT/source/perturbations.c"
 grep -q 'E_rhs_aest -= 0.5\*Q_aest\*Bchi_aest;' "$R2D_ROOT/source/perturbations.c"
 grep -q 'AEST_R2D_TRACE_KH' "$R2D_ROOT/source/aest_memory.c"
+grep -q 'AEST_R2D_TRACE_ALL_K' "$R2D_ROOT/source/aest_memory.c"
 grep -q 'AEST_TANGENT_FORCE_FILE' "$R2D_ROOT/source/aest_memory.c"
 echo STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_SOURCE_PASS
 
+echo STABLE_AEST_GROWTH_WEYL_MEMORY_R2D_FULL_K_TRANSPORT_PASS
 export AEST_STABLE_R2D_CLASS_ROOT="$R2D_ROOT"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
-unset AEST_TANGENT_FORCE_FILE AEST_TANGENT_LAMBDA AEST_TANGENT_TRACE_FILE AEST_R2D_TRACE_FILE AEST_R2D_TRACE_KH AEST_OFFLINE_TRACE_FILE AEST_TANGENT_ALLOW_K_MISS AEST_ERHS_TRACE_FILE AEST_ERHS_TRACE_K || true
+unset AEST_TANGENT_FORCE_FILE AEST_TANGENT_LAMBDA AEST_TANGENT_TRACE_FILE AEST_R2D_TRACE_FILE AEST_R2D_TRACE_KH AEST_R2D_TRACE_ALL_K AEST_OFFLINE_TRACE_FILE AEST_TANGENT_ALLOW_K_MISS AEST_ERHS_TRACE_FILE AEST_ERHS_TRACE_K || true
 
 JSON='results/stable_aest_growth_weyl_memory_r2d_full_history.json'
 NPZ='results/stable_aest_growth_weyl_memory_r2d_full_history.npz'
@@ -112,6 +115,7 @@ import sys,zipfile
 zp=Path(sys.argv[1]); work=Path(sys.argv[5])
 paths=[Path(x) for x in sys.argv[2:5]]+[
  Path('docs/stable_aest_growth_weyl_memory_r2d_full_history_predata.md'),
+ Path('docs/stable_aest_growth_weyl_memory_r2d_runtime_repair_01.md'),
  Path('docs/stable_aest_growth_weyl_memory_r2c_normalization_postdata.md'),
  Path('fullj_weyl/stable_aest_growth_weyl_memory_r2d_full_history.py'),
  Path('fullj_weyl/run_local_stable_aest_growth_weyl_memory_r2d_full_history.sh'),
