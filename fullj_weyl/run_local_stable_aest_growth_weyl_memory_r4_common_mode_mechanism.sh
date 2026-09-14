@@ -18,6 +18,7 @@ echo STABLE_AEST_GROWTH_WEYL_MEMORY_R4_IMPORT_PASS
 
 for f in \
  docs/stable_aest_growth_weyl_memory_r4_common_mode_mechanism_predata.md \
+ docs/stable_aest_growth_weyl_memory_r4_technical_repair_01.md \
  docs/stable_aest_growth_weyl_memory_r3_scale_generality_postdata.md \
  docs/stable_aest_growth_weyl_memory_r2e_single_hook_postdata.md \
  results/stable_aest_growth_weyl_memory_r3_scale_generality.json \
@@ -56,26 +57,29 @@ EXPECTED_MEMORY_SHA='4d5ab5dc7066d4880f06fcfc731d6534ed0ff992e3cc15fb473dddccb25
 [[ "$(sha256sum "$OLD_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]
 echo "STABLE_AEST_GROWTH_WEYL_MEMORY_R4_OLD_PROVENANCE_PASS head=$EXPECTED_CLASS_HEAD"
 
-STABLE_ROOT="$ROOT/.local/class_corrected_e8580832_densek64_stablechi"
-if [[ ! -d "$STABLE_ROOT/.git" ]] || ! grep -q 'FULLJ_AEST_STABLE_CHI_RESIDUAL_V1' "$STABLE_ROOT/source/perturbations.c"; then
-  rm -rf "$STABLE_ROOT"; cp -a "$OLD_ROOT" "$STABLE_ROOT"
-  python fullj_weyl/apply_aest_stable_chi_residual_patch.py "$STABLE_ROOT"
-fi
-[[ "$(git -C "$STABLE_ROOT" rev-parse HEAD)" == "$EXPECTED_CLASS_HEAD" ]]
-[[ "$(sha256sum "$STABLE_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]
-grep -q 'FULLJ_AEST_STABLE_CHI_RESIDUAL_V1' "$STABLE_ROOT/source/perturbations.c"
-grep -q 'double chi_aest = Q_aest\*s_aest;' "$STABLE_ROOT/source/perturbations.c"
-[[ "$(grep -Fc 'Bchi_aest *= pba->aest_eta;' "$STABLE_ROOT/source/perturbations.c")" -eq 1 ]]
-[[ "$(grep -Fc 'E_rhs_aest -= 0.5*Q_aest*Bchi_aest;' "$STABLE_ROOT/source/perturbations.c")" -eq 1 ]]
-[[ "$(grep -Fc 'aest_tangent_external_force' "$STABLE_ROOT/source/perturbations.c")" -eq 0 ]]
+# R4 intentionally uses a fresh disposable source tree.  Do not reuse the
+# mutable shared stablechi cache because R4 audits the absence of diagnostic
+# variational-force hooks as part of the preregistered source topology.
+R4_ROOT="$ROOT/.local/class_corrected_e8580832_densek64_stablechi_r4source"
+rm -rf "$R4_ROOT"
+cp -a "$OLD_ROOT" "$R4_ROOT"
+python fullj_weyl/apply_aest_stable_chi_residual_patch.py "$R4_ROOT"
+[[ "$(git -C "$R4_ROOT" rev-parse HEAD)" == "$EXPECTED_CLASS_HEAD" ]]
+[[ "$(sha256sum "$R4_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]
+
+grep -q 'FULLJ_AEST_STABLE_CHI_RESIDUAL_V1' "$R4_ROOT/source/perturbations.c"
+grep -q 'double chi_aest = Q_aest\*s_aest;' "$R4_ROOT/source/perturbations.c"
+[[ "$(grep -Fc 'Bchi_aest *= pba->aest_eta;' "$R4_ROOT/source/perturbations.c")" -eq 1 ]]
+[[ "$(grep -Fc 'E_rhs_aest -= 0.5*Q_aest*Bchi_aest;' "$R4_ROOT/source/perturbations.c")" -eq 1 ]]
+[[ "$(grep -Fc 'aest_tangent_external_force' "$R4_ROOT/source/perturbations.c")" -eq 0 ]]
 echo STABLE_AEST_GROWTH_WEYL_MEMORY_R4_SINGLE_CHANNEL_SOURCE_PASS
 
 PYTARGET="$ROOT/.local/classy_corrected_e8580832_densek64_stablechi_r4"
 rm -rf "$PYTARGET"; mkdir -p "$PYTARGET"
-rm -rf "$STABLE_ROOT/build" "$STABLE_ROOT/python/build" "$STABLE_ROOT/python/classy.egg-info" 2>/dev/null || true
-python -m pip install --no-deps --no-build-isolation --target "$PYTARGET" "$STABLE_ROOT"
+rm -rf "$R4_ROOT/build" "$R4_ROOT/python/build" "$R4_ROOT/python/classy.egg-info" 2>/dev/null || true
+python -m pip install --no-deps --no-build-isolation --target "$PYTARGET" "$R4_ROOT"
 
-export AEST_STABLE_CLASS_ROOT="$STABLE_ROOT"
+export AEST_STABLE_CLASS_ROOT="$R4_ROOT"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 unset AEST_TANGENT_FORCE_FILE AEST_TANGENT_LAMBDA AEST_TANGENT_TRACE_FILE AEST_R2D_TRACE_FILE AEST_R2D_TRACE_KH AEST_R2D_TRACE_ALL_K AEST_TANGENT_ALLOW_K_MISS AEST_ERHS_TRACE_FILE AEST_ERHS_TRACE_K || true
 
@@ -98,6 +102,7 @@ import sys,zipfile
 zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:5]]+[
  Path('docs/stable_aest_growth_weyl_memory_r4_common_mode_mechanism_predata.md'),
+ Path('docs/stable_aest_growth_weyl_memory_r4_technical_repair_01.md'),
  Path('docs/stable_aest_growth_weyl_memory_r3_scale_generality_postdata.md'),
  Path('docs/stable_aest_growth_weyl_memory_r2e_single_hook_postdata.md'),
  Path('fullj_weyl/stable_aest_growth_weyl_memory_r4_common_mode_mechanism.py'),
