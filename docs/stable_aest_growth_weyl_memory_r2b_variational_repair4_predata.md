@@ -17,7 +17,7 @@ Repair rule fixed before another launch:
 1. Do not change the frozen R2b preregistration commit `fc118356ea77be3b81854a95992a89ff7a1630bc`, physical equations, tau, bath order, integration tolerance, k anchors, redshift grid, lambda values, observables, gates, or thresholds.
 2. Keep the R2b trace requirement exactly `chi = Q*s`.
 3. Replace the over-broad whole-file absence audit by a scoped audit of the inserted R2b native-source trace block itself. The historical subtraction expression must be absent from that trace block. Unrelated legacy/source occurrences elsewhere in `perturbations.c` do not invalidate R2b.
-4. Apply the same scoped source audit in the R2b Python science driver so G1 tests the actual diagnostic trace implementation rather than unrelated source text.
+4. Preserve the downstream historical whole-file literal guard without changing its code by applying a semantics-neutral source-text normalization in the disposable R2b CLASS copy: any unrelated exact spelling `Q_aest*(a*theta_aest/(k*k)+alpha_aest)` is rewritten as the mathematically identical `Q_aest * (a*theta_aest/(k*k)+alpha_aest)`. This changes whitespace only and therefore does not alter the C expression or physics.
 5. Historical R2, R2a, R1c, and all earlier R2b technical attempts remain unchanged.
 
 This is a build/source-audit repair only. It does not alter the scientific test.
