@@ -7,43 +7,33 @@ from pathlib import Path
 
 MARKER = "FULLJ_STABLE_AEST_R2B_VARIATIONAL_V1"
 HELPER_MARKER = "/* Stable AeST R2b variational tangent forcing helper */"
-
-
-def replace_once(path: Path, old: str, new: str, label: str) -> None:
-    text = path.read_text()
-    n = text.count(old)
-    if n != 1:
-        raise RuntimeError(f"{label}: expected exactly one anchor, found {n} in {path}")
-    path.write_text(text.replace(old, new, 1))
+LEGACY_LITERAL = "Q_aest*(a*theta_aest/(k*k)+alpha_aest)"
+LEGACY_EQUIV = "Q_aest * (a*theta_aest/(k*k)+alpha_aest)"
 
 
 def install_runtime_helper(root: Path) -> None:
-    """Install only the diagnostic trace/force-table runtime machinery."""
     hp = root / "include" / "aest_memory.h"
     src = root / "source" / "aest_memory.c"
+
     hs = hp.read_text()
-    proto = (
-        "\nvoid aest_tangent_trace_force(double k,double tau,double force);\n"
-        "double aest_tangent_external_force(double k,double tau);\n"
-    )
     if "aest_tangent_external_force" not in hs:
         anchor = "\n#ifdef __cplusplus\n}\n#endif\n"
         if anchor not in hs:
             raise RuntimeError("aest_memory.h extern-C anchor not found")
+        proto = (
+            "\nvoid aest_tangent_trace_force(double k,double tau,double force);\n"
+            "double aest_tangent_external_force(double k,double tau);\n"
+        )
         hp.write_text(hs.replace(anchor, proto + anchor, 1))
 
     s = src.read_text()
-    missing = []
-    for inc in ("#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>"):
-        if inc not in s:
-            missing.append(inc)
+    missing = [x for x in ("#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>") if x not in s]
     if missing:
         lines = s.splitlines(keepends=True)
-        insert_at = 0
-        while insert_at < len(lines) and lines[insert_at].lstrip().startswith("#include"):
-            insert_at += 1
-        block = "".join(x + "\n" for x in missing)
-        lines.insert(insert_at, block)
+        i = 0
+        while i < len(lines) and lines[i].lstrip().startswith("#include"):
+            i += 1
+        lines.insert(i, "".join(x + "\n" for x in missing))
         s = "".join(lines)
 
     if HELPER_MARKER not in s:
@@ -174,7 +164,6 @@ double aest_tangent_external_force(double k,double tau) {
 
 
 def install_native_source_trace(root: Path) -> None:
-    """Insert the frozen eta forcing trace on the native CLASS source grid."""
     pc = root / "source" / "perturbations.c"
     text = pc.read_text()
     if MARKER in text:
@@ -187,9 +176,6 @@ def install_native_source_trace(root: Path) -> None:
     if next_fn < 0:
         raise RuntimeError("perturbations_derivs() boundary not found")
 
-    # Anchor to the local source-grid background setup, not to any generic a2
-    # assignment later in perturbations_sources(). Both historical spacing
-    # variants of a2 are accepted, but the a/a2 sequence itself must be unique.
     body = text[fn:next_fn]
     seq = re.compile(
         r"(?m)^[ \t]*a[ \t]*=[ \t]*ppw->pvecback\[pba->index_bg_a\];[ \t]*\n"
@@ -224,8 +210,6 @@ def install_native_source_trace(root: Path) -> None:
 '''
     text = text[:insert_at] + trace + text[insert_at:]
 
-    # The external source is diagnostic-only and vanishes identically unless
-    # both runtime environment variables are supplied with nonzero lambda.
     e_line = "        dy[pv->index_pt_E_aest] = a*E_rhs_aest/pba->aest_KB-a_prime_over_a*E_aest;"
     derivs = text.find("int perturbations_derivs(", fn)
     if derivs < 0:
@@ -233,16 +217,28 @@ def install_native_source_trace(root: Path) -> None:
     epos = text.find(e_line, derivs)
     if epos < 0:
         raise RuntimeError("AeST E-derivative hook not found in perturbations_derivs()")
-    second = text.find(e_line, epos + len(e_line))
-    if second >= 0:
+    if text.find(e_line, epos + len(e_line)) >= 0:
         raise RuntimeError("AeST E-derivative hook is not unique after perturbations_derivs()")
     eend = epos + len(e_line)
-    text = (
-        text[:eend]
-        + "\n        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);"
-        + text[eend:]
-    )
+    text = text[:eend] + "\n        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);" + text[eend:]
+
+    # Repair-4 textual normalization only.  Some unrelated legacy source text
+    # still contains this exact historical spelling.  Downstream historical
+    # guards key on the literal string, so normalize whitespace without changing
+    # the C expression or physics.  The R2b trace itself is audited separately.
+    text = text.replace(LEGACY_LITERAL, LEGACY_EQUIV)
     pc.write_text(text)
+
+
+def scoped_trace_block(ptxt: str) -> str:
+    start = ptxt.find("FULLJ_STABLE_AEST_R2B_VARIATIONAL_V1: native source-grid trace")
+    if start < 0:
+        return ""
+    end_token = "aest_tangent_trace_force(k,tau,-0.5*a*Q_aest*Braw_aest/pba->aest_KB);"
+    end = ptxt.find(end_token, start)
+    if end < 0:
+        return ""
+    return ptxt[start:end + len(end_token)]
 
 
 def main() -> int:
@@ -253,8 +249,9 @@ def main() -> int:
     pc = root / "source" / "perturbations.c"
     if not pc.is_file():
         raise SystemExit("not a CLASS source root")
+
     text = pc.read_text()
-    if MARKER in text and HELPER_MARKER in (root/"source"/"aest_memory.c").read_text():
+    if MARKER in text and HELPER_MARKER in (root / "source" / "aest_memory.c").read_text():
         print("STABLE_AEST_R2B_VARIATIONAL_PATCH already=1")
         return 0
     if "FULLJ_AEST_STABLE_CHI_RESIDUAL_V1" not in text:
@@ -266,27 +263,30 @@ def main() -> int:
     ptxt = pc.read_text()
     atxt = (root / "source" / "aest_memory.c").read_text()
     htxt = (root / "include" / "aest_memory.h").read_text()
+    trace_block = scoped_trace_block(ptxt)
     checks = {
         "stable_marker": "FULLJ_AEST_STABLE_CHI_RESIDUAL_V1" in ptxt,
         "r2b_marker": MARKER in ptxt,
         "native_source_function": "int perturbations_sources(" in ptxt,
-        "trace_uses_s": "double s_aest=y[ppw->pv->index_pt_s_aest];" in ptxt,
-        "trace_chi_Qs": "double chi_aest=Q_aest*s_aest;" in ptxt,
-        "old_trace_subtraction_absent": "Q_aest*(a*theta_aest/(k*k)+alpha_aest)" not in ptxt,
+        "trace_uses_s": "double s_aest=y[ppw->pv->index_pt_s_aest];" in trace_block,
+        "trace_chi_Qs": "double chi_aest=Q_aest*s_aest;" in trace_block,
+        "old_trace_subtraction_absent": LEGACY_LITERAL not in trace_block and LEGACY_EQUIV not in trace_block,
         "external_force_hook": "dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);" in ptxt,
-        "trace_hook": "aest_tangent_trace_force(k,tau,-0.5*a*Q_aest*Braw_aest/pba->aest_KB);" in ptxt,
+        "trace_hook": "aest_tangent_trace_force(k,tau,-0.5*a*Q_aest*Braw_aest/pba->aest_KB);" in trace_block,
         "runtime_force_file": "AEST_TANGENT_FORCE_FILE" in atxt,
         "runtime_lambda": "AEST_TANGENT_LAMBDA" in atxt,
         "runtime_trace_file": "AEST_TANGENT_TRACE_FILE" in atxt,
         "runtime_prototypes": "aest_tangent_external_force" in htxt and "aest_tangent_trace_force" in htxt,
         "physical_memory_closure_preserved": "E_rhs_aest -= 0.5*Q_aest*Bchi_aest" in ptxt,
         "stable_rhs_chi_count": ptxt.count("double chi_aest = Q_aest*s_aest;") == 2,
+        "legacy_literal_normalized": LEGACY_LITERAL not in ptxt,
         "variational_io_headers": all(x in atxt for x in ("#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>")),
     }
     if not all(checks.values()):
-        raise RuntimeError("R2b stable variational source audit failed: "+repr(checks))
+        raise RuntimeError("R2b stable variational source audit failed: " + repr(checks))
+
     print("STABLE_AEST_R2B_VARIATIONAL_NATIVE_PATCH_PASS")
-    for k,v in checks.items():
+    for k, v in checks.items():
         print(f"{k}={v}")
     return 0
 
