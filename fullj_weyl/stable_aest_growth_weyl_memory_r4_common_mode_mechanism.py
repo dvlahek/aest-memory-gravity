@@ -17,7 +17,7 @@ if str(ROOT) not in sys.path:
 
 from fullj_weyl import aest_ulp_initial_amplitude_localization as amp
 from fullj_weyl import aest_stable_chi_precision_convergence as pc
-from fullj_weyl import stable_aest_growth_weyl_memory_r3_scale_generality as r3
+from fullj_weyl import stable_aest_growth_weyl_memory_r2 as r2
 
 PREDATA_LOCK = "f742cfb33bd00ec8e1b637d7d1e7201d464fc433"
 R3_POSTDATA_LOCK = "8094cf2a3a40659419e64ea0c45fd27491decae3"
@@ -132,17 +132,17 @@ def run_case(kh: float, eta: float):
 
     c = Class(); c.set(p); c.compute()
     try:
-        h = r3.classy_h(c)
+        h = r2.classy_h(c)
         D=[]; P=[]; S=[]; W=[]; domains=[]; keys=[]
         for z in Z:
             tr = c.get_transfer(z=float(z), output_format="class")
             missing = [x for x in ("d_m", "phi", "psi") if x not in tr]
             if missing:
                 raise RuntimeError(f"missing transfer fields {missing}; keys={sorted(tr.keys())}")
-            kg, kkey = r3.k_h_from_transfer(tr, h)
-            dm, klo, khi, nk = r3.interp_transfer_field(kg, tr["d_m"], kh)
-            ph, _, _, _ = r3.interp_transfer_field(kg, tr["phi"], kh)
-            ps, _, _, _ = r3.interp_transfer_field(kg, tr["psi"], kh)
+            kg, kkey = r2.k_h_from_transfer(tr, h)
+            dm, klo, khi, nk = r2.interp_transfer_field(kg, tr["d_m"], kh)
+            ph, _, _, _ = r2.interp_transfer_field(kg, tr["phi"], kh)
+            ps, _, _, _ = r2.interp_transfer_field(kg, tr["psi"], kh)
             D.append(dm); P.append(ph); S.append(ps); W.append(ph+ps)
             domains.append((klo,khi,nk)); keys.append(kkey)
         D=np.asarray(D,float); P=np.asarray(P,float); S=np.asarray(S,float); W=np.asarray(W,float)
