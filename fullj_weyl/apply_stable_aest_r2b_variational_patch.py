@@ -11,20 +11,32 @@ LEGACY_LITERAL = "Q_aest*(a*theta_aest/(k*k)+alpha_aest)"
 LEGACY_EQUIV = "Q_aest * (a*theta_aest/(k*k)+alpha_aest)"
 
 
+def runtime_helper_complete(text: str) -> bool:
+    req = (
+        "aest_tangent_trace_force",
+        "aest_tangent_external_force",
+        "AEST_TANGENT_TRACE_FILE",
+        "AEST_TANGENT_FORCE_FILE",
+        "AEST_TANGENT_LAMBDA",
+    )
+    return all(x in text for x in req)
+
+
 def install_runtime_helper(root: Path) -> None:
     hp = root / "include" / "aest_memory.h"
     src = root / "source" / "aest_memory.c"
 
     hs = hp.read_text()
+    missing_proto = []
+    if "aest_tangent_trace_force" not in hs:
+        missing_proto.append("void aest_tangent_trace_force(double k,double tau,double force);\n")
     if "aest_tangent_external_force" not in hs:
+        missing_proto.append("double aest_tangent_external_force(double k,double tau);\n")
+    if missing_proto:
         anchor = "\n#ifdef __cplusplus\n}\n#endif\n"
         if anchor not in hs:
             raise RuntimeError("aest_memory.h extern-C anchor not found")
-        proto = (
-            "\nvoid aest_tangent_trace_force(double k,double tau,double force);\n"
-            "double aest_tangent_external_force(double k,double tau);\n"
-        )
-        hp.write_text(hs.replace(anchor, proto + anchor, 1))
+        hp.write_text(hs.replace(anchor, "\n" + "".join(missing_proto) + anchor, 1))
 
     s = src.read_text()
     missing = [x for x in ("#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>") if x not in s]
@@ -36,7 +48,24 @@ def install_runtime_helper(root: Path) -> None:
         lines.insert(i, "".join(x + "\n" for x in missing))
         s = "".join(lines)
 
-    if HELPER_MARKER not in s:
+    trace_def = len(re.findall(r"\bvoid\s+aest_tangent_trace_force\s*\(", s))
+    external_def = len(re.findall(r"\bdouble\s+aest_tangent_external_force\s*\(", s))
+    env_present = [x in s for x in ("AEST_TANGENT_TRACE_FILE", "AEST_TANGENT_FORCE_FILE", "AEST_TANGENT_LAMBDA")]
+
+    # The frozen parent already carries the historical v0.19w runtime helper.
+    # Reuse a complete implementation by symbol/environment support instead of
+    # appending an R2b-specific duplicate. Partial state is rejected fail-safe.
+    helper_present = trace_def > 0 or external_def > 0 or any(env_present)
+    helper_complete = trace_def == 1 and external_def == 1 and all(env_present)
+    if helper_present and not helper_complete:
+        raise RuntimeError(
+            "partial or duplicated historical variational runtime helper: "
+            f"trace_defs={trace_def} external_defs={external_def} env={env_present}"
+        )
+
+    if helper_complete:
+        print("STABLE_AEST_R2B_VARIATIONAL_RUNTIME_REUSE_PASS")
+    else:
         s += r'''
 
 /* Stable AeST R2b variational tangent forcing helper */
@@ -160,6 +189,7 @@ double aest_tangent_external_force(double k,double tau) {
   return _aest_tf_lambda*(f0 + x*(f1-f0));
 }
 '''
+
     src.write_text(s)
 
 
@@ -222,10 +252,10 @@ def install_native_source_trace(root: Path) -> None:
     eend = epos + len(e_line)
     text = text[:eend] + "\n        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);" + text[eend:]
 
-    # Repair-4 textual normalization only.  Some unrelated legacy source text
-    # still contains this exact historical spelling.  Downstream historical
+    # Repair-4 textual normalization only. Some unrelated legacy source text
+    # still contains this exact historical spelling. Downstream historical
     # guards key on the literal string, so normalize whitespace without changing
-    # the C expression or physics.  The R2b trace itself is audited separately.
+    # the C expression or physics. The R2b trace itself is audited separately.
     text = text.replace(LEGACY_LITERAL, LEGACY_EQUIV)
     pc.write_text(text)
 
@@ -251,9 +281,6 @@ def main() -> int:
         raise SystemExit("not a CLASS source root")
 
     text = pc.read_text()
-    if MARKER in text and HELPER_MARKER in (root / "source" / "aest_memory.c").read_text():
-        print("STABLE_AEST_R2B_VARIATIONAL_PATCH already=1")
-        return 0
     if "FULLJ_AEST_STABLE_CHI_RESIDUAL_V1" not in text:
         raise RuntimeError("R2b variational patch requires the certified stable-residual source")
 
@@ -277,6 +304,10 @@ def main() -> int:
         "runtime_lambda": "AEST_TANGENT_LAMBDA" in atxt,
         "runtime_trace_file": "AEST_TANGENT_TRACE_FILE" in atxt,
         "runtime_prototypes": "aest_tangent_external_force" in htxt and "aest_tangent_trace_force" in htxt,
+        "runtime_helper_singletons": (
+            len(re.findall(r"\bvoid\s+aest_tangent_trace_force\s*\(", atxt)) == 1
+            and len(re.findall(r"\bdouble\s+aest_tangent_external_force\s*\(", atxt)) == 1
+        ),
         "physical_memory_closure_preserved": "E_rhs_aest -= 0.5*Q_aest*Bchi_aest" in ptxt,
         "stable_rhs_chi_count": ptxt.count("double chi_aest = Q_aest*s_aest;") == 2,
         "legacy_literal_normalized": LEGACY_LITERAL not in ptxt,
