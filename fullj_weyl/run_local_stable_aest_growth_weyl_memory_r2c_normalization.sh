@@ -16,7 +16,13 @@ python -m py_compile \
   fullj_weyl/apply_stable_aest_r2b_variational_patch.py \
   fullj_weyl/apply_aest_stable_chi_residual_patch.py \
   v019w/normalize_force_table.py
+grep -q 'p\["perturbations_sampling_stepsize"\]' fullj_weyl/stable_aest_growth_weyl_memory_r2c_normalization.py
+if grep -q 'p\["perturb_sampling_stepsize"\]' fullj_weyl/stable_aest_growth_weyl_memory_r2c_normalization.py; then
+  echo 'STABLE_AEST_GROWTH_WEYL_MEMORY_R2C: stale CLASS sampling parameter spelling' >&2
+  exit 4
+fi
 echo STABLE_AEST_GROWTH_WEYL_MEMORY_R2C_IMPORT_PASS
+echo STABLE_AEST_GROWTH_WEYL_MEMORY_R2C_PRECISION_PARAMETER_PASS
 
 for f in \
  docs/stable_aest_growth_weyl_memory_r2c_normalization_predata.md \
