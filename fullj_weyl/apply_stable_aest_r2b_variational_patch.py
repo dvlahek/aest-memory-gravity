@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 
 MARKER = "FULLJ_STABLE_AEST_R2B_VARIATIONAL_V1"
@@ -17,12 +18,7 @@ def replace_once(path: Path, old: str, new: str, label: str) -> None:
 
 
 def install_runtime_helper(root: Path) -> None:
-    """Install only the diagnostic trace/force-table runtime machinery.
-
-    This is the same conceptual machinery as historical v0.19w, but it is
-    installed directly so R2b does not depend on obsolete literal source
-    anchors from the historical patcher.
-    """
+    """Install only the diagnostic trace/force-table runtime machinery."""
     hp = root / "include" / "aest_memory.h"
     src = root / "source" / "aest_memory.c"
     hs = hp.read_text()
@@ -37,7 +33,6 @@ def install_runtime_helper(root: Path) -> None:
         hp.write_text(hs.replace(anchor, proto + anchor, 1))
 
     s = src.read_text()
-    # Add required C-library headers without depending on their order.
     missing = []
     for inc in ("#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>"):
         if inc not in s:
@@ -192,22 +187,18 @@ def install_native_source_trace(root: Path) -> None:
     if next_fn < 0:
         raise RuntimeError("perturbations_derivs() boundary not found")
 
-    # Use a semantic anchor inside perturbations_sources(), not a historical
-    # literal multi-line block. This preserves the preregistered native source grid.
-    a2_candidates = ("  a2 = a * a;", "  a2 = a*a;")
-    apos = -1
-    used = None
-    for candidate in a2_candidates:
-        p = text.find(candidate, fn, next_fn)
-        if p >= 0:
-            if apos >= 0:
-                raise RuntimeError("multiple a2 source-grid anchors found")
-            apos = p; used = candidate
-    if apos < 0 or used is None:
-        raise RuntimeError("native perturbations_sources a2 anchor not found")
-    line_end = text.find("\n", apos)
-    if line_end < 0 or line_end >= next_fn:
-        raise RuntimeError("invalid native source-grid insertion point")
+    # Anchor to the local source-grid background setup, not to any generic a2
+    # assignment later in perturbations_sources(). Both historical spacing
+    # variants of a2 are accepted, but the a/a2 sequence itself must be unique.
+    body = text[fn:next_fn]
+    seq = re.compile(
+        r"(?m)^[ \t]*a[ \t]*=[ \t]*ppw->pvecback\[pba->index_bg_a\];[ \t]*\n"
+        r"[ \t]*a2[ \t]*=[ \t]*a[ \t]*\*[ \t]*a[ \t]*;[ \t]*$"
+    )
+    matches = list(seq.finditer(body))
+    if len(matches) != 1:
+        raise RuntimeError(f"native perturbations_sources a/a2 anchor expected once, found {len(matches)}")
+    insert_at = fn + matches[0].end()
 
     trace = r'''
 
@@ -231,18 +222,25 @@ def install_native_source_trace(root: Path) -> None:
     aest_tangent_trace_force(k,tau,-0.5*a*Q_aest*Braw_aest/pba->aest_KB);
   }
 '''
-    text = text[:line_end+1] + trace + text[line_end+1:]
+    text = text[:insert_at] + trace + text[insert_at:]
 
     # The external source is diagnostic-only and vanishes identically unless
     # both runtime environment variables are supplied with nonzero lambda.
     e_line = "        dy[pv->index_pt_E_aest] = a*E_rhs_aest/pba->aest_KB-a_prime_over_a*E_aest;"
-    n = text.count(e_line)
-    if n != 1:
-        raise RuntimeError(f"AeST E-derivative hook expected once, found {n}")
-    text = text.replace(
-        e_line,
-        e_line + "\n        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);",
-        1,
+    derivs = text.find("int perturbations_derivs(", fn)
+    if derivs < 0:
+        raise RuntimeError("perturbations_derivs() not found after trace insertion")
+    epos = text.find(e_line, derivs)
+    if epos < 0:
+        raise RuntimeError("AeST E-derivative hook not found in perturbations_derivs()")
+    second = text.find(e_line, epos + len(e_line))
+    if second >= 0:
+        raise RuntimeError("AeST E-derivative hook is not unique after perturbations_derivs()")
+    eend = epos + len(e_line)
+    text = (
+        text[:eend]
+        + "\n        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);"
+        + text[eend:]
     )
     pc.write_text(text)
 
