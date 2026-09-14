@@ -62,7 +62,7 @@ def run_transfer(kh,sampling):
     bits=r2.pc.bits_for_anchor(kh)
     p,pos=r2.amp.make_params(kh,int(bits))
     p["tol_perturbations_integration"]=float(TOL)
-    p["perturb_sampling_stepsize"]=float(sampling)
+    p["perturbations_sampling_stepsize"]=float(sampling)
     p["aest_memory_enabled"]="yes"; p["aest_memory_order"]=int(ORDER)
     p["aest_eta"]=0.0; p["aest_tau_H0"]=float(TAU)
     p["output"]="mTk,vTk"; p["z_max_pk"]=max(float(p.get("z_max_pk",0.0)),6.5)
