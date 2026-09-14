@@ -19,6 +19,7 @@ echo STABLE_AEST_GROWTH_WEYL_MEMORY_R4_IMPORT_PASS
 for f in \
  docs/stable_aest_growth_weyl_memory_r4_common_mode_mechanism_predata.md \
  docs/stable_aest_growth_weyl_memory_r4_technical_repair_01.md \
+ docs/stable_aest_growth_weyl_memory_r4_repair2_predata.md \
  docs/stable_aest_growth_weyl_memory_r3_scale_generality_postdata.md \
  docs/stable_aest_growth_weyl_memory_r2e_single_hook_postdata.md \
  results/stable_aest_growth_weyl_memory_r3_scale_generality.json \
@@ -57,9 +58,8 @@ EXPECTED_MEMORY_SHA='4d5ab5dc7066d4880f06fcfc731d6534ed0ff992e3cc15fb473dddccb25
 [[ "$(sha256sum "$OLD_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]
 echo "STABLE_AEST_GROWTH_WEYL_MEMORY_R4_OLD_PROVENANCE_PASS head=$EXPECTED_CLASS_HEAD"
 
-# R4 intentionally uses a fresh disposable source tree.  Do not reuse the
-# mutable shared stablechi cache because R4 audits the absence of diagnostic
-# variational-force hooks as part of the preregistered source topology.
+# R4 intentionally uses a fresh disposable source tree. Do not reuse the
+# mutable shared stablechi cache because R4 audits source topology.
 R4_ROOT="$ROOT/.local/class_corrected_e8580832_densek64_stablechi_r4source"
 rm -rf "$R4_ROOT"
 cp -a "$OLD_ROOT" "$R4_ROOT"
@@ -67,11 +67,28 @@ python fullj_weyl/apply_aest_stable_chi_residual_patch.py "$R4_ROOT"
 [[ "$(git -C "$R4_ROOT" rev-parse HEAD)" == "$EXPECTED_CLASS_HEAD" ]]
 [[ "$(sha256sum "$R4_ROOT/source/aest_memory.c" | awk '{print $1}')" == "$EXPECTED_MEMORY_SHA" ]]
 
+# The frozen parent carries one dormant historical v0.19w diagnostic forcing
+# hook. It is zero when AEST_TANGENT_* is unset, but R4 requires literal
+# physical single-channel topology. Remove exactly that one hook in this
+# disposable source only; do not change the physical memory closure.
+python - "$R4_ROOT/source/perturbations.c" <<'PY'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1]); s=p.read_text()
+hook='        dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);'
+n=s.count(hook)
+if n != 1:
+    raise SystemExit(f'STABLE_AEST_GROWTH_WEYL_MEMORY_R4_DIAGNOSTIC_HOOK_COUNT_FAIL count={n}')
+p.write_text(s.replace(hook,'',1))
+print('STABLE_AEST_GROWTH_WEYL_MEMORY_R4_DIAGNOSTIC_HOOK_NEUTRALIZED count_before=1 count_after=0')
+PY
+
 grep -q 'FULLJ_AEST_STABLE_CHI_RESIDUAL_V1' "$R4_ROOT/source/perturbations.c"
 grep -q 'double chi_aest = Q_aest\*s_aest;' "$R4_ROOT/source/perturbations.c"
 [[ "$(grep -Fc 'Bchi_aest *= pba->aest_eta;' "$R4_ROOT/source/perturbations.c")" -eq 1 ]]
 [[ "$(grep -Fc 'E_rhs_aest -= 0.5*Q_aest*Bchi_aest;' "$R4_ROOT/source/perturbations.c")" -eq 1 ]]
-[[ "$(grep -Fc 'aest_tangent_external_force' "$R4_ROOT/source/perturbations.c")" -eq 0 ]]
+HOOK='dy[pv->index_pt_E_aest] += aest_tangent_external_force(k,tau);'
+[[ "$(grep -Fc "$HOOK" "$R4_ROOT/source/perturbations.c")" -eq 0 ]]
 echo STABLE_AEST_GROWTH_WEYL_MEMORY_R4_SINGLE_CHANNEL_SOURCE_PASS
 
 PYTARGET="$ROOT/.local/classy_corrected_e8580832_densek64_stablechi_r4"
@@ -103,6 +120,7 @@ zp=Path(sys.argv[1])
 paths=[Path(x) for x in sys.argv[2:5]]+[
  Path('docs/stable_aest_growth_weyl_memory_r4_common_mode_mechanism_predata.md'),
  Path('docs/stable_aest_growth_weyl_memory_r4_technical_repair_01.md'),
+ Path('docs/stable_aest_growth_weyl_memory_r4_repair2_predata.md'),
  Path('docs/stable_aest_growth_weyl_memory_r3_scale_generality_postdata.md'),
  Path('docs/stable_aest_growth_weyl_memory_r2e_single_hook_postdata.md'),
  Path('fullj_weyl/stable_aest_growth_weyl_memory_r4_common_mode_mechanism.py'),
