@@ -55,19 +55,29 @@ void aest_r2d_trace_force(double k,double h,double tau,double force) {
   static int disabled = 0;
   const char *path;
   const char *skh;
+  const char *sall;
+  int all_k = 0;
   double target_kh,kh,rel;
   if (disabled) return;
   path = getenv("AEST_R2D_TRACE_FILE");
   skh = getenv("AEST_R2D_TRACE_KH");
-  if (path == NULL || path[0] == '\0' || skh == NULL || skh[0] == '\0') {
+  sall = getenv("AEST_R2D_TRACE_ALL_K");
+  if (sall != NULL && sall[0] != '\0' && strtol(sall,NULL,10) != 0) all_k = 1;
+  if (path == NULL || path[0] == '\0') {
     disabled = 1;
     return;
   }
-  target_kh = strtod(skh,NULL);
-  if (!(h > 0.) || !(target_kh > 0.)) return;
-  kh = k/h;
-  rel = fabs(kh-target_kh)/(fabs(target_kh)+1.e-300);
-  if (rel > 2.e-10) return;
+  if (!all_k) {
+    if (skh == NULL || skh[0] == '\0') {
+      disabled = 1;
+      return;
+    }
+    target_kh = strtod(skh,NULL);
+    if (!(h > 0.) || !(target_kh > 0.)) return;
+    kh = k/h;
+    rel = fabs(kh-target_kh)/(fabs(target_kh)+1.e-300);
+    if (rel > 2.e-10) return;
+  }
   if (fp == NULL) {
     fp = fopen(path,"w");
     if (fp == NULL) {
@@ -96,6 +106,7 @@ void aest_r2d_trace_force(double k,double h,double tau,double force) {
         "physical_closure_once": ptxt.count("E_rhs_aest -= 0.5*Q_aest*Bchi_aest;") == 1,
         "helper_once": atxt.count("void aest_r2d_trace_force(") == 1,
         "target_filter": "AEST_R2D_TRACE_KH" in atxt,
+        "all_k_transport": "AEST_R2D_TRACE_ALL_K" in atxt and "if (!all_k)" in atxt,
         "trace_file_env": "AEST_R2D_TRACE_FILE" in atxt,
         "prototype": proto in htxt,
     }
