@@ -133,6 +133,17 @@ def normalize_rhs(raw,out):
 def overlap_metrics(rhs_path,src_path):
     rr=read_force(rhs_path); ss=read_force(src_path)
     if not rr or not ss: return {"pass":False,"E_force":float("inf"),"C_force":float("nan")}
+    # R2d RHS trace is target-k only; R2c source-grid tables contain all k modes.
+    # Select the R2c physical-k block nearest to the unique R2d target k before
+    # comparing the forcing on their common tau interval.
+    kr=float(np.median([x[0] for x in rr]))
+    sk=np.asarray(sorted({x[0] for x in ss}),float)
+    ks=float(sk[int(np.argmin(np.abs(sk-kr)))])
+    krel=abs(ks-kr)/max(abs(kr),1e-300)
+    if krel>2e-10:
+        return {"pass":False,"E_force":float("inf"),"C_force":float("nan"),"relative_k_error":krel}
+    rr=[x for x in rr if abs(x[0]-kr)<=2e-13*(1.+abs(kr))]
+    ss=[x for x in ss if x[0]==ks]
     tr=np.asarray([x[1] for x in rr],float); fr=np.asarray([x[2] for x in rr],float)
     ts=np.asarray([x[1] for x in ss],float); fs=np.asarray([x[2] for x in ss],float)
     order=np.argsort(tr); tr=tr[order]; fr=fr[order]
@@ -140,10 +151,12 @@ def overlap_metrics(rhs_path,src_path):
     if len(tr)>1: keep[1:]=np.diff(tr)>0
     tr=tr[keep]; fr=fr[keep]
     good=(ts>=tr[0])&(ts<=tr[-1])
-    if np.count_nonzero(good)<8: return {"pass":False,"E_force":float("inf"),"C_force":float("nan")}
+    if np.count_nonzero(good)<8:
+        return {"pass":False,"E_force":float("inf"),"C_force":float("nan"),"relative_k_error":krel}
     fi=np.interp(ts[good],tr,fr); fsrc=fs[good]
     e=rel(fi,fsrc); c=cosine(fi,fsrc)
-    return {"pass":bool(e<=.02 and c>=.999),"E_force":e,"C_force":c,"overlap_points":int(np.count_nonzero(good))}
+    return {"pass":bool(e<=.02 and c>=.999),"E_force":e,"C_force":c,
+            "overlap_points":int(np.count_nonzero(good)),"relative_k_error":krel}
 
 def main():
     ap=argparse.ArgumentParser()
