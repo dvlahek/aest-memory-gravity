@@ -1,6 +1,6 @@
 # IMPORTANT PROJECT HISTORY
 
-This file is the durable continuation checkpoint for the AeST memory-gravity project. Read this before reopening the DESI direct-velocity / ShapeFit chain.
+This file is the durable continuation checkpoint for the AeST memory-gravity project. Read this before reopening the DESI direct-velocity / ShapeFit chain or the ACT live-lensing chain.
 
 ## 2026-09-15 — R9b2k native-k density breakthrough
 
@@ -145,4 +145,90 @@ Therefore:
 - Repair02 full runner SHA256: `490f0c7c842c1974b6003b70611409128ff27924fa642984a72afcb9c1588498`
 - Repair02 postdata freeze commit: `d3fd6191d55f4e74aa8666f842dae64bd8aee09b`
 
-Treat this as the high-priority continuation state. Future DESI direct-velocity work must begin from the certified Repair02 result, not from the historical R9b2/R9b2j failures.
+Treat this as the high-priority continuation state for DESI direct-velocity work.
+
+## 2026-09-15 — R10a ACT DR6 LIVE WEYL-MEMORY PROJECTION CERTIFIED
+
+**IMPORTANT: the ACT DR6 live-lensing chain is now numerically closed for the certified local AeST regime. Do not revert to interpreting R6a as the final lensing result. R10a supersedes the fixed-template approximation with the certified live Weyl response.**
+
+R10a classification:
+
+`STABLE_AEST_ACT_DR6_R10A_LIVE_WEYL_MEMORY_PROJECTION_CERTIFIED`
+
+All preregistered gates R10A-G1 through R10A-G7 passed:
+
+- parent provenance;
+- official ACT interface control;
+- support and live eta-zero baseline consistency;
+- central-derivative stability in ACT bandpower space;
+- amplitude-deprojection algebra and physical local model;
+- matched-filter / GLS identity;
+- ACT-space tau coherence.
+
+The official ACT control is reproduced: `chi2_fiducial = 14.057911788739439` for target `14.06 +/- 0.10`.
+
+### Live ACT result
+
+For tau/H0 = 10, 5, 2.5, 1.25:
+
+- signed template S/N = `3.226`, `3.261`, `3.327`, `3.460`;
+- signed eta_hat = `8.786e5`, `8.988e5`, `9.385e5`, `1.019e6`;
+- sigma_eta = `2.723e5`, `2.756e5`, `2.820e5`, `2.945e5`;
+- physical Delta chi2 at the edge `eta=0.05` = approximately `1.18e-06` for every tau;
+- `F_perp/F_raw` = approximately `0.598`, `0.595`, `0.591`, `0.585`.
+
+Therefore about 58.5%--59.8% of the raw covariance-metric lensing-template norm survives deprojection against a broadband lensing-amplitude nuisance. The memory fingerprint is not a pure amplitude rescaling.
+
+### Tau result
+
+ACT-space tangent coherence relative to tau10 is extremely high:
+
+- tau5: norm ratio `0.991668`, cosine `0.99999348`;
+- tau2.5: norm ratio `0.975770`, cosine `0.99994374`;
+- tau1.25: norm ratio `0.951043`, cosine `0.99969046`.
+
+Thus shorter relaxation time does not rescue ACT detectability in the certified interval.
+
+### Detection interpretation
+
+**There is no physical AeST-memory detection.**
+
+The `3.2--3.5 sigma` values are signed mathematical template-overlap diagnostics obtained only if eta is allowed to extrapolate to values of order `10^6`. The certified physical interval is only `0 <= eta <= 0.05`, so the required unconstrained coefficient is roughly 1.8e7--2.0e7 times too large.
+
+Inside the licensed physical interval, `Delta chi2 ~ 1.18e-06`, which is observationally negligible.
+
+Therefore:
+
+- no detection claim;
+- no physical eta estimate from eta_hat_signed;
+- no tau bound;
+- no full cosmological inference claim;
+- no nonlinear-lensing claim;
+- live ACT DR6 projection is reportable as a validated physical null-sensitivity result.
+
+### R6a relation
+
+At tau10, R10a closely reproduces the earlier R6a fixed-template result (`sigma_eta`, `eta_hat`, shape fraction, and physical Delta chi2 differ only at the sub-percent level). This validates the earlier qualitative result while replacing it with a live-theory calculation.
+
+### Frozen R10a identifiers
+
+- R10a preregistration: `4c46fd21df048553b577a1927d8404bc493f649e`
+- R10a final implementation: `af2b85cf2a4d564c7575aa9bdcdd9039ff48ba0f`
+- R10a runner / run head: `dd295e0800e45a27d5acd01872915ca4e71bbb40`
+- R10a full runner SHA256: `10a46b4f593220cee1198e7e4a577dd2c3ba027997ab7e2e0245bf0e2e4bb5b4`
+- R10a environment SHA256: `2b362b30502bcc367a30b03ec9d26d89d99bf10ff77cebe3819b1e87414fb722`
+- R10a JSON SHA256: `e794162e7090435e4344f29fb926460e012d3f37fa1c87729e711d172c73598f`
+- R10a science log SHA256: `72ed65ec7f87f45e481c16c72f8f0a5cf22fd2a78dd0ccbb48d9549673aee789`
+- R10a NPZ SHA256: `f37ebc39342a57c6f217a9593b3372aa162102ca337d119cc8a7bc785906c49b`
+- R10a postdata freeze commit: `b7da648f1810ea0c047b6e511e3f87211e830329`
+
+### Next scientific directions
+
+Do not spend the next step on another ACT fixed-template variation. The amplitude, not numerical stability or shape distinctness, is the bottleneck.
+
+Natural next questions are:
+
+1. lensing detectability forecast: quantify the precision improvement needed for a physical `eta=0.05` signal and compare with next-generation surveys;
+2. kSZ / velocity-sensitive observables: test if the memory model leaves a relatively larger signature in electron momentum / peculiar-velocity statistics than in CMB lensing or compressed DESI ShapeFit.
+
+Treat R10a as the authoritative ACT live-lensing checkpoint.
