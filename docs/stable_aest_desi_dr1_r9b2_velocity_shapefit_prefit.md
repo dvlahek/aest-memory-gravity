@@ -58,13 +58,15 @@ The direct-velocity construction must reproduce the structure of the pinned offi
 
 ## Frozen direct CLASS velocity adapter
 
-The frozen stable-AeST baseline already runs CLASS in Newtonian gauge. R9b2 requests CLASS transfer outputs with `mTk,vTk` in addition to the linear matter spectrum.
+The frozen stable-AeST baseline runs CLASS in Newtonian gauge. R9b2 requests CLASS transfer outputs with `mTk,vTk` in addition to the linear matter spectrum.
 
 At each DESI effective redshift `z`, read the CLASS transfer dictionary and require the fields
 
 - `k (h/Mpc)`;
 - `d_b`, `d_cdm`;
 - `t_b`, `t_cdm`.
+
+CLASS source inspection fixes the meaning of the velocity columns: in CLASS-format transfer output, `t_b` stores the baryon velocity-divergence source `theta_b`, and `t_cdm` stores `theta_cdm` in Newtonian gauge. They are not velocity potentials.
 
 Let
 
@@ -74,11 +76,13 @@ Construct the clustering-species density transfer
 
 `delta_cb = f_b d_b + f_c d_cdm`.
 
-For the frozen Newtonian-gauge CLASS convention, use `t_b` and `t_cdm` as the velocity divergences and convert them to the CAMB/DESI dimensionless Newtonian-velocity variables
+For Newtonian gauge, define the CAMB/DESI dimensionless Newtonian-velocity transfer candidate from the CLASS divergence by
 
-`v_newtonian_x = - t_x / (k * Hconf)`,
+`v_newtonian_x = - t_x / Hconf`,
 
-where `k` is in `1/Mpc` and `Hconf = a H` is the conformal Hubble rate in `1/Mpc`.
+where `Hconf = a H` is the conformal Hubble rate in `1/Mpc`. No extra factor of `k` is inserted. This follows the standard relation between velocity divergence and scalar velocity amplitude and the CAMB definition `v_newtonian_x = -v_N,x k/Hconf`.
+
+This normalization is not accepted on convention alone: it must pass the frozen GR cross-code validation below before any AeST R9b2 science result is evaluated.
 
 Then construct
 
@@ -91,6 +95,35 @@ For adiabatic scalar initial conditions, the auto/cross velocity combination use
 The density spectrum remains the direct modified-CLASS linear `P_cb(k,z)`. No numerical redshift derivative is used in the primary `df` construction.
 
 The old `effective_f_sigma8/sigma8` value may be recorded only as a non-gating diagnostic. It cannot enter `df`, the central tangent, nuisance projection, matched filter, or classification.
+
+## Frozen GR cross-code validation before AeST science
+
+Before evaluating any `eta != 0` AeST R9b2 point, run a pure GR/LambdaCDM control at the same six DESI effective redshifts and with the same background/primordial parameters in CLASS and CAMB.
+
+From CLASS construct
+
+- `P_delta_delta^CLASS` from the direct linear clustering-species spectrum;
+- `P_theta_theta^CLASS` from `t_b,t_cdm` using the adapter above;
+- `f^CLASS = sigma8[P_theta_theta^CLASS] / sigma8[P_delta_delta^CLASS]`.
+
+From CAMB request the native transfer/power variables
+
+- `delta_nonu`;
+- `v_newtonian_cdm`;
+- `v_newtonian_baryon`;
+
+and reproduce the official DESI baryon/CDM weighted velocity combination and corresponding `f^CAMB`.
+
+The validation is performed only on theory outputs, before reading any DESI residual or likelihood preference.
+
+The direct-velocity adapter is accepted iff, for all six effective redshifts,
+
+- the CLASS and CAMB density-spectrum sigma8 values agree to relative `<= 5e-3`;
+- the CLASS and CAMB velocity-spectrum sigma8 values agree to relative `<= 5e-3`;
+- the resulting `f` values agree to relative `<= 5e-3`;
+- the sign/orientation is common across the retained linear k range and all reconstructed spectra are finite and nonnegative.
+
+If this validation fails, R9b2 stops as an adapter-validation failure. No alternative normalization is selected after looking at AeST/DESI science output. A corrected adapter requires a new pre-result repair declaration.
 
 ## Unchanged physics and analysis settings
 
@@ -121,9 +154,9 @@ PASS iff the frozen R9b post-result commit is an ancestor of HEAD with exact his
 
 Identical to R9b G2.
 
-### R9B2-G3 direct-velocity ShapeFit construction
+### R9B2-G3 direct-velocity adapter validation and ShapeFit construction
 
-PASS iff all six ShapeFit bins are valid, all eta=0 theory vectors are finite, every requested CLASS transfer dictionary contains the frozen density and velocity fields, the transfer k grid is finite/strictly positive, `delta_cb` is nonzero on the retained grid, the reconstructed `P_theta_theta` is finite and nonnegative, and every resulting `df` and `dm` is finite.
+PASS iff the frozen GR CLASS-vs-CAMB cross-code validation above passes, all six ShapeFit bins are valid, all eta=0 theory vectors are finite, every requested CLASS transfer dictionary contains the frozen density and velocity fields, the transfer k grid is finite/strictly positive, `delta_cb` is nonzero on the retained grid, the reconstructed `P_theta_theta` is finite and nonnegative, and every resulting `df` and `dm` is finite.
 
 ### R9B2-G4 central derivative consistency
 
@@ -153,6 +186,6 @@ If G1-G6 all pass, classification is
 
 ## Claim discipline
 
-A PASS licenses a reproducible projection of the frozen stable-AeST local memory tangent onto the official DESI DR1 ShapeFit compression using a direct CLASS velocity-transfer construction consistent with the official DESI velocity/density definition.
+A PASS licenses a reproducible projection of the frozen stable-AeST local memory tangent onto the official DESI DR1 ShapeFit compression using a direct CLASS velocity-transfer construction cross-validated against CAMB and consistent with the official DESI velocity/density definition.
 
 It still does not license an observational detection, a tau/eta bound beyond the validated local interval, or a raw full-EFT modified-gravity claim. Any interesting nonzero DESI preference remains subject to the separately preregistered R9c full power-spectrum/EFT confirmation.
