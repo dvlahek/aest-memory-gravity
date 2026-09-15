@@ -4,9 +4,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 mkdir -p results .local
 
-PREFIT_LOCK='819e40eeea3dec55181fc63233e4002cda005a2e'
-IMPLEMENTATION_LOCK='9db2f444c310a311116b58659b8154743ca707d5'
-IMPLEMENTATION_BLOB='aaebb2206e54c2a1c8f5899b5d1e0c28081a6c52'
+PREFIT_LOCK='a34c4d13738383c670222472b3af8ab4e1802fdf'
+IMPLEMENTATION_LOCK='44a65aea8f671a0af7534447c31f415a6c9d314c'
+IMPLEMENTATION_BLOB='53c2f2d20b32f70d0550da185cea2b81e4cf4987'
 R9B2K_POSTDATA_LOCK='dd3981b2fd838fb24a997af77f913c3d5dd8d07b'
 REPAIR02_POSTDATA_LOCK='d3fd6191d55f4e74aa8666f842dae64bd8aee09b'
 R10A_POSTDATA_LOCK='b7da648f1810ea0c047b6e511e3f87211e830329'
@@ -50,11 +50,11 @@ python - <<'PY'
 from pathlib import Path
 p=Path('fullj_weyl/stable_aest_ksz_r11a_pairwise_velocity_response.py').read_text()
 required=[
- 'PREFIT_LOCK = "819e40eeea3dec55181fc63233e4002cda005a2e"',
+ 'PREFIT_LOCK = "a34c4d13738383c670222472b3af8ab4e1802fdf"',
  'R9B2K_POSTDATA_LOCK = "dd3981b2fd838fb24a997af77f913c3d5dd8d07b"',
  'REPAIR02_POSTDATA_LOCK = "d3fd6191d55f4e74aa8666f842dae64bd8aee09b"',
  'R10A_POSTDATA_LOCK = "b7da648f1810ea0c047b6e511e3f87211e830329"',
- 'R_MPC_H = np.arange(20.0, 201.0, 10.0)',
+ 'R_MPC_H = np.arange(40.0, 201.0, 10.0)',
  'EPS_PRIMARY = 0.025',
  'EPS_CONTROL = 0.05',
  'pdf = sign * np.sqrt(pdd * ptt)',
