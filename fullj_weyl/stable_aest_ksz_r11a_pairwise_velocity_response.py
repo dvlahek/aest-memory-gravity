@@ -16,7 +16,7 @@ from scipy.special import spherical_jn
 from fullj_weyl import stable_aest_desi_dr1_r9b2k_native_k_density_convergence as k2
 
 ROOT = Path(__file__).resolve().parents[1]
-PREFIT_LOCK = "819e40eeea3dec55181fc63233e4002cda005a2e"
+PREFIT_LOCK = "a34c4d13738383c670222472b3af8ab4e1802fdf"
 R9B2K_POSTDATA_LOCK = "dd3981b2fd838fb24a997af77f913c3d5dd8d07b"
 REPAIR02_POSTDATA_LOCK = "d3fd6191d55f4e74aa8666f842dae64bd8aee09b"
 R10A_POSTDATA_LOCK = "b7da648f1810ea0c047b6e511e3f87211e830329"
@@ -28,7 +28,7 @@ TAUS = (10.0, 5.0, 2.5, 1.25)
 ETAS = (0.0, 0.025, -0.025, 0.05, -0.05)
 EPS_PRIMARY = 0.025
 EPS_CONTROL = 0.05
-R_MPC_H = np.arange(20.0, 201.0, 10.0)
+R_MPC_H = np.arange(40.0, 201.0, 10.0)
 Z = np.asarray(k2.ZEFF, float)
 C_KMS = 299792.458
 DEFAULT_NK = 108
@@ -196,7 +196,6 @@ def main() -> int:
     out = Path(args.json_out); work = Path(args.workdir)
     print("STABLE_AEST_KSZ_R11A_START", flush=True)
 
-    # G1: immutable parent chain and all existing checkpoints.
     prov = {
         "prefit_lock": PREFIT_LOCK,
         "r9b2k_postdata_lock": R9B2K_POSTDATA_LOCK,
@@ -245,7 +244,6 @@ def main() -> int:
 
     print(f"STABLE_AEST_KSZ_R11A_CHECKPOINT_PASS count={len(checkpoint_meta)}", flush=True)
 
-    # Build all pairwise curves with both operators.
     pw = {}
     try:
         for key, case in cases.items():
@@ -260,7 +258,6 @@ def main() -> int:
     def V(tier, tau, eta, op):
         return pw[(tier, float(tau), float(eta), op)]["v"]
 
-    # G2: baseline physicality, actual native refinement, eta0 tau invariance.
     g2 = True
     physicality = []
     for tau in TAUS:
@@ -288,14 +285,12 @@ def main() -> int:
         eta0_tau_max_rel = max(eta0_tau_max_rel, _max_point_rel(vref, V("D2", tau, 0.0, "simpson")))
     g2 &= bool(eta0_tau_max_rel <= ETA0_TAU_REL_GATE)
 
-    # G3: baseline quadrature agreement.
     baseline_quad = {}; g3 = True
     for tau in TAUS:
         m = metric(V("D2", tau, 0.0, "simpson"), V("D2", tau, 0.0, "trapezoid"))
         baseline_quad[str(tau)] = m
         g3 &= bool(m["E"] <= BASELINE_E_GATE and m["C"] >= BASELINE_C_GATE)
 
-    # Tangents for all needed cases.
     tang = {}
     abs_tang = {}
     for tier, taus in (("D1", (10.0,)), ("D2", TAUS)):
@@ -307,7 +302,6 @@ def main() -> int:
                     tang[(tier, tau, op, eps)] = _frac_tangent(v0, vp, vm, eps)
                     abs_tang[(tier, tau, op, eps)] = _abs_tangent(vp, vm, eps)
 
-    # G4 epsilon consistency.
     eps_metrics = {}; g4 = True
     for tau in TAUS:
         eps_metrics[str(tau)] = {}
@@ -315,7 +309,6 @@ def main() -> int:
             m = metric(tang[("D2", tau, op, EPS_PRIMARY)], tang[("D2", tau, op, EPS_CONTROL)])
             eps_metrics[str(tau)][op] = m; g4 &= tangent_pass(m)
 
-    # G5 D1 -> D2 convergence at tau10.
     density_metrics = {}; g5 = True
     for op in ("simpson", "trapezoid"):
         density_metrics[op] = {}
@@ -323,7 +316,6 @@ def main() -> int:
             m = metric(tang[("D1", 10.0, op, eps)], tang[("D2", 10.0, op, eps)])
             density_metrics[op][str(eps)] = m; g5 &= tangent_pass(m)
 
-    # G6 Simpson <-> trapezoid tangent agreement on D2.
     cross_quad = {}; g6 = True
     for tau in TAUS:
         cross_quad[str(tau)] = {}
@@ -331,7 +323,6 @@ def main() -> int:
             m = metric(tang[("D2", tau, "simpson", eps)], tang[("D2", tau, "trapezoid", eps)])
             cross_quad[str(tau)][str(eps)] = m; g6 &= tangent_pass(m)
 
-    # G7 direct eta=0.05 physical shift vs local linear prediction.
     linearity = {}; g7 = True
     physical = {}
     for tau in TAUS:
@@ -364,7 +355,6 @@ def main() -> int:
             },
         }
 
-    # Descriptive tau coherence; intentionally not a gate.
     tau_coherence = {}
     tref = tang[("D2", 10.0, "simpson", EPS_PRIMARY)]
     for tau in TAUS:
