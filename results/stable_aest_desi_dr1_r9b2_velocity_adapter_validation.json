@@ -1,0 +1,122 @@
+{
+  "adapter": {
+    "Hconf": "Hubble(z)/(1+z)",
+    "class_column_meaning": [
+      "theta_b",
+      "theta_cdm"
+    ],
+    "class_velocity_columns": [
+      "t_b",
+      "t_cdm"
+    ],
+    "mapping": "v_newtonian_x = -theta_x / Hconf",
+    "velocity_spectrum": "P_cb * (v_cb/delta_cb)^2"
+  },
+  "classification": "STABLE_AEST_DESI_DR1_R9B2_VELOCITY_ADAPTER_VALIDATED",
+  "diagnostic_complete": true,
+  "gate": 0.005,
+  "parent": {
+    "classification": "STABLE_AEST_DESI_DR1_R9B_CENTRAL_DERIVATIVE_FAIL",
+    "gates": {
+      "R9B_G1_parent_and_official_data_provenance": true,
+      "R9B_G2_direct_physical_source_topology": true,
+      "R9B_G3_shapefit_data_construction": true,
+      "R9B_G4_central_derivative_consistency": false,
+      "R9B_G5_nuisance_projection_algebra": false,
+      "R9B_G6_matched_filter_gls_identity": false
+    }
+  },
+  "rows": [
+    {
+      "camb_f": 0.681287417599708,
+      "camb_sigma8_dd": 0.7022604696407299,
+      "camb_sigma8_tt": 0.478441221843891,
+      "class_f": 0.681259751306656,
+      "class_sigma8_dd": 0.7023810498705182,
+      "class_sigma8_tt": 0.4785039393572971,
+      "old_proxy": 0.6812019827703937,
+      "old_proxy_rel_to_direct": 8.479663762826202e-05,
+      "pass": true,
+      "rel_f": 4.0608841932730003e-05,
+      "rel_sigma8_dd": 0.00017167352366719585,
+      "rel_sigma8_tt": 0.00013107000433555452,
+      "z": 0.29536404346937617
+    },
+    {
+      "camb_f": 0.7624971513713459,
+      "camb_sigma8_dd": 0.6286963870223394,
+      "camb_sigma8_tt": 0.479379204181991,
+      "class_f": 0.7624690202584387,
+      "class_sigma8_dd": 0.6288053392257484,
+      "class_sigma8_tt": 0.47944459093273156,
+      "old_proxy": 0.7629897809353736,
+      "old_proxy_rel_to_direct": 0.0006825264111618171,
+      "pass": true,
+      "rel_f": 3.689340065944156e-05,
+      "rel_sigma8_dd": 0.0001732685723425326,
+      "rel_sigma8_tt": 0.00013638020321258667,
+      "z": 0.5096288678782911
+    },
+    {
+      "camb_f": 0.8174880779918648,
+      "camb_sigma8_dd": 0.5708002168574939,
+      "camb_sigma8_tt": 0.46662237219617236,
+      "class_f": 0.8174598773776501,
+      "class_sigma8_dd": 0.5708996981317723,
+      "class_sigma8_tt": 0.4666875972297361,
+      "old_proxy": 0.8183345229819001,
+      "old_proxy_rel_to_direct": 0.0010688118119016909,
+      "pass": true,
+      "rel_f": 3.449666725903434e-05,
+      "rel_sigma8_dd": 0.00017425350653352134,
+      "rel_sigma8_tt": 0.00013976166058598117,
+      "z": 0.7057956472488681
+    },
+    {
+      "camb_f": 0.8611653904453578,
+      "camb_sigma8_dd": 0.5171235291446146,
+      "camb_sigma8_tt": 0.44532888588430336,
+      "class_f": 0.8611374803079561,
+      "class_sigma8_dd": 0.5172140277823044,
+      "class_sigma8_tt": 0.44539238466438286,
+      "old_proxy": 0.8622176992413028,
+      "old_proxy_rel_to_direct": 0.0012528378091718234,
+      "pass": true,
+      "rel_f": 3.240972954943249e-05,
+      "rel_sigma8_dd": 0.00017497328538801873,
+      "rel_sigma8_tt": 0.00014256817643468352,
+      "z": 0.9185851971138159
+    },
+    {
+      "camb_f": 0.9131870535644292,
+      "camb_sigma8_dd": 0.4372609268023552,
+      "camb_sigma8_tt": 0.3993010173854943,
+      "class_f": 0.9131582105154363,
+      "class_sigma8_dd": 0.4373375658719475,
+      "class_sigma8_tt": 0.39935838904280435,
+      "old_proxy": 0.9143155473507716,
+      "old_proxy_rel_to_direct": 0.0012657958608367063,
+      "pass": true,
+      "rel_f": 3.158503931947272e-05,
+      "rel_sigma8_dd": 0.00017524007899829327,
+      "rel_sigma8_tt": 0.00014365957717221944,
+      "z": 1.3170658832980264
+    },
+    {
+      "camb_f": 0.927934232742648,
+      "camb_sigma8_dd": 0.40914368258556505,
+      "camb_sigma8_tt": 0.3796584291815378,
+      "class_f": 0.9279048400639893,
+      "class_sigma8_dd": 0.4092153628786323,
+      "class_sigma8_tt": 0.37971291584362465,
+      "old_proxy": 0.9290326720175363,
+      "old_proxy_rel_to_direct": 0.0012139852424109827,
+      "pass": true,
+      "rel_f": 3.1675389937681046e-05,
+      "rel_sigma8_dd": 0.00017516520534082425,
+      "rel_sigma8_tt": 0.00014349436064294696,
+      "z": 1.4905017757527006
+    }
+  ],
+  "science_evaluated": false
+}
