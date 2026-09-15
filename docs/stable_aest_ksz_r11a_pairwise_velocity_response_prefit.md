@@ -35,9 +35,9 @@ Use the same local eta stencil:
 
 Use separations
 
-`r = 20, 30, ..., 200 Mpc/h`.
+`r = 40, 50, ..., 200 Mpc/h`.
 
-The minimum separation is deliberately kept at 20 Mpc/h because R11a is a linear-theory diagnostic, not a nonlinear halo-pair model.
+This conservative lower cut is frozen before any R11a result is evaluated. R11a intentionally stays on large scales where the linear pairwise-velocity approximation is the appropriate diagnostic. Smaller separations would require halo/nonlinear corrections and are deferred to any later observational kSZ stage.
 
 ## Pairwise-velocity construction
 
@@ -88,7 +88,7 @@ The certified Repair02 result and frozen parent commits must be ancestors of HEA
 
 ### R11A-G2 — baseline physicality and eta-zero tau invariance
 
-For all six redshifts and all 19 separations:
+For all six redshifts and all 17 separations:
 
 - `v12`, `xi`, and `I_df` are finite;
 - `1 + xi > 0`;
@@ -150,7 +150,7 @@ Require
 
 Only if G1--G7 all pass, report for each tau:
 
-- maximum and RMS `|T_v12|` over the 6 x 19 grid;
+- maximum and RMS `|T_v12|` over the 6 x 17 grid;
 - maximum and RMS fractional physical shift at eta=0.05;
 - maximum absolute velocity shift in km/s at eta=0.05;
 - location `(z,r)` of the largest fractional shift;
