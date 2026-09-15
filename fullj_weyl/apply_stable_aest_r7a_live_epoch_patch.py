@@ -5,9 +5,12 @@ import argparse
 from pathlib import Path
 
 MARKER = "FULLJ_STABLE_AEST_R7A_LIVE_EPOCH_V1"
+SIGNED_MARKER = "FULLJ_STABLE_AEST_R7A_SIGNED_ETA_DIAGNOSTIC_V1"
 PROTO = "double aest_r7a_epoch_weight(double a);"
 OLD_MUL = "Bchi_aest *= pba->aest_eta;"
 NEW_MUL = "Bchi_aest *= pba->aest_eta*aest_r7a_epoch_weight(a);"
+ETA_GUARD = "pba->aest_eta < 0."
+ETA_MESSAGE = "AeST memory requires aest_eta >= 0"
 
 
 def main() -> int:
@@ -18,7 +21,8 @@ def main() -> int:
     pc = root / "source" / "perturbations.c"
     am = root / "source" / "aest_memory.c"
     ah = root / "include" / "aest_memory.h"
-    if not pc.is_file() or not am.is_file() or not ah.is_file():
+    inp = root / "source" / "input.c"
+    if not pc.is_file() or not am.is_file() or not ah.is_file() or not inp.is_file():
         raise SystemExit("not an AeST CLASS source root")
 
     ptxt = pc.read_text()
@@ -35,6 +39,26 @@ def main() -> int:
         raise RuntimeError("R7a requires dormant external tangent hook to be neutralized before patch")
     if "aest_r2d_trace_force(k,pba->h,tau" in ptxt:
         raise RuntimeError("R7a must not contain an R2d full-history trace hook")
+
+    # Technical pre-result repair: the frozen parent parser forbids eta<0, while
+    # R7a preregistered a symmetric diagnostic derivative about eta=0. Disable
+    # only that input-domain guard in this disposable R7a source. The physical
+    # perturbation equations and the eta multiplier are not changed here.
+    itxt = inp.read_text()
+    if itxt.count(ETA_MESSAGE) != 1:
+        raise RuntimeError(
+            f"R7a signed-eta parser message expected once, found {itxt.count(ETA_MESSAGE)}"
+        )
+    if itxt.count(ETA_GUARD) != 1:
+        raise RuntimeError(
+            f"R7a signed-eta parser condition expected once, found {itxt.count(ETA_GUARD)}"
+        )
+    itxt = itxt.replace(
+        ETA_GUARD,
+        f"0 /* {SIGNED_MARKER}: symmetric derivative continuation only */",
+        1,
+    )
+    inp.write_text(itxt)
 
     htxt = ah.read_text()
     if PROTO not in htxt:
@@ -107,7 +131,7 @@ double aest_r7a_epoch_weight(double a) {
     )
     pc.write_text(ptxt)
 
-    ptxt = pc.read_text(); atxt = am.read_text(); htxt = ah.read_text()
+    ptxt = pc.read_text(); atxt = am.read_text(); htxt = ah.read_text(); itxt = inp.read_text()
     checks = {
         "marker": MARKER in ptxt and MARKER in atxt,
         "stable_parent": "FULLJ_AEST_STABLE_CHI_RESIDUAL_V1" in ptxt,
@@ -120,6 +144,9 @@ double aest_r7a_epoch_weight(double a) {
         "mode_env": "AEST_R7A_EPOCH_MODE" in atxt,
         "all_modes": all(('\"'+x+'\"') in atxt for x in ("full","ancient","intermediate","recent_structure","late")),
         "prototype": PROTO in htxt,
+        "signed_eta_parser_marker_once": itxt.count(SIGNED_MARKER) == 1,
+        "signed_eta_guard_absent": ETA_GUARD not in itxt,
+        "signed_eta_message_retained_once": itxt.count(ETA_MESSAGE) == 1,
     }
     if not all(checks.values()):
         raise RuntimeError("R7a live epoch patch audit failed: " + repr(checks))
