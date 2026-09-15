@@ -78,6 +78,7 @@ def prepare_params(tau: float, variant: str):
     params["output"] = "mPk,mTk,vTk"
     params.pop("non_linear", None)
     params.pop("lensing", None)
+    params.pop("l_max_scalars", None)
 
     if variant == "locked":
         pass
