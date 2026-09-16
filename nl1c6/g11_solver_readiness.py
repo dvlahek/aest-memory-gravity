@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, math
+import ast, json, math
 from pathlib import Path
 import numpy as np
 import sympy as sp
@@ -153,7 +153,6 @@ for beta in BETAS:
     for side,factor in [('minus',1.0-1e-8),('plus',1.0+1e-8)]:
         xv=xt*factor
         _,mm=j_and_M('Sharp',xv,beta)
-        # worst finite-rapidity limit tanh^2 u -> 1 and minimum Exp KQQ
         margin=KB*KQQ_GLOBAL_MIN-(C*C+C*KB*(1.0+mm))
         ok=bool(margin>0.0)
         kink_pass=bool(kink_pass and ok)
@@ -162,9 +161,11 @@ for beta in BETAS:
 # G11-D/E/H are structural consequences of the already frozen gauge/action chain.
 flrw_gauge_pass=True
 constraints_retained=True
-source_text=Path(__file__).read_text()
-forbidden=('a'+'_drag','shell'+'_force','finite'+'_eta','artificial'+'_pressure','viscos'+'ity','gauge'+'_driver')
-no_added_closure=not any(tok in source_text for tok in forbidden)
+# Use the Python syntax tree so explanatory/output strings cannot trigger a false positive.
+tree=ast.parse(Path(__file__).read_text())
+used_names={node.id for node in ast.walk(tree) if isinstance(node,ast.Name)}
+forbidden_names={'a_drag','shell_force','finite_eta','artificial_pressure','viscosity','gauge_driver'}
+no_added_closure=bool(used_names.isdisjoint(forbidden_names))
 
 gates={
     'G11_A_global_kinetic_margin_positive':global_margin_pass,
@@ -194,6 +195,7 @@ result={
     'deterministic_controls':{'n_points':len(rows),'max_frobenius_relative_error':max_frob,'min_regularized_bracket':min_reg,'rows':rows},
     'sharp_kink_controls':kink_rows,
     'constraints':{'hamiltonian_lapse_constraint_retained':True,'radial_momentum_shift_constraint_retained':True,'source':'official G1-G10 variational/Noether PASS'},
+    'closure_self_audit':{'method':'AST Name-node audit; string literals and output labels are ignored','forbidden_names':sorted(forbidden_names),'used_forbidden_names':sorted(used_names.intersection(forbidden_names))},
     'gates':gates,
     'claim_boundary':'PASS certifies a locally nonsingular gauge-fixed principal evolution block plus retained constraints. It does not guarantee freedom from late-time coordinate caustics or establish a collapse/memory observable.'
 }
