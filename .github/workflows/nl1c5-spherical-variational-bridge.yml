@@ -1,0 +1,99 @@
+name: NL1C5 spherical variational bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [nl1c5-spherical-variational-bridge]
+    paths:
+      - 'nl1c5/**'
+      - 'docs/nl1c5_predata_spherical_variational_bridge.md'
+      - '.github/workflows/nl1c5-spherical-variational-bridge.yml'
+
+jobs:
+  spherical-variational-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Verify frozen preregistration and implementation lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 9f23f0d5bd86f70eab7221e604d8566aa322cb50:nl1c5/spherical_variational_bridge.py)" = "7f9fcab2cfc2ef8d75a81a4ff7e914770096d1c8"
+          git merge-base --is-ancestor 0a5f0cdf8bf01319c9a3026b5cfaaa42979a1efb HEAD
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/nl1c5_predata_spherical_variational_bridge.md').read_text()
+          assert 'NL1C5_PREDATA_SPHERICAL_VARIATIONAL_BRIDGE' in p
+          assert '0a5f0cdf8bf01319c9a3026b5cfaaa42979a1efb' in p
+          assert '35074946151' in p
+          assert '10437352769' in p
+          assert '5594457eab915ed2150e4a66d35cb8b98b8c5f6f084c3a0ced1f556f0a86913c' in p
+          assert 'NL1C5_SPHERICAL_VARIATIONAL_BRIDGE_PASS' in p
+          print('NL1C5_PREDATA_LOCK_PASS')
+          PY
+
+      - name: Verify NL1C4 official provenance
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35074946151)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="e6b8b1956fdfd53aa6b4dfd3c25650fb192523cd"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10437352769)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:5594457eab915ed2150e4a66d35cb8b98b8c5f6f084c3a0ced1f556f0a86913c"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C4_PROVENANCE_PASS
+
+      - name: Re-run NL1C3B dependency gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 nl1c3b/longitudinal_3plus1_memory_bridge.py > results/nl1c3b_dependency_for_nl1c5.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c3b_longitudinal_3plus1_memory_bridge.json'))
+          assert d['classification']=='NL1C3B_LONGITUDINAL_3PLUS1_MEMORY_BRIDGE_PASS'
+          assert all(d['locked_gates'].values())
+          print('NL1C3B_DEPENDENCY_PASS')
+          PY
+
+      - name: Run NL1C5 spherical variational bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile nl1c5/spherical_variational_bridge.py
+          python3 nl1c5/spherical_variational_bridge.py | tee results/nl1c5_spherical_variational_bridge.log
+
+      - name: Verify final classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c5_spherical_variational_bridge.json'))
+          assert d['classification']=='NL1C5_SPHERICAL_VARIATIONAL_BRIDGE_PASS'
+          assert all(d['gates'].values())
+          assert d['variation_audit']['max_relative_error'] <= 1e-6
+          assert d['helmholtz_audit']['normalized_residual'] <= 1e-10
+          print('NL1C5_SPHERICAL_VARIATIONAL_BRIDGE_PASS')
+          PY
+
+      - name: Upload NL1C5 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c5_spherical_variational_bridge
+          path: |
+            results/nl1c5_spherical_variational_bridge.json
+            results/nl1c5_spherical_variational_bridge.log
+            results/nl1c3b_longitudinal_3plus1_memory_bridge.json
+            results/nl1c3b_dependency_for_nl1c5.log
+          if-no-files-found: warn
