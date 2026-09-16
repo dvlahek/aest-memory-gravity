@@ -22,8 +22,6 @@ def main():
     new_proto='''void aest_offline_trace_state(double k,double tau,double a,double H,double H0,\n                              double chi,double Q,double rhoA,double KQ,double KQQ,\n                              double delta_b,double theta_b,double delta_A,double theta_A,\n                              double alpha_A,double E_A,double Phi,double Phi_prime,double Psi);\n'''
     replace_once(hp,old_proto,new_proto,'trace prototype')
 
-    # Repair01: the validated stack applies v0.72 before C7A. Anchor to the
-    # post-v0.72 helper and preserve all runtime path reload/flush semantics.
     old_helper=r'''void aest_offline_trace_state(double k,double tau,double a,double H,double H0,
                               double chi,double Q) {
   static FILE *fp = NULL;
@@ -91,7 +89,7 @@ def main():
     replace_once(src,old_helper,new_helper,'trace helper')
 
     old_call='''  if ((pba->aest_enabled == _TRUE_) &&\n      (index_md == ppt->index_md_scalars)) {\n    double Q_trace = pvecback[pba->index_bg_Q_aest];\n    double theta_trace = y[ppw->pv->index_pt_theta_cdm];\n    double alpha_trace = y[ppw->pv->index_pt_alpha_aest];\n    double chi_trace = Q_trace*(a*theta_trace/(k*k)+alpha_trace);\n    aest_offline_trace_state(k,tau,a,pvecback[pba->index_bg_H],pba->H0,\n                             chi_trace,Q_trace);\n  }\n'''
-    new_call='''  if ((pba->aest_enabled == _TRUE_) &&\n      (index_md == ppt->index_md_scalars)) {\n    double Q_trace = pvecback[pba->index_bg_Q_aest];\n    double theta_trace = y[ppw->pv->index_pt_theta_cdm];\n    double alpha_trace = y[ppw->pv->index_pt_alpha_aest];\n    double chi_trace = Q_trace*(a*theta_trace/(k*k)+alpha_trace);\n    double rhoA_trace = pvecback[pba->index_bg_rho_cdm];\n    double KQ_trace = pvecback[pba->index_bg_KQ_aest];\n    double cad2_trace = pvecback[pba->index_bg_cad2_aest];\n    double KQQ_trace = KQ_trace/(Q_trace*cad2_trace);\n    aest_offline_trace_state(k,tau,a,pvecback[pba->index_bg_H],pba->H0,\n                             chi_trace,Q_trace,rhoA_trace,KQ_trace,KQQ_trace,\n                             y[ppw->pv->index_pt_delta_b],y[ppw->pv->index_pt_theta_b],\n                             y[ppw->pv->index_pt_delta_cdm],y[ppw->pv->index_pt_theta_cdm],\n                             alpha_trace,y[ppw->pv->index_pt_E_aest],\n                             y[ppw->pv->index_pt_phi],ppw->pvecmetric[ppt->index_mt_phi_prime],\n                             ppw->pvecmetric[ppt->index_mt_psi]);\n  }\n'''
+    new_call='''  if ((pba->aest_enabled == _TRUE_) &&\n      (index_md == ppt->index_md_scalars)) {\n    double Q_trace = pvecback[pba->index_bg_Q_aest];\n    double theta_trace = y[ppw->pv->index_pt_theta_cdm];\n    double alpha_trace = y[ppw->pv->index_pt_alpha_aest];\n    double chi_trace = Q_trace*(a*theta_trace/(k*k)+alpha_trace);\n    double rhoA_trace = pvecback[pba->index_bg_rho_cdm];\n    double KQ_trace = pvecback[pba->index_bg_KQ_aest];\n    double cad2_trace = pvecback[pba->index_bg_cad2_aest];\n    double KQQ_trace = KQ_trace/(Q_trace*cad2_trace);\n    aest_offline_trace_state(k,tau,a,pvecback[pba->index_bg_H],pba->H0,\n                             chi_trace,Q_trace,rhoA_trace,KQ_trace,KQQ_trace,\n                             y[ppw->pv->index_pt_delta_b],y[ppw->pv->index_pt_theta_b],\n                             y[ppw->pv->index_pt_delta_cdm],y[ppw->pv->index_pt_theta_cdm],\n                             alpha_trace,y[ppw->pv->index_pt_E_aest],\n                             y[ppw->pv->index_pt_phi],ppw->pvecmetric[ppw->index_mt_phi_prime],\n                             ppw->pvecmetric[ppw->index_mt_psi]);\n  }\n'''
     replace_once(pert,old_call,new_call,'accepted source trace call')
 
     stxt=src.read_text(); ptxt=pert.read_text()
@@ -104,12 +102,14 @@ def main():
       'post_v072_flush_retained':helper.count('fflush(fp);')>=3,
       'output_only_fields_present':all(x in helper for x in ['delta_b','theta_b','delta_A','theta_A','alpha_A','E_A','Phi','Phi_prime','Psi','KQQ']),
       'accepted_source_location_retained':'aest_offline_trace_state(k,tau,a,pvecback[pba->index_bg_H],pba->H0' in ptxt,
+      'metric_indices_owned_by_workspace':'ppw->pvecmetric[ppw->index_mt_phi_prime]' in ptxt and 'ppw->pvecmetric[ppw->index_mt_psi]' in ptxt,
+      'no_invalid_ppt_metric_indices':'ppt->index_mt_phi_prime' not in ptxt and 'ppt->index_mt_psi' not in ptxt,
       'no_new_derivative_assignment':'NL1C7A' not in ''.join(line for line in ptxt.splitlines() if 'dy[' in line),
     }
     report={
-      'classification':'NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION_REPAIR01',
-      'historical_technical_failure_run':35092490498,
-      'repair':'anchor and replacement helper updated from original v0.23 form to post-v0.72 runtime-reload form; science gates unchanged',
+      'classification':'NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION_REPAIR03',
+      'historical_technical_failure_runs':[35092490498,35093456930,35093652714],
+      'repair03':'diagnostic metric indices index_mt_phi_prime/index_mt_psi are read from perturbations_workspace ppw, matching pinned CLASS ownership; science gates unchanged',
       'fields':['k','tau','a','H_Mpc_inv','H_over_H0','chi','Q','rhoA','KQ','KQQ','delta_b','theta_b','delta_A','theta_A','alpha_A','E_A','Phi','Phi_prime','Psi'],
       'replacements':{'prototype':1,'helper':1,'accepted_source_call':1},
       'checks':checks,
