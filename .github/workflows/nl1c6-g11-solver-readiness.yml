@@ -53,24 +53,30 @@ jobs:
           python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:935a9f05364c3f00f85616957fe217bcd1708915ee5a4d72a0bd9f896a582b6a"; assert d["expired"] is False' <<<"${art_json}"
           echo NL1C6_G1_G10_PROVENANCE_PASS
 
-      - name: Re-run G1-G10 dependency
+      - name: Load certified G1-G10 dependency artifact
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p results
-          python3 nl1c6/spherical_self_gravity_g1_g10.py > results/nl1c6_g1_g10_dependency_for_g11.log
+          mkdir -p results/g1g10_official
+          gh run download 35088549978 -n results_bundle_nl1c6_g1_g10 -D results/g1g10_official
           python3 - <<'PY'
           import json
-          d=json.load(open('results/nl1c6_spherical_self_gravity_g1_g10.json'))
+          p='results/g1g10_official/nl1c6_spherical_self_gravity_g1_g10.json'
+          d=json.load(open(p))
           assert d['classification']=='NL1C6_G1_G10_PASS_PENDING_G11'
           assert all(d['gates'].values())
-          print('NL1C6_G1_G10_DEPENDENCY_PASS')
+          assert d['variation_audit']['max_relative_error']==3.0234628378725663e-07
+          assert d['radial_diffeomorphism_noether']['normalized_residual']==3.321538460904162e-09
+          print('NL1C6_CERTIFIED_G1_G10_ARTIFACT_PASS')
           PY
 
       - name: Run locked G11 solver-readiness audit
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p results
           python3 -m py_compile nl1c6/g11_solver_readiness.py
           python3 nl1c6/g11_solver_readiness.py | tee results/nl1c6_g11_solver_readiness.log
 
@@ -98,6 +104,5 @@ jobs:
           path: |
             results/nl1c6_g11_solver_readiness.json
             results/nl1c6_g11_solver_readiness.log
-            results/nl1c6_spherical_self_gravity_g1_g10.json
-            results/nl1c6_g1_g10_dependency_for_g11.log
+            results/g1g10_official/nl1c6_spherical_self_gravity_g1_g10.json
           if-no-files-found: warn
