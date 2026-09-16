@@ -1,0 +1,81 @@
+name: NL1C7A A2 gauge bridge audit
+
+on:
+  push:
+    branches: [nl1c7a-growing-mode-bridge]
+    paths:
+      - '.github/workflows/nl1c7a-gauge-bridge-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gauge-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install symbolic dependency
+        run: python3 -m pip install --user sympy
+
+      - name: Verify frozen C7A prereg and A2 implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5399a2ca73165e8f97cea45934e50baf8ffb3629 HEAD
+          test "$(git rev-parse HEAD:nl1c7a/gauge_bridge_audit.py)" = "dd9612552eed874fa4ab4b00091e5d46c22751be"
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/nl1c7a_gauge_bridge_audit_lock.md').read_text()
+          assert '5399a2ca73165e8f97cea45934e50baf8ffb3629' in p
+          assert 'dd9612552eed874fa4ab4b00091e5d46c22751be' in p
+          print('NL1C7A_A2_LOCK_PASS')
+          PY
+
+      - name: Verify certified C7 initial-data parent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35091301474)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="c4351a752eccc99a86cf458acb4c52a509f63f6e"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10444427175)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:f1f5327bc6c19fb379723ad5f6b03816453d21bc7bfce33a564d217fee01b91a"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C7_PARENT_PROVENANCE_PASS
+
+      - name: Run locked symbolic gauge bridge audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile nl1c7a/gauge_bridge_audit.py
+          python3 nl1c7a/gauge_bridge_audit.py | tee results/nl1c7a_gauge_bridge_audit.log
+
+      - name: Verify A2 classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7a_gauge_bridge_audit.json'))
+          assert d['classification']=='NL1C7A_GAUGE_VARIABLE_DICTIONARY_PASS'
+          assert all(d['gates'].values())
+          assert d['X_bridge']['residual']=='0'
+          assert d['E_bridge']['residual']=='0'
+          assert d['rhoA_Q_identity_residual']=='0'
+          print('NL1C7A_GAUGE_VARIABLE_DICTIONARY_PASS')
+          PY
+
+      - name: Upload A2 bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7a_gauge_bridge_audit
+          path: |
+            results/nl1c7a_gauge_bridge_audit.json
+            results/nl1c7a_gauge_bridge_audit.log
