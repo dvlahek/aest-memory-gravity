@@ -26,19 +26,20 @@ jobs:
       - name: Install symbolic dependency
         run: python3 -m pip install --user sympy
 
-      - name: Verify pre-data lock and implementation blob
+      - name: Verify Repair01 pre-data lock and implementation blob
         shell: bash
         run: |
           set -euo pipefail
           git merge-base --is-ancestor 8e55b2db18a3bf463e392bc6bcba85bcaf056fb9 HEAD
-          test "$(git rev-parse HEAD:nl1c7/initial_data_closure_audit.py)" = "60ed1a669e0f50129dbe27de21f81b8538774c7f"
+          git merge-base --is-ancestor 47af6894bfbe2a863165570bf23dea006f0ddc8d HEAD
+          test "$(git rev-parse HEAD:nl1c7/initial_data_closure_audit.py)" = "0040ed81ac2e4adb197612a5b37e9bd4de6dea6a"
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('docs/nl1c7_initial_data_closure_audit_lock.md').read_text()
-          assert '60ed1a669e0f50129dbe27de21f81b8538774c7f' in p
-          assert '8e55b2db18a3bf463e392bc6bcba85bcaf056fb9' in p
-          assert 'NL1C7_INITIAL_DATA_CLOSURE_INCOMPLETE' in p
-          print('NL1C7_INITIAL_DATA_AUDIT_LOCK_PASS')
+          p=Path('docs/nl1c7_initial_data_audit_repair01_lock.md').read_text()
+          assert '0040ed81ac2e4adb197612a5b37e9bd4de6dea6a' in p
+          assert '47af6894bfbe2a863165570bf23dea006f0ddc8d' in p
+          assert '35091142502' in p
+          print('NL1C7_INITIAL_DATA_AUDIT_REPAIR01_LOCK_PASS')
           PY
 
       - name: Verify certified NL1C6 parent provenance
@@ -73,6 +74,7 @@ jobs:
           assert d['principal_audit']['symbolic_rank']==4
           assert d['principal_audit']['background_rank']==4
           assert d['initial_data_count']['n_free_radial_functions_after_constraints']==6
+          assert d['repair01']['historical_technical_failure_run']==35091142502
           print('NL1C7_INITIAL_DATA_CLOSURE_INCOMPLETE_CERTIFIED')
           PY
 
