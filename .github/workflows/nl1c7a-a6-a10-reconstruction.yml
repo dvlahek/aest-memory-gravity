@@ -1,0 +1,111 @@
+name: NL1C7A A6-A10 spherical reconstruction
+
+on:
+  push:
+    branches: [nl1c7a-growing-mode-bridge]
+    paths:
+      - '.github/workflows/nl1c7a-a6-a10-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reconstruct:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify frozen A6-A10 locks and parent provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 86a70318c60cc4c0dddea7012dcd5193db7b5f62 HEAD
+          test "$(git rev-parse HEAD:nl1c7a/a6_a10_spherical_reconstruction.py)" = "ff383c1ddc2cb2a684e2b5dd11fde0ae811e4fac"
+          r4="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35104087182)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="0762723606536b58b7db39d41608fcaefe8eebd4"' <<<"${r4}"
+          a4="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10450205501)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:9b1a4f998af55ce594cbdd6db78b9b99944cd25a3f690c68bab49ffef290ffc6"; assert d["expired"] is False' <<<"${a4}"
+          r5="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35105898962)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="d910b814631e0e18337ff6c280d797a658623e5a"' <<<"${r5}"
+          a5="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10450715138)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:41b1eeab85725f4765cfe491411a4b2f14bd15e4566fd62ca410487af7e2c2cf"; assert d["expired"] is False' <<<"${a5}"
+          echo NL1C7A_A6_A10_LOCKS_AND_PARENT_PROVENANCE_PASS
+
+      - name: Download frozen A4 and A5 artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/a4 input/a5 results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10450205501/zip -o input/a4.zip
+          unzip -q input/a4.zip -d input/a4
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10450715138/zip -o input/a5.zip
+          unzip -q input/a5.zip -d input/a5
+          test -s input/a4/nl1c7a_extended_source_trace.dat
+          test -s input/a4/nl1c7a_trace_coverage.json
+          test -s input/a5/nl1c7a_a5_denominator.json
+
+      - name: Run frozen A6-A10 reconstruction
+        shell: bash
+        run: |
+          set -uo pipefail
+          python3 nl1c7a/a6_a10_spherical_reconstruction.py \
+            --trace input/a4/nl1c7a_extended_source_trace.dat \
+            --coverage-json input/a4/nl1c7a_trace_coverage.json \
+            --a5-json input/a5/nl1c7a_a5_denominator.json \
+            --source nl1c7a/a6_a10_spherical_reconstruction.py \
+            --out results/nl1c7a_a6_a10_reconstruction.json \
+            2>&1 | tee results/nl1c7a_a6_a10_reconstruction.log
+          rc=${PIPESTATUS[0]}
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify scientific classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7a_a6_a10_reconstruction.json'))
+          allowed={
+            'NL1C7A_ETA0_GROWING_MODE_SPHERICAL_BRIDGE_CERTIFIED',
+            'NL1C7A_TIME_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_K_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_RECONSTRUCTION_FAIL',
+            'NL1C7A_BRIDGE_IDENTITY_FAIL',
+            'NL1C7A_FREE_MODE_INJECTION_FAIL',
+          }
+          assert d['classification'] in allowed
+          g=d['gates']
+          if d['classification']=='NL1C7A_ETA0_GROWING_MODE_SPHERICAL_BRIDGE_CERTIFIED': assert all(g.values())
+          if d['classification']=='NL1C7A_TIME_INTERPOLATION_CONTROL_FAIL': assert not g['A6_time_interpolation_control']
+          if d['classification']=='NL1C7A_K_INTERPOLATION_CONTROL_FAIL': assert g['A6_time_interpolation_control'] and not g['A7_k_interpolation_control']
+          if d['classification']=='NL1C7A_RECONSTRUCTION_FAIL': assert g['A6_time_interpolation_control'] and g['A7_k_interpolation_control'] and not g['A8_target_profile_reconstruction']
+          if d['classification']=='NL1C7A_BRIDGE_IDENTITY_FAIL': assert g['A6_time_interpolation_control'] and g['A7_k_interpolation_control'] and g['A8_target_profile_reconstruction'] and not g['A9_bridge_identities']
+          if d['classification']=='NL1C7A_FREE_MODE_INJECTION_FAIL': assert all(g[k] for k in ['A6_time_interpolation_control','A7_k_interpolation_control','A8_target_profile_reconstruction','A9_bridge_identities']) and not g['A10_no_free_mode_injection']
+          print(d['classification'])
+          PY
+
+      - name: Upload A6-A10 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7a_a6_a10_reconstruction
+          path: |
+            results/nl1c7a_a6_a10_reconstruction.json
+            results/nl1c7a_a6_a10_reconstruction.log
+          if-no-files-found: warn
