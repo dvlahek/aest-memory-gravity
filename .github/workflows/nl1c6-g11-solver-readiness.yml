@@ -22,12 +22,12 @@ jobs:
       - name: Install numerical dependencies
         run: python3 -m pip install --user numpy sympy
 
-      - name: Verify G11 pre-result lock and implementation blob
+      - name: Verify G11 pre-result lock and Repair01 implementation blob
         shell: bash
         run: |
           set -euo pipefail
           git merge-base --is-ancestor a2b787adf3fcd9493c9569ae8a5e00969a232e41 HEAD
-          test "$(git rev-parse 462a5935dd5a9a5bb11b827eaee3fa2e4405b51e:nl1c6/g11_solver_readiness.py)" = "1ea641ac8012f93ca8df312c76e58b75f2d3d11f"
+          test "$(git rev-parse 11dc0cfb3d70fb81c9bc5d63bde6b8f9fd9acad5:nl1c6/g11_solver_readiness.py)" = "970ccb164f8ab7d3de6681ff4af940b1638d1686"
           python3 - <<'PY'
           from pathlib import Path
           p=Path('docs/nl1c6_g11_predata_solver_readiness.md').read_text()
@@ -38,7 +38,7 @@ jobs:
           assert 'N=1' in p and 'b=0' in p
           assert '4.1199352008117163' in p
           assert 'G11-H' in p
-          print('NL1C6_G11_PREDATA_LOCK_PASS')
+          print('NL1C6_G11_PREDATA_REPAIR01_LOCK_PASS')
           PY
 
       - name: Verify official G1-G10 provenance
@@ -86,6 +86,7 @@ jobs:
           assert all(d['gates'].values())
           assert d['deterministic_controls']['max_frobenius_relative_error'] <= 1e-10
           assert d['analytic_principal']['delta_kin_global_lower_bound'] > 0.0
+          assert d['closure_self_audit']['used_forbidden_names']==[]
           print('NL1C6_SPHERICAL_SELF_GRAVITY_CLOSURE_PASS')
           PY
 
