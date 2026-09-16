@@ -1,0 +1,85 @@
+name: NL1C7 initial-data closure audit
+
+on:
+  push:
+    branches:
+      - nl1c7-spherical-evolution
+    paths:
+      - '.github/workflows/nl1c7-initial-data-closure.yml'
+      - 'nl1c7/**'
+      - 'docs/nl1c7_*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install symbolic dependency
+        run: python3 -m pip install --user sympy
+
+      - name: Verify pre-data lock and implementation blob
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 8e55b2db18a3bf463e392bc6bcba85bcaf056fb9 HEAD
+          test "$(git rev-parse HEAD:nl1c7/initial_data_closure_audit.py)" = "60ed1a669e0f50129dbe27de21f81b8538774c7f"
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/nl1c7_initial_data_closure_audit_lock.md').read_text()
+          assert '60ed1a669e0f50129dbe27de21f81b8538774c7f' in p
+          assert '8e55b2db18a3bf463e392bc6bcba85bcaf056fb9' in p
+          assert 'NL1C7_INITIAL_DATA_CLOSURE_INCOMPLETE' in p
+          print('NL1C7_INITIAL_DATA_AUDIT_LOCK_PASS')
+          PY
+
+      - name: Verify certified NL1C6 parent provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35089436959)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="0f868057e788423b588cda5bc654287c784ebee7"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10442933686)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:12b83f6f67f473937514005f6a87764646407e3b2141b4451d47bd92b62c6ddc"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C6_PARENT_PROVENANCE_PASS
+
+      - name: Run locked initial-data closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile nl1c7/initial_data_closure_audit.py
+          python3 nl1c7/initial_data_closure_audit.py | tee results/nl1c7_initial_data_closure_audit.log
+
+      - name: Verify classification boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7_initial_data_closure_audit.json'))
+          assert d['classification']=='NL1C7_INITIAL_DATA_CLOSURE_INCOMPLETE'
+          assert all(d['gates'].values())
+          assert d['principal_audit']['symbolic_rank']==4
+          assert d['principal_audit']['background_rank']==4
+          assert d['initial_data_count']['n_free_radial_functions_after_constraints']==6
+          print('NL1C7_INITIAL_DATA_CLOSURE_INCOMPLETE_CERTIFIED')
+          PY
+
+      - name: Upload NL1C7 audit bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7_initial_data_closure
+          path: |
+            results/nl1c7_initial_data_closure_audit.json
+            results/nl1c7_initial_data_closure_audit.log
