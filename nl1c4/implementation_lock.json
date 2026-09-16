@@ -1,0 +1,29 @@
+{
+  "classification": "NL1C4_IMPLEMENTATION_LOCK_BEFORE_OFFICIAL_RUN",
+  "frozen_predata_document_blob_sha": "c8174b6146f4fd440d50d5595700840cc101188b",
+  "artifact": {
+    "run_id": 34315590099,
+    "artifact_id": 10090367181,
+    "digest": "sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378",
+    "trace": "v076_v077_base_trace.dat"
+  },
+  "quadrature_orders": {
+    "control": 512,
+    "primary": 1024
+  },
+  "spatial_resolutions": [256, 512],
+  "relative_difference_gate_definition": "maximum pointwise |A-B|/max(|A|,|B|,1e-300) over the frozen native evaluation times",
+  "global_relative_L2": "reported descriptively but not used to weaken the gate",
+  "spatial_derivative": "analytic Fourier derivative on exact integer modes 3,5,8,10,15,20",
+  "time_evolution": "complete common native trace history; no off-native time interpolation",
+  "primary_evaluation_grid": "the eight common native times satisfying 0.2<=z<=1.5",
+  "x_rms_control": "both Nx=256 and Nx=512, both quadrature runs, must reproduce the analytic NL1C0 band RMS within 1e-10",
+  "forbidden": [
+    "finite physical eta",
+    "observational data or likelihood",
+    "halo model",
+    "collapse threshold",
+    "off-native time interpolation",
+    "post-result gate retuning"
+  ]
+}
