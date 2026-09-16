@@ -31,20 +31,21 @@ jobs:
       - name: Install build dependencies
         run: python3 -m pip install --user numpy scipy cython setuptools wheel
 
-      - name: Verify frozen C7A trace locks and A2 provenance
+      - name: Verify frozen C7A Repair01 trace locks and A2 provenance
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           git merge-base --is-ancestor 5399a2ca73165e8f97cea45934e50baf8ffb3629 HEAD
-          test "$(git rev-parse HEAD:nl1c7a/apply_trace_extension.py)" = "b25b6087cb1e9fd6a275ffcf0843c880d009efce"
+          git merge-base --is-ancestor 1c5bec98bc713c809e265aee7c7c74690015550d HEAD
+          test "$(git rev-parse HEAD:nl1c7a/apply_trace_extension.py)" = "b1567b17245facbceb73f01aa21758968f69175b"
           test "$(git rev-parse HEAD:nl1c7a/trace_coverage_probe.py)" = "5be7163070a7fa2709e3ac6cb5835206c8feb5ec"
           run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35092206904)"
           python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="0ccd15c1a7b6660a72fa1c49e8e7317967443631"' <<<"${run_json}"
           art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10444488624)"
           python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:05b36f93e272aebf04f9887b384c695b01b399ca4e816b1549a8e5d7f8189422"; assert d["expired"] is False' <<<"${art_json}"
-          echo NL1C7A_TRACE_LOCKS_AND_A2_PROVENANCE_PASS
+          echo NL1C7A_REPAIR01_TRACE_LOCKS_AND_A2_PROVENANCE_PASS
 
       - name: Apply validated eta0 AeST stack
         shell: bash
@@ -69,7 +70,7 @@ jobs:
           cp class_c7a/source/aest_memory.c results/c7a_before/aest_memory.c
           cp class_c7a/source/perturbations.c results/c7a_before/perturbations.c
 
-      - name: Apply locked output-only C7A trace extension
+      - name: Apply locked output-only C7A trace extension Repair01
         run: python3 nl1c7a/apply_trace_extension.py class_c7a
 
       - name: Verify output-only source boundary
@@ -81,7 +82,6 @@ jobs:
           import json,difflib
           b=Path('results/c7a_before/perturbations.c').read_text().splitlines()
           a=Path('class_c7a/source/perturbations.c').read_text().splitlines()
-          # Evolution assignments must be byte-identical line-for-line.
           assert [x for x in b if 'dy[' in x] == [x for x in a if 'dy[' in x]
           critical=['E_rhs_aest -= 0.5*Q_aest*Bchi_aest','dy[pv->index_pt_E_aest]','dy[pv->index_pt_delta_cdm]','dy[pv->index_pt_theta_cdm]','dy[pv->index_pt_alpha_aest]']
           for token in critical:
@@ -91,9 +91,10 @@ jobs:
           forbidden=['dy[','E_rhs_aest =','Pi_aest =','metric_euler=']
           assert not any(tok in line for line in changed for tok in forbidden)
           d=json.load(open('results/nl1c7a_trace_extension_patch.json'))
-          assert d['classification']=='NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION'
+          assert d['classification']=='NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION_REPAIR01'
+          assert d['historical_technical_failure_run']==35092490498
           assert all(d['checks'].values())
-          print('NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION_PASS')
+          print('NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION_REPAIR01_PASS')
           PY
 
       - name: Build CLASS and classy
