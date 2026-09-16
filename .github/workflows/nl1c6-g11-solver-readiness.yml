@@ -1,0 +1,102 @@
+name: NL1C6 G11 solver readiness
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [nl1c6-spherical-self-gravity]
+    paths:
+      - 'nl1c6/g11_solver_readiness.py'
+      - 'docs/nl1c6_g11_predata_solver_readiness.md'
+      - '.github/workflows/nl1c6-g11-solver-readiness.yml'
+
+jobs:
+  g11:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Verify G11 pre-result lock and implementation blob
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor a2b787adf3fcd9493c9569ae8a5e00969a232e41 HEAD
+          test "$(git rev-parse 462a5935dd5a9a5bb11b827eaee3fa2e4405b51e:nl1c6/g11_solver_readiness.py)" = "1ea641ac8012f93ca8df312c76e58b75f2d3d11f"
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/nl1c6_g11_predata_solver_readiness.md').read_text()
+          assert 'NL1C6_G11_PREDATA_SOLVER_READINESS' in p
+          assert '35088549978' in p
+          assert '10443038294' in p
+          assert '935a9f05364c3f00f85616957fe217bcd1708915ee5a4d72a0bd9f896a582b6a' in p
+          assert 'N=1' in p and 'b=0' in p
+          assert '4.1199352008117163' in p
+          assert 'G11-H' in p
+          print('NL1C6_G11_PREDATA_LOCK_PASS')
+          PY
+
+      - name: Verify official G1-G10 provenance
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35088549978)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="2ca1489a920c0ef9c7b05afe932a6cb22844c9bd"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10443038294)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:935a9f05364c3f00f85616957fe217bcd1708915ee5a4d72a0bd9f896a582b6a"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C6_G1_G10_PROVENANCE_PASS
+
+      - name: Re-run G1-G10 dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 nl1c6/spherical_self_gravity_g1_g10.py > results/nl1c6_g1_g10_dependency_for_g11.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c6_spherical_self_gravity_g1_g10.json'))
+          assert d['classification']=='NL1C6_G1_G10_PASS_PENDING_G11'
+          assert all(d['gates'].values())
+          print('NL1C6_G1_G10_DEPENDENCY_PASS')
+          PY
+
+      - name: Run locked G11 solver-readiness audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile nl1c6/g11_solver_readiness.py
+          python3 nl1c6/g11_solver_readiness.py | tee results/nl1c6_g11_solver_readiness.log
+
+      - name: Verify final C6 classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c6_g11_solver_readiness.json'))
+          assert d['classification']=='NL1C6_G11_SOLVER_READINESS_PASS'
+          assert d['combined_C6_classification']=='NL1C6_SPHERICAL_SELF_GRAVITY_CLOSURE_PASS'
+          assert all(d['gates'].values())
+          assert d['deterministic_controls']['max_frobenius_relative_error'] <= 1e-10
+          assert d['analytic_principal']['delta_kin_global_lower_bound'] > 0.0
+          print('NL1C6_SPHERICAL_SELF_GRAVITY_CLOSURE_PASS')
+          PY
+
+      - name: Upload NL1C6 G11 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c6_g11_solver_readiness
+          path: |
+            results/nl1c6_g11_solver_readiness.json
+            results/nl1c6_g11_solver_readiness.log
+            results/nl1c6_spherical_self_gravity_g1_g10.json
+            results/nl1c6_g1_g10_dependency_for_g11.log
+          if-no-files-found: warn
