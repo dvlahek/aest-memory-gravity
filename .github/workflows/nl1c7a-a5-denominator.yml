@@ -54,10 +54,11 @@ jobs:
           test -s input/a4/nl1c7a_extended_source_trace.dat
           test -s input/a4/nl1c7a_trace_coverage.json
 
-      - name: Run frozen A5 denominator audit
+      - name: Run frozen A5 denominator audit Repair01
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p results
           python3 nl1c7a/a5_denominator_audit.py \
             --trace input/a4/nl1c7a_extended_source_trace.dat \
             --coverage-json input/a4/nl1c7a_trace_coverage.json \
