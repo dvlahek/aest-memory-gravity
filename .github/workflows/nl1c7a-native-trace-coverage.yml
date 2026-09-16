@@ -31,7 +31,7 @@ jobs:
       - name: Install build dependencies
         run: python3 -m pip install --user numpy scipy cython setuptools wheel
 
-      - name: Verify frozen C7A Repair04 locks and A2 provenance
+      - name: Verify frozen C7A Repair05 locks and A2 provenance
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -42,13 +42,15 @@ jobs:
           git merge-base --is-ancestor cfdb171c376c0d4e7b72bec6a12af84d3e66954c HEAD
           git merge-base --is-ancestor 8f5ef128548e2f2fc3a77cf91f1594fffb412d93 HEAD
           git merge-base --is-ancestor 384a06e3090bfe69a4ed834291ca85ef76de79f3 HEAD
+          git merge-base --is-ancestor 2e7092ba8a6c606f4406ace0a433b4549ada61c2 HEAD
+          git merge-base --is-ancestor 4d178b30be47938297d405a5d1b8f4ba3d7f75ca HEAD
           test "$(git rev-parse HEAD:nl1c7a/apply_trace_extension.py)" = "21147e873e6cdee8b55260189eafb8c0e612f02b"
-          test "$(git rev-parse HEAD:nl1c7a/trace_coverage_probe.py)" = "5be7163070a7fa2709e3ac6cb5835206c8feb5ec"
+          test "$(git rev-parse HEAD:nl1c7a/trace_coverage_probe.py)" = "4d9b4b83ecdb144a7a853ae337f9c1136fd8fb07"
           run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35092206904)"
           python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="0ccd15c1a7b6660a72fa1c49e8e7317967443631"' <<<"${run_json}"
           art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10444488624)"
           python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:05b36f93e272aebf04f9887b384c695b01b399ca4e816b1549a8e5d7f8189422"; assert d["expired"] is False' <<<"${art_json}"
-          echo NL1C7A_REPAIR04_LOCKS_AND_A2_PROVENANCE_PASS
+          echo NL1C7A_REPAIR05_LOCKS_AND_A2_PROVENANCE_PASS
 
       - name: Apply validated eta0 AeST stack
         shell: bash
@@ -122,18 +124,10 @@ jobs:
           report={
             'classification':'NL1C7A_DIAGNOSTIC_K_OUTPUT_CAPACITY_REPAIR04',
             'historical_technical_failure_run':35093879845,
-            'old_capacity':30,
-            'new_capacity':160,
-            'requested_k_count':128,
-            'physics_modified':False,
-            'solver_tolerances_modified':False,
-            'k_grid_modified':False,
-            'science_gates_modified':False,
-            'checks':{
-              'single_macro_replacement':True,
-              'capacity_exceeds_requested_grid':160>=128,
-              'only_header_line_changed':len(changed)==1,
-            },
+            'old_capacity':30,'new_capacity':160,'requested_k_count':128,
+            'physics_modified':False,'solver_tolerances_modified':False,
+            'k_grid_modified':False,'science_gates_modified':False,
+            'checks':{'single_macro_replacement':True,'capacity_exceeds_requested_grid':True,'only_header_line_changed':len(changed)==1},
           }
           Path('results').mkdir(exist_ok=True)
           Path('results/nl1c7a_k_output_capacity_repair04.json').write_text(json.dumps(report,indent=2)+'\n')
@@ -145,7 +139,7 @@ jobs:
           make -C class_c7a -j2 class
           make -C class_c7a -j2 classy
 
-      - name: Run locked A4 native coverage probe
+      - name: Run locked A4 native coverage probe Repair05
         shell: bash
         run: |
           set -euo pipefail
@@ -166,6 +160,12 @@ jobs:
           assert d['classification']=='NL1C7A_NATIVE_TRACE_COVERAGE_PASS'
           assert all(d['gates'].values())
           assert len(d['k_grid_h_Mpc'])==128
+          assert d['repair05']['diagnostic_batching_only'] is True
+          assert d['repair05']['batch_size']==24
+          assert d['repair05']['n_batches']==6
+          assert d['repair05']['interpolation_used'] is False
+          assert d['repair05']['nearest_neighbour_substitution_used'] is False
+          assert all(b['requested_k_relative_miss_max']<=1e-12 for b in d['repair05']['batches'])
           r=json.load(open('results/nl1c7a_k_output_capacity_repair04.json'))
           assert r['classification']=='NL1C7A_DIAGNOSTIC_K_OUTPUT_CAPACITY_REPAIR04'
           assert all(r['checks'].values())
