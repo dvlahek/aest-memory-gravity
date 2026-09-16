@@ -5,9 +5,16 @@ Branch: `fullj-evolving-weyl-bridge`
 
 ## Purpose
 
-Historical R11a failed native-grid density/operator robustness. Repair01 formed the signed source response before the oscillatory Bessel integration and fixed both failures, but its preregistered dense-resolution gate failed because 4096 dense log-k nodes were insufficient. Repair01 simultaneously showed that 8192 -> 16384 already satisfies the original tangent threshold.
+Historical R11a failed native-grid density/operator robustness. Repair01 formed the signed source response before the oscillatory Bessel integration and fixed both failures, but its preregistered dense-resolution gate failed.
 
-Repair02 asks only if the response has entered a stable asymptotic dense-grid regime. No physical model, eta range, tau grid, separation range, source-state definition, interpolation family, likelihood, or convergence threshold is changed.
+Repair01 established two separate facts:
+
+- 4096 -> 8192 is strongly under-resolved;
+- 8192 -> 16384 improves dramatically, but still has `E ~ 0.0393`, which does **not** satisfy the original Repair01 dense-resolution threshold `E <= 0.01` even though it satisfies the looser general tangent threshold.
+
+Repair02 therefore tests a genuinely finer asymptotic regime without relaxing any convergence threshold.
+
+No physical model, eta range, tau grid, separation range, source-state definition, interpolation family, likelihood, or convergence threshold is changed.
 
 ## Frozen parents
 
@@ -20,6 +27,8 @@ Repair02 asks only if the response has entered a stable asymptotic dense-grid re
 - R9b2k saved work directory remains the only theory-state input.
 
 Repair02 must not call CLASS or regenerate any source state.
+
+The earlier unrun Repair02 draft commit `855bd48089b915b810f81c2b1399bc4713e55af4` is superseded by this corrected preregistration because that draft accidentally quoted the general tangent threshold for the dense-resolution gate. No Repair02 data were generated under that draft.
 
 ## Frozen physical domain
 
@@ -48,15 +57,17 @@ with sign-preserving `Pdf`, and
 
 ## Dense grids
 
-Primary science grid: `16384` equally spaced nodes in `ln k` on the common bounded support.
+Primary science grid: `32768` equally spaced nodes in `ln k` on the common bounded support.
 
-Resolution controls: `8192` and `32768` nodes.
+Resolution controls: `16384` and `65536` nodes.
 
 Primary interpolation: linear interpolation of signed responses in `ln k`, with positive baseline `Pdd` treated logarithmically exactly as in Repair01.
 
-Independent shape control: PCHIP at `16384` nodes.
+Independent shape control: PCHIP at `32768` nodes.
 
-The shift from a Repair01 primary of 8192 to a Repair02 primary of 16384 is fixed before Repair02 is run because Repair01 already demonstrated that 4096 is under-resolved and that 8192 -> 16384 passes the original tangent threshold. Historical Repair01 remains FAIL and is not reclassified.
+The use of 32768 as the primary grid is fixed before Repair02 is run. It is motivated only by Repair01 showing that 8192 -> 16384 had not yet met the original dense-resolution threshold.
+
+Historical R11a and Repair01 remain FAIL and are never reclassified.
 
 ## Frozen gates
 
@@ -64,34 +75,34 @@ The shift from a Repair01 primary of 8192 to a Repair02 primary of 16384 is fixe
 All frozen parent locks/hashes and all 25 R9b2k checkpoints must validate.
 
 ### G2 — support and baseline
-Common bounded support and finite nonzero eta-zero pairwise velocities must remain valid at 16384 for linear and PCHIP baselines.
+Common bounded support and finite nonzero eta-zero pairwise velocities must remain valid at 32768 for linear and PCHIP baselines.
 
 ### G3 — asymptotic dense-resolution closure
 For every tau and both epsilon values, require both:
 
-- LINEAR8192 vs LINEAR16384: `E <= 0.05`, `C >= 0.995`;
-- LINEAR16384 vs LINEAR32768: `E <= 0.05`, `C >= 0.995`;
+- LINEAR16384 vs LINEAR32768: `E <= 0.01`, `C >= 0.999`;
+- LINEAR32768 vs LINEAR65536: `E <= 0.01`, `C >= 0.999`;
 - all norms > `1e-12`.
 
-These are the same tangent thresholds used previously. No threshold relaxation is allowed.
+These are exactly the Repair01 dense-resolution thresholds. No threshold relaxation is allowed.
 
 ### G4 — epsilon consistency at primary grid
-At LINEAR16384 and PCHIP16384, eps=0.025 vs eps=0.05 must satisfy `E <= 0.05`, `C >= 0.995`, norms > `1e-12`.
+At LINEAR32768 and PCHIP32768, eps=0.025 vs eps=0.05 must satisfy `E <= 0.05`, `C >= 0.995`, norms > `1e-12`.
 
 ### G5 — native-density convergence at primary grid
-At tau10, D1 vs D2 at 16384 must satisfy `E <= 0.05`, `C >= 0.995` for both interpolation operators and both epsilon values.
+At tau10, D1 vs D2 at 32768 must satisfy `E <= 0.05`, `C >= 0.995` for both interpolation operators and both epsilon values.
 
 ### G6 — cross-operator agreement at primary grid
-At D2, LINEAR16384 vs PCHIP16384 must satisfy `E <= 0.05`, `C >= 0.995` for every tau and both epsilon values.
+At D2, LINEAR32768 vs PCHIP32768 must satisfy `E <= 0.05`, `C >= 0.995` for every tau and both epsilon values.
 
 ### G7 — local eta=0.05 linearity
-At LINEAR16384, direct eta=0.05 fractional shift versus `0.05*T(eps=0.025)` must satisfy `E <= 0.10`, `C >= 0.99` for every tau.
+At LINEAR32768, direct eta=0.05 fractional shift versus `0.05*T(eps=0.025)` must satisfy `E <= 0.10`, `C >= 0.99` for every tau.
 
 ### G8 — background audit
 All `Dln(H/h)` values must be finite. They are not required to vanish.
 
 ### G9 — physical-shift dense-resolution closure
-The direct eta=0.05 fractional-shift vectors from LINEAR16384 and LINEAR32768 must satisfy `E <= 0.05`, `C >= 0.995` for every tau.
+The direct eta=0.05 fractional-shift vectors from LINEAR32768 and LINEAR65536 must satisfy the original dense-resolution criterion `E <= 0.01`, `C >= 0.999` for every tau.
 
 ## PASS classification
 
