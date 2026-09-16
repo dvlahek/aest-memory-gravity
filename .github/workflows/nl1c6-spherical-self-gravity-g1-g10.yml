@@ -1,0 +1,85 @@
+name: NL1C6 spherical self-gravity G1-G10
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [nl1c6-spherical-self-gravity]
+    paths:
+      - 'nl1c6/**'
+      - 'docs/nl1c6_predata_spherical_self_gravity_closure.md'
+      - '.github/workflows/nl1c6-spherical-self-gravity-g1-g10.yml'
+
+jobs:
+  g1-g10:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Verify frozen preregistration and implementation lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5d5d9d3293849f878394b22a092db22e1c860189 HEAD
+          test "$(git rev-parse f7ce5a26501f9bceed65c9bea1a4b7a2b80a82d0:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/nl1c6_predata_spherical_self_gravity_closure.md').read_text()
+          assert 'NL1C6_PREDATA_SPHERICAL_SELF_GRAVITY_CLOSURE' in p
+          assert '226f57f8c5d978c52646d2911a518765c882274d' in p
+          assert '35087054333' in p
+          assert '10441759239' in p
+          assert '6831d0f81022a8c57d7f623fafc9ecfc1ef1f2cb94abd44cd84bed837cb290af' in p
+          assert 'C6-G10' in p and 'C6-G11' in p
+          print('NL1C6_PREDATA_IMPLEMENTATION_LOCK_PASS')
+          PY
+
+      - name: Verify NL1C5 official provenance
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35087054333)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="81e38a4a466220d97d7eba0acf79875da7e1d9c2"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10441759239)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:6831d0f81022a8c57d7f623fafc9ecfc1ef1f2cb94abd44cd84bed837cb290af"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C5_PROVENANCE_PASS
+
+      - name: Run ungauged G1-G10 closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile nl1c6/spherical_self_gravity_g1_g10.py
+          python3 nl1c6/spherical_self_gravity_g1_g10.py | tee results/nl1c6_spherical_self_gravity_g1_g10.log
+
+      - name: Verify G1-G10 classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c6_spherical_self_gravity_g1_g10.json'))
+          assert d['classification']=='NL1C6_G1_G10_PASS_PENDING_G11'
+          assert all(d['gates'].values())
+          assert d['variation_audit']['max_relative_error'] <= 1e-6
+          assert d['radial_diffeomorphism_noether']['normalized_residual'] <= 1e-8
+          print('NL1C6_G1_G10_PASS_PENDING_G11')
+          PY
+
+      - name: Upload G1-G10 theory bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c6_g1_g10
+          path: |
+            results/nl1c6_spherical_self_gravity_g1_g10.json
+            results/nl1c6_spherical_self_gravity_g1_g10.log
+          if-no-files-found: warn
