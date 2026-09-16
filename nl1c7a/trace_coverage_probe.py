@@ -11,6 +11,7 @@ H0=float(v63.START['H0']); h=H0/100.0
 K_H=np.geomspace(0.0015,1.2,128)
 K_MPC=K_H*h
 AI=0.02
+BATCH_SIZE=24
 FIELDS=['k','tau','a','H_Mpc_inv','H_over_H0','chi','Q','rhoA','KQ','KQQ','delta_b','theta_b','delta_A','theta_A','alpha_A','E_A','Phi','Phi_prime','Psi']
 
 
@@ -40,9 +41,15 @@ def cluster(rows):
     return [{k:float(np.median([x[k] for x in g])) for k in FIELDS} for g in groups]
 
 
-def select(rows,k):
+def exact_rows(rows,k):
     rel=np.array([abs(x['k']-k)/max(abs(k),1e-300) for x in rows])
-    m=float(np.min(rel)); sel=[x for x,e in zip(rows,rel) if e<=1e-12]
+    m=float(np.min(rel))
+    sel=[x for x,e in zip(rows,rel) if e<=1e-12]
+    return sel,m
+
+
+def select(rows,k):
+    sel,m=exact_rows(rows,k)
     if not sel: raise RuntimeError(f'k={k} missing; best rel={m}')
     return cluster(sel),m
 
@@ -69,7 +76,7 @@ def common_grid(modes):
     return out,maxrel
 
 
-def run_class(class_root,trace):
+def run_class_batch(trace,k_batch):
     from classy import Class
     if trace.exists(): trace.unlink()
     saved={k:os.environ.get(k) for k in ['AEST_OFFLINE_TRACE_FILE','AEST_TANGENT_FORCE_FILE','AEST_TANGENT_LAMBDA','OMP_NUM_THREADS']}
@@ -81,7 +88,7 @@ def run_class(class_root,trace):
         pars=dict(v63.class_params())
         pars.update({
           'output':'mTk', 'lensing':'no', 'aest_memory_enabled':'no','aest_eta':0.0,
-          'k_output_values':', '.join(f'{k:.17g}' for k in K_MPC),
+          'k_output_values':', '.join(f'{k:.17g}' for k in k_batch),
           'P_k_max_h/Mpc':1.3, 'z_max_pk':60.0,
           'k_per_decade_for_pk':80.0,'k_per_decade_for_bao':560.0,
         })
@@ -95,14 +102,48 @@ def run_class(class_root,trace):
         for k,v in saved.items():
             if v is None: os.environ.pop(k,None)
             else: os.environ[k]=v
-    if not trace.exists() or trace.stat().st_size==0: raise RuntimeError('extended trace not produced')
+    if not trace.exists() or trace.stat().st_size==0:
+        raise RuntimeError(f'extended trace not produced for {trace.name}')
+
+
+def run_class_batched(trace):
+    if trace.exists(): trace.unlink()
+    trace.parent.mkdir(parents=True,exist_ok=True)
+    kept=[]
+    batch_reports=[]
+    n_batches=int(np.ceil(len(K_MPC)/BATCH_SIZE))
+    for ib in range(n_batches):
+        lo=ib*BATCH_SIZE; hi=min((ib+1)*BATCH_SIZE,len(K_MPC))
+        batch=np.asarray(K_MPC[lo:hi],dtype=float)
+        tmp=trace.with_name(f'{trace.stem}_batch{ib+1:02d}{trace.suffix}')
+        run_class_batch(tmp,batch)
+        rows=read_trace(tmp)
+        batch_max_miss=0.0
+        batch_kept=0
+        for k in batch:
+            sel,m=exact_rows(rows,float(k))
+            batch_max_miss=max(batch_max_miss,m)
+            if not sel:
+                raise RuntimeError(f'batch {ib+1}: requested k={k} missing; best rel={m}')
+            kept.extend(sel); batch_kept+=len(sel)
+        batch_reports.append({
+            'batch':ib+1,'start_index':lo,'stop_index_exclusive':hi,
+            'requested_count':int(len(batch)),'kept_rows':int(batch_kept),
+            'requested_k_relative_miss_max':float(batch_max_miss),
+        })
+        tmp.unlink(missing_ok=True)
+    with open(trace,'w') as f:
+        f.write(' '.join(FIELDS)+'\n')
+        for row in kept:
+            f.write(' '.join(f'{row[k]:.17g}' for k in FIELDS)+'\n')
+    return batch_reports
 
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('--class-root',required=True); ap.add_argument('--trace-out',required=True); ap.add_argument('--json-out',required=True); args=ap.parse_args()
     trace=Path(args.trace_out); trace.parent.mkdir(parents=True,exist_ok=True)
     out=Path(args.json_out); out.parent.mkdir(parents=True,exist_ok=True)
-    run_class(Path(args.class_root).resolve(),trace)
+    batch_reports=run_class_batched(trace)
     rows=read_trace(trace)
     modes=[]; misses=[]
     for k in K_MPC:
@@ -129,6 +170,11 @@ def main():
     result={
       'classification':classification,
       'scope':'C7A A3/A4 output-only eta0 accepted-source trace coverage; no interpolation, radial reconstruction, spherical evolution, or finite eta.',
+      'repair05':{
+        'diagnostic_batching_only':True,'batch_size':BATCH_SIZE,
+        'n_batches':len(batch_reports),'batches':batch_reports,
+        'interpolation_used':False,'nearest_neighbour_substitution_used':False,
+      },
       'CLASS_commit':'e85808324f51fc694d12e3ed7439552a3c3f9540',
       'H0_km_s_Mpc':H0,'h':h,'a_i':AI,
       'k_grid_h_Mpc':K_H.tolist(),
