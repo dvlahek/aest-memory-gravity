@@ -56,6 +56,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p results
           python3 nl1c3b/longitudinal_3plus1_memory_bridge.py > results/nl1c3b_dependency_for_nl1c5.log
           python3 - <<'PY'
           import json
