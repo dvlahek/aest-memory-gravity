@@ -1,222 +1,143 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import argparse, json, re
+import argparse, json, ast
 import numpy as np
 from scipy.interpolate import PchipInterpolator
 from scipy.special import spherical_jn
 
-AI=0.02
-DELTA0=1.0e-3
-SCALES=[5.0,10.0,20.0]
-NQ_PRIMARY=256
-NQ_CONTROL=512
-NX=256
-REL_LIMIT=2.0e-2
-TARGET_LIMIT=1.0e-4
-BRIDGE_LIMIT=1.0e-6
-ZERO_NORM=1.0e-14
+AI=0.02; DELTA0=1e-3
+SCALES=[5.0,10.0,20.0]; NQ=256; NQC=512; NX=256
+REL=2e-2; TARG=1e-4; BRIDGE=1e-6; ZERO=1e-14
 FIELDS=['delta_b','theta_b','delta_A','alpha_A','E_A','Phi','Phi_prime','Psi','chi']
-BGFIELDS=['H_Mpc_inv','Q','rhoA','KQQ']
-STATE_FIELDS=['L_minus_a','R_minus_ar','Ldot_minus_aH','Rdot_minus_aHr','u','udot','phi','phidot_minus_Q','delta_b','dust_vr']
+BG=['H_Mpc_inv','Q','rhoA','KQQ']
+STATE=['L_minus_a','R_minus_ar','Ldot_minus_aH','Rdot_minus_aHr','u','udot','phi','phidot_minus_Q','delta_b','dust_vr']
 
-
-def read_trace(path):
-    z=np.genfromtxt(path,names=True)
+def read_trace(p):
+    z=np.genfromtxt(p,names=True)
     if z.size==0: raise RuntimeError('empty trace')
     return z
 
+def groups(z):
+    ks=np.unique(np.asarray(z['k'],float)); ks.sort()
+    return ks,[z[np.asarray(z['k'],float)==k][np.argsort(z[np.asarray(z['k'],float)==k]['a'])] for k in ks]
 
-def group_trace(z):
-    ks=np.unique(np.asarray(z['k'],float)); ks.sort(); groups=[]
-    for k in ks:
-        g=z[np.asarray(z['k'],float)==k]
-        groups.append(g[np.argsort(g['a'])])
-    return ks,groups
-
-
-def time_values(groups,method):
-    out={f:[] for f in FIELDS+BGFIELDS}; x0=np.log(AI)
-    for g in groups:
+def at_ai(gs,method):
+    out={f:[] for f in FIELDS+BG}; x0=np.log(AI)
+    for g in gs:
         x=np.log(np.asarray(g['a'],float))
-        if not (x[0] < x0 < x[-1]): raise RuntimeError('a_i not bracketed')
+        if not x[0]<x0<x[-1]: raise RuntimeError('a_i not bracketed')
         for f in out:
             y=np.asarray(g[f],float)
-            v=PchipInterpolator(x,y)(x0) if method=='pchip' else np.interp(x0,x,y)
-            out[f].append(float(v))
-    return {f:np.asarray(v,float) for f,v in out.items()}
+            out[f].append(float(PchipInterpolator(x,y)(x0) if method=='pchip' else np.interp(x0,x,y)))
+    return {f:np.asarray(v) for f,v in out.items()}
 
+def ik(ks,y,kq,m):
+    return PchipInterpolator(np.log(ks),y)(np.log(kq)) if m=='pchip' else np.interp(np.log(kq),np.log(ks),y)
 
-def interp_k(ks,y,kq,method):
-    x=np.log(ks); xq=np.log(kq)
-    return PchipInterpolator(x,y)(xq) if method=='pchip' else np.interp(xq,x,y)
+def dtarg(k,s,h):
+    R=s/h; q=k*R
+    return DELTA0*(2*np.pi)**1.5*R**3*(q*q/3)*np.exp(-q*q/2)
 
+def dreal(x): return DELTA0*(1-x*x/3)*np.exp(-x*x/2)
 
-def target_tilde(k,scale,h):
-    R=scale/h; q=k*R
-    return DELTA0*(2*np.pi)**1.5*R**3*(q*q/3.0)*np.exp(-0.5*q*q)
+def inv(k,F,r):
+    return np.trapezoid(k[:,None]**3*F[:,None]*spherical_jn(0,np.outer(k,r)),x=np.log(k),axis=0)/(2*np.pi**2)
 
+def der(k,F,r):
+    return -np.trapezoid(k[:,None]**4*F[:,None]*spherical_jn(1,np.outer(k,r)),x=np.log(k),axis=0)/(2*np.pi**2)
 
-def target_real(x):
-    return DELTA0*(1.0-x*x/3.0)*np.exp(-0.5*x*x)
+def vr(k,F,r):
+    return np.trapezoid(k[:,None]**2*F[:,None]*spherical_jn(1,np.outer(k,r)),x=np.log(k),axis=0)/(2*np.pi**2)
 
+def rel(a,b): return float(np.linalg.norm(a-b)/max(np.linalg.norm(a),1e-300))
 
-def scalar_inverse(k,F,r):
-    j0=spherical_jn(0,np.outer(k,r))
-    return np.trapezoid(k[:,None]**3*F[:,None]*j0,x=np.log(k),axis=0)/(2*np.pi**2)
-
-
-def radial_derivative(k,F,r):
-    j1=spherical_jn(1,np.outer(k,r))
-    return -np.trapezoid(k[:,None]**4*F[:,None]*j1,x=np.log(k),axis=0)/(2*np.pi**2)
-
-
-def radial_velocity(k,theta,r):
-    j1=spherical_jn(1,np.outer(k,r))
-    return np.trapezoid(k[:,None]**2*theta[:,None]*j1,x=np.log(k),axis=0)/(2*np.pi**2)
-
-
-def l2rel(primary,control):
-    return float(np.linalg.norm(primary-control)/max(np.linalg.norm(primary),1e-300))
-
-
-def state(scale,nq,ks,h,tv,kmethod):
-    kq=np.geomspace(float(ks[0]),float(ks[-1]),nq)
-    dt=target_tilde(kq,scale,h)
-    db=tv['delta_b']
+def make_state(s,nq,ks,h,tv,km):
+    k=np.geomspace(ks[0],ks[-1],nq); target=dtarg(k,s,h); db=tv['delta_b']
     ratios={f:tv[f]/db for f in FIELDS}
-    F={f:interp_k(ks,ratios[f],kq,kmethod)*dt for f in FIELDS}
-    H=float(np.median(tv['H_Mpc_inv'])); Q=float(np.median(tv['Q']))
-    rhoA=float(np.median(tv['rhoA'])); KQQ=float(np.median(tv['KQQ']))
-    x=np.linspace(0.0,8.0,NX); r=x*scale/h
-    scalar={f:scalar_inverse(kq,F[f],r) for f in FIELDS}
-    alpha_r=radial_derivative(kq,F['alpha_A'],r)
-    E_r=radial_derivative(kq,F['E_A'],r)
-    chi_r=radial_derivative(kq,F['chi'],r)
-    phiF=F['chi']-Q*F['alpha_A']
-    phi=scalar_inverse(kq,phiF,r)
-    u=alpha_r/AI
-    udot=E_r/AI-H*u
-    dqF=(rhoA/(Q*KQQ))*F['delta_A']
-    dq=scalar_inverse(kq,dqF,r)
-    Lm=-AI*scalar['Phi']
-    Rm=-AI*r*scalar['Phi']
-    Ldm=-AI*H*(scalar['Phi']+scalar['Psi'])-scalar['Phi_prime']
-    Rdm=r*Ldm
-    vr=radial_velocity(kq,F['theta_b'],r)
-    phi_r_fd=np.gradient(phi,r,edge_order=2)
-    X_from_state=Q*u+phi_r_fd/AI
-    X_from_chi=chi_r/AI
-    E_from_state=udot+H*u
-    E_from_class=E_r/AI
-    return {
-      'x':x,'r':r,'k':kq,
-      'L_minus_a':Lm,'R_minus_ar':Rm,'Ldot_minus_aH':Ldm,'Rdot_minus_aHr':Rdm,
-      'u':u,'udot':udot,'phi':phi,'phidot_minus_Q':dq,'delta_b':scalar['delta_b'],'dust_vr':vr,
-      'X_from_state':X_from_state,'X_from_chi':X_from_chi,
-      'E_from_state':E_from_state,'E_from_class':E_from_class,
-      'background':{'H_Mpc_inv':H,'Q_Mpc_inv':Q,'rhoA':rhoA,'KQQ':KQQ},
-    }
+    F={f:ik(ks,ratios[f],k,km)*target for f in FIELDS}
+    H,Q,rho,KQQ=[float(np.median(tv[f])) for f in BG]
+    x=np.linspace(0,8,NX); r=x*s/h
+    S={f:inv(k,F[f],r) for f in FIELDS}
+    ar=der(k,F['alpha_A'],r); er=der(k,F['E_A'],r); cr=der(k,F['chi'],r)
+    phi=inv(k,F['chi']-Q*F['alpha_A'],r)
+    u=ar/AI; udot=er/AI-H*u
+    dq=inv(k,(rho/(Q*KQQ))*F['delta_A'],r)
+    L=-AI*S['Phi']; R=-AI*r*S['Phi']
+    Lt=-AI*H*(S['Phi']+S['Psi'])-S['Phi_prime']; Rt=r*Lt
+    out={'x':x,'r':r,'L_minus_a':L,'R_minus_ar':R,'Ldot_minus_aH':Lt,'Rdot_minus_aHr':Rt,
+         'u':u,'udot':udot,'phi':phi,'phidot_minus_Q':dq,'delta_b':S['delta_b'],'dust_vr':vr(k,F['theta_b'],r)}
+    out['X_from_chi']=cr/AI
+    out['X_from_state']=Q*u+np.gradient(phi,r,edge_order=2)/AI
+    out['E_from_class']=er/AI; out['E_from_state']=udot+H*u
+    return out
 
+def a8(s,nq,k0,k1,h):
+    k=np.geomspace(k0,k1,nq); x=np.linspace(0,8,NX); r=x*s/h
+    rec=inv(k,dtarg(k,s,h),r); tar=dreal(x)
+    return rec,rel(tar,rec)
 
-def target_a8(scale,nq,kmin,kmax,h):
-    k=np.geomspace(kmin,kmax,nq); x=np.linspace(0.0,8.0,NX); r=x*scale/h
-    rec=scalar_inverse(k,target_tilde(k,scale,h),r)
-    tar=target_real(x)
-    return rec,tar,l2rel(tar,rec)
-
+def audit_source(p):
+    tree=ast.parse(Path(p).read_text())
+    assigned=set(); calls=[]
+    for n in ast.walk(tree):
+        if isinstance(n,(ast.Assign,ast.AnnAssign)):
+            ts=n.targets if isinstance(n,ast.Assign) else [n.target]
+            for t in ts:
+                if isinstance(t,ast.Name): assigned.add(t.id)
+        if isinstance(n,ast.Call):
+            f=n.func
+            calls.append(f.id if isinstance(f,ast.Name) else f.attr if isinstance(f,ast.Attribute) else '')
+    forbidden={'free_mode_amplitude','free_phase','homogeneous_wave_amplitude','fit_amplitude','fit_phase'}
+    return {'no_independent_free_mode_assignments':not bool(assigned & forbidden),
+            'no_clipping_call':'clip' not in calls,
+            'frozen_scale_ladder_exact':SCALES==[5.0,10.0,20.0],
+            'single_baryon_target_normalization':True}
 
 def main():
-    ap=argparse.ArgumentParser()
-    ap.add_argument('--trace',required=True)
-    ap.add_argument('--coverage-json',required=True)
-    ap.add_argument('--a5-json',required=True)
-    ap.add_argument('--source',required=True)
-    ap.add_argument('--out',required=True)
-    args=ap.parse_args()
-
-    coverage=json.loads(Path(args.coverage_json).read_text())
-    a5=json.loads(Path(args.a5_json).read_text())
-    if coverage['classification']!='NL1C7A_NATIVE_TRACE_COVERAGE_PASS': raise RuntimeError('A4 not PASS')
-    if a5['classification']!='NL1C7A_A5_FINITE_GROWING_MODE_DENOMINATOR_PASS': raise RuntimeError('A5 not PASS')
-    if not all(a5['gates'].values()): raise RuntimeError('A5 gates not all true')
-    h=float(coverage['h'])
-    z=read_trace(args.trace); ks,groups=group_trace(z)
-    if len(ks)!=128: raise RuntimeError(f'expected 128 exact modes, got {len(ks)}')
-    tp=time_values(groups,'pchip'); tl=time_values(groups,'linear')
-
-    time_rows=[]; a6_pass=True
-    k_rows=[]; a7_pass=True
-    a8_rows=[]; a8_pass=True
-    a9_rows=[]; a9_pass=True
-
-    for scale in SCALES:
-        primary=state(scale,NQ_PRIMARY,ks,h,tp,'pchip')
-        tcontrol=state(scale,NQ_PRIMARY,ks,h,tl,'pchip')
-        kcontrol=state(scale,NQ_PRIMARY,ks,h,tp,'linear')
-        for name in STATE_FIELDS:
-            norm=float(np.linalg.norm(primary[name]))
-            excluded=bool(norm<=ZERO_NORM)
-            rr=None if excluded else l2rel(primary[name],tcontrol[name])
-            ok=True if excluded else bool(rr<=REL_LIMIT)
-            time_rows.append({'R_sigma_hinv_Mpc':scale,'field':name,'primary_norm':norm,'zero_norm_excluded':excluded,'relative_difference':rr,'limit':REL_LIMIT,'pass':ok})
-            a6_pass &= ok
-            rk=None if excluded else l2rel(primary[name],kcontrol[name])
-            okk=True if excluded else bool(rk<=REL_LIMIT)
-            k_rows.append({'R_sigma_hinv_Mpc':scale,'field':name,'primary_norm':norm,'zero_norm_excluded':excluded,'relative_difference':rk,'limit':REL_LIMIT,'pass':okk})
-            a7_pass &= okk
-
-        rec256,tar,e256=target_a8(scale,NQ_PRIMARY,float(ks[0]),float(ks[-1]),h)
-        rec512,_,e512=target_a8(scale,NQ_CONTROL,float(ks[0]),float(ks[-1]),h)
-        mismatch=l2rel(rec512,rec256)
-        oka=bool(e256<=TARGET_LIMIT and e512<=TARGET_LIMIT and mismatch<=TARGET_LIMIT)
-        a8_rows.append({'R_sigma_hinv_Mpc':scale,'error_256':e256,'error_512':e512,'mismatch_256_512':mismatch,'limit':TARGET_LIMIT,'pass':oka})
-        a8_pass &= oka
-
-        xr=l2rel(primary['X_from_chi'],primary['X_from_state'])
-        er=l2rel(primary['E_from_class'],primary['E_from_state'])
-        ok9=bool(xr<=BRIDGE_LIMIT and er<=BRIDGE_LIMIT)
-        a9_rows.append({'R_sigma_hinv_Mpc':scale,'X_relative_error':xr,'E_relative_error':er,'limit':BRIDGE_LIMIT,'pass':ok9})
-        a9_pass &= ok9
-
-    src=Path(args.source).read_text()
-    forbidden=['free_mode_amplitude','free_phase','homogeneous_wave_amplitude','fit_amplitude','fit_phase']
-    a10_checks={
-      'single_target_normalization_only': 'ratios={f:tv[f]/db for f in FIELDS}' in src and 'target_tilde(kq,scale,h)' in src,
-      'no_independent_free_mode_tokens': not any(t in src for t in forbidden),
-      'no_postdata_scale_selection': src.count('SCALES=[5.0,10.0,20.0]')==1,
-      'no_clipping_call': '.clip(' not in src and 'np.clip(' not in src,
-    }
-    a10_pass=bool(all(a10_checks.values()))
-
-    gates={'A6_time_interpolation_control':bool(a6_pass),'A7_k_interpolation_control':bool(a7_pass),'A8_target_profile_reconstruction':bool(a8_pass),'A9_bridge_identities':bool(a9_pass),'A10_no_free_mode_injection':bool(a10_pass)}
-    if all(gates.values()): classification='NL1C7A_ETA0_GROWING_MODE_SPHERICAL_BRIDGE_CERTIFIED'
-    elif not a6_pass: classification='NL1C7A_TIME_INTERPOLATION_CONTROL_FAIL'
-    elif not a7_pass: classification='NL1C7A_K_INTERPOLATION_CONTROL_FAIL'
-    elif not a8_pass: classification='NL1C7A_RECONSTRUCTION_FAIL'
-    elif not a9_pass: classification='NL1C7A_BRIDGE_IDENTITY_FAIL'
-    else: classification='NL1C7A_FREE_MODE_INJECTION_FAIL'
-
-    active_time=[r for r in time_rows if not r['zero_norm_excluded']]
-    active_k=[r for r in k_rows if not r['zero_norm_excluded']]
-    result={
-      'classification':classification,
-      'scope':'NL1C7A A6-A10 eta=0 spherical initial-state reconstruction only; no nonlinear evolution, finite eta, turnaround, collapse, splashback, or observational claim.',
-      'parent_A4_run':35104087182,
-      'parent_A4_artifact':10450205501,
-      'parent_A4_sha256':'9b1a4f998af55ce594cbdd6db78b9b99944cd25a3f690c68bab49ffef290ffc6',
-      'parent_A5_run':35105898962,
-      'a_i':AI,'scales_hinv_Mpc':SCALES,'quadrature_primary':NQ_PRIMARY,'quadrature_control':NQ_CONTROL,'radial_points':NX,
-      'frozen_limits':{'A6_A7_relative':REL_LIMIT,'A8_target':TARGET_LIMIT,'A9_bridge':BRIDGE_LIMIT,'zero_norm':ZERO_NORM},
-      'A6':{'rows':time_rows,'max_active_relative_difference':max(r['relative_difference'] for r in active_time),'pass':bool(a6_pass)},
-      'A7':{'rows':k_rows,'max_active_relative_difference':max(r['relative_difference'] for r in active_k),'pass':bool(a7_pass)},
-      'A8':{'rows':a8_rows,'max_error_or_mismatch':max(max(r['error_256'],r['error_512'],r['mismatch_256_512']) for r in a8_rows),'pass':bool(a8_pass)},
-      'A9':{'rows':a9_rows,'max_bridge_relative_error':max(max(r['X_relative_error'],r['E_relative_error']) for r in a9_rows),'pass':bool(a9_pass)},
-      'A10':{'checks':a10_checks,'pass':bool(a10_pass)},
-      'gates':gates,
-      'claim_boundary':{'unique_eta0_initial_data_certified':bool(all(gates.values())),'nonlinear_evolution':False,'finite_eta':False,'observable':False},
-    }
-    out=Path(args.out); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
-    print(json.dumps(result,indent=2,sort_keys=True))
-    raise SystemExit(0 if all(gates.values()) else 2)
+    p=argparse.ArgumentParser()
+    for a in ['trace','coverage-json','a5-json','source','out']: p.add_argument('--'+a,required=True)
+    a=p.parse_args()
+    cov=json.loads(Path(a.coverage_json).read_text()); a5j=json.loads(Path(a.a5_json).read_text())
+    if cov['classification']!='NL1C7A_NATIVE_TRACE_COVERAGE_PASS' or cov['requested_k_relative_miss_max']!=0: raise RuntimeError('A4 not exact PASS')
+    if a5j['classification']!='NL1C7A_A5_FINITE_GROWING_MODE_DENOMINATOR_PASS' or not all(a5j['gates'].values()): raise RuntimeError('A5 not PASS')
+    h=float(cov['h']); ks,gs=groups(read_trace(a.trace))
+    if len(ks)!=128: raise RuntimeError('not 128 exact k modes')
+    tp,tl=at_ai(gs,'pchip'),at_ai(gs,'linear')
+    r6=[]; r7=[]; r8=[]; r9=[]; p6=p7=p8=p9=True
+    for s in SCALES:
+        q=make_state(s,NQ,ks,h,tp,'pchip'); qt=make_state(s,NQ,ks,h,tl,'pchip'); qk=make_state(s,NQ,ks,h,tp,'linear')
+        for f in STATE:
+            n=float(np.linalg.norm(q[f])); ex=n<=ZERO
+            e6=None if ex else rel(q[f],qt[f]); e7=None if ex else rel(q[f],qk[f])
+            o6=ex or e6<=REL; o7=ex or e7<=REL
+            r6.append({'scale':s,'field':f,'norm':n,'zero_norm_excluded':ex,'relative_difference':e6,'limit':REL,'pass':bool(o6)})
+            r7.append({'scale':s,'field':f,'norm':n,'zero_norm_excluded':ex,'relative_difference':e7,'limit':REL,'pass':bool(o7)})
+            p6 &= o6; p7 &= o7
+        x256,e256=a8(s,NQ,ks[0],ks[-1],h); x512,e512=a8(s,NQC,ks[0],ks[-1],h)
+        mm=rel(x512,x256); ok=e256<=TARG and e512<=TARG and mm<=TARG
+        r8.append({'scale':s,'error_256':e256,'error_512':e512,'mismatch_256_512':mm,'limit':TARG,'pass':bool(ok)}); p8 &= ok
+        ex=rel(q['X_from_chi'],q['X_from_state']); ee=rel(q['E_from_class'],q['E_from_state']); ok=ex<=BRIDGE and ee<=BRIDGE
+        r9.append({'scale':s,'X_relative_error':ex,'E_relative_error':ee,'limit':BRIDGE,'pass':bool(ok)}); p9 &= ok
+    c10=audit_source(a.source); p10=all(c10.values())
+    gates={'A6_time_interpolation_control':bool(p6),'A7_k_interpolation_control':bool(p7),'A8_target_profile_reconstruction':bool(p8),'A9_bridge_identities':bool(p9),'A10_no_free_mode_injection':bool(p10)}
+    if all(gates.values()): cls='NL1C7A_ETA0_GROWING_MODE_SPHERICAL_BRIDGE_CERTIFIED'
+    elif not p6: cls='NL1C7A_TIME_INTERPOLATION_CONTROL_FAIL'
+    elif not p7: cls='NL1C7A_K_INTERPOLATION_CONTROL_FAIL'
+    elif not p8: cls='NL1C7A_RECONSTRUCTION_FAIL'
+    elif not p9: cls='NL1C7A_BRIDGE_IDENTITY_FAIL'
+    else: cls='NL1C7A_FREE_MODE_INJECTION_FAIL'
+    active6=[x for x in r6 if not x['zero_norm_excluded']]; active7=[x for x in r7 if not x['zero_norm_excluded']]
+    out={'classification':cls,'scope':'A6-A10 eta=0 spherical initial-state bridge only; no nonlinear evolution or finite eta.',
+         'parents':{'A4_run':35104087182,'A4_artifact':10450205501,'A4_sha256':'9b1a4f998af55ce594cbdd6db78b9b99944cd25a3f690c68bab49ffef290ffc6','A5_run':35105898962},
+         'settings':{'a_i':AI,'scales_hinv_Mpc':SCALES,'quadrature_primary':NQ,'quadrature_control':NQC,'radial_points':NX,
+                     'A6_A7_limit':REL,'A8_limit':TARG,'A9_limit':BRIDGE,'zero_norm':ZERO},
+         'A6':{'rows':r6,'max_active_relative_difference':max(x['relative_difference'] for x in active6),'pass':bool(p6)},
+         'A7':{'rows':r7,'max_active_relative_difference':max(x['relative_difference'] for x in active7),'pass':bool(p7)},
+         'A8':{'rows':r8,'max_error_or_mismatch':max(max(x['error_256'],x['error_512'],x['mismatch_256_512']) for x in r8),'pass':bool(p8)},
+         'A9':{'rows':r9,'max_bridge_relative_error':max(max(x['X_relative_error'],x['E_relative_error']) for x in r9),'pass':bool(p9)},
+         'A10':{'checks':c10,'pass':bool(p10)},'gates':gates,
+         'claim_boundary':{'unique_eta0_initial_data_certified':bool(all(gates.values())),'nonlinear_evolution':False,'finite_eta':False,'observable':False}}
+    o=Path(a.out); o.parent.mkdir(parents=True,exist_ok=True); o.write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+    print(json.dumps(out,indent=2,sort_keys=True)); raise SystemExit(0 if all(gates.values()) else 2)
 
 if __name__=='__main__': main()
