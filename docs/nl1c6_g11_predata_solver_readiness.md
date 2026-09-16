@@ -124,7 +124,25 @@ The official implementation must also pass all of the following without changing
 2. **G11-C — bath principal coefficient:** for every normalized bath node, the coefficient of `ddot q_j` in `N=1,b=0` is positive for `L>0`, `R>0` and finite `u`.
 3. **G11-D — FLRW gauge compatibility:** `N=1,b=0,L=a,R=ar,u=0` is admitted without imposing an extra physical equation.
 4. **G11-E — constraints retained:** the lapse and shift Euler-Lagrange equations from G1-G10 remain explicitly identified as monitorable constraints after gauge fixing.
-5. **G11-F — deterministic principal solve:** on a fixed smooth test family spanning `u={0,0.25,0.5}`, local regime controls `x={1e-6,1,1e6}`, all three interpolation functions and all three beta0 values, the direct numerical Hessian and analytic Hessian must agree to normalized Frobenius error `<=1e-10`. The regularized determinant must have the sign predicted by G11-A at every point.
+5. **G11-F — deterministic principal solve:** use the fixed Cartesian product
+   - `u = {0, 0.25, 0.5}`;
+   - local regime controls `x = {1e-6, 1, 1e6}`;
+   - Exp-sector controls `Z = {0, 0.5, 1}`;
+   - `L = 1.2`, `R = 2.3`;
+   - all three interpolation functions and all three beta0 values.
+
+   Convert the frozen physical acceleration to geometric inverse-length units using
+   \[
+   a_{0,\rm geo}=a_0\,\mathrm{Mpc}/c^2
+   =4.1199352008117163\times10^{-5}\;\mathrm{Mpc}^{-1},
+   \]
+   with `c=299792458 m/s` and `Mpc=3.0856775814913673e22 m`.
+
+   At each control point choose local scalar derivatives by the exact inverse boost so that
+   \[
+   Q=Q_0+Z_0 Z,\qquad X=a_{0,\rm geo}x.
+   \]
+   The direct Hessian obtained from the full frozen local action and the analytic Hessian must agree to normalized Frobenius error `<=1e-10`. The regularized determinant must have the sign predicted by G11-A at every point.
 6. **G11-G — Sharp kink policy:** no ordinary derivative is evaluated exactly at `x=(1+beta0)/beta0`; the two one-sided principal matrices must both be nonsingular. This is a numerical nonsmooth-interface rule, not an interpolation selection.
 7. **G11-H — no physical closure added:** implementation contains no Poisson/GR substitute, memory drag, shell force, finite eta, artificial pressure, viscosity or gauge-driver parameter.
 
