@@ -232,3 +232,85 @@ Natural next questions are:
 2. kSZ / velocity-sensitive observables: test if the memory model leaves a relatively larger signature in electron momentum / peculiar-velocity statistics than in CMB lensing or compressed DESI ShapeFit.
 
 Treat R10a as the authoritative ACT live-lensing checkpoint.
+
+## 2026-09-16 — R11a kSZ pairwise-velocity native-density FAIL
+
+**IMPORTANT: R11a is a numerical response-extraction FAIL, not a kSZ null result. Do not interpret the provisional physical amplitudes as certified.**
+
+R11a classification:
+
+`STABLE_AEST_KSZ_R11A_NATIVE_DENSITY_FAIL`
+
+Gate status:
+
+- G1 provenance/checkpoints: PASS
+- G2 baseline physicality and tau invariance: PASS
+- G3 eta-zero Simpson/trapezoid agreement: PASS
+- G4 epsilon consistency: PASS
+- G5 D1 -> D2 native-density convergence: FAIL
+- G6 Simpson -> trapezoid tangent agreement: FAIL
+- G7 local eta=0.05 linearity: PASS
+
+### What is healthy
+
+All 25 frozen R9b2k checkpoints validate. Native refinement remains 108 -> 864 -> 1729 k nodes.
+
+The eta-zero pairwise-velocity baseline is healthy and stable:
+
+- Simpson/trapezoid baseline E ~ `0.00132014`
+- baseline cosine ~ `0.999999157`
+- eta-zero tau variation ~ `1.45e-9` pointwise.
+
+The eta stencil is also internally stable: `eps=0.025` versus `eps=0.05` gives E of order `1e-6`--`1e-5` inside either quadrature, with cosine essentially one. The direct eta=0.05 shift is locally linear at E ~ `0.0017` and C ~ `0.9999999`.
+
+### Failure localization
+
+The tiny signed pairwise-velocity response is not robust to native-grid oscillatory integration.
+
+At tau10, D1 -> D2 tangent convergence fails strongly:
+
+- Simpson: E ~ `0.604`, C ~ `0.799`
+- trapezoid: E ~ `0.834`, C ~ `0.644`.
+
+At D2, Simpson versus trapezoid tangent agreement also fails for all tau and both epsilon values:
+
+- E ~ `0.289`
+- C ~ `0.958`.
+
+Thus the baseline integral is stable, but the derivative of the oscillatory Bessel integral is under-resolved. This is numerically analogous to the earlier DESI signed-response issue and does not imply physical instability.
+
+### Provisional amplitude only — not licensed science
+
+The failed-estimator D2/Simpson diagnostic suggests that physical eta=0.05 produces only a very small pairwise-velocity shift:
+
+- max fractional shift ~ `5.4e-5`--`5.7e-5`
+- RMS fractional shift ~ `8.9e-6`--`9.3e-6`
+- max absolute shift < `8.4e-4 km/s` (~`0.84 m/s`)
+- largest fractional shift near `z=0.29536`, `r=180 Mpc/h`.
+
+These values must not be used as a final AeST/kSZ prediction until the response integral is numerically certified.
+
+### Required continuation
+
+The next permitted step is a separately preregistered **response-before-integration repair**:
+
+1. form signed central responses of `P_dd` and the sign-preserving density-velocity cross spectrum before spherical-Bessel integration;
+2. interpolate the signed response itself on a dense bounded log-k grid;
+3. integrate the response with independent dense quadrature/operator controls;
+4. analytically propagate the response through `v12 = -2 a H I_df / [h(1+xi)]`;
+5. retain frozen 40--200 Mpc/h scales, tau grid, eta stencil, and original convergence gates;
+6. no smoothing, clipping, extrapolation, post-data scale selection, or gate relaxation.
+
+Only after that repair passes may the physical amplitude be used to decide if observational R11b kSZ work is justified.
+
+### Frozen R11a identifiers
+
+- R11a prefit: `a34c4d13738383c670222472b3af8ab4e1802fdf`
+- R11a implementation: `44a65aea8f671a0af7534447c31f415a6c9d314c`
+- R11a runner / run head: `8868dc344b83f69f7429b507e750450c724ddd63`
+- R11a JSON SHA256: `a868dbbb6b5b08bf54139abf9d3a288d52bee501f23cc4b61f9422f9fb2d98ab`
+- R11a NPZ SHA256: `4c48329839af71f30f56f2b54b48de5cbf8cef395cee105b4fa2fd378ad39b08`
+- R11a science log SHA256: `ff9a4e30234485e58ae65974bce4024ba8280127d74e1bed319e883d93366691`
+- R11a postdata freeze commit: `94efaf95b4582a177bd80dd566d5d2c26b4e212c`
+
+Treat this as the authoritative kSZ/pairwise-velocity continuation state.
