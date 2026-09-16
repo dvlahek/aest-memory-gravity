@@ -1,0 +1,208 @@
+name: NL1C7A Repair01 dense source-time certification
+
+on:
+  push:
+    branches: [nl1c7a-growing-mode-bridge]
+    paths:
+      - '.github/workflows/nl1c7a-repair01-dense-time.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  dense-time-repair01:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_c7a
+
+      - name: Install build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Verify frozen Repair01 locks and historical parent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor d5ad768ff91abd789a1ff24fa7b19dfff8905489 HEAD
+          git merge-base --is-ancestor 66bcc9d48ce3cf7dde797ba1f1426e98731f50af HEAD
+          git merge-base --is-ancestor ccf2ac18dd3187f67bafcba4eeeb2b1c0dc524ae HEAD
+          test "$(git rev-parse HEAD:nl1c7a/trace_dense_time_repair01.py)" = "59afc0ca82217110e8a6e6b2d1d397a62e0452a2"
+          test "$(git rev-parse HEAD:nl1c7a/evaluate_dense_time_repair01.py)" = "aa84b4892586a59455ec93b6dfdc0057adc20d38"
+          test "$(git rev-parse HEAD:nl1c7a/a5_denominator_audit.py)" = "47b486ca2defbd1db029df003b37909a9d4d170d"
+          test "$(git rev-parse HEAD:nl1c7a/a6_a10_spherical_reconstruction.py)" = "ff383c1ddc2cb2a684e2b5dd11fde0ae811e4fac"
+          test "$(git rev-parse HEAD:nl1c7a/apply_trace_extension.py)" = "21147e873e6cdee8b55260189eafb8c0e612f02b"
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35106735707)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="8b02243fc0b1ea58f00466868d58170c73dbc4e4"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10450343358)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:99b795389566a21b0438977af55bae21f92b428d52ad50ba2c9855bafda28fb5"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C7A_REPAIR01_PROVENANCE_PASS
+
+      - name: Verify pinned CLASS source-sampling semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('class_c7a/include/precisions.h').read_text()
+          assert 'class_precision_parameter(perturbations_sampling_stepsize,double,0.1)' in s
+          assert 'class_precision_parameter(perturbations_integration_stepsize,double,0.5)' in s
+          r=Path('nl1c7a/trace_dense_time_repair01.py').read_text()
+          assert 'SAMPLE_STEP=0.025' in r
+          assert "'perturbations_sampling_stepsize':SAMPLE_STEP" in r
+          assert "forbidden={'perturbations_integration_stepsize','tol_perturbations_integration'}" in r
+          print('NL1C7A_REPAIR01_SOURCE_SAMPLING_BOUNDARY_PRECHECK_PASS')
+          PY
+
+      - name: Apply validated eta0 AeST stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_c7a
+          python3 v019i/apply_ic_patch.py class_c7a
+          python3 v019j/apply_memory_patch.py class_c7a
+          python3 v019w/apply_variational_forcing_patch.py class_c7a
+          python3 v019y/apply_output_precision_patch.py class_c7a
+          python3 v023/apply_source_grid_trace_patch.py class_c7a
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_c7a
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_c7a
+          python3 tools/apply_v075_force_path_reload_patch.py class_c7a
+
+      - name: Snapshot pre-extension evolution source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results/c7a_before
+          cp class_c7a/source/perturbations.c results/c7a_before/perturbations.c
+
+      - name: Apply frozen output-only trace extension
+        run: python3 nl1c7a/apply_trace_extension.py class_c7a
+
+      - name: Verify output-only evolution boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import difflib,json
+          b=Path('results/c7a_before/perturbations.c').read_text().splitlines()
+          a=Path('class_c7a/source/perturbations.c').read_text().splitlines()
+          bt='\n'.join(b); at='\n'.join(a)
+          assert [x for x in b if 'dy[' in x] == [x for x in a if 'dy[' in x]
+          critical=['E_rhs_aest -= 0.5*Q_aest*Bchi_aest','dy[pv->index_pt_E_aest]','dy[pv->index_pt_delta_cdm]','dy[pv->index_pt_theta_cdm]','dy[pv->index_pt_alpha_aest]']
+          for token in critical:
+              assert bt.count(token)>=1 and at.count(token)==bt.count(token)
+          changed=[x for x in difflib.unified_diff(b,a,n=0) if (x.startswith('+') or x.startswith('-')) and not x.startswith('+++') and not x.startswith('---')]
+          forbidden=['dy[','E_rhs_aest =','Pi_aest =','metric_euler=']
+          assert not any(tok in line for line in changed for tok in forbidden), changed
+          d=json.load(open('results/nl1c7a_trace_extension_patch.json'))
+          assert d['classification']=='NL1C7A_OUTPUT_ONLY_TRACE_EXTENSION_REPAIR03'
+          assert all(d['checks'].values())
+          print('NL1C7A_REPAIR01_OUTPUT_ONLY_BOUNDARY_PASS')
+          PY
+
+      - name: Apply diagnostic k-output capacity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('class_c7a/include/perturbations.h'); s=p.read_text()
+          old='#define _MAX_NUMBER_OF_K_FILES_ 30'; new='#define _MAX_NUMBER_OF_K_FILES_ 160'
+          assert s.count(old)==1; p.write_text(s.replace(old,new,1))
+          PY
+
+      - name: Build CLASS and classy
+        run: |
+          make -C class_c7a -j2 class
+          make -C class_c7a -j2 classy
+
+      - name: Run frozen dense exact-k trace Repair01
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p results
+          export OMP_NUM_THREADS=1
+          python3 nl1c7a/trace_dense_time_repair01.py \
+            --class-root class_c7a \
+            --trace-out results/nl1c7a_repair01_dense_trace.dat \
+            --json-out results/nl1c7a_repair01_dense_coverage.json \
+            2>&1 | tee results/nl1c7a_repair01_dense_trace.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "TRACE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Run unchanged A5-A10 science gates through Repair01 evaluator
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          python3 nl1c7a/evaluate_dense_time_repair01.py \
+            --trace results/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json results/nl1c7a_repair01_dense_coverage.json \
+            --source nl1c7a/a6_a10_spherical_reconstruction.py \
+            --out results/nl1c7a_repair01_result.json \
+            --state-npz results/nl1c7a_repair01_primary_states.npz \
+            2>&1 | tee results/nl1c7a_repair01_result.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify Repair01 classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          d=json.load(open('results/nl1c7a_repair01_result.json'))
+          allowed={
+            'NL1C7A_REPAIR01_DENSE_TIME_SPHERICAL_BRIDGE_CERTIFIED',
+            'NL1C7A_REPAIR01_SOURCE_SAMPLING_BOUNDARY_FAIL',
+            'NL1C7A_REPAIR01_NATIVE_DENSITY_FAIL',
+            'NL1C7A_REPAIR01_TRANSFER_ZERO_FAIL',
+            'NL1C7A_REPAIR01_TIME_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_REPAIR01_K_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_REPAIR01_RECONSTRUCTION_FAIL',
+            'NL1C7A_REPAIR01_BRIDGE_IDENTITY_FAIL',
+            'NL1C7A_REPAIR01_FREE_MODE_INJECTION_FAIL',
+          }
+          assert d['classification'] in allowed
+          if d['classification']=='NL1C7A_REPAIR01_DENSE_TIME_SPHERICAL_BRIDGE_CERTIFIED':
+              assert all(d['gates'].values())
+              assert d['primary_state_npz_written'] is True
+              assert os.path.getsize('results/nl1c7a_repair01_primary_states.npz')>0
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair01 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7a_repair01_dense_time
+          path: |
+            results/nl1c7a_trace_extension_patch.json
+            results/nl1c7a_repair01_dense_trace.dat
+            results/nl1c7a_repair01_dense_coverage.json
+            results/nl1c7a_repair01_dense_trace.log
+            results/nl1c7a_repair01_a5_raw.json
+            results/nl1c7a_repair01_a6_a10_raw.json
+            results/nl1c7a_repair01_result.json
+            results/nl1c7a_repair01_result.log
+            results/nl1c7a_repair01_primary_states.npz
+          if-no-files-found: warn
