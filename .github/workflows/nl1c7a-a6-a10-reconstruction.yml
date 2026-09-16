@@ -59,9 +59,10 @@ jobs:
           test -s input/a4/nl1c7a_trace_coverage.json
           test -s input/a5/nl1c7a_a5_denominator.json
 
-      - name: Run frozen A6-A10 reconstruction
+      - name: Run frozen A6-A10 reconstruction Repair01
         shell: bash
         run: |
+          set +e
           set -uo pipefail
           python3 nl1c7a/a6_a10_spherical_reconstruction.py \
             --trace input/a4/nl1c7a_extended_source_trace.dat \
@@ -71,6 +72,7 @@ jobs:
             --out results/nl1c7a_a6_a10_reconstruction.json \
             2>&1 | tee results/nl1c7a_a6_a10_reconstruction.log
           rc=${PIPESTATUS[0]}
+          set -e
           echo "SCIENCE_RC=${rc}"
           test "${rc}" -eq 0 -o "${rc}" -eq 2
 
