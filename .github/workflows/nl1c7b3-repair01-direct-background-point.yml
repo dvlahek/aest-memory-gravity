@@ -1,0 +1,142 @@
+name: NL1C7B3 Repair01 direct background-point reconciliation
+
+on:
+  push:
+    branches: [nl1c7b-eta0-spherical-evolution]
+    paths:
+      - '.github/workflows/nl1c7b3-repair01-direct-background-point.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  direct-background-point:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_c7b3r1
+
+      - name: Install dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Verify frozen Repair01 provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 58a5dc4d22fe83d8b2eadae35a313050e6c7df43 HEAD
+          git merge-base --is-ancestor 4fb8679f84585c4008008d7043ac0b5f4ca33eeb HEAD
+          git merge-base --is-ancestor 4e50a12c062f96dcc79eeb0f496fe922b551eee7 HEAD
+          git merge-base --is-ancestor 287e7fa8b6e1f315e5978e17c2f8f4bdb92046aa HEAD
+          test "$(git rev-parse HEAD:nl1c7b/standard_background_sector_identification_repair01.py)" = "b3cdba7e314d2b5285b51770fb20e17cf68b181c"
+          test "$(git rev-parse HEAD:v063/theory_response_map.py)" = "fb373c8118b755c5aa7d5572d910d6ca3684866e"
+          hist_run="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35195633648)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="43573a7c1eaf9090b0890297edcadde017bdb9bb"' <<<"${hist_run}"
+          hist_art="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10484764897)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:d6b80e99cb456314e130f5e7e65c15b4f608ac9fc8a8395263404045e9fa67e4"; assert d["expired"] is False' <<<"${hist_art}"
+          test "$(git -C class_c7b3r1 rev-parse HEAD)" = "e85808324f51fc694d12e3ed7439552a3c3f9540"
+          echo NL1C7B3_REPAIR01_PROVENANCE_PASS
+
+      - name: Download historical B3 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/b3
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10484764897/zip \
+            -o input/b3.zip
+          unzip -q input/b3.zip -d input/b3
+          test -s input/b3/nl1c7b3_standard_background_sector_identification.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('input/b3/nl1c7b3_standard_background_sector_identification.json'))
+          assert d['classification']=='NL1C7B3_STANDARD_BACKGROUND_IDENTIFICATION_FAIL'
+          print('NL1C7B3_REPAIR01_HISTORICAL_PARENT_PASS')
+          PY
+
+      - name: Apply validated eta0 AeST stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_c7b3r1
+          python3 v019i/apply_ic_patch.py class_c7b3r1
+          python3 v019j/apply_memory_patch.py class_c7b3r1
+          python3 v019w/apply_variational_forcing_patch.py class_c7b3r1
+          python3 v019y/apply_output_precision_patch.py class_c7b3r1
+          python3 v023/apply_source_grid_trace_patch.py class_c7b3r1
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_c7b3r1
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_c7b3r1
+          python3 tools/apply_v075_force_path_reload_patch.py class_c7b3r1
+
+      - name: Build CLASS and classy
+        run: |
+          make -C class_c7b3r1 -j2 class
+          make -C class_c7b3r1 -j2 classy
+
+      - name: Execute locked Repair01 direct-point reconciliation
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p results
+          export OMP_NUM_THREADS=1
+          python3 nl1c7b/standard_background_sector_identification_repair01.py \
+            --class-root class_c7b3r1 \
+            --historical-json input/b3/nl1c7b3_standard_background_sector_identification.json \
+            --out results/nl1c7b3_repair01_direct_background_point.json \
+            2>&1 | tee results/nl1c7b3_repair01_direct_background_point.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify preregistered Repair01 classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b3_repair01_direct_background_point.json'))
+          assert d['classification'] in {
+            'NL1C7B3_REPAIR01_DIRECT_BACKGROUND_POINT_PASS',
+            'NL1C7B3_REPAIR01_DIRECT_BACKGROUND_POINT_FAIL',
+          }
+          assert d['historical_parent']['run']==35195633648
+          assert d['historical_parent']['artifact']==10484764897
+          assert d['provenance']['pinned_CLASS']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['limits']['homogeneous_closure']==1e-7
+          assert d['aggregate_diagnostics']['rho_tot_is_not_species'] is True
+          assert d['claim_boundary']['radial_initial_constraint_executed'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          print(d['classification'])
+          print('epsilon_direct=',d['closure']['epsilon_direct'])
+          print('class_density_sum_relative_error=',d['closure']['class_density_sum_relative_error'])
+          print('gates=',d['gates'])
+          PY
+
+      - name: Upload Repair01 result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b3_repair01_direct_background_point
+          path: |
+            results/nl1c7b3_repair01_direct_background_point.json
+            results/nl1c7b3_repair01_direct_background_point.log
+          if-no-files-found: warn
