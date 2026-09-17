@@ -1,0 +1,141 @@
+name: NL1C7A Repair08 identity-preserving scalar representation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair08-certification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify Repair08 lock and retained artifact provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor c32c77940b5a338fd6ca42f7251b3a1b57927fb7 HEAD
+          git merge-base --is-ancestor 93807f46ea532849aaf3d4dc8efdd7f25d985bd2 HEAD
+          git merge-base --is-ancestor b99954cace654d7edac9d202b1db8537788dc92b HEAD
+          git merge-base --is-ancestor d2bc5fcbf6559ecd1f80be46909a010bbd8a12c0 HEAD
+          git merge-base --is-ancestor 6c4d6beb2373f9d08cb8f19ab8e1c394f4cee69b HEAD
+
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair07b_result_freeze.md)" = "fa0d38dcce6902b224c8d5055a883ad163dab5bd"
+          test "$(git rev-parse HEAD:docs/nl1c7a_repair08_identity_preserving_scalar_representation.md)" = "258c74068d0f6bfb33867e07057b1977344c022c"
+          test "$(git rev-parse HEAD:docs/nl1c7a_repair08_implementation_lock.md)" = "53773587917529c5d3caa318b45e4c640ddd29a9"
+          test "$(git rev-parse HEAD:nl1c7a/evaluate_identity_preserving_repair08.py)" = "94fb3f42a7c819b0525860f7344d5dbaff93da19"
+          test "$(git rev-parse HEAD:nl1c7a/run_local_nl1c7a_repair08_identity_preserving_scalar_representation.sh)" = "6f2b5c1bd19218f37009fe163c94dbbc3f155b69"
+
+          test "$(git rev-parse HEAD:nl1c7a/a5_denominator_audit.py)" = "47b486ca2defbd1db029df003b37909a9d4d170d"
+          test "$(git rev-parse HEAD:nl1c7a/a6_a10_spherical_reconstruction.py)" = "ff383c1ddc2cb2a684e2b5dd11fde0ae811e4fac"
+          test "$(git rev-parse HEAD:nl1c7a/evaluate_dense_time_repair01.py)" = "aa84b4892586a59455ec93b6dfdc0057adc20d38"
+          test "$(git rev-parse HEAD:nl1c7a/make_repair01_coverage_compat.py)" = "db52f94e1b896b2d277bb306a9eb4a63ea412ead"
+          test "$(git rev-parse HEAD:.github/workflows/nl1c7a-repair01-evalfix.yml)" = "3e784644e92aea67c8adbc36139d72694052e5ae"
+
+          for spec in \
+            '10481526695 sha256:c2ede2e602e35bbd52afdc0a5eee22cb1bf5c6efc2e1063bf8f2b91a0554fb6c' \
+            '10469031693 sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70'; do
+            set -- ${spec}; id="$1"; dig="$2"
+            j="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}")"
+            python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]==sys.argv[1]; assert d["expired"] is False' "${dig}" <<<"${j}"
+          done
+          echo NL1C7A_REPAIR08_PROVENANCE_PASS
+
+      - name: Download exact retained inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense input/final results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481526695/zip -o input/final.zip
+          unzip -q input/final.zip -d input/final
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+          test -s input/final/nl1c7a_repair01_evalfix_primary_states.npz
+
+      - name: Execute locked Repair08 certification
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          bash nl1c7a/run_local_nl1c7a_repair08_identity_preserving_scalar_representation.sh \
+            2>&1 | tee results/nl1c7a_repair08_runner.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify terminal classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          p='results/nl1c7a_repair08_identity_preserving_scalar_representation.json'
+          d=json.load(open(p))
+          allowed={
+            'NL1C7A_REPAIR08_IDENTITY_PRESERVING_SCALAR_REPRESENTATION_CERTIFIED',
+            'NL1C7A_REPAIR08_SCALAR_IDENTITY_FAIL',
+            'NL1C7A_REPAIR08_TIME_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_REPAIR08_K_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_REPAIR08_RECONSTRUCTION_FAIL',
+            'NL1C7A_REPAIR08_BRIDGE_IDENTITY_FAIL',
+            'NL1C7A_REPAIR08_FREE_MODE_INJECTION_FAIL',
+            'NL1C7A_REPAIR08_STATE_REGRESSION_FAIL',
+            'NL1C7A_REPAIR08_IMPLEMENTATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          cb=d['claim_boundary']
+          assert cb['historical_C7A_NPZ_overwritten'] is False
+          assert cb['physical_coefficient_changed'] is False
+          assert cb['coefficient_fitted'] is False
+          assert cb['source_fitted_or_inserted'] is False
+          assert cb['sign_flipped'] is False
+          assert cb['clipping_used'] is False
+          assert cb['radial_points_removed'] is False
+          assert cb['historical_threshold_changed'] is False
+          assert cb['nonlinear_evolution_executed'] is False
+          assert cb['finite_eta_executed'] is False
+          assert cb['B4_pass_claimed'] is False
+          if d['classification']=='NL1C7A_REPAIR08_IDENTITY_PRESERVING_SCALAR_REPRESENTATION_CERTIFIED':
+              assert all(d['gates'].values())
+              assert d['new_state_npz_written'] is True
+              assert os.path.getsize('results/nl1c7a_repair08_identity_preserving_primary_states.npz')>0
+          else:
+              assert d['new_state_npz_written'] is False
+              assert not os.path.exists('results/nl1c7a_repair08_identity_preserving_primary_states.npz')
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair08 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7a_repair08_identity_preserving_scalar_representation
+          path: |
+            results/nl1c7a_repair08_dense_coverage_compat.json
+            results/nl1c7a_repair08_coverage_compat.log
+            results/nl1c7a_repair08_a5.json
+            results/nl1c7a_repair08_a5.log
+            results/nl1c7a_repair08_identity_preserving_scalar_representation.json
+            results/nl1c7a_repair08_identity_preserving_scalar_representation.log
+            results/nl1c7a_repair08_identity_preserving_primary_states.npz
+            results/nl1c7a_repair08_runner.log
+          if-no-files-found: warn
