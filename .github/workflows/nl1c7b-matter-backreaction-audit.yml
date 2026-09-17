@@ -1,0 +1,69 @@
+name: NL1C7B matter-backreaction closure audit
+
+on:
+  push:
+    branches:
+      - nl1c7b-eta0-spherical-evolution
+    paths:
+      - '.github/workflows/nl1c7b-matter-backreaction-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-frozen-c6-matter-backreaction:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify preregistration and implementation lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor fcc9bdf3795051f870baa59427b7bdc7dd72d3f8 HEAD
+          git merge-base --is-ancestor ff1c8884d8050eac7dcb1a6e5601f055e523f205 HEAD
+          git merge-base --is-ancestor 764dce8fc0f121c3563535c596e9e76c2c45c536 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/matter_backreaction_closure_audit.py)" = "e7b4a364b1798348acc7c7decf930f77fda437b4"
+          test "$(git rev-parse HEAD:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
+          test "$(git rev-parse HEAD:nl1c6/g11_solver_readiness.py)" = "970ccb164f8ab7d3de6681ff4af940b1638d1686"
+          test "$(git rev-parse 4090367131f0a4fac22cf13571f157cab0a284dc)" = "4090367131f0a4fac22cf13571f157cab0a284dc"
+          echo NL1C7B_MATTER_BACKREACTION_AUDIT_LOCK_PASS
+
+      - name: Execute locked source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 nl1c7b/matter_backreaction_closure_audit.py | tee results/nl1c7b_matter_backreaction_closure_audit.log
+
+      - name: Verify allowed scientific classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          p='results/nl1c7b_matter_backreaction_closure_audit.json'
+          d=json.load(open(p))
+          allowed={
+            'NL1C7B_MATTER_BACKREACTION_CLOSURE_AUDIT_PASS',
+            'NL1C7B_MATTER_BACKREACTION_CLOSURE_INCOMPLETE',
+          }
+          assert d['classification'] in allowed, d['classification']
+          assert d['gates']['B0_G1_provenance'] is True
+          assert d['gates']['B0_G5_no_hidden_phenomenological_closure'] is True
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          assert d['claim_boundary']['finite_eta_executed'] is False
+          print(d['classification'])
+          PY
+
+      - name: Upload audit bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b_matter_backreaction_closure_audit
+          path: |
+            results/nl1c7b_matter_backreaction_closure_audit.json
+            results/nl1c7b_matter_backreaction_closure_audit.log
