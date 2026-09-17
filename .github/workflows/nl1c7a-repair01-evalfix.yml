@@ -1,0 +1,127 @@
+name: NL1C7A Repair01 dense-time evaluator interface fix
+
+on:
+  push:
+    branches: [nl1c7a-growing-mode-bridge]
+    paths:
+      - '.github/workflows/nl1c7a-repair01-evalfix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reevaluate-exact-dense-artifact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify locked technical-fix boundary and parent artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor d2c60546c36b4c104570a1ed6e3f75fc094f72b0 HEAD
+          git merge-base --is-ancestor 828c32d199bc8be6db3716fcaeae5af6036511e7 HEAD
+          test "$(git rev-parse HEAD:nl1c7a/make_repair01_coverage_compat.py)" = "db52f94e1b896b2d277bb306a9eb4a63ea412ead"
+          test "$(git rev-parse HEAD:nl1c7a/evaluate_dense_time_repair01.py)" = "aa84b4892586a59455ec93b6dfdc0057adc20d38"
+          test "$(git rev-parse HEAD:nl1c7a/a5_denominator_audit.py)" = "47b486ca2defbd1db029df003b37909a9d4d170d"
+          test "$(git rev-parse HEAD:nl1c7a/a6_a10_spherical_reconstruction.py)" = "ff383c1ddc2cb2a684e2b5dd11fde0ae811e4fac"
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35149865129)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="4a275f4777a7e487004f4783bc2a929a93ac8188"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70"; assert d["expired"] is False' <<<"${art_json}"
+          echo NL1C7A_REPAIR01_EVALFIX_PROVENANCE_PASS
+
+      - name: Download exact retained dense-time artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense results
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip \
+            -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Create metadata-only compatibility coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 nl1c7a/make_repair01_coverage_compat.py \
+            --input input/dense/nl1c7a_repair01_dense_coverage.json \
+            --output results/nl1c7a_repair01_dense_coverage_compat.json \
+            2>&1 | tee results/nl1c7a_repair01_evalfix_compat.log
+
+      - name: Re-run unchanged frozen A5-A10 gates on exact dense trace
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          python3 nl1c7a/evaluate_dense_time_repair01.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json results/nl1c7a_repair01_dense_coverage_compat.json \
+            --source nl1c7a/a6_a10_spherical_reconstruction.py \
+            --out results/nl1c7a_repair01_evalfix_result.json \
+            --state-npz results/nl1c7a_repair01_evalfix_primary_states.npz \
+            2>&1 | tee results/nl1c7a_repair01_evalfix_result.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify scientific classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          d=json.load(open('results/nl1c7a_repair01_evalfix_result.json'))
+          allowed={
+            'NL1C7A_REPAIR01_DENSE_TIME_SPHERICAL_BRIDGE_CERTIFIED',
+            'NL1C7A_REPAIR01_TRANSFER_ZERO_FAIL',
+            'NL1C7A_REPAIR01_TIME_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_REPAIR01_K_INTERPOLATION_CONTROL_FAIL',
+            'NL1C7A_REPAIR01_RECONSTRUCTION_FAIL',
+            'NL1C7A_REPAIR01_BRIDGE_IDENTITY_FAIL',
+            'NL1C7A_REPAIR01_FREE_MODE_INJECTION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['gates']['R1_historical_parent_frozen']
+          assert d['gates']['R2_source_sampling_only_change']
+          assert d['gates']['R3_denser_exact_native_trace']
+          if d['classification']=='NL1C7A_REPAIR01_DENSE_TIME_SPHERICAL_BRIDGE_CERTIFIED':
+              assert all(d['gates'].values())
+              assert d['primary_state_npz_written'] is True
+              assert os.path.getsize('results/nl1c7a_repair01_evalfix_primary_states.npz')>0
+          print(d['classification'])
+          PY
+
+      - name: Upload evaluator-fix bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7a_repair01_evalfix
+          path: |
+            results/nl1c7a_repair01_dense_coverage_compat.json
+            results/nl1c7a_repair01_evalfix_compat.log
+            results/nl1c7a_repair01_a5_raw.json
+            results/nl1c7a_repair01_a6_a10_raw.json
+            results/nl1c7a_repair01_evalfix_result.json
+            results/nl1c7a_repair01_evalfix_result.log
+            results/nl1c7a_repair01_evalfix_primary_states.npz
+          if-no-files-found: warn
