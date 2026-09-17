@@ -1,0 +1,107 @@
+name: NL1C7B2 Repair01 stable Exp energy reconciliation
+
+on:
+  push:
+    branches:
+      - nl1c7b-eta0-spherical-evolution
+    paths:
+      - '.github/workflows/nl1c7b2-repair01-stable-exp-energy.yml'
+      - 'nl1c7b/homogeneous_background_reconciliation_repair01.py'
+      - 'docs/nl1c7b2_repair01_predata_stable_exp_energy.md'
+      - 'docs/nl1c7b2_repair01_implementation_lock.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair01-stable-exp:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify frozen provenance and Repair01 lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 22923058c883dd36c6b507fa7079efba5000b4e0 HEAD
+          git merge-base --is-ancestor 0b509efb43f5d8d681d3e906b4b96b144e5ded77 HEAD
+          git merge-base --is-ancestor 4c6378b73c7668190474c5f5ff880ebf1a0d6975 HEAD
+          git merge-base --is-ancestor 11f2f1c215935f5c6af9d5eace8a52ceb11db5a6 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/homogeneous_background_reconciliation_repair01.py)" = "ac41fbe5688f299f8bd5290c9748092697dc2643"
+          test "$(git rev-parse HEAD:nl1c7b/homogeneous_background_reconciliation.py)" = "526b60a64b42e3f98663a5367a3cf4c4bf2d4316"
+          hist_run="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35190742632)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="c13207ef37540e7c01171c4d638b4058ad1fadd3"' <<<"${hist_run}"
+          hist_art="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10483358073)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:aa017449e0d4bc2afa4906925c4c53151c4c1eae1571916851aeacf87ef16281"; assert d["expired"] is False' <<<"${hist_art}"
+          echo NL1C7B2_REPAIR01_PROVENANCE_LOCK_PASS
+
+      - name: Download retained dense eta0 trace
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip \
+            -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute locked Repair01 reconciliation
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p results
+          python3 nl1c7b/homogeneous_background_reconciliation_repair01.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --out results/nl1c7b2_repair01_stable_exp_energy.json \
+            2>&1 | tee results/nl1c7b2_repair01_stable_exp_energy.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify preregistered Repair01 classification
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b2_repair01_stable_exp_energy.json'))
+          allowed={
+            'NL1C7B2_REPAIR01_HOMOGENEOUS_BACKGROUND_RECONCILIATION_PASS',
+            'NL1C7B2_REPAIR01_HOMOGENEOUS_BACKGROUND_SECTOR_INCOMPLETE',
+            'NL1C7B2_REPAIR01_STABLE_EXP_EVALUATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['historical_parent']['run']==35190742632
+          assert d['claim_boundary']['radial_initial_constraint_executed'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          assert d['limits']['scalar_energy']==1e-8
+          assert d['limits']['epsilon_H']==1e-7
+          print(d['classification'])
+          print('scalar_energy_relative_error=',d['pchip']['scalar_energy_relative_error'])
+          print('epsilon_H_max=',d['pchip']['epsilon_H_max'])
+          print('rho_rem_fraction=',d['missing_sector_diagnostic']['fraction_of_3H2'])
+          PY
+
+      - name: Upload Repair01 result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b2_repair01_stable_exp_energy
+          path: |
+            results/nl1c7b2_repair01_stable_exp_energy.json
+            results/nl1c7b2_repair01_stable_exp_energy.log
+          if-no-files-found: error
