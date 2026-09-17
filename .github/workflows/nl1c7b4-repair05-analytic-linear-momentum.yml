@@ -1,0 +1,122 @@
+name: NL1C7B4 Repair05 analytic linear momentum identity
+
+on:
+  push:
+    branches: [nl1c7b-eta0-spherical-evolution]
+    paths:
+      - '.github/workflows/nl1c7b4-repair05-analytic-linear-momentum.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  analytic-momentum:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair05 lock and provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 96223c4faf1f912f6c47df830a5c50702b2b2ed5 HEAD
+          git merge-base --is-ancestor 775574efe52870a6a790bdc7d8bc6d72ad4f2e92 HEAD
+          git merge-base --is-ancestor 14539f7081e0d16c3872c71c15143be64440f788 HEAD
+          git merge-base --is-ancestor 148b5f51b08fae9eb3cf1b49404cca99816bb639 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair05.py)" = "34fd22c73171fce5e32920a94d71d05de61521f6"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair01.py)" = "253a0ae2a19a597f06358704ea276c9005973af3"
+          for spec in \
+            '10498905089 sha256:1192b25acc1099bd24ff07c1e0b58c448d946513c895307a7c364aa9cfe66f3f' \
+            '10481526695 sha256:c2ede2e602e35bbd52afdc0a5eee22cb1bf5c6efc2e1063bf8f2b91a0554fb6c' \
+            '10469031693 sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70'; do
+              set -- ${spec}; id="$1"; dig="$2"
+              j="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}")"
+              python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]==sys.argv[1]; assert d["expired"] is False' "${dig}" <<<"${j}"
+          done
+          echo NL1C7B4_REPAIR05_PROVENANCE_PASS
+
+      - name: Download exact retained inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/parent input/final input/dense results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10498905089/zip -o input/parent.zip
+          unzip -q input/parent.zip -d input/parent
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481526695/zip -o input/final.zip
+          unzip -q input/final.zip -d input/final
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/parent/nl1c7b4_repair04_linear_momentum_interface.json
+          test -s input/final/nl1c7a_repair01_evalfix_primary_states.npz
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute frozen Repair05 analytic audit
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          PYTHONPATH="$PWD" python3 nl1c7b/initial_constraint_certification_repair05.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --official-npz input/final/nl1c7a_repair01_evalfix_primary_states.npz \
+            --parent-json input/parent/nl1c7b4_repair04_linear_momentum_interface.json \
+            --out results/nl1c7b4_repair05_analytic_linear_momentum.json \
+            2>&1 | tee results/nl1c7b4_repair05_analytic_linear_momentum.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify preregistered classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair05_analytic_linear_momentum.json'))
+          allowed={
+            'NL1C7B4_REPAIR05_ANALYTIC_LINEAR_MOMENTUM_INTERFACE_PASS',
+            'NL1C7B4_REPAIR05_ANALYTIC_LEADING_ORDER_INTERFACE_MISMATCH',
+            'NL1C7B4_REPAIR05_ANALYTIC_LINEAR_MOMENTUM_DIAGNOSTIC_COMPLETE',
+            'NL1C7B4_REPAIR05_IMPLEMENTATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['summary']['n_cases']==54
+          assert d['claim_boundary']['finite_difference_tangent_used_for_primary_result'] is False
+          assert d['claim_boundary']['state_projected'] is False
+          assert d['claim_boundary']['coefficient_fitted'] is False
+          assert d['claim_boundary']['dust_sign_changed'] is False
+          assert d['claim_boundary']['radial_standard_species_added'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          print(d['classification'])
+          print(json.dumps(d['summary'],sort_keys=True))
+          print(json.dumps(d['background_interface'],sort_keys=True))
+          PY
+
+      - name: Upload Repair05 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair05_analytic_linear_momentum
+          path: |
+            results/nl1c7b4_repair05_analytic_linear_momentum.json
+            results/nl1c7b4_repair05_analytic_linear_momentum.log
+          if-no-files-found: error
