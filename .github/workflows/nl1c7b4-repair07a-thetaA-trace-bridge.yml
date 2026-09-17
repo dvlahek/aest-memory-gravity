@@ -1,0 +1,142 @@
+name: NL1C7B4 Repair07a theta_A trace bridge
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair07a-thetaA-trace-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair07a lock and provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 6a7971661ff612a1928413a3a4dc8ca31373dcf2 HEAD
+          git merge-base --is-ancestor 9fa982e454d0df4178e113e64d27cf9376aeb87f HEAD
+          git merge-base --is-ancestor f118ff6f28c6d4ab3ddc09019a1ec05bf7397074 HEAD
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair07a_thetaA_trace_bridge.md)" = "9a3a1742432bb5e93b51409dfdc7672ac1cfbf13"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair07a_implementation_lock.md)" = "8ec1efa39011f6e91f65f5c525a48aef0f7b2fb5"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair07a.py)" = "59cac7b5105bc779c27ce1daea9e1a52fe582cae"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair07.py)" = "ef591df4e92b262963e928218e3932943ab9e45c"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair05.py)" = "34fd22c73171fce5e32920a94d71d05de61521f6"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
+          for spec in \
+            '10500046102 sha256:b589d1f595782d793cdcc0f6cde1de1e4df1994b32f27ac64ee253fd665b4b1d' \
+            '10481526695 sha256:c2ede2e602e35bbd52afdc0a5eee22cb1bf5c6efc2e1063bf8f2b91a0554fb6c' \
+            '10469031693 sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70'; do
+              set -- ${spec}; id="$1"; dig="$2"
+              j="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}")"
+              python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]==sys.argv[1]; assert d["expired"] is False' "${dig}" <<<"${j}"
+          done
+          echo NL1C7B4_REPAIR07A_PROVENANCE_PASS
+
+      - name: Download exact retained inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/repair06 input/final input/dense results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10500046102/zip -o input/repair06.zip
+          unzip -q input/repair06.zip -d input/repair06
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481526695/zip -o input/final.zip
+          unzip -q input/final.zip -d input/final
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/repair06/nl1c7b4_repair06_highres_analytic_momentum.json
+          test -s input/final/nl1c7a_repair01_evalfix_primary_states.npz
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute frozen Repair07a audit
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          PYTHONPATH="$PWD" python3 nl1c7b/initial_constraint_certification_repair07a.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --official-npz input/final/nl1c7a_repair01_evalfix_primary_states.npz \
+            --parent-json input/repair06/nl1c7b4_repair06_highres_analytic_momentum.json \
+            --out results/nl1c7b4_repair07a_thetaA_trace_bridge.json \
+            2>&1 | tee results/nl1c7b4_repair07a_thetaA_trace_bridge.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify Repair07a classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair07a_thetaA_trace_bridge.json'))
+          allowed={
+            'NL1C7B4_REPAIR07A_COVARIANT_FOURIER_BRIDGE_DIAGNOSTIC_PASS',
+            'NL1C7B4_REPAIR07A_COVARIANT_FOURIER_INTERFACE_MISMATCH',
+            'NL1C7B4_REPAIR07A_IMPLEMENTATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          b=d['repair07a_theta_A_bridge']
+          assert b['interpolator']=='PchipInterpolator'
+          assert b['independent_variable']=='log(a)'
+          assert b['n_k_groups']==128
+          assert b['all_finite'] is True
+          assert b['physics_coefficients_changed'] is False
+          assert b['thresholds_changed'] is False
+          assert b['state_modified'] is False
+          assert d['locks']['eta']==0.0
+          assert d['locks']['scales_hinv_Mpc']==[5.0,10.0,20.0]
+          assert d['locks']['radial_resolutions']==[256,512]
+          assert abs(d['locks']['state_reproduction_limit']-1e-12)<1e-24
+          assert abs(d['locks']['algebra_identity_limit']-1e-10)<1e-22
+          assert abs(d['locks']['inherited_C7A_fourier_envelope']-2e-2)<1e-15
+          cb=d['claim_boundary']
+          assert cb['repair07_parent_evaluator_modified'] is False
+          assert cb['theta_A_bridge_harness_only'] is True
+          assert cb['physics_equation_changed'] is False
+          assert cb['threshold_changed_by_repair07a'] is False
+          assert cb['B4_pass_claimed'] is False
+          print(d['classification'])
+          print('theta_A_bridge=', b)
+          print('state_reproduction=', d['state_reproduction'])
+          print('K_symbolic=', d['symbolic_K_shift'])
+          print('scalar_composite=', d['scalar_composite'])
+          print('fourier_0i=', json.dumps(d['fourier_0i'],sort_keys=True))
+          for row in d['radial_diagnostics']:
+              print('RADIAL', row['scale_hinv_Mpc'], row['Nr'],
+                    'phi_rel=', row['phi_current_vs_composite_relative_L2'],
+                    'K_rel=', row['K_current_vs_composite_relative_L2'],
+                    'GR_rel=', row['GR_R05_vs_closed_form_relative_L2'],
+                    'current_global=', row['current_route']['global_L2_ratio'],
+                    'composite_global=', row['composite_first_diagnostic_route']['global_L2_ratio'])
+          PY
+
+      - name: Upload Repair07a bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair07a_thetaA_trace_bridge
+          path: |
+            results/nl1c7b4_repair07a_thetaA_trace_bridge.json
+            results/nl1c7b4_repair07a_thetaA_trace_bridge.log
+          if-no-files-found: error
