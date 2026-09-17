@@ -1,0 +1,66 @@
+name: NL1C7B1 pressureless-matter variational closure
+
+on:
+  push:
+    branches:
+      - nl1c7b-eta0-spherical-evolution
+    paths:
+      - '.github/workflows/nl1c7b1-pressureless-matter-closure.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify-pressureless-matter-closure:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install symbolic and numerical dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Verify preregistration and implementation lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 6d663c661159744c44acfc919ea9d604fa6f7651 HEAD
+          git merge-base --is-ancestor 3d41ff9b91921c8a35d8ad67048a7abd5e0384f1 HEAD
+          git merge-base --is-ancestor 4c9ef42641b7de19e09f42d185cdfb8d305d7109 HEAD
+          git merge-base --is-ancestor 9a367bc559b6acb5b3b1f9c9581d0e397e7af046 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/pressureless_matter_variational_closure.py)" = "485ed20a642ffe868b01c30196154b4834e18e10"
+          test "$(git rev-parse HEAD:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
+          echo NL1C7B1_PRESSURELESS_MATTER_CLOSURE_LOCK_PASS
+
+      - name: Execute locked variational closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 nl1c7b/pressureless_matter_variational_closure.py | tee results/nl1c7b1_pressureless_matter_variational_closure.log
+
+      - name: Verify final classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b1_pressureless_matter_variational_closure.json'))
+          assert d['classification']=='NL1C7B1_PRESSURELESS_MATTER_VARIATIONAL_CLOSURE_PASS', d['classification']
+          assert all(d['gates'].values())
+          assert d['variation_audit']['max_relative_error'] <= 1e-6
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          assert d['claim_boundary']['finite_eta_executed'] is False
+          print(d['classification'])
+          PY
+
+      - name: Upload closure bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b1_pressureless_matter_variational_closure
+          path: |
+            results/nl1c7b1_pressureless_matter_variational_closure.json
+            results/nl1c7b1_pressureless_matter_variational_closure.log
