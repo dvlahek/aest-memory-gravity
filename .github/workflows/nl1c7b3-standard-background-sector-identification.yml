@@ -1,0 +1,149 @@
+name: NL1C7B3 standard background sector identification
+
+on:
+  push:
+    branches:
+      - nl1c7b-eta0-spherical-evolution
+    paths:
+      - '.github/workflows/nl1c7b3-standard-background-sector-identification.yml'
+      - 'nl1c7b/standard_background_sector_identification.py'
+      - 'docs/nl1c7b3_predata_standard_background_sector_identification.md'
+      - 'docs/nl1c7b3_standard_background_identification_implementation_lock.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  standard-background-identification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_c7b3
+
+      - name: Install dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Verify frozen B3 provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor e36570cce4e8f5057af5d0abe01b4f66e90fcf92 HEAD
+          git merge-base --is-ancestor eae3ca58239a07c306d00db2c157f770fd8fe9e9 HEAD
+          git merge-base --is-ancestor ce6820b4b31f514fd662e3c22f48b4ceee208b1e HEAD
+          test "$(git rev-parse HEAD:nl1c7b/standard_background_sector_identification.py)" = "565c3cbf598c2978ee2b263ffdce354e085c43c7"
+          test "$(git rev-parse HEAD:v063/theory_response_map.py)" = "fb373c8118b755c5aa7d5572d910d6ca3684866e"
+          run_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35193003807)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="6804934c12b7fa02bbec3c5e1d06ec31466f1c44"' <<<"${run_json}"
+          art_json="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10484278813)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:76f24778c432b018724c90cdbb3c6a586dd37698fa9ae4eb644cf8acd0b99059"; assert d["expired"] is False' <<<"${art_json}"
+          test "$(git -C class_c7b3 rev-parse HEAD)" = "e85808324f51fc694d12e3ed7439552a3c3f9540"
+          echo NL1C7B3_PROVENANCE_PASS
+
+      - name: Download retained B2 Repair01 parent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/b2
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10484278813/zip \
+            -o input/b2.zip
+          unzip -q input/b2.zip -d input/b2
+          test -s input/b2/nl1c7b2_repair01_stable_exp_energy.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('input/b2/nl1c7b2_repair01_stable_exp_energy.json'))
+          assert d['classification']=='NL1C7B2_REPAIR01_HOMOGENEOUS_BACKGROUND_SECTOR_INCOMPLETE'
+          assert abs(d['missing_sector_diagnostic']['rho_rem_Mpc_inv2']-0.00010529789814922824)<=1e-18
+          print('NL1C7B3_PARENT_RETAINED_PASS')
+          PY
+
+      - name: Apply validated eta0 AeST stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_c7b3
+          python3 v019i/apply_ic_patch.py class_c7b3
+          python3 v019j/apply_memory_patch.py class_c7b3
+          python3 v019w/apply_variational_forcing_patch.py class_c7b3
+          python3 v019y/apply_output_precision_patch.py class_c7b3
+          python3 v023/apply_source_grid_trace_patch.py class_c7b3
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_c7b3
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_c7b3
+          python3 tools/apply_v075_force_path_reload_patch.py class_c7b3
+
+      - name: Build CLASS and classy
+        run: |
+          make -C class_c7b3 -j2 class
+          make -C class_c7b3 -j2 classy
+
+      - name: Execute locked B3 identification
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p results
+          export OMP_NUM_THREADS=1
+          python3 nl1c7b/standard_background_sector_identification.py \
+            --class-root class_c7b3 \
+            --parent-json input/b2/nl1c7b2_repair01_stable_exp_energy.json \
+            --out results/nl1c7b3_standard_background_sector_identification.json \
+            2>&1 | tee results/nl1c7b3_standard_background_sector_identification.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify preregistered B3 classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b3_standard_background_sector_identification.json'))
+          allowed={
+            'NL1C7B3_STANDARD_BACKGROUND_SECTOR_IDENTIFIED_PASS',
+            'NL1C7B3_STANDARD_BACKGROUND_SECTOR_INCOMPLETE',
+            'NL1C7B3_STANDARD_BACKGROUND_IDENTIFICATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['provenance']['parent_run']==35193003807
+          assert d['provenance']['parent_artifact']==10484278813
+          assert d['provenance']['pinned_CLASS']=='e85808324f51fc694d12e3ed7439552a3c3f9540'
+          assert d['limits']['parent_reproduction']==1e-8
+          assert d['limits']['closure']==1e-7
+          assert d['limits']['interpolation_control']==2e-2
+          assert d['claim_boundary']['radial_initial_constraint_executed'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          print(d['classification'])
+          print('components=',d['components'])
+          print('closure=',d['closure'])
+          print('gates=',d['gates'])
+          PY
+
+      - name: Upload B3 result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b3_standard_background_sector_identification
+          path: |
+            results/nl1c7b3_standard_background_sector_identification.json
+            results/nl1c7b3_standard_background_sector_identification.log
+          if-no-files-found: warn
