@@ -1,0 +1,131 @@
+name: NL1C7B4 Repair06 high-resolution analytic momentum convergence
+
+on:
+  push:
+    branches: [nl1c7b-eta0-spherical-evolution]
+    paths:
+      - '.github/workflows/nl1c7b4-repair06-highres-analytic-momentum.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  highres-analytic-momentum:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair06 lock and provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor fac8014a1d8740fc2eb131504be812c8e209db67 HEAD
+          git merge-base --is-ancestor d7bc0b39af33e120299043be3d68bae862db8e47 HEAD
+          git merge-base --is-ancestor 922b89d6284036d70c97ad0a68bfa6a78b32702a HEAD
+          git merge-base --is-ancestor 56de1b3bf028dfdbbab2684bde652056561074c1 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair05.py)" = "34fd22c73171fce5e32920a94d71d05de61521f6"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair06.py)" = "eca6a857def972663252c44165b6afd047a75fcd"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair01.py)" = "253a0ae2a19a597f06358704ea276c9005973af3"
+          for spec in \
+            '10498343763 sha256:5798127479d0a359b5805aa7bd846caee035e582b0fdb3a08b7cd7ab2dc2e9ce' \
+            '10481526695 sha256:c2ede2e602e35bbd52afdc0a5eee22cb1bf5c6efc2e1063bf8f2b91a0554fb6c' \
+            '10469031693 sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70'; do
+              set -- ${spec}; id="$1"; dig="$2"
+              j="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}")"
+              python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]==sys.argv[1]; assert d["expired"] is False' "${dig}" <<<"${j}"
+          done
+          echo NL1C7B4_REPAIR06_PROVENANCE_PASS
+
+      - name: Download exact retained inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/parent input/final input/dense results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10498343763/zip -o input/parent.zip
+          unzip -q input/parent.zip -d input/parent
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481526695/zip -o input/final.zip
+          unzip -q input/final.zip -d input/final
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/parent/nl1c7b4_repair05_analytic_linear_momentum.json
+          test -s input/final/nl1c7a_repair01_evalfix_primary_states.npz
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute frozen Repair06 high-resolution audit
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          PYTHONPATH="$PWD" python3 nl1c7b/initial_constraint_certification_repair06.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --official-npz input/final/nl1c7a_repair01_evalfix_primary_states.npz \
+            --parent-json input/parent/nl1c7b4_repair05_analytic_linear_momentum.json \
+            --out results/nl1c7b4_repair06_highres_analytic_momentum.json \
+            2>&1 | tee results/nl1c7b4_repair06_highres_analytic_momentum.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify preregistered classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair06_highres_analytic_momentum.json'))
+          allowed={
+            'NL1C7B4_REPAIR06_ANALYTIC_LINEAR_MOMENTUM_INTERFACE_PASS',
+            'NL1C7B4_REPAIR06_ANALYTIC_LEADING_ORDER_INTERFACE_MISMATCH',
+            'NL1C7B4_REPAIR06_ANALYTIC_LINEAR_MOMENTUM_DIAGNOSTIC_COMPLETE',
+            'NL1C7B4_REPAIR06_IMPLEMENTATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['summary']['n_cases']==81
+          assert d['locks']['resolutions']==[512,1024,2048]
+          assert d['locks']['grid_pairs']==[[512,1024],[1024,2048]]
+          assert abs(d['locks']['grid_limit']-0.02)<1e-15
+          assert d['claim_boundary']['repair05_primary_evaluator_modified'] is False
+          assert d['claim_boundary']['finite_difference_tangent_used_for_primary_result'] is False
+          assert d['claim_boundary']['state_projected'] is False
+          assert d['claim_boundary']['coefficient_fitted'] is False
+          assert d['claim_boundary']['dust_sign_changed'] is False
+          assert d['claim_boundary']['radial_standard_species_added'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          assert d['claim_boundary']['finite_eta_executed'] is False
+          print(d['classification'])
+          print(json.dumps(d['summary'],sort_keys=True))
+          for key in ('512_to_1024','1024_to_2048'):
+              rows=d['grid_controls'][key]
+              print(key, 'max_relative_difference=', max(x['relative_difference'] for x in rows),
+                    'all_pass=', all(x['pass'] for x in rows))
+          PY
+
+      - name: Upload Repair06 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair06_highres_analytic_momentum
+          path: |
+            results/nl1c7b4_repair06_highres_analytic_momentum.json
+            results/nl1c7b4_repair06_highres_analytic_momentum.log
+          if-no-files-found: error
