@@ -32,6 +32,7 @@ jobs:
           set -euo pipefail
           git merge-base --is-ancestor 95f37bfe7be2757ab3cf4c00087da010017be679 HEAD
           git merge-base --is-ancestor 2e3105ba5b81d38dbc53d2b45a09d82215013f7b HEAD
+          git merge-base --is-ancestor d5eb2d8416de87c347ef6ff77cbfeb93b340ef6d HEAD
           test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
           test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair01.py)" = "253a0ae2a19a597f06358704ea276c9005973af3"
           test "$(git rev-parse HEAD:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
@@ -68,7 +69,7 @@ jobs:
         run: |
           set +e
           set -uo pipefail
-          python3 nl1c7b/initial_constraint_certification_repair01.py \
+          PYTHONPATH="$PWD" python3 nl1c7b/initial_constraint_certification_repair01.py \
             --trace input/dense/nl1c7a_repair01_dense_trace.dat \
             --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
             --official-npz input/final/nl1c7a_repair01_evalfix_primary_states.npz \
