@@ -1,0 +1,113 @@
+name: NL1C7B4 Repair01 log-domain exact Exp constraint audit
+
+on:
+  push:
+    branches: [nl1c7b-eta0-spherical-evolution]
+    paths:
+      - '.github/workflows/nl1c7b4-repair01-log-exp-constraint.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify frozen Repair01 provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 95f37bfe7be2757ab3cf4c00087da010017be679 HEAD
+          git merge-base --is-ancestor 2e3105ba5b81d38dbc53d2b45a09d82215013f7b HEAD
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair01.py)" = "253a0ae2a19a597f06358704ea276c9005973af3"
+          test "$(git rev-parse HEAD:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
+          test "$(git rev-parse HEAD:nl1c7b/pressureless_matter_variational_closure.py)" = "485ed20a642ffe868b01c30196154b4834e18e10"
+          for spec in \
+            '10492575332 sha256:9fdf56fd2c2b224c934cc15be31d5d27076971b50ab2961849c151939d60ef74' \
+            '10481526695 sha256:c2ede2e602e35bbd52afdc0a5eee22cb1bf5c6efc2e1063bf8f2b91a0554fb6c' \
+            '10469031693 sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70'; do
+              set -- ${spec}; id="$1"; dig="$2"
+              j="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}")"
+              python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]==sys.argv[1]; assert d["expired"] is False' "${dig}" <<<"${j}"
+          done
+          echo NL1C7B4_REPAIR01_PROVENANCE_PASS
+
+      - name: Download exact retained C7A inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/final input/dense results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481526695/zip -o input/final.zip
+          unzip -q input/final.zip -d input/final
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/final/nl1c7a_repair01_evalfix_primary_states.npz
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute frozen log-domain constraint audit
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          python3 nl1c7b/initial_constraint_certification_repair01.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --official-npz input/final/nl1c7a_repair01_evalfix_primary_states.npz \
+            --out results/nl1c7b4_repair01_log_exp_constraint.json \
+            2>&1 | tee results/nl1c7b4_repair01_log_exp_constraint.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify scientific classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair01_log_exp_constraint.json'))
+          allowed={
+            'NL1C7B4_REPAIR01_RAW_INITIAL_CONSTRAINT_FAIL',
+            'NL1C7B4_REPAIR01_RAW_INITIAL_CONSTRAINT_PASS',
+            'NL1C7B4_REPAIR01_LOG_DOMAIN_IMPLEMENTATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['symbolic_K_dictionary_identity'] is True
+          assert d['state_reproduction']['pass'] is True
+          if d['classification']=='NL1C7B4_REPAIR01_RAW_INITIAL_CONSTRAINT_FAIL':
+              assert d['all_nonK_terms_finite_on_proof_subsets'] is True
+              assert d['all_54_cases_fail'] is True
+              assert d['summary']['min_over_cases_max_H_lower_bound'] > 1e-7
+              assert d['summary']['min_over_cases_max_M_lower_bound'] > 1e-7
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair01 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair01_log_exp_constraint
+          path: |
+            results/nl1c7b4_repair01_log_exp_constraint.json
+            results/nl1c7b4_repair01_log_exp_constraint.log
+          if-no-files-found: error
