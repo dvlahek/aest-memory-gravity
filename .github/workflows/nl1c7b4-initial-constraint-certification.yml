@@ -1,0 +1,113 @@
+name: NL1C7B4 raw initial-constraint certification
+
+on:
+  push:
+    branches: [nl1c7b-eta0-spherical-evolution]
+    paths:
+      - '.github/workflows/nl1c7b4-initial-constraint-certification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify frozen B4 provenance and implementation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 336c219f713fe5f573ed25223f9c723956869038 HEAD
+          git merge-base --is-ancestor 98f9e879091e231614457b43e1fcdd8a92269d52 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
+          test "$(git rev-parse HEAD:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
+          test "$(git rev-parse HEAD:nl1c6/g11_solver_readiness.py)" = "970ccb164f8ab7d3de6681ff4af940b1638d1686"
+          test "$(git rev-parse HEAD:nl1c7b/pressureless_matter_variational_closure.py)" = "485ed20a642ffe868b01c30196154b4834e18e10"
+          test "$(git rev-parse HEAD:nl1c7a/a6_a10_spherical_reconstruction.py)" = "ff383c1ddc2cb2a684e2b5dd11fde0ae811e4fac"
+          for spec in \
+            '10481526695 sha256:c2ede2e602e35bbd52afdc0a5eee22cb1bf5c6efc2e1063bf8f2b91a0554fb6c' \
+            '10469031693 sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70' \
+            '10486515383 sha256:12f3157fa05e7c0c4fc431005a506cbfa6347aa78dafd1a1dedf4328b193d3ec'; do
+              set -- ${spec}; id="$1"; dig="$2"
+              j="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}")"
+              python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]==sys.argv[1]; assert d["expired"] is False' "${dig}" <<<"${j}"
+          done
+          echo NL1C7B4_PROVENANCE_PASS
+
+      - name: Download exact C7A retained artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/final input/dense results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481526695/zip -o input/final.zip
+          unzip -q input/final.zip -d input/final
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/final/nl1c7a_repair01_evalfix_primary_states.npz
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute frozen B4 audit
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          python3 nl1c7b/initial_constraint_certification.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --official-npz input/final/nl1c7a_repair01_evalfix_primary_states.npz \
+            --out results/nl1c7b4_initial_constraint_certification.json \
+            2>&1 | tee results/nl1c7b4_initial_constraint_certification.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify B4 classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_initial_constraint_certification.json'))
+          allowed={
+            'NL1C7B4_RAW_INITIAL_CONSTRAINT_PASS',
+            'NL1C7B4_RAW_INITIAL_CONSTRAINT_FAIL',
+            'NL1C7B4_STANDARD_SECTOR_RADIAL_CLOSURE_INCOMPLETE',
+            'NL1C7B4_CONSTRAINT_IMPLEMENTATION_INCOMPLETE',
+          }
+          assert d['classification'] in allowed
+          assert d['gates']['B4_G1_provenance_and_state_reproduction']
+          assert d['gates']['B4_G5_no_state_modification']
+          if d['classification']=='NL1C7B4_CONSTRAINT_IMPLEMENTATION_INCOMPLETE':
+              assert d['reason']=='full_Exp_Q_sector_not_representable_in_unmodified_float64_action_evaluator'
+              assert all(not r['Exp_K_float64_representable'] for r in d['nonlinear_Q_domain'])
+          print(d['classification'])
+          PY
+
+      - name: Upload B4 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_initial_constraint_certification
+          path: |
+            results/nl1c7b4_initial_constraint_certification.json
+            results/nl1c7b4_initial_constraint_certification.log
+          if-no-files-found: error
