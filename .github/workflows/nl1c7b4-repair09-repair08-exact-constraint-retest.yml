@@ -1,0 +1,132 @@
+name: NL1C7B4 Repair09 Repair08 exact constraint retest
+
+on:
+  workflow_dispatch:
+    inputs:
+      repair08_artifact_id:
+        description: 'Artifact ID containing the already executed certified Repair08 JSON and NPZ'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair09-exact-retest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair09 implementation lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor ee97aec3e274f3996c87c622a770f5233666f7f6 HEAD
+          git merge-base --is-ancestor 8f04b382aaa44960df18f662c2fa8330665e82c2 HEAD
+          git merge-base --is-ancestor 14b2a05000a8ea73105ede6c4188013df11be88a HEAD
+          git merge-base --is-ancestor a55ca63c57d9d739091e9273a0a5b945f7923790 HEAD
+
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair09_predata_repair08_exact_constraint_retest.md)" = "3e4f6ed8cf8a70a791f0ffef68c9b780ba7552c6"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair09.py)" = "0cd67cecfbd590cb8819ad37314dc5b49047bc93"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair09_implementation_lock.md)" = "d36b8238d83fdb13199d5e7709c8fbccafaf7df7"
+          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair09_repair08_exact_constraint_retest.sh)" = "102508be8f2c3cd01e14a4636c9156ea97f7c24e"
+
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair01.py)" = "253a0ae2a19a597f06358704ea276c9005973af3"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair02.py)" = "eff076ec9a511f64bc693dc48b07b2ce26cfbaeb"
+          test "$(git rev-parse HEAD:nl1c7a/a6_a10_spherical_reconstruction.py)" = "ff383c1ddc2cb2a684e2b5dd11fde0ae811e4fac"
+          test "$(git rev-parse HEAD:nl1c7a/evaluate_identity_preserving_repair08.py)" = "94fb3f42a7c819b0525860f7344d5dbaff93da19"
+          echo NL1C7B4_REPAIR09_CODE_LOCK_PASS
+
+      - name: Download frozen dense trace and supplied Repair08 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R8_ARTIFACT_ID: ${{ inputs.repair08_artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense input/r8 results
+
+          dense_meta="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70"; assert d["expired"] is False' <<<"${dense_meta}"
+
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+
+          r8_meta="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${R8_ARTIFACT_ID}")"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["expired"] is False' <<<"${r8_meta}"
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${R8_ARTIFACT_ID}/zip" -o input/r8.zip
+          unzip -q input/r8.zip -d input/r8
+
+          mapfile -t js < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_scalar_representation.json')
+          mapfile -t np < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_primary_states.npz')
+          test "${#js[@]}" -eq 1
+          test "${#np[@]}" -eq 1
+          cp "${js[0]}" results/nl1c7a_repair08_identity_preserving_scalar_representation.json
+          cp "${np[0]}" results/nl1c7a_repair08_identity_preserving_primary_states.npz
+
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_scalar_representation.json | awk '{print $1}')" = "054851decab71e79a05aca2bc9fb287bb1239c8fb425989f40920004c3d88453"
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_primary_states.npz | awk '{print $1}')" = "4639f3b5c0afcddb2f98c8b9f6a9dbbf8661dac685b12d235c09075a106dafa7"
+          test "$(stat -c %s results/nl1c7a_repair08_identity_preserving_primary_states.npz)" = "103024"
+
+      - name: Execute locked Repair09
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          bash nl1c7b/run_local_nl1c7b4_repair09_repair08_exact_constraint_retest.sh \
+            2>&1 | tee results/nl1c7b4_repair09_runner.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify terminal classification integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair09_repair08_exact_constraint_retest.json'))
+          allowed={
+            'NL1C7B4_REPAIR09_REPAIR08_EXACT_NONLINEAR_CONSTRAINT_PASS',
+            'NL1C7B4_REPAIR09_REPAIR08_RAW_CONSTRAINT_FAIL',
+            'NL1C7B4_REPAIR09_IMPLEMENTATION_FAIL',
+          }
+          assert d['classification'] in allowed
+          assert d['claim_boundary']['state_projection_used'] is False
+          assert d['claim_boundary']['coefficient_fitted'] is False
+          assert d['claim_boundary']['source_fitted_or_inserted'] is False
+          assert d['claim_boundary']['K_clipping_used'] is False
+          assert d['claim_boundary']['Q_linearized'] is False
+          assert d['claim_boundary']['radial_points_removed'] is False
+          assert d['claim_boundary']['historical_threshold_changed'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          assert d['claim_boundary']['finite_eta_executed'] is False
+          if d['classification']=='NL1C7B4_REPAIR09_REPAIR08_EXACT_NONLINEAR_CONSTRAINT_PASS':
+              assert all(d['gates'].values())
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair09 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair09_repair08_exact_constraint_retest
+          path: |
+            results/nl1c7b4_repair09_repair08_exact_constraint_retest.json
+            results/nl1c7b4_repair09_repair08_exact_constraint_retest.log
+            results/nl1c7b4_repair09_runner.log
+          if-no-files-found: warn
