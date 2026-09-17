@@ -1,0 +1,109 @@
+name: NL1C7B2 homogeneous-background reconciliation
+
+on:
+  push:
+    branches: [nl1c7b-eta0-spherical-evolution]
+    paths:
+      - '.github/workflows/nl1c7b2-homogeneous-background-reconciliation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reconcile-homogeneous-background:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify frozen provenance and implementation lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 1478bc59b66adf5ab81b2d85fc025ea2b20a091c HEAD
+          git merge-base --is-ancestor 9e9cf2616d5b959cf98a4975555ab85a8ae95428 HEAD
+          git merge-base --is-ancestor 9e39d8685cd0ce5cefce65745e0dd09a816cf2c6 HEAD
+          git merge-base --is-ancestor a974473a3eeb32de01ac841afe1a52c3ded321e6 HEAD
+          test "$(git rev-parse HEAD:nl1c7b/homogeneous_background_reconciliation.py)" = "526b60a64b42e3f98663a5367a3cf4c4bf2d4316"
+          test "$(git rev-parse HEAD:docs/nl1c7b2_predata_homogeneous_background_reconciliation.md)" = "b35e4662dc26fbe9b00910b4f6416c3578ed2d73"
+          test "$(git rev-parse HEAD:nl1c7a/apply_trace_extension.py)" = "21147e873e6cdee8b55260189eafb8c0e612f02b"
+          test "$(git rev-parse HEAD:v019/patch/source/aest_memory.c)" = "9a522a653a1855eda3cb67e856f9fc10a1e73d54"
+          dense_run="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35149865129)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="4a275f4777a7e487004f4783bc2a929a93ac8188"' <<<"${dense_run}"
+          dense_art="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:193325536405f9a21a238f5fbe71a772d2484a096dcbfec3d6007e825cc38f70"; assert d["expired"] is False' <<<"${dense_art}"
+          b1_run="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/runs/35185338047)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["conclusion"]=="success"; assert d["head_sha"]=="6b555bc2ee3cba7c9e97706eb1a0949416e9932f"' <<<"${b1_run}"
+          b1_art="$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10481781728)"
+          python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["digest"]=="sha256:645d29e4e8ac7cfa4fff9833a4ef500d34fc667373bfac3073883155fac519a7"; assert d["expired"] is False' <<<"${b1_art}"
+          echo NL1C7B2_PROVENANCE_LOCK_PASS
+
+      - name: Download retained dense eta0 trace
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip \
+            -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          test -s input/dense/nl1c7a_repair01_dense_trace.dat
+          test -s input/dense/nl1c7a_repair01_dense_coverage.json
+
+      - name: Execute locked B2 reconciliation
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p results
+          python3 nl1c7b/homogeneous_background_reconciliation.py \
+            --trace input/dense/nl1c7a_repair01_dense_trace.dat \
+            --coverage-json input/dense/nl1c7a_repair01_dense_coverage.json \
+            --out results/nl1c7b2_homogeneous_background_reconciliation.json \
+            2>&1 | tee results/nl1c7b2_homogeneous_background_reconciliation.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify preregistered scientific classification
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          p='results/nl1c7b2_homogeneous_background_reconciliation.json'
+          d=json.load(open(p))
+          allowed={
+            'NL1C7B2_HOMOGENEOUS_BACKGROUND_RECONCILIATION_PASS',
+            'NL1C7B2_HOMOGENEOUS_BACKGROUND_RECONCILIATION_FAIL',
+            'NL1C7B2_HOMOGENEOUS_BACKGROUND_SECTOR_INCOMPLETE',
+          }
+          assert d['classification'] in allowed, d['classification']
+          assert d['gates']['B2_G1_provenance'] is True
+          assert d['claim_boundary']['radial_initial_constraint_executed'] is False
+          assert d['claim_boundary']['nonlinear_evolution_executed'] is False
+          assert d['claim_boundary']['finite_eta_executed'] is False
+          assert d['missing_sector_diagnostic']['reported_only_not_added'] is True
+          print(d['classification'])
+          print('epsilon_H_max=',d['pchip']['epsilon_H_max'])
+          print('rho_rem_fraction=',d['missing_sector_diagnostic']['fraction_of_3H2'])
+          PY
+
+      - name: Upload B2 result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b2_homogeneous_background_reconciliation
+          path: |
+            results/nl1c7b2_homogeneous_background_reconciliation.json
+            results/nl1c7b2_homogeneous_background_reconciliation.log
+          if-no-files-found: error
