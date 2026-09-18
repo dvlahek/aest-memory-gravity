@@ -179,6 +179,13 @@ Use `scipy.optimize.least_squares` with:
 
 No multistart is allowed.
 
+The solver bounds are fixed pre-run as:
+
+- `y_L in [-0.5,0.5]` at every non-center point;
+- `delta R_t/(a H R_s) in [-0.5,0.5]` at every non-center point.
+
+These bounds are deliberately much wider than an admissible second-order correction and exist only to keep trial states in a finite numerical domain. Hitting a bound is reported and cannot be re-tuned after the first execution.
+
 If the locked solver does not converge, Repair18 records a feasibility FAIL. Solver settings are not altered after first execution.
 
 ## Frozen grids and scales
