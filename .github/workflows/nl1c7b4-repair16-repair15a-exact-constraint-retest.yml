@@ -1,0 +1,98 @@
+name: NL1C7B4 Repair16 exact B4 retest on Repair15a state
+
+on:
+  workflow_dispatch:
+    inputs:
+      repair15a_artifact_id:
+        description: 'Artifact containing certified Repair15a JSON and NPZ'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair16:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair16 lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 045c5b28b74ff258dbc775057cf3e9387d47b37c HEAD
+          git merge-base --is-ancestor f39e797ab9c6df71fe4b026f783654eef45e3e2c HEAD
+          git merge-base --is-ancestor c31b740460f25ffd9d8cb4b60dea593ea7db8587 HEAD
+          git merge-base --is-ancestor d3cce7fa101917828ea460858a7991cfba943d9b HEAD
+          git merge-base --is-ancestor 1d0ee589cf53050273324a0ad2e1142ce120a600 HEAD
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair15a_result_freeze.md)" = "2843173d5a024ad3e256b0f3eeda5f5bafae0242"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair16_predata_repair15a_exact_constraint_retest.md)" = "70f6edc9bb5e7847abc68b2947115c42757e88df"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair16.py)" = "fbd7d24f748fc398638d4eea4b7707801161e52a"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair16_implementation_lock.md)" = "2e51a373ec353af4a67a5b48dac211774b28bbdc"
+          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair16_repair15a_exact_constraint_retest.sh)" = "fdd904db585f16f6f1d26794b414d2731c3488b2"
+          echo NL1C7B4_REPAIR16_CODE_LOCK_PASS
+
+      - name: Download frozen dense trace and Repair15a state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R15A_ARTIFACT_ID: ${{ inputs.repair15a_artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense input/r15a results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${R15A_ARTIFACT_ID}/zip" -o input/r15a.zip
+          unzip -q input/r15a.zip -d input/r15a
+          mapfile -t rj < <(find input/r15a -type f -name 'nl1c7b4_repair15a_density_q_completed_state.json')
+          mapfile -t rn < <(find input/r15a -type f -name 'nl1c7b4_repair15a_density_q_completed_primary_states.npz')
+          test "${#rj[@]}" -eq 1; test "${#rn[@]}" -eq 1
+          cp "${rj[0]}" results/nl1c7b4_repair15a_density_q_completed_state.json
+          cp "${rn[0]}" results/nl1c7b4_repair15a_density_q_completed_primary_states.npz
+          test "$(sha256sum results/nl1c7b4_repair15a_density_q_completed_state.json | awk '{print $1}')" = "596c7b13c4683840bcf40f6850356e179e77f873c3a3b42ba0b54730ae80811d"
+          test "$(sha256sum results/nl1c7b4_repair15a_density_q_completed_primary_states.npz | awk '{print $1}')" = "997d0033eeed1f3e60c1907c7938a0ea87a1cf38de6ab860340bd003d18d6e6e"
+
+      - name: Execute locked Repair16
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          bash nl1c7b/run_local_nl1c7b4_repair16_repair15a_exact_constraint_retest.sh 2>&1 | tee results/nl1c7b4_repair16_runner.log
+          rc=$?
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify terminal classification
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair16_repair15a_exact_constraint_retest.json'))
+          assert d['classification'] in {
+            'NL1C7B4_REPAIR16_REPAIR15A_EXACT_NONLINEAR_CONSTRAINT_PASS',
+            'NL1C7B4_REPAIR16_REPAIR15A_RAW_CONSTRAINT_FAIL',
+            'NL1C7B4_REPAIR16_IMPLEMENTATION_FAIL'}
+          if d['classification'].endswith('_PASS'): assert all(d['gates'].values())
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair16 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair16_repair15a_exact_constraint_retest
+          path: |
+            results/nl1c7b4_repair16_repair15a_exact_constraint_retest.json
+            results/nl1c7b4_repair16_repair15a_exact_constraint_retest.log
+            results/nl1c7b4_repair16_runner.log
+          if-no-files-found: warn
