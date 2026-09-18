@@ -1,0 +1,121 @@
+name: NL1C7B4 Repair12 full constraint order audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      repair08_artifact_id:
+        description: 'Artifact containing certified Repair08 JSON and NPZ'
+        required: true
+        type: string
+      repair10_artifact_id:
+        description: 'Artifact containing Repair10 JSON'
+        required: true
+        type: string
+      repair11_artifact_id:
+        description: 'Artifact containing Repair11 JSON'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair12-full-order-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair12 code lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor d1b5c5f3aab13b3929f8c91eeea216724951c5f3 HEAD
+          git merge-base --is-ancestor 85b9120781b29854f7508f1a18a77f8b42c814f2 HEAD
+          git merge-base --is-ancestor ccba3e6d6b19a77032145ec65d5209710699a4fb HEAD
+          git merge-base --is-ancestor 559650a2de9bf57a344401ba459adf2268212b81 HEAD
+          git merge-base --is-ancestor 9e76269c0fe00043805ba7d1a37b2d42be4889c9 HEAD
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair12_predata_full_constraint_order_audit.md)" = "f10574705665d31dc88efb0cd34867ad2ed2de07"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair12.py)" = "2199f8221bf341515301887de2f9fbf5a28b68a8"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair12_implementation_lock.md)" = "d5aa1277639df4638dd9f5b63962b0e2db0966ab"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair11_result_freeze.md)" = "5aade75b3c9f66427dba3ce6192d2500d4d604ee"
+          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair12_full_constraint_order_audit.sh)" = "4861db7bef574ef751c1367bd50ab585fc6fcd60"
+          echo NL1C7B4_REPAIR12_CODE_LOCK_PASS
+
+      - name: Download frozen inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R8_ARTIFACT_ID: ${{ inputs.repair08_artifact_id }}
+          R10_ARTIFACT_ID: ${{ inputs.repair10_artifact_id }}
+          R11_ARTIFACT_ID: ${{ inputs.repair11_artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense input/r8 input/r10 input/r11 results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          for pair in "r8 ${R8_ARTIFACT_ID}" "r10 ${R10_ARTIFACT_ID}" "r11 ${R11_ARTIFACT_ID}"; do
+            set -- ${pair}; tag="$1"; id="$2"
+            curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}/zip" -o "input/${tag}.zip"
+            unzip -q "input/${tag}.zip" -d "input/${tag}"
+          done
+          mapfile -t r8j < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_scalar_representation.json')
+          mapfile -t r8n < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_primary_states.npz')
+          mapfile -t r10j < <(find input/r10 -type f -name 'nl1c7b4_repair10_raw_source_localization.json')
+          mapfile -t r11j < <(find input/r11 -type f -name 'nl1c7b4_repair11_esector_analytic_covariant_audit.json')
+          test "${#r8j[@]}" -eq 1; test "${#r8n[@]}" -eq 1; test "${#r10j[@]}" -eq 1; test "${#r11j[@]}" -eq 1
+          cp "${r8j[0]}" results/nl1c7a_repair08_identity_preserving_scalar_representation.json
+          cp "${r8n[0]}" results/nl1c7a_repair08_identity_preserving_primary_states.npz
+          cp "${r10j[0]}" results/nl1c7b4_repair10_raw_source_localization.json
+          cp "${r11j[0]}" results/nl1c7b4_repair11_esector_analytic_covariant_audit.json
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_scalar_representation.json | awk '{print $1}')" = "054851decab71e79a05aca2bc9fb287bb1239c8fb425989f40920004c3d88453"
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_primary_states.npz | awk '{print $1}')" = "4639f3b5c0afcddb2f98c8b9f6a9dbbf8661dac685b12d235c09075a106dafa7"
+          test "$(sha256sum results/nl1c7b4_repair10_raw_source_localization.json | awk '{print $1}')" = "f1fc1a86d2d488f5e88f0d32b0d3d1d5ce9dab22f52e51fa69801948aeb6de9d"
+          test "$(sha256sum results/nl1c7b4_repair11_esector_analytic_covariant_audit.json | awk '{print $1}')" = "48c8caf0c5758b089318bcd18885c87725bc244ed5a47862ac841b37b834742d"
+
+      - name: Execute locked Repair12
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          bash nl1c7b/run_local_nl1c7b4_repair12_full_constraint_order_audit.sh 2>&1 | tee results/nl1c7b4_repair12_runner.log
+          rc=$?
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify terminal classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair12_full_constraint_order_audit.json'))
+          assert d['classification'] in {
+            'NL1C7B4_REPAIR12_FULL_CONSTRAINT_SECOND_ORDER_AUDIT_PASS',
+            'NL1C7B4_REPAIR12_FULL_CONSTRAINT_FIRST_ORDER_RESIDUAL',
+            'NL1C7B4_REPAIR12_IMPLEMENTATION_FAIL'}
+          cb=d['claim_boundary']
+          assert cb['historical_B4_fail_preserved'] is True
+          assert all(v is False for k,v in cb.items() if k!='historical_B4_fail_preserved')
+          if d['classification'].endswith('_AUDIT_PASS'): assert all(d['gates'].values())
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair12 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair12_full_constraint_order_audit
+          path: |
+            results/nl1c7b4_repair12_full_constraint_order_audit.json
+            results/nl1c7b4_repair12_full_constraint_order_audit.log
+            results/nl1c7b4_repair12_runner.log
+          if-no-files-found: warn
