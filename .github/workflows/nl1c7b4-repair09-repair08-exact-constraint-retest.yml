@@ -29,15 +29,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git merge-base --is-ancestor ee97aec3e274f3996c87c622a770f5233666f7f6 HEAD
+          git merge-base --is-ancestor ee97aec340b9b8dcc508d092730b795f01eb65bd HEAD
           git merge-base --is-ancestor 8f04b382aaa44960df18f662c2fa8330665e82c2 HEAD
           git merge-base --is-ancestor 14b2a05000a8ea73105ede6c4188013df11be88a HEAD
-          git merge-base --is-ancestor a55ca63c57d9d739091e9273a0a5b945f7923790 HEAD
+          git merge-base --is-ancestor 31245e697143304e37440d2dd939bd3965d50fc3 HEAD
+          git merge-base --is-ancestor 555bc34a98eb918730aebe6f46bbb9f7a1497fc6 HEAD
+          git merge-base --is-ancestor 1de4be8003f07425df716bf4bbac9425f7041025 HEAD
 
           test "$(git rev-parse HEAD:docs/nl1c7b4_repair09_predata_repair08_exact_constraint_retest.md)" = "3e4f6ed8cf8a70a791f0ffef68c9b780ba7552c6"
           test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair09.py)" = "0cd67cecfbd590cb8819ad37314dc5b49047bc93"
           test "$(git rev-parse HEAD:docs/nl1c7b4_repair09_implementation_lock.md)" = "d36b8238d83fdb13199d5e7709c8fbccafaf7df7"
-          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair09_repair08_exact_constraint_retest.sh)" = "102508be8f2c3cd01e14a4636c9156ea97f7c24e"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair09_attempt01_harness_failure_freeze.md)" = "5381609f7df27f578ef8a514777457f0aeaf51d7"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair09_provenance_lock_correction.md)" = "03a49c08d7d7337dc6f728c6ce274ef95cf22886"
+          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair09_repair08_exact_constraint_retest.sh)" = "c3906f26da0bcc0fd6480cbef1c7220fba292f59"
 
           test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification.py)" = "8559120dc273be3174eca130ca313ed6ff5acb25"
           test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair01.py)" = "253a0ae2a19a597f06358704ea276c9005973af3"
