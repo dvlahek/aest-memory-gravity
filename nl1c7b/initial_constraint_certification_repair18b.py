@@ -91,10 +91,10 @@ def exact_probe(parent,x,alpha,scale,h,qbg,zbg,funcs,dY):
         'finite':bool(ev.get('finite',False)),
         'within_bounds':bool(np.max(np.abs(xa))<=BOUND+1e-15),
         'max_abs_coordinate':float(np.max(np.abs(xa))),
-        'L_min':float(np.min(ev['L'])) if ev.get('finite',False) else float('nan'),
-        'exact_Q_max_normalized_error':float(ev['qerr']) if ev.get('finite',False) else float('inf'),
-        'max_epsilon_H':float(ev['maxH']) if ev.get('finite',False) else float('inf'),
-        'max_epsilon_M':float(ev['maxM']) if ev.get('finite',False) else float('inf'),
+        'L_min':float(np.min(ev['L'])) if ev.get('finite',False) else None,
+        'exact_Q_max_normalized_error':float(ev['qerr']) if ev.get('finite',False) else None,
+        'max_epsilon_H':float(ev['maxH']) if ev.get('finite',False) else None,
+        'max_epsilon_M':float(ev['maxM']) if ev.get('finite',False) else None,
         'correction':cm,
     }
 
@@ -326,7 +326,7 @@ def main():
             'finite_all':finite_all,
             'structure_match_all':structure_match_all,
             'full_rank_all':full_rank_all,
-            'max_relative_Frobenius_sparse_vs_dense':float(max(x['relative_Frobenius_sparse_vs_dense'] for x in rows)) if rows else float('inf'),
+            'max_relative_Frobenius_sparse_vs_dense':float(max(x['relative_Frobenius_sparse_vs_dense'] for x in rows)) if rows else None,
             'min_sigma_min_over_sigma_max':float(min(x['dense_sigma_min_over_sigma_max'] for x in rows)) if rows else 0.0,
         },
         'claim_boundary':claim_boundary,
