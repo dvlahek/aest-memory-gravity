@@ -1,0 +1,111 @@
+name: NL1C7B4 Repair11 E-sector analytic covariant audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      repair08_artifact_id:
+        description: 'Artifact containing certified Repair08 JSON and NPZ'
+        required: true
+        type: string
+      repair10_artifact_id:
+        description: 'Artifact containing frozen Repair10 JSON'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair11-esector-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Verify Repair11 code lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 02e1e7eaffd08aa289830810250057314594b9cf HEAD
+          git merge-base --is-ancestor 95ba6dd33105ff0b4cada77e0df44ed819edf4a0 HEAD
+          git merge-base --is-ancestor 1de607cfffef8c0862ddb14f6f296a584f9e92f1 HEAD
+          git merge-base --is-ancestor de03f563ee3e8700b3159be5a46b73633c85db8d HEAD
+          git merge-base --is-ancestor 907e273c60ed9acd29afe3f0ac611d74380d69a8 HEAD
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair11_predata_esector_analytic_covariant_audit.md)" = "e35181ff632bbc6461dc087d9800e63779000f18"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair11.py)" = "72d324d94100ee4555698bf44acd45c6b612c927"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair11_implementation_lock.md)" = "a4a4b7fbfa33121a90880d7c00dfb5d03730d677"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair10_result_freeze.md)" = "86021d3ac9086585a2c01223a9700b6f67896f30"
+          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair11_esector_analytic_covariant_audit.sh)" = "44742e091b556bce5cda2f1e95f8af2cd4223576"
+          echo NL1C7B4_REPAIR11_CODE_LOCK_PASS
+
+      - name: Download frozen inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R8_ARTIFACT_ID: ${{ inputs.repair08_artifact_id }}
+          R10_ARTIFACT_ID: ${{ inputs.repair10_artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense input/r8 input/r10 results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          for pair in "r8 ${R8_ARTIFACT_ID}" "r10 ${R10_ARTIFACT_ID}"; do
+            set -- ${pair}; tag="$1"; id="$2"
+            curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${id}/zip" -o "input/${tag}.zip"
+            unzip -q "input/${tag}.zip" -d "input/${tag}"
+          done
+          mapfile -t r8j < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_scalar_representation.json')
+          mapfile -t r8n < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_primary_states.npz')
+          mapfile -t r10j < <(find input/r10 -type f -name 'nl1c7b4_repair10_raw_source_localization.json')
+          test "${#r8j[@]}" -eq 1; test "${#r8n[@]}" -eq 1; test "${#r10j[@]}" -eq 1
+          cp "${r8j[0]}" results/nl1c7a_repair08_identity_preserving_scalar_representation.json
+          cp "${r8n[0]}" results/nl1c7a_repair08_identity_preserving_primary_states.npz
+          cp "${r10j[0]}" results/nl1c7b4_repair10_raw_source_localization.json
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_scalar_representation.json | awk '{print $1}')" = "054851decab71e79a05aca2bc9fb287bb1239c8fb425989f40920004c3d88453"
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_primary_states.npz | awk '{print $1}')" = "4639f3b5c0afcddb2f98c8b9f6a9dbbf8661dac685b12d235c09075a106dafa7"
+          test "$(sha256sum results/nl1c7b4_repair10_raw_source_localization.json | awk '{print $1}')" = "f1fc1a86d2d488f5e88f0d32b0d3d1d5ce9dab22f52e51fa69801948aeb6de9d"
+
+      - name: Execute locked Repair11
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          bash nl1c7b/run_local_nl1c7b4_repair11_esector_analytic_covariant_audit.sh 2>&1 | tee results/nl1c7b4_repair11_runner.log
+          rc=$?
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify terminal classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          d=json.load(open('results/nl1c7b4_repair11_esector_analytic_covariant_audit.json'))
+          assert d['classification'] in {
+            'NL1C7B4_REPAIR11_ESECTOR_ANALYTIC_COVARIANT_AUDIT_PASS',
+            'NL1C7B4_REPAIR11_ESECTOR_INTERFACE_MISMATCH',
+            'NL1C7B4_REPAIR11_IMPLEMENTATION_FAIL'}
+          assert not any(d['claim_boundary'].values())
+          if d['classification'].endswith('_AUDIT_PASS'): assert all(d['gates'].values())
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair11 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair11_esector_analytic_covariant_audit
+          path: |
+            results/nl1c7b4_repair11_esector_analytic_covariant_audit.json
+            results/nl1c7b4_repair11_esector_analytic_covariant_audit.log
+            results/nl1c7b4_repair11_runner.log
+          if-no-files-found: warn
