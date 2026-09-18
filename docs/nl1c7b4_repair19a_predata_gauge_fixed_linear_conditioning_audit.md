@@ -216,13 +216,23 @@ Repair19a must not:
 
 ## Terminal classifications
 
-If all eight gates pass:
+If implementation/provenance/completeness gates G1-G4, G7, and G8 do not all pass:
+
+`NL1C7B4_REPAIR19A_IMPLEMENTATION_FAIL`.
+
+Else if G5 fails:
+
+`NL1C7B4_REPAIR19A_GAUGE_FIXED_LINEAR_INFEASIBILITY`.
+
+Else if G6 fails:
+
+`NL1C7B4_REPAIR19A_REDUCED_COORDINATE_NUMERICAL_DISAGREEMENT`.
+
+Else:
 
 `NL1C7B4_REPAIR19A_GAUGE_FIXED_LINEAR_CONDITIONING_CHARACTERIZED`.
 
-Otherwise:
-
-`NL1C7B4_REPAIR19A_IMPLEMENTATION_FAIL`.
+The latter three outcomes are scientific/numerical diagnostic classifications, not harness failures.
 
 ## Interpretation boundary
 
