@@ -1,0 +1,110 @@
+name: NL1C7B4 Repair15 density-Q-completed state
+
+on:
+  workflow_dispatch:
+    inputs:
+      repair08_artifact_id:
+        description: 'Artifact containing Repair08 JSON and NPZ'
+        required: true
+        type: string
+      repair14a_artifact_id:
+        description: 'Artifact containing Repair14a JSON'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repair15:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout locked harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify Repair15 lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor be1ad5287a22feb81e9fceef0483eefb17b1a800 HEAD
+          git merge-base --is-ancestor fad9c5136d04de1618d3b94ef47a483529ba4d78 HEAD
+          git merge-base --is-ancestor 50644d7e4def48a2da80e854e1e9f0ac3c0f2720 HEAD
+          git merge-base --is-ancestor fa986b353dcb0ab64c4fd5759cf8c6faaffcb7ad HEAD
+          git merge-base --is-ancestor 07bd09cc7de2d59e86953af67cbca5edcf474a78 HEAD
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair14a_result_freeze.md)" = "ad041eef454a4d02675ee4f4df6afe506177a37f"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair15_predata_density_q_completed_state.md)" = "f2fa2983df554c1d9807c1e135ee17b0d1839c4e"
+          test "$(git rev-parse HEAD:nl1c7b/initial_constraint_certification_repair15.py)" = "b455d72d768aec2ea2835e967418574de678be2d"
+          test "$(git rev-parse HEAD:docs/nl1c7b4_repair15_implementation_lock.md)" = "5e9d4df7067c8fc620848cda01186cf31ff4c787"
+          test "$(git rev-parse HEAD:nl1c7b/run_local_nl1c7b4_repair15_density_q_completed_state.sh)" = "b21392604af4c16049819c35806353ea0809cb46"
+          echo NL1C7B4_REPAIR15_CODE_LOCK_PASS
+
+      - name: Download frozen inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R8_ARTIFACT_ID: ${{ inputs.repair08_artifact_id }}
+          R14A_ARTIFACT_ID: ${{ inputs.repair14a_artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input/dense input/r8 input/r14a results
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/10469031693/zip -o input/dense.zip
+          unzip -q input/dense.zip -d input/dense
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${R8_ARTIFACT_ID}/zip" -o input/r8.zip
+          unzip -q input/r8.zip -d input/r8
+          curl -fsSL -L -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/dvlahek/aest-memory-gravity/actions/artifacts/${R14A_ARTIFACT_ID}/zip" -o input/r14a.zip
+          unzip -q input/r14a.zip -d input/r14a
+          mapfile -t r8j < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_scalar_representation.json')
+          mapfile -t r8n < <(find input/r8 -type f -name 'nl1c7a_repair08_identity_preserving_primary_states.npz')
+          mapfile -t r14aj < <(find input/r14a -type f -name 'nl1c7b4_repair14a_decoded_static_semantics_parser.json')
+          test "${#r8j[@]}" -eq 1; test "${#r8n[@]}" -eq 1; test "${#r14aj[@]}" -eq 1
+          cp "${r8j[0]}" results/nl1c7a_repair08_identity_preserving_scalar_representation.json
+          cp "${r8n[0]}" results/nl1c7a_repair08_identity_preserving_primary_states.npz
+          cp "${r14aj[0]}" results/nl1c7b4_repair14a_decoded_static_semantics_parser.json
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_scalar_representation.json | awk '{print $1}')" = "054851decab71e79a05aca2bc9fb287bb1239c8fb425989f40920004c3d88453"
+          test "$(sha256sum results/nl1c7a_repair08_identity_preserving_primary_states.npz | awk '{print $1}')" = "4639f3b5c0afcddb2f98c8b9f6a9dbbf8661dac685b12d235c09075a106dafa7"
+          test "$(sha256sum results/nl1c7b4_repair14a_decoded_static_semantics_parser.json | awk '{print $1}')" = "d60398e2804222df70e8cd3acda5fb397e9cfdd2068415b9256af4d65a5c64ca"
+
+      - name: Execute locked Repair15
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          bash nl1c7b/run_local_nl1c7b4_repair15_density_q_completed_state.sh 2>&1 | tee results/nl1c7b4_repair15_runner.log
+          rc=$?
+          set -e
+          echo "SCIENCE_RC=${rc}"
+          test "${rc}" -eq 0 -o "${rc}" -eq 2
+
+      - name: Verify terminal classification
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          d=json.load(open('results/nl1c7b4_repair15_density_q_completed_state.json'))
+          assert d['classification'] in {
+            'NL1C7B4_REPAIR15_DENSITY_Q_COMPLETED_STATE_CERTIFIED',
+            'NL1C7B4_REPAIR15_IMPLEMENTATION_FAIL'}
+          if d['classification'].endswith('_CERTIFIED'):
+            assert all(d['gates'].values())
+            assert pathlib.Path('results/nl1c7b4_repair15_density_q_completed_primary_states.npz').is_file()
+          print(d['classification'])
+          PY
+
+      - name: Upload Repair15 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_nl1c7b4_repair15_density_q_completed_state
+          path: |
+            results/nl1c7b4_repair15_density_q_completed_state.json
+            results/nl1c7b4_repair15_density_q_completed_state.log
+            results/nl1c7b4_repair15_runner.log
+            results/nl1c7b4_repair15_density_q_completed_primary_states.npz
+          if-no-files-found: warn
