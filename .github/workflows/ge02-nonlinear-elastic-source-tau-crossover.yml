@@ -1,0 +1,130 @@
+name: GE02 nonlinear elastic source tau crossover
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge02/**'
+      - 'docs/ge02_nonlinear_elastic_source_tau_crossover_implementation_lock.md'
+      - '.github/workflows/ge02-nonlinear-elastic-source-tau-crossover.yml'
+
+jobs:
+  nonlinear-elastic-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock and provenance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge02/predata_nonlinear_elastic_source_tau_crossover.json)" = "cc427e0c4941db75bd792c930fab851580bfae08"
+          test "$(git rev-parse HEAD:ge02/nonlinear_elastic_source_tau_crossover.py)" = "52636cdb2e8a7d6ea31287052fc72292d859bd0e"
+          test "$(git rev-parse HEAD:docs/ge02_nonlinear_elastic_source_tau_crossover_implementation_lock.md)" = "fd0c9ee6f7e7ccc8df5affb904152c2181827f53"
+          git merge-base --is-ancestor a4ad4d5a8e6bb38d23f5f6e937091b0ca030d105 HEAD
+          git merge-base --is-ancestor c809863aaed93490b48e652e3fea8057585561eb HEAD
+          git merge-base --is-ancestor 472235fa64adab0d1fbd4c2b5ce82af14ce32bfe HEAD
+          echo GE02_LOCK_PASS
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy sympy
+
+      - name: Predata and implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge02/nonlinear_elastic_source_tau_crossover.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge02/predata_nonlinear_elastic_source_tau_crossover.json'))
+          assert d['classification']=='GE02_PREDATA_NONLINEAR_ELASTIC_SOURCE_TAU_CROSSOVER'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['tauH0_values']==[0.1,0.3,0.5,0.7,1.0,3.0,10.0]
+          g=d['gates']
+          assert g['quadrature_B_rms_max_pointwise_relative_difference']==0.01
+          assert g['quadrature_rhohat_mem_max_pointwise_relative_difference']==0.01
+          assert g['spatial_B_rms_max_pointwise_relative_difference']==0.005
+          assert g['spatial_rhohat_mem_max_pointwise_relative_difference']==0.005
+          print('GE02_PREDATA_PASS')
+          PY
+
+      - name: Verify frozen v0.77 artifact metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10090367181"             -o results/ge02_artifact_metadata.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('results/ge02_artifact_metadata.json'))
+          assert a['id']==10090367181
+          assert a['workflow_run']['id']==34315590099
+          assert a['digest']=='sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378'
+          assert a['expired'] is False
+          print('GE02_FROZEN_ARTIFACT_PROVENANCE_PASS')
+          PY
+
+      - name: Download exact retained v0.77 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10090367181
+          path: frozen_v077
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 34315590099
+
+      - name: Run GE02 nonlinear elastic source map
+        shell: bash
+        run: |
+          set -euo pipefail
+          TRACE="$(find frozen_v077 -type f -name v076_v077_base_trace.dat -print -quit)"
+          test -n "${TRACE}"
+          python3 ge02/nonlinear_elastic_source_tau_crossover.py             --trace "${TRACE}"             --artifact-meta-json results/ge02_artifact_metadata.json             --json-out results/ge02_nonlinear_elastic_source_tau_crossover.json             --npz-out results/ge02_nonlinear_elastic_source_tau_crossover.npz             | tee results/ge02_nonlinear_elastic_source_tau_crossover.log
+
+      - name: Summarize GE02
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge02_nonlinear_elastic_source_tau_crossover.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge02_nonlinear_elastic_source_tau_crossover.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          for r in d['rows']:
+              print(
+                  'tauH0=',r['tauH0'],
+                  'Bnorm=',r['B_rms_time_L2_norm'],
+                  'Brel10=',r['B_rms_norm_relative_to_tauH0_10'],
+                  'Rnorm=',r['rhohat_mem_time_L2_norm'],
+                  'Rrel10=',r['rhohat_mem_norm_relative_to_tauH0_10'],
+                  'zpeak=',r['rhohat_mem_peak']['z'],
+                  'pass=',r['pass'],
+              )
+          PY
+          fi
+
+      - name: Upload GE02 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge02_nonlinear_elastic_source_tau_crossover
+          path: |
+            results/ge02_artifact_metadata.json
+            results/ge02_nonlinear_elastic_source_tau_crossover.json
+            results/ge02_nonlinear_elastic_source_tau_crossover.npz
+            results/ge02_nonlinear_elastic_source_tau_crossover.log
+            ge02/predata_nonlinear_elastic_source_tau_crossover.json
+            docs/ge02_nonlinear_elastic_source_tau_crossover_implementation_lock.md
+          if-no-files-found: warn
