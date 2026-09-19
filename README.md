@@ -177,6 +177,37 @@ Therefore later weakly nonlinear state work must use N1024 primary and N2048 con
 
 The descriptive high-resolution source geometry is nearly antiparallel to the baseline Y source throughout the frozen native window, with `||2DY2||/||2Y2||` increasing from about 0.015 to 0.097 per unit eta tangent.
 
+### Physics-first checkpoint
+
+The gravitational-elasticity programme now has controlled results at several levels.
+
+**GE01 — PASS.** The trusted native total-matter eta=0 tangent increases smoothly with the Maxwell timescale. Relative response norms for `tau H0={0.1,0.3,0.5,0.7,1,3,10}` are approximately
+
+`{0.580,0.809,0.878,0.912,0.939,0.983,1.000}`
+
+relative to the historical `tau H0=10` case.
+
+**GE02 — PASS.** The finite-amplitude action-derived restoring source and quadratic direct metric-energy source show the same relaxed-to-elastic transition. At `tau H0=1` they are already approximately 0.88 and 0.865 of their `tau H0=10` norms.
+
+**GE03 — frozen FAIL.** The exact weakly nonlinear `DY2[chi10;chi11]` identity, finite-difference check, lambda affinity and beta scaling all pass, but the preregistered N256/N512 low-mode convergence gate fails.
+
+**GE04 — PASS.** A separately preregistered resolution ladder shows approximately third-order convergence:
+`256/512 ~1.17e-3`,
+`512/1024 ~1.27e-4`,
+`1024/2048 ~1.75e-5`,
+`2048/4096 ~1.75e-6`.
+Later weakly nonlinear state work therefore uses N1024 primary and N2048 control. GE03 is not relabelled.
+
+**GE05 — PASS.** The longitudinal 3+1 NL0B action now has explicit first- and second-directional source generators `M1` and `M2` for scalar, bath, aether and all metric blocks. Direct metric memory stress is exactly absent at first order and nonzero at second order, as required by the covariant action.
+
+The remaining source-completeness item before a full weakly nonlinear state tangent is the memory-off analytic Hessian block
+
+`Q(Z10,Z11)`
+
+and the associated baseline second-order state/source `Z20`.
+
+Do not start a `Z21` solver until that block is generated from the frozen AeST/Einstein/matter theory.
+
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
 Latest completed construction result:
