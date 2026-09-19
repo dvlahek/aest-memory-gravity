@@ -1,0 +1,125 @@
+name: GE04 DY2 spectral convergence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge04/**'
+      - 'docs/ge04_dy2_spectral_convergence_implementation_lock.md'
+      - '.github/workflows/ge04-dy2-spectral-convergence.yml'
+
+jobs:
+  dy2-spectral-convergence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock and provenance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge04/predata_dy2_spectral_convergence.json)" = "7d85c3374e6099a64a8869e0f4ca9d1e00df81ba"
+          test "$(git rev-parse HEAD:ge04/dy2_spectral_convergence.py)" = "c96812aca5d73b0fd0e61625b62c7022a4930a96"
+          test "$(git rev-parse HEAD:docs/ge04_dy2_spectral_convergence_implementation_lock.md)" = "a7f3c74908483857070054071ef722d5e7c09c83"
+          test "$(git rev-parse HEAD:tools/ge03_resolve_v077_artifact_dir.sh)" = "d3fe4deb838245b91e5600bbbee7362366f9bb3e"
+          git merge-base --is-ancestor 248fdbe5ec381509363b52e33c536b683fb3ba3d HEAD
+          git merge-base --is-ancestor 82e354f9a4fa791dcc00ece14d697a74c4ae216d HEAD
+          git merge-base --is-ancestor 0919df661c7e72f4094756610e33fbe2191f284a HEAD
+          echo GE04_LOCK_PASS
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Predata and implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge04/dy2_spectral_convergence.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge04/predata_dy2_spectral_convergence.json'))
+          assert d['classification']=='GE04_PREDATA_DY2_SPECTRAL_CONVERGENCE_CHARACTERIZATION'
+          assert d['created_before_result'] is True
+          assert d['numerical_characterization']['spatial_resolutions']==[128,256,512,1024,2048,4096]
+          assert d['gates']['N1024_vs_N2048_low_mode_relative_L2_max']==0.0005
+          assert d['gates']['fitted_convergence_order_min']==0.5
+          print('GE04_PREDATA_PASS')
+          PY
+
+      - name: Verify frozen v0.77 artifact metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10090367181"             -o results/ge04_artifact_metadata.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('results/ge04_artifact_metadata.json'))
+          assert a['id']==10090367181
+          assert a['workflow_run']['id']==34315590099
+          assert a['digest']=='sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378'
+          assert a['expired'] is False
+          print('GE04_FROZEN_ARTIFACT_PROVENANCE_PASS')
+          PY
+
+      - name: Download exact retained v0.77 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10090367181
+          path: frozen_v077
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 34315590099
+
+      - name: Run GE04 convergence characterization
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARTIFACT_DIR="$(bash tools/ge03_resolve_v077_artifact_dir.sh frozen_v077)"
+          echo "GE04_ARTIFACT_DIR=${ARTIFACT_DIR}"
+          python3 ge04/dy2_spectral_convergence.py             --artifact-dir "${ARTIFACT_DIR}"             --artifact-meta-json results/ge04_artifact_metadata.json             --json-out results/ge04_dy2_spectral_convergence.json             --npz-out results/ge04_dy2_spectral_convergence.npz             | tee results/ge04_dy2_spectral_convergence.log
+
+      - name: Summarize GE04
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge04_dy2_spectral_convergence.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge04_dy2_spectral_convergence.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('SUMMARY=',d['summary'])
+          for r in d['rows']:
+              b=r['by_beta']['1.0']
+              print('z=',r['z'],
+                    'pairs=',b['pairwise_low_mode_relative_errors'],
+                    'p=',b['fitted_convergence_order'],
+                    'ratio=',r['two_DY2_over_two_Y2_norm_ratio_per_eta_tangent'],
+                    'cos=',r['Y2_DY2_cosine'])
+          PY
+          fi
+
+      - name: Upload GE04 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge04_dy2_spectral_convergence
+          path: |
+            results/ge04_artifact_metadata.json
+            results/ge04_dy2_spectral_convergence.json
+            results/ge04_dy2_spectral_convergence.npz
+            results/ge04_dy2_spectral_convergence.log
+            ge04/predata_dy2_spectral_convergence.json
+            docs/ge04_dy2_spectral_convergence_implementation_lock.md
+          if-no-files-found: warn
