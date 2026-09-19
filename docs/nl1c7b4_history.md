@@ -10,79 +10,73 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-NL1C7B5 Repair01 is frozen as:
+NL1C7B6 is frozen as:
 
-`NL1C7B5_CONSERVATIVE_DIFFERENTIAL_CERTIFICATION_FAIL`.
+`NL1C7B6_SYMBOLIC_RADIAL_REDUCTION_PASS`.
 
 Result freeze commit:
 
-`2a2739db609ffb58e899baa7308199fd8dbc528b`.
+`70c9fc2aa58b76bf3579260e54c6d85097769160`.
 
 Result JSON SHA-256:
 
-`bfeae8019b69f23e0fa659c6c3e0134353b85e0dcd67f0337c14d6f50b887c8d`.
+`ed1efdac5dee72d8c57cbda23d074213babd15fdf3bc7adc18e61789f862e635`.
 
-The analytic regular-center repair succeeds as an implementation repair:
+All seven NL1C7B6 gates PASS.
 
-- all six initial conservative residuals are finite;
-- provenance PASS;
-- conservative source/flux decomposition PASS;
-- orthonormal gauge representation PASS;
-- complete conservative construction PASS;
-- exact-Q/gauge/field-freeze safety PASS;
-- two-grid correction-amplitude control PASS;
-- output integrity PASS;
-- claim boundary PASS.
+The exact eta=0 spherical Hamiltonian and radial-momentum constraints admit a first-order radial reduction for the same frozen physical pair `(L,R_t)`.
 
-The decisive original B4 differential certification fails in all six cases.
+After the exact frozen Q substitution:
 
-Across the frozen cases, the final exact differential residuals are approximately:
+- H is affine in `L_r`;
+- H is quadratic in algebraic `R_t`;
+- H contains no `R_{t,r}`;
+- M is affine in `R_{t,r}`;
+- M is independent of algebraic `R_t` outside the GR flux/source cancellation;
+- no solved-field second derivative appears.
 
-- Hamiltonian:
-  `4.238e-2--4.246e-2`;
-- momentum:
-  effectively `1.0`.
+The exact solved derivative coefficients are
 
-The historical exact threshold remains
+`A_H=[4 R R_r + 2 K_B R^2 cosh(u)sinh(u)(L_t+u_r) + 2 C R^2 phi_r]/L^2`
 
-`1e-7`.
+and
 
-The conservative objective itself also does not approach zero under the frozen construction. Full conservative L2 falls only from approximately `0.03810` to `0.03398`. All six TRF solves reach the frozen `max_nfev=200` limit.
+`A_M=-4LR`.
 
-The correction-amplitude two-grid ratios are stable and pass:
+Thus, away from the analytic center,
 
-- scale 5: `1.7236598675`;
-- scale 10: `1.7218237729`;
-- scale 20: `1.7225161300`.
+`L_r=-B_H/A_H`
+
+and
+
+`R_{t,r}=B_M/(4LR)`.
+
+All six frozen lambda=1 parent cases pass the coefficient nondegeneracy audit on every noncenter point.
+
+Near the center:
+
+- `A_H/r ≈ 4`;
+- `(4LR)/r ≈ 1.6000e-3`;
+
+showing the expected regular linear center degeneracy rather than an interior singularity.
 
 ### Project decision
 
-The B5 conservative initial-data track terminates here.
+The residual-minimization initial-data strategy is no longer the preferred route.
 
-No B5a/B5b solver-parameter repair is licensed.
+The next licensed step is a separately preregistered numerical construction of the exact reduced first-order radial system.
 
-In particular, do not:
+The historical Repair18d1 `Y4/Qmean` functionals remain projection-nullspace gauges and must not be silently reused as radial physical boundary conditions.
 
-- increase `max_nfev`;
-- alter TRF settings;
-- change finite-difference step;
-- add multistart, continuation or damping;
-- relax the `1e-7` differential threshold;
-- remove radial points;
-- add a new physical field inside B5.
+The numerical construction must specify its regular-center and asymptotic-background boundary policy before execution.
 
-Two independently preregistered double-precision two-field construction strategies have now failed to produce an exact B4-certified state:
+The final independent science gate remains the unchanged original B4 differential certification
 
-1. pointwise differential Gauss-Newton through Repair19c4;
-2. conservative cell-integrated construction through B5 Repair01.
+`max epsilon_H,max epsilon_M <=1e-7`
 
-This still does **not** establish physical nonexistence of an exact frozen `(L,R_t)` state.
+on both Nr=256 and Nr=512.
 
-Eta=0 short-time evolution remains unlicensed because no exact `1e-7` initial state exists.
-
-Any further initial-data work must be a genuinely new project-level representation, such as analytically reduced constraints or higher-precision arithmetic, and must be separately preregistered before implementation.
-
-Observational/tangent infrastructure may continue in parallel, but no finite-eta nonlinear AeST observational claim is licensed from this track.
+Eta=0 short-time evolution remains gated until such a state is certified.
 
 ---
 
@@ -763,3 +757,35 @@ No state NPZ is written.
 No B5 solver-parameter follow-up is licensed.
 
 The result does not prove physical nonexistence of the frozen `(L,R_t)` ansatz.
+
+
+### NL1C7B6 — exact symbolic radial reduction
+
+Class:
+
+`NL1C7B6_SYMBOLIC_RADIAL_REDUCTION_PASS`.
+
+Result-freeze commit:
+
+`70c9fc2aa58b76bf3579260e54c6d85097769160`.
+
+Frozen local outputs:
+
+- JSON SHA-256:
+  `ed1efdac5dee72d8c57cbda23d074213babd15fdf3bc7adc18e61789f862e635`;
+- evaluator log SHA-256:
+  `c02cbca48db44b9807852eef7b98404d07b148b64b2dbf9011cd5984cf140592`;
+- full runner log SHA-256:
+  `52cdce4a0847cae3fd7f4cfc10ecfe1603016285f91664af59384674bd1c2101`.
+
+All seven gates PASS.
+
+The exact frozen H/M system reduces to a coupled first-order radial system for `(L,R_t)` with no solved-field second derivatives.
+
+All six scale/grid parent cases have finite positive noncenter derivative coefficients with no interior zero or sign change.
+
+The center ratios `A_H/r` and `(4LR)/r` are finite and nearly constant, confirming the expected regular spherical `O(r)` degeneracy.
+
+This PASS licenses a separately preregistered reduced-radial numerical construction.
+
+It does not yet certify initial data or license evolution.
