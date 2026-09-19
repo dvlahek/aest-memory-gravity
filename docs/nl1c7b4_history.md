@@ -10,51 +10,46 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-Repair19c1 is now frozen as a clean diagnostic PASS:
+Repair19c2 is frozen as:
 
-`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`.
+`NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
 
 Result JSON SHA-256:
 
-`b4898fed6c6bbe7d4c91f8144ed35d03e6f318b298a2fc13c0daaef038c0e3cd`.
+`6a724f46a70be8d23e7b9898fe6e70073879c12f77eefbdbddc63d87fb47a17c`.
 
-All eight preregistered gates pass.
+All eight Repair19c2 gates pass.
 
-The main result is that the Repair19c finite-difference Jacobian is not locally faithful enough in the cancellation-sensitive momentum direction.
+The preregistered derivative-fidelity rule selected exactly:
 
-For a faithful Jacobian one expects
+- finite-difference method: `3-point`
+- explicit absolute physical-coordinate step: `3e-6`.
 
-`F(alpha dx)=F0+alpha J dx+O(alpha^2)`.
+Across the six lambda=1 canonical cases, the selected Jacobian reduces the worst-case frozen-direction mismatch from
 
-Repair19c1 instead finds a predominantly first-order discrepancy:
+`4.781774890514617e-2`
 
-- large-alpha nonlinear-remainder slopes are near 1 in the clearest cases;
-- directional-mismatch slopes are near 0;
-- the mismatch frequently worsens again at very small amplitudes, consistent with roundoff/cancellation.
+to
 
-The alpha=1 exact residual is approximately `5e7` to `9.6e8` times larger than the frozen linear prediction, even though the first step is exactly reproduced.
+`1.3488978416629585e-4`,
 
-The discrepancy is momentum dominated. The Hamiltonian directional prediction remains locally accurate.
+an improvement factor of about `354.5`.
 
-This does not show that the physical `(L,R_t)` ansatz is infeasible.
+The median mismatch improves by about `49.5`.
+
+The selected one-step exact residual ratios remain descriptive and are still of order `1e-4` to `1e-3`, so Repair19c2 does not itself certify nonlinear closure.
 
 ### Next executable gate
 
-Repair19c2 is preregistered, implemented, implementation-locked, and runner-ready.
+Repair19c3 is preregistered, implemented, implementation-locked, and runner-ready.
 
-It keeps the same six lambda=1 parents, physical pair, orthonormal gauge, residual, branch and eta=0.
+It reruns the exact same Repair19c orthonormal direct GELSY Gauss-Newton nonlinear projection with only the Repair19c2-selected Jacobian change:
 
-Repair19c2 compares grouped Jacobians built with:
+- grouped half-band-16 physical-coordinate Jacobian
+- `method='3-point'`
+- `abs_step=3e-6`.
 
-- methods: 2-point and 3-point;
-- absolute steps:
-  `1e-5,3e-6,1e-6,3e-7,1e-7,3e-8`.
-
-Each candidate is compared against a Richardson-extrapolated symmetric exact directional derivative along the frozen Repair19c first direction.
-
-The candidate-selection rule is preregistered and uses only derivative-fidelity metrics, not nonlinear closure performance.
-
-No nonlinear iteration is run.
+All physical variables, gauge conditions, line-search parameters, safety bounds, historical thresholds, correction-scaling gates, two-grid controls, branch retests, eta=0 restriction and radial points remain unchanged.
 
 ---
 
@@ -571,6 +566,72 @@ Runner blob:
 Target successful characterization class:
 
 `NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
+
+
+
+### Repair19c2 — finite-difference step-scale characterization
+
+Class:
+
+`NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
+
+Result-freeze commit:
+
+`5f51cae7943679f6e96dcdefc7814c0f1551e244`.
+
+Frozen local outputs:
+
+- JSON SHA-256:
+  `6a724f46a70be8d23e7b9898fe6e70073879c12f77eefbdbddc63d87fb47a17c`
+- evaluator log SHA-256:
+  `01902b0a920041c22eacc6a24bca22478f90e2d6d1b1a155695ae5720d978e60`
+- local runner log SHA-256:
+  `74992b9e84560391f9150e7a94fed26c094b27b4b0228706202a029546f735dc`.
+
+Selected candidate:
+
+`3-point, abs_step=3e-6`.
+
+Aggregate selected mismatch:
+
+- max:
+  `1.3488978416629585e-4`
+- median:
+  `4.24433123436393e-5`.
+
+Compared with the frozen default control, this improves worst-case directional fidelity by about `354.5x` and median fidelity by about `49.5x`.
+
+The result confirms that finite-difference Jacobian fidelity was a major source of the Repair19c momentum-direction discrepancy.
+
+### Repair19c3 — selected-Jacobian nonlinear closure
+
+Status:
+
+**PREREGISTERED / IMPLEMENTED / IMPLEMENTATION-LOCKED / RUNNER READY / NOT YET EXECUTED**.
+
+Preregistration commit:
+
+`39d36344c9746c51f57cc2f1d85c773b62df2d3c`.
+
+Implementation commit:
+
+`0f5ac90a7b618f9769bcdf2367aeecdec8f4217d`.
+
+Implementation-lock commit:
+
+`d4dd685940fd3eb7d4d1b1dafa5e5d33a07db3ff`.
+
+Runner commit/current pre-run HEAD:
+
+`0c0b9976dfe7c90e9484c584307123cd85451c7e`.
+
+Runner blob:
+
+`f96b4343750dffbb37cfb46ea97a1235f9f9c48f`.
+
+Target full-pass class:
+
+`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_EXACT_NONLINEAR_CONSTRAINT_PASS`.
 
 
 ---
