@@ -136,6 +136,12 @@ def source_flux(st,kind,beta,qbg,zbg,funcs,dY,D=None):
     SM+=2.0*L**2*R**2*varrho*np.cosh(v)*np.sinh(v)
     SH+=-2.0*L*R**2*b4.RHO_STD
 
+    # Analytic regular-center source limits.  The raw lambdified expressions
+    # contain removable 0/0 forms at R=0, while the regular spherical limits
+    # vanish.  B5 Repair01 changes only these two center values.
+    SH[0]=0.0
+    SM[0]=0.0
+
     numH=SH-D@FH
     numM=SM-D@FM
     non=np.arange(n)>0
@@ -253,6 +259,8 @@ def solve_case(parent,scale,nr,h,qbg,zbg,funcs,dY,B):
     )
     z0=np.zeros(B.shape[1],float)
     initial=conservative_metrics(fun_x,np.zeros(B.shape[0],float))
+    if not initial['finite']:
+        raise RuntimeError('nonfinite conservative residual after analytic regular-center source limit')
 
     sol=least_squares(
         fun_z,z0,jac=jac_z,method='trf',loss='linear',
@@ -300,6 +308,7 @@ def solve_case(parent,scale,nr,h,qbg,zbg,funcs,dY,B):
             'cost':float(sol.cost),'optimality':float(sol.optimality),
         },
         'initial_conservative':initial,
+        'initial_conservative_residual_finite':bool(initial['finite']),
         'final_conservative':final,
         'physical_correction_L2':float(np.linalg.norm(x)),
         'reduced_correction_L2':float(np.linalg.norm(z)),
