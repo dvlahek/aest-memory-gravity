@@ -10,57 +10,61 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-The linear gauge-fixed `(L,R_t)` completion problem is now certified feasible in the preregistered orthonormal `Y4=0, Qmean=0` representation.
+The linear gauge-fixed `(L,R_t)` problem remains certified feasible from Repair19b1, but the first locked nonlinear direct Gauss-Newton closure attempt has now failed scientifically.
 
-Latest completed checkpoint:
+Latest completed nonlinear checkpoint:
 
-`NL1C7B4_REPAIR19B1_ORTHONORMAL_DIRECT_LINEAR_FEASIBILITY_LSMR_STAGNATION_PASS`
+`NL1C7B4_REPAIR19C_ORTHONORMAL_DIRECT_GN_NONLINEAR_CLOSURE_FAIL`
 
 with
 
-- `SCIENCE_RC=0`
+- `SCIENCE_RC=2`
 - execution HEAD:
-  `17a7656e361568dd06024d13022331081edb3e7a`
+  `2d59ebeef39bc2c4936eb3d6a465da25cc9613cf`
 - result JSON SHA-256:
-  `33774c721bfd15c1c2f6b776408b3fc4623e3720f9199aa04fc43e8415be1a26`
-- maximum direct relative residual:
-  `1.1984362607786484e-07`
-- minimum frozen LSMR/direct residual ratio:
-  `4833536.02985291`
-- all 9 preregistered gates PASS.
+  `5ad02254c512f90d0f82a42d0f5aa00f15c1dae6248bdbe7ad69addb183b600a`
+- canonical PASS:
+  `0/24`
+- lambda=1 PASS:
+  `0/6`
+- no state NPZ written.
 
-Repair19b1 establishes that the same physical `(L,R_t)` correction subspace, with exact `Y4=0` and `Qmean=0`, admits a direct linear correction in all six canonical scale/grid cases.
+Repair19c preserves exact provenance, the orthonormal gauge, parent reproduction, the certified Repair19b1 first step, two-grid control, field freeze, output integrity and the claim boundary.
 
-It also establishes that the Repair19a LSMR result was grossly underconverged. It does not yet certify exact nonlinear B4 closure.
+The failed science gates are exact canonical nonlinear closure, one marginal small-lambda scaling path, and the downstream branch-retest gate.
+
+The central new result is that the first direct GELSY linear step predicts residuals near `1e-11` to `1e-9`, but exact nonlinear evaluation of that same physical step leaves residuals around `1e-2` to `1` depending on scale/grid. The mismatch is approximately `1e7-1e9` at lambda=1.
+
+Hamiltonian closure becomes very small in the final lambda=1 states, while momentum remains above the historical `1e-7` threshold.
+
+The physical correction amplitude remains grid-stable, with lambda=1 Nr512/Nr256 ratios near `1.003` for all three scales.
 
 ### Next executable gate
 
-Repair19c has been preregistered, implemented, implementation-locked, and given a local runner.
+Repair19c1 is preregistered, implemented, implementation-locked, and runner-ready.
 
-Current HEAD:
+It is a diagnostic only:
 
-`25769ce21404efbf03e368f4cf89f446cf7c9c44`.
+`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`
 
-Repair19c is the first deterministic nonlinear direct Gauss-Newton closure test in the certified orthonormal subspace.
+is the successful characterization class.
 
-It keeps:
+Repair19c1 reproduces the same six lambda=1 first GELSY directions and evaluates the exact residual along
 
-- eta=0;
-- physical correction pair only `(L,R_t)`;
-- exact `Y4=0,Qmean=0`;
-- historical exact B4 threshold `epsilon_H,epsilon_M <= 1e-7`;
-- frozen source dictionaries and coefficients;
-- all nonprojection fields bitwise frozen.
+`alpha = 1 ... 1/4096`.
 
-It uses:
+It measures:
 
-- the same grouped two-point physical Jacobian;
-- algebraic projection `J_orth=J_x B_orth`;
-- direct LAPACK GELSY steps;
-- deterministic Armijo backtracking;
-- no LSMR, TRF, LM, multistart, random perturbation, or alternate-driver fallback.
+- exact versus linear-predicted residual;
+- nonlinear remainder scaling;
+- directional derivative mismatch;
+- Hamiltonian and momentum blocks separately;
+- exact Q and gauge preservation;
+- field freeze.
 
-If Repair19c passes and is frozen, the next scientific stage is short-time nonlinear eta=0 evolution, not another initial-constraint repair.
+It does not run a new nonlinear optimizer or change the physical ansatz.
+
+The purpose is to distinguish genuine nonlinear curvature from loss of finite-difference/local-Jacobian fidelity before any solver repair is proposed.
 
 ---
 
@@ -416,6 +420,69 @@ the frozen physical `(L,R_t)` gauge-fixed subspace is linearly residual-space fe
 
 ### Repair19c — orthonormal direct Gauss-Newton nonlinear closure
 
+Class:
+
+`NL1C7B4_REPAIR19C_ORTHONORMAL_DIRECT_GN_NONLINEAR_CLOSURE_FAIL`.
+
+Result freeze commit:
+
+`e0d7415be5da36757327c0d36cc2eaaae2ecc2d5`.
+
+Frozen local output:
+
+- JSON SHA-256:
+  `5ad02254c512f90d0f82a42d0f5aa00f15c1dae6248bdbe7ad69addb183b600a`
+- evaluator log SHA-256:
+  `69c1c31de071087fd2cb06f291037903ee71da2524351780b5add081a8b76b6e`
+- local runner log SHA-256:
+  `6f686fe7dca26eb5aca65c536b9fc1f4ffc7b490f35ca3df31ea4cbcb6dfeabb`.
+
+Science result:
+
+- canonical exact closure: `0/24`
+- lambda=1 exact closure: `0/6`
+- every canonical solve ends in `backtracking_failed`
+- no state NPZ written.
+
+PASS controls include:
+
+- provenance;
+- orthonormal constrained basis;
+- exact parent reproduction;
+- exact Repair19b1 first-step reproduction;
+- two-grid correction control;
+- field freeze;
+- output integrity;
+- claim boundary.
+
+The final lambda=1 Hamiltonian residuals are very small, while momentum remains above threshold. Representative momentum values are:
+
+- scale 5 / Nr256:
+  `1.0025853680751008e-4`
+- scale 10 / Nr256:
+  `2.093034986286432e-4`
+- scale 20 / Nr256:
+  `5.730951320826147e-6`.
+
+The correction amplitude remains extremely grid-stable:
+
+- scale 5 ratio:
+  `1.0034811583557677`
+- scale 10:
+  `1.0028899322177636`
+- scale 20:
+  `1.0034806074679696`.
+
+Five of six small-lambda scaling paths pass. The only scaling failure is scale 10 / Nr512 with final slope `2.2059300525270347` against the frozen upper limit `2.2`.
+
+The main diagnostic finding is the first-step linear/nonlinear mismatch. For scale 5 / Nr256 / lambda=1, the direct Jacobian predicts residual L2 `2.449845864172695e-11`, while the exact nonlinear residual after the accepted full step is `1.459496330366806e-2`. Similar discrepancies of roughly `1e7-1e9` occur across all six lambda=1 cases.
+
+Interpretation:
+
+the failure does not license a new field or physics change. It licenses a directional Jacobian-fidelity audit of the already certified first step.
+
+### Repair19c1 — first-step directional Jacobian fidelity audit
+
 Status:
 
 **PREREGISTERED / IMPLEMENTED / IMPLEMENTATION-LOCKED / RUNNER READY / NOT YET EXECUTED**.
@@ -423,48 +490,34 @@ Status:
 Preregistration:
 
 - commit:
-  `3eaefcccb6c44f2db12b24caf3bfa3c3ec16a712`
+  `6318ce0f3a61a6503c4090bde6f4f247563cb704`
 - blob:
-  `7749938dadb43f6cff6b974a9ee4af58bdf72a09`.
+  `9388ef43b7e6e215f89383d154a04a266d385ef8`.
 
 Implementation:
 
 - commit:
-  `5216c1afb9e27a24957aaade43f0857641f1b12d`
+  `cbbbdf0db23b65412f99ce73b2c1c15aaac989da`
 - blob:
-  `f27ed8b39c1351e27d4f3b43b195ff4423e04c76`.
+  `616570dd106d92ffcb08bdaed99b646dd08a12e1`.
 
 Implementation lock:
 
 - commit:
-  `f3c93050db6b545b57d5a0de32d6fd0a56f78945`
+  `63345a1c95ee5b945f4565651ef1df6aa5bc3c85`
 - blob:
-  `bf5b7ec878eecc06ba83f51e7662080e95fa169c`.
+  `ca1837723f70a8b54c049192b85c992a197c24af`.
 
 Runner:
 
 - commit/current pre-run HEAD:
-  `25769ce21404efbf03e368f4cf89f446cf7c9c44`
+  `d7894886216ed96d6a7ed7ccc6816f3674c5b1db`
 - runner blob:
-  `dc02d03f1d165caf3f2e16bf596cd2a3658a0943`.
+  `acbeb7a66d06769cf0c97114b40b2a060612994b`.
 
-Target PASS class:
+Repair19c1 uses only the six lambda=1 canonical cases and one frozen x=0 GELSY direction per case.
 
-`NL1C7B4_REPAIR19C_ORTHONORMAL_DIRECT_GN_EXACT_NONLINEAR_CONSTRAINT_PASS`.
-
-If R19c passes:
-
-1. freeze the R19c result;
-2. preserve the exact six lambda=1 nonlinear states;
-3. preregister short-time nonlinear eta=0 evolution;
-4. only after clean eta=0 nonlinear evolution proceed toward finite eta and observational bridges.
-
-If R19c fails:
-
-1. freeze the failure exactly;
-2. inspect the failed preregistered gate;
-3. do not change solver, line search, driver, threshold, fields, or physics inside R19c;
-4. open a separately preregistered diagnostic/repair only if the frozen evidence licenses it.
+It samples exact directional amplitudes from 1 down to 1/4096 and records secant/Jacobian fidelity without running a new nonlinear optimizer.
 
 ---
 
