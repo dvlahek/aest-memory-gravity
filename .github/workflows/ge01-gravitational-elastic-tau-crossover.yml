@@ -1,0 +1,128 @@
+name: GE01 gravitational elastic tau crossover
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge01/**'
+      - 'docs/ge01_tau_crossover_implementation_lock.md'
+      - '.github/workflows/ge01-gravitational-elastic-tau-crossover.yml'
+
+jobs:
+  tau-crossover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Lock and provenance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge01/predata_tau_crossover_native_state.json)" = "51f96fd5e1b0308e4e2cd0917ba2b94959658a8d"
+          test "$(git rev-parse HEAD:ge01/tau_crossover_native_state.py)" = "5ba1d624f1219189ec3d4b2fc84692bbbb290032"
+          test "$(git rev-parse HEAD:docs/ge01_tau_crossover_implementation_lock.md)" = "cdaa40aa6a62aa765a4c4662c8c07ef33f1ecc88"
+          git merge-base --is-ancestor ed8e415fdda39ccc5804bfd462a0ec46da8c9bd2 HEAD
+          git merge-base --is-ancestor e0f4ffc92605cdd120e820b5cd5d4879cdc7bfa9 HEAD
+          git merge-base --is-ancestor 3dc2c5334852b3a412d8eb720ad94d49fbf2c061 HEAD
+          echo GE01_LOCK_PASS
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_ge01
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply validated AeST patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_ge01
+          python3 v019i/apply_ic_patch.py class_ge01
+          python3 v019j/apply_memory_patch.py class_ge01
+          python3 v019w/apply_variational_forcing_patch.py class_ge01
+          python3 v019y/apply_output_precision_patch.py class_ge01
+          python3 v023/apply_source_grid_trace_patch.py class_ge01
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_ge01
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_ge01
+          python3 tools/apply_v075_force_path_reload_patch.py class_ge01
+
+      - name: Build CLASS and classy
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C class_ge01 -j2 class
+          make -C class_ge01 -j2 classy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge01/tau_crossover_native_state.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge01/predata_tau_crossover_native_state.json'))
+          assert d['classification']=='GE01_PREDATA_GRAVITATIONAL_ELASTIC_TAU_CROSSOVER'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['tauH0_values']==[0.1,0.3,0.5,0.7,1.0,3.0,10.0]
+          assert d['tangent_amplitudes']==[2.5,1.25]
+          g=d['gates']
+          assert g['forcing_control_vs_primary_relative_L2_max']==0.01
+          assert g['forcing_control_vs_primary_cosine_min']==0.9999
+          assert g['baseline_state_relative_L2_across_tau_max']==1e-12
+          assert g['tangent_two_lambda_relative_L2_max']==0.005
+          assert g['tangent_two_lambda_cosine_min']==0.9999
+          print('GE01_PREDATA_PASS')
+          PY
+
+      - name: Run GE01 tau crossover
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 ge01/tau_crossover_native_state.py             --class-root class_ge01             --json-out results/ge01_tau_crossover_native_state.json             --npz-out results/ge01_tau_crossover_native_state.npz
+
+      - name: Summarize GE01
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge01_tau_crossover_native_state.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge01_tau_crossover_native_state.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          for r in d['rows']:
+              print(
+                  'tauH0=',r['tauH0'],
+                  'norm=',r['consensus_tangent_L2_norm'],
+                  'rel10=',r['response_norm_relative_to_tauH0_10'],
+                  'cos10=',r['consensus_cosine_to_tauH0_10'],
+                  'Kf05=',r['analytic_Maxwell_proxy_at_H_eq_H0']['f_0p5_K'],
+                  'Kf1=',r['analytic_Maxwell_proxy_at_H_eq_H0']['f_1p0_K'],
+              )
+          PY
+          fi
+
+      - name: Upload GE01 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge01_gravitational_elastic_tau_crossover
+          path: |
+            results/ge01_tau_crossover_native_state.json
+            results/ge01_tau_crossover_native_state.npz
+            results/v075_r4_forcing_summary.json
+            results/v075_r4_forcing_trace.log
+            results/v075_r4_forcing_trace.dat
+            results/v075_r4_forcing_force.dat
+            results/v076_ge01_*_trace.dat
+          if-no-files-found: warn
