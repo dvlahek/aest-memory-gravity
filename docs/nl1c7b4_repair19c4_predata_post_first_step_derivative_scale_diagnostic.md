@@ -115,17 +115,29 @@ Let the resulting reduced correction be `dz2_control` and physical correction be
 
 `dx2_control = B_orth dz2_control`.
 
-Define the frozen diagnostic direction
+Define the normalization
 
-`v = dx2_control / ||dx2_control||_2`.
+`n2 = ||dx2_control||_2`.
 
-If `dx2_control` is non-finite or has zero norm, the diagnostic fails implementation integrity for that case.
+Define the frozen reduced diagnostic direction
 
-Candidate Jacobians may not redefine this direction.
+`v_z = dz2_control / n2`
+
+and its physical image
+
+`v_x = B_orth v_z = dx2_control / n2`.
+
+Thus `||v_x||_2=1`.
+
+If `dx2_control` is non-finite or `n2=0`, the diagnostic fails implementation integrity for that case.
+
+Candidate Jacobians may not redefine either direction.
+
+This reduced/physical pair is an implementation clarification committed before any Repair19c4 implementation or execution. It changes no candidate, threshold, metric or selection rule.
 
 ## Independent symmetric directional reference
 
-At `x1`, evaluate the exact frozen-denominator residual along the frozen unit direction `v`.
+At `x1`, evaluate the exact frozen-denominator residual along the frozen unit physical direction `v_x`.
 
 Directional amplitudes are fixed to:
 
@@ -133,18 +145,18 @@ Directional amplitudes are fixed to:
 
 For each amplitude `s`, evaluate:
 
-- `F(x1+s v)`;
-- `F(x1-s v)`;
-- `F(x1+(s/2)v)`;
-- `F(x1-(s/2)v)`.
+- `F(x1+s v_x)`;
+- `F(x1-s v_x)`;
+- `F(x1+(s/2)v_x)`;
+- `F(x1-(s/2)v_x)`.
 
 Define
 
-`D1(s)=[F(x1+s v)-F(x1-s v)]/(2s)`
+`D1(s)=[F(x1+s v_x)-F(x1-s v_x)]/(2s)`
 
 and
 
-`Dhalf(s)=[F(x1+(s/2)v)-F(x1-(s/2)v)]/s`.
+`Dhalf(s)=[F(x1+(s/2)v_x)-F(x1-(s/2)v_x)]/s`.
 
 Define the Richardson directional estimate
 
@@ -204,9 +216,11 @@ The `3e-6` candidate is the frozen Repair19c3 control.
 
 No relative-step fallback is permitted.
 
-For candidate reduced Jacobian `J_cand`, evaluate only its action on the frozen direction:
+For candidate reduced Jacobian `J_cand`, evaluate only its action on the frozen reduced direction:
 
-`A_cand = J_cand v`.
+`A_cand = J_cand v_z`.
+
+This is algebraically the same directional action as the corresponding physical-coordinate Jacobian acting on `v_x`.
 
 If a case has a resolved `Dstar`, define:
 
