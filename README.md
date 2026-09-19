@@ -73,3 +73,18 @@ Do **not** insert the H-dependent v0.19l rational table into CLASS.
 The next gate is to optimize and compress the fixed-frequency positive oscillator representation directly on the full time-dependent FLRW/CMB domain, extend the frequency/Hubble coverage to the actual CLASS history, and require convergence against the dense conservative bath. Only after that gate passes should finite-eta tangent CMB response be rerun.
 
 The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adiabatic mode, and central smooth-source drag law `a_drag ∝ -(v tau)^(1/3)` are unaffected by the v0.19m numerical finding.
+
+
+## NL1C7B eta=0 spherical nonlinear-constraint track
+
+On branch `nl1c7b-eta0-spherical-evolution`, the latest completed checkpoint is
+
+`NL1C7B4_REPAIR19B1_ORTHONORMAL_DIRECT_LINEAR_FEASIBILITY_LSMR_STAGNATION_PASS`.
+
+This certifies direct linear residual-space feasibility of the same physical `(L,R_t)` correction pair in the exact orthonormal `Y4=0,Qmean=0` subspace and identifies the earlier LSMR result as numerical stagnation.
+
+Repair19c is preregistered, implemented, implementation-locked, and runner-ready. It is the first deterministic direct-GELSY Gauss-Newton test of exact nonlinear eta=0 B4 closure at the unchanged historical `1e-7` threshold.
+
+Full chronology and frozen provenance are maintained in:
+
+`docs/nl1c7b4_history.md`.
