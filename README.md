@@ -132,6 +132,26 @@ The earlier shear-strain completion draft is retained only as an exploratory alt
 
 Immediate physics target:
 
+- GE01: linear native-state tau crossover across the Maxwell transition;
+- GE02: **PASS** — finite-amplitude nonlinear action-source tau crossover;
+- next: weakly nonlinear `O(epsilon^2 eta)` Y-memory cross-source `DY2[chi10;chi11]`;
+- only after that: nonlinear-background physical-state eta tangent;
+- finite physical eta and collapse remain later stages.
+
+GE02 first locked run:
+
+- classification: `GE02_NONLINEAR_ELASTIC_SOURCE_TAU_CROSSOVER_PASS`;
+- workflow: `35470926045`;
+- artifact: `10592418646`;
+- artifact SHA-256: `61c72e6cd66fc27427f15fbe7d0c9e1410096b82b99ebcd8368194f8348bc100`;
+- result freeze: `docs/ge02_nonlinear_elastic_source_tau_crossover_result_freeze.md`.
+
+Across `tau H0={0.1,0.3,0.5,0.7,1,3,10}`, both the action-derived restoring source `B_rms` and the quadratic finite-amplitude metric-energy source `rhohat_mem` increase smoothly from the relaxed regime toward the unrelaxed elastic plateau.
+
+At `tau H0=1`, the nonlinear source norms have already reached approximately 0.88 and 0.865 of their `tau H0=10` values; at `tau H0=3` they are approximately 0.966 and 0.962.
+
+This is a nonlinear source/stress result. It is not yet a self-consistent finite-eta nonlinear trajectory.
+
 `identify the dynamical regimes where tau/t_dyn ~ 1 and test the resulting elastic-memory response with the already validated linear and spherical action infrastructure`.
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
