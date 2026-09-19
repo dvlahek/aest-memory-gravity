@@ -1,0 +1,131 @@
+name: GE03 weakly nonlinear Y memory cross source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge03/**'
+      - 'docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md'
+      - '.github/workflows/ge03-weakly-nonlinear-y-memory-cross-source.yml'
+
+jobs:
+  weakly-nonlinear-y-memory-cross-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock and provenance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge03/predata_weakly_nonlinear_y_memory_cross_source.json)" = "9b5a21aa77f4e8bcacb0e41cc9f0d83285a62395"
+          test "$(git rev-parse HEAD:ge03/weakly_nonlinear_y_memory_cross_source.py)" = "c80a76a190d749b0a2c57d35449ed01ad2205a03"
+          test "$(git rev-parse HEAD:docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md)" = "5db45add047f6c7e28cc7845c7ce83fd2b1ec8de"
+          git merge-base --is-ancestor bceff2b86dd5f94cfe50ca722d4601400fc4ee49 HEAD
+          git merge-base --is-ancestor 21664244deff23a7a05980aabcc95072aa42aaf9 HEAD
+          git merge-base --is-ancestor 99bdd01ccda871390e14852ec9af7d6077409fb7 HEAD
+          echo GE03_LOCK_PASS
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Predata and implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge03/weakly_nonlinear_y_memory_cross_source.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge03/predata_weakly_nonlinear_y_memory_cross_source.json'))
+          assert d['classification']=='GE03_PREDATA_WEAKLY_NONLINEAR_Y_MEMORY_CROSS_SOURCE'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['finite_physical_eta'] is False
+          assert d['retained_traces']['tangent_lambdas']==[10.0,5.0,2.5,1.25]
+          assert d['frozen_model']['beta0_co_primary']==[1.0,0.5,0.1]
+          g=d['gates']
+          assert g['chi11_four_lambda_affinity_relative_L2_max']==0.005
+          assert g['chi11_four_lambda_cosine_min']==0.9999
+          assert g['analytic_vs_fd_DY2_relative_L2_max']==0.0001
+          assert g['primary_vs_control_fd_DY2_relative_L2_max']==0.0001
+          assert g['Nx256_vs_Nx512_low_mode_DY2_relative_L2_max']==0.0005
+          print('GE03_PREDATA_PASS')
+          PY
+
+      - name: Verify frozen v0.77 artifact metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10090367181"             -o results/ge03_artifact_metadata.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('results/ge03_artifact_metadata.json'))
+          assert a['id']==10090367181
+          assert a['workflow_run']['id']==34315590099
+          assert a['digest']=='sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378'
+          assert a['expired'] is False
+          print('GE03_FROZEN_ARTIFACT_PROVENANCE_PASS')
+          PY
+
+      - name: Download exact retained v0.77 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10090367181
+          path: frozen_v077
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 34315590099
+
+      - name: Run GE03 weakly nonlinear cross source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge03/weakly_nonlinear_y_memory_cross_source.py             --artifact-dir frozen_v077             --artifact-meta-json results/ge03_artifact_metadata.json             --json-out results/ge03_weakly_nonlinear_y_memory_cross_source.json             --npz-out results/ge03_weakly_nonlinear_y_memory_cross_source.npz             | tee results/ge03_weakly_nonlinear_y_memory_cross_source.log
+
+      - name: Summarize GE03
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge03_weakly_nonlinear_y_memory_cross_source.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge03_weakly_nonlinear_y_memory_cross_source.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('CHI11_AFFINITY=',d['chi11_affinity'])
+          print('OPERATOR_CONTROLS=',d['operator_controls'])
+          for r in d['rows']:
+              print(
+                  'z=',r['z'],
+                  'Ynorm=',r['Y2_beta1_L2_norm'],
+                  'DYnorm=',r['DY2_beta1_L2_norm'],
+                  'ratio=',r['two_DY2_over_two_Y2_norm_ratio_per_eta_tangent'],
+                  'cos=',r['Y2_DY2_cosine'],
+              )
+          PY
+          fi
+
+      - name: Upload GE03 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge03_weakly_nonlinear_y_memory_cross_source
+          path: |
+            results/ge03_artifact_metadata.json
+            results/ge03_weakly_nonlinear_y_memory_cross_source.json
+            results/ge03_weakly_nonlinear_y_memory_cross_source.npz
+            results/ge03_weakly_nonlinear_y_memory_cross_source.log
+            ge03/predata_weakly_nonlinear_y_memory_cross_source.json
+            docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md
+          if-no-files-found: warn
