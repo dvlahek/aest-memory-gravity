@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout AeST harness
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Lock and provenance audit
         shell: bash
