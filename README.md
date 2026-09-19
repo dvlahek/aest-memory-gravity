@@ -75,6 +75,37 @@ The next gate is to optimize and compress the fixed-frequency positive oscillato
 The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adiabatic mode, and central smooth-source drag law `a_drag ∝ -(v tau)^(1/3)` are unaffected by the v0.19m numerical finding.
 
 
+## Physics-first gravitational elasticity
+
+The active theory direction is now the gravitational-elasticity interpretation.
+
+Core statement:
+
+> Inhomogeneous gravitational geometry deforms a preferred local congruence. Internal elastic strain modes store that deformation and return a stress to the metric. Eliminating the strain modes produces a causal memory kernel.
+
+The conservative completion uses spatial traceless strain oscillators `epsilon_n^{mu nu}` coupled to the congruence shear `sigma_{mu nu}`:
+
+`S_el = sum_n integral sqrt(-g) [ A_n/2 (D_u epsilon_n)^2 - A_n omega_n^2/2 epsilon_n^2 + g_n epsilon_n:sigma ]`.
+
+This gives fixed-frequency positive spectral weights
+
+`w_n=g_n^2/A_n >= 0`
+
+and directly explains why the fixed-frequency positive oscillator bath is the preferred memory representation.
+
+This direction retains the validated zero-regression, CLASS and fixed-oscillator infrastructure, while the B4–B8 spherical nonlinear-constraint programme is retained only as a later nonlinear-validation track.
+
+See:
+
+- `docs/gravitational_elasticity_core_model.md`;
+- `docs/gravitational_elasticity_conservative_completion.md`.
+
+Immediate gates:
+
+`quadratic action -> kinetic/stability audit -> one-mode linear cosmology -> weak-field spherical solution`.
+
+No further B4–B8 solver tuning is part of the active path.
+
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
 Latest completed construction result:
