@@ -77,13 +77,17 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-Latest completed diagnostic:
+Latest completed nonlinear checkpoint:
 
-`NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
+`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_NONLINEAR_CLOSURE_FAIL`.
 
-Repair19c2 confirms the Repair19c1 diagnosis that the frozen default finite-difference Jacobian was a dominant source of local momentum-direction error. The preregistered selection rule chose `3-point` differences with explicit physical-coordinate `abs_step=3e-6`, reducing the worst-case directional mismatch by about 354.5x and the median mismatch by about 49.5x relative to the frozen default control.
+Repair19c3 exactly reproduces the Repair19c2-selected `3-point, abs_step=3e-6` first Jacobian step and preserves provenance, gauge, field freeze and two-grid control, but 0/24 canonical solves reach the historical exact `1e-7` H/M closure threshold. The remaining failure is momentum dominated.
 
-Repair19c3 is preregistered, implemented, implementation-locked, and runner-ready. It reruns the otherwise unchanged orthonormal direct GELSY Gauss-Newton nonlinear projection using exactly that selected Jacobian.
+The first-step finite-difference fidelity problem is substantially improved, but after that step the requested Newton corrections collapse to roughly `1e-9--1e-13` while the Jacobian probe remains fixed at `3e-6`. This identifies a post-first-step derivative-scale floor rather than a demonstrated failure of the physical `(L,R_t)` ansatz.
+
+This is the stopping point for open-ended nonlinear solver repair. At most one separately preregistered post-first-step derivative-scale diagnostic is allowed before a project-level decision.
+
+Observational/data-side infrastructure may proceed in parallel now, but no real-data result is to be presented as a tested AeST prediction until a finite-eta prediction exists and the numerical limitations are stated.
 
 Full chronology and frozen provenance are maintained in:
 
