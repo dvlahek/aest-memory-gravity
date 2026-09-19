@@ -7,9 +7,9 @@ on:
     branches: [physics-first-gravitational-elasticity]
     paths:
       - 'ge03/**'
-      - 'docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md
-            docs/ge03_repair01_predata_python_import_path.md
-            docs/ge03_repair01_python_import_path_implementation_lock.md'
+      - 'docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md'
+      - 'docs/ge03_repair01_predata_python_import_path.md'
+      - 'docs/ge03_repair01_python_import_path_implementation_lock.md'
       - '.github/workflows/ge03-weakly-nonlinear-y-memory-cross-source.yml'
 
 jobs:
