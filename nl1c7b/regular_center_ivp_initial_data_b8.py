@@ -73,16 +73,56 @@ def center_identity_audit():
     mgr=4*(e*R1)*Lt0*R1-4*L0*(e*R1)*T1
     t1_solution=sp.solve(sp.Eq(sp.factor(mgr/e),0),T1)
 
-    # Non-GR H local terms all carry R^2. Their radial fluxes carry R^2,
-    # so a single radial derivative is O(e). j/K/dust/background local H
-    # terms likewise carry R^2.
-    # Regular momentum non-GR terms carry R^2 times an odd radial quantity
-    # (phi_r, rapidity/velocity, or equivalent), hence O(e^3).
+    # Machine-check the regular-center power counting used to exclude
+    # non-GR O(1) terms from the center algebraic Hamiltonian condition.
+    # Regular spherical parity gives R~r, u~r, phi_r~r, dust_v~r,
+    # E~r and X~r, while q and scalar coefficients remain finite.
+    U1,P1,V1,E1,X1,J0,j1,Z0=sp.symbols(
+        'U1 P1 V1 E1 X1 J0 j1 Z0', real=True
+    )
+    R=e*R1
+    E=e*E1
+    X=e*X1
+    pr=e*P1
+    vv=e*V1
+
+    aest_h_local=[
+        L0*R**2*E**2,
+        L0*R**2*E*X,
+        L0*R**2*X**2,
+    ]
+    aest_h_flux=[
+        R**2*E,
+        R**2*X,
+    ]
+    other_h_local=[
+        L0*R**2*J0,
+        L0*R**2*j1*X,
+        L0*R**2*Z0,
+        L0*R**2*sp.cosh(vv)**2,
+        L0*R**2,
+    ]
+    non_gr_momentum=[
+        L0*R**2*E*U1*e,
+        L0*R**2*X*U1*e,
+        L0*R**2*pr,
+        L0**2*R**2*sp.cosh(vv)*sp.sinh(vv),
+        L0*R**2*j1*X,
+    ]
+
     structural_orders={
-        'AeST_H_local_R2_or_higher':True,
-        'AeST_H_flux_divergence_O_r':True,
-        'j_K_dust_background_H_R2_or_higher':True,
-        'nonGR_momentum_O_r3':True,
+        'AeST_H_local_R2_or_higher':bool(
+            all(sp.limit(t/e,e,0)==0 for t in aest_h_local)
+        ),
+        'AeST_H_flux_divergence_O_r_or_higher':bool(
+            all(sp.limit(t/e**2,e,0)==0 for t in aest_h_flux)
+        ),
+        'j_K_dust_background_H_R2_or_higher':bool(
+            all(sp.limit(t/e,e,0)==0 for t in other_h_local)
+        ),
+        'nonGR_momentum_O_r3_or_higher':bool(
+            all(sp.limit(t/e**2,e,0)==0 for t in non_gr_momentum)
+        ),
     }
 
     checks={
