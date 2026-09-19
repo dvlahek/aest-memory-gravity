@@ -10,61 +10,51 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-The linear gauge-fixed `(L,R_t)` problem remains certified feasible from Repair19b1, but the first locked nonlinear direct Gauss-Newton closure attempt has now failed scientifically.
+Repair19c1 is now frozen as a clean diagnostic PASS:
 
-Latest completed nonlinear checkpoint:
+`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`.
 
-`NL1C7B4_REPAIR19C_ORTHONORMAL_DIRECT_GN_NONLINEAR_CLOSURE_FAIL`
+Result JSON SHA-256:
 
-with
+`b4898fed6c6bbe7d4c91f8144ed35d03e6f318b298a2fc13c0daaef038c0e3cd`.
 
-- `SCIENCE_RC=2`
-- execution HEAD:
-  `2d59ebeef39bc2c4936eb3d6a465da25cc9613cf`
-- result JSON SHA-256:
-  `5ad02254c512f90d0f82a42d0f5aa00f15c1dae6248bdbe7ad69addb183b600a`
-- canonical PASS:
-  `0/24`
-- lambda=1 PASS:
-  `0/6`
-- no state NPZ written.
+All eight preregistered gates pass.
 
-Repair19c preserves exact provenance, the orthonormal gauge, parent reproduction, the certified Repair19b1 first step, two-grid control, field freeze, output integrity and the claim boundary.
+The main result is that the Repair19c finite-difference Jacobian is not locally faithful enough in the cancellation-sensitive momentum direction.
 
-The failed science gates are exact canonical nonlinear closure, one marginal small-lambda scaling path, and the downstream branch-retest gate.
+For a faithful Jacobian one expects
 
-The central new result is that the first direct GELSY linear step predicts residuals near `1e-11` to `1e-9`, but exact nonlinear evaluation of that same physical step leaves residuals around `1e-2` to `1` depending on scale/grid. The mismatch is approximately `1e7-1e9` at lambda=1.
+`F(alpha dx)=F0+alpha J dx+O(alpha^2)`.
 
-Hamiltonian closure becomes very small in the final lambda=1 states, while momentum remains above the historical `1e-7` threshold.
+Repair19c1 instead finds a predominantly first-order discrepancy:
 
-The physical correction amplitude remains grid-stable, with lambda=1 Nr512/Nr256 ratios near `1.003` for all three scales.
+- large-alpha nonlinear-remainder slopes are near 1 in the clearest cases;
+- directional-mismatch slopes are near 0;
+- the mismatch frequently worsens again at very small amplitudes, consistent with roundoff/cancellation.
+
+The alpha=1 exact residual is approximately `5e7` to `9.6e8` times larger than the frozen linear prediction, even though the first step is exactly reproduced.
+
+The discrepancy is momentum dominated. The Hamiltonian directional prediction remains locally accurate.
+
+This does not show that the physical `(L,R_t)` ansatz is infeasible.
 
 ### Next executable gate
 
-Repair19c1 is preregistered, implemented, implementation-locked, and runner-ready.
+Repair19c2 is preregistered, implemented, implementation-locked, and runner-ready.
 
-It is a diagnostic only:
+It keeps the same six lambda=1 parents, physical pair, orthonormal gauge, residual, branch and eta=0.
 
-`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`
+Repair19c2 compares grouped Jacobians built with:
 
-is the successful characterization class.
+- methods: 2-point and 3-point;
+- absolute steps:
+  `1e-5,3e-6,1e-6,3e-7,1e-7,3e-8`.
 
-Repair19c1 reproduces the same six lambda=1 first GELSY directions and evaluates the exact residual along
+Each candidate is compared against a Richardson-extrapolated symmetric exact directional derivative along the frozen Repair19c first direction.
 
-`alpha = 1 ... 1/4096`.
+The candidate-selection rule is preregistered and uses only derivative-fidelity metrics, not nonlinear closure performance.
 
-It measures:
-
-- exact versus linear-predicted residual;
-- nonlinear remainder scaling;
-- directional derivative mismatch;
-- Hamiltonian and momentum blocks separately;
-- exact Q and gauge preservation;
-- field freeze.
-
-It does not run a new nonlinear optimizer or change the physical ansatz.
-
-The purpose is to distinguish genuine nonlinear curvature from loss of finite-difference/local-Jacobian fidelity before any solver repair is proposed.
+No nonlinear iteration is run.
 
 ---
 
@@ -518,6 +508,70 @@ Runner:
 Repair19c1 uses only the six lambda=1 canonical cases and one frozen x=0 GELSY direction per case.
 
 It samples exact directional amplitudes from 1 down to 1/4096 and records secant/Jacobian fidelity without running a new nonlinear optimizer.
+
+
+### Repair19c1 — directional Jacobian fidelity characterization
+
+Class:
+
+`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`.
+
+Result freeze commit:
+
+`cbf05b2a2845cda70fb962b20c5062d516b24a5b`.
+
+Frozen local output:
+
+- JSON SHA-256:
+  `b4898fed6c6bbe7d4c91f8144ed35d03e6f318b298a2fc13c0daaef038c0e3cd`
+- evaluator log SHA-256:
+  `0db205484be993b7c9732afa2cea96df281279a6956bc4b1ba5b8c831ff3f89b`
+- local runner log SHA-256:
+  `63d6f55bfd067a770568669dcf5ff78d53b1c7428dfd6adce194282cade9ca6e`.
+
+All eight gates PASS.
+
+Global alpha=1 exact/predicted residual ratio:
+
+- minimum:
+  `50334591.40411471`
+- maximum:
+  `961747913.6033223`.
+
+The leading discrepancy behaves approximately as `alpha deltaD`, not as an ordinary quadratic nonlinear remainder.
+
+This identifies loss of local derivative fidelity in the frozen finite-difference Jacobian action, concentrated in the momentum block.
+
+### Repair19c2 — finite-difference step-scale audit
+
+Status:
+
+**PREREGISTERED / IMPLEMENTED / IMPLEMENTATION-LOCKED / RUNNER READY / NOT YET EXECUTED**.
+
+Preregistration commit:
+
+`a094d9b660b346c3fcf03f6b26f2ce39ce263894`.
+
+Implementation commit:
+
+`515cc6c0ed04ec02d6dd48422bb0e96cf6575373`.
+
+Implementation-lock commit:
+
+`33190d51827fdfd84c5b4a7ed200f4ceac764045`.
+
+Runner commit/current pre-run HEAD:
+
+`e539011b888a4853f6f602de0ec7b71cb8c89a77`.
+
+Runner blob:
+
+`69d781af27f68b1aa72a440d539b83c796d15a11`.
+
+Target successful characterization class:
+
+`NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
+
 
 ---
 
