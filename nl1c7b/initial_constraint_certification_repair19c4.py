@@ -548,12 +548,11 @@ def main():
             cand=audit_candidates(problem,bases[nr],ref)
             g6 &= bool(
                 len(cand)==len(CANDIDATE_STEPS)
-                and all(c['jacobian_finite'] for c in cand)
+                and all(c['jacobian_finite'] and c['action_finite'] for c in cand)
                 and (
                     (not resolved)
                     or all(
-                        c['action_finite']
-                        and c['directional_action_mismatch'] is not None
+                        c['directional_action_mismatch'] is not None
                         and np.isfinite(c['directional_action_mismatch'])
                         and np.isfinite(c['H_action_mismatch'])
                         and np.isfinite(c['M_action_mismatch'])
