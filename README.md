@@ -77,53 +77,60 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-Latest completed initial-data result:
+Latest completed structural result:
 
-`NL1C7B5_CONSERVATIVE_DIFFERENTIAL_CERTIFICATION_FAIL`.
+`NL1C7B6_SYMBOLIC_RADIAL_REDUCTION_PASS`.
 
-The original B5 execution first exposed an implementation-only regular-center problem: the conservative cell quadrature used raw lambdified source values at `r=0`, where removable spherical-coordinate `0/0` forms occur. That result remains frozen as an implementation FAIL.
+The previous pointwise differential Gauss-Newton route and the B5 conservative cell-integrated constructor both failed to produce a state satisfying the unchanged exact B4 differential constraint threshold `1e-7`.
 
-B5 Repair01 replaces only the analytic regular-center source limits
+NL1C7B6 therefore changed the numerical representation rather than tuning those solvers.
 
-`S_H(0)=S_M(0)=0`
+Using the same frozen eta=0 physics and the same physical pair `(L,R_t)`, the exact Hamiltonian and radial-momentum constraints were reconstructed from the frozen action-derived source dictionary and reduced symbolically.
 
-and leaves all noncenter equations, quadrature rules, solver settings, Jacobian settings and science thresholds unchanged.
+After exact-Q substitution:
 
-After that repair:
+- H is affine in `L_r`;
+- H is quadratic in algebraic `R_t`;
+- H contains no `R_{t,r}`;
+- M is affine in `R_{t,r}`;
+- the GR algebraic `R_t` terms cancel exactly in M;
+- all non-GR momentum sectors are independent of algebraic `R_t`;
+- no second derivative of either solved field is present.
 
-- all six conservative initial residuals are finite;
-- provenance and source/flux decomposition pass;
-- orthonormal gauge representation passes;
-- all six conservative construction attempts complete;
-- exact-Q, gauge and field-freeze checks pass;
-- two-grid correction-amplitude control passes;
-- output integrity and claim-boundary checks pass.
+The solved derivative coefficients are
 
-The decisive unchanged B4 differential constraint certification fails on all six cases.
+`A_H=[4 R R_r + 2 K_B R^2 cosh(u)sinh(u)(L_t+u_r) + 2 C R^2 phi_r]/L^2`
 
-Final exact differential residuals are approximately:
+and
 
-- Hamiltonian: `4.24e-2`;
-- momentum: `1.0`;
+`A_M=-4LR`.
 
-against the unchanged historical threshold
+Hence, away from the analytic center,
 
-`1e-7`.
+`L_r=-B_H/A_H`
 
-The conservative objective itself decreases only from approximately `0.03810` to `0.03398` in full L2. All six frozen TRF solves reach `max_nfev=200`.
+and
 
-Per the preregistered project boundary, no B5a/B5b solver-parameter repair is licensed. Increasing the iteration budget, changing TRF settings, trying another finite-difference step, adding multistart/continuation or relaxing the exact threshold would be post-hoc changes.
+`R_{t,r}=B_M/(4LR)`.
 
-The nonlinear initial-data program has therefore exhausted two independently preregistered double-precision two-field construction strategies:
+All six frozen scale/grid cases pass the nondegeneracy audit on every noncenter point. The coefficients are positive and show no interior zero or sign change.
 
-1. pointwise differential Gauss-Newton through Repair19c4;
-2. conservative cell-integrated construction through B5 Repair01.
+Near the regular center,
 
-This does not prove physical nonexistence of the frozen `(L,R_t)` ansatz. It does mean that eta=0 short-time evolution remains gated because no exact `1e-7` certified initial state exists.
+- `A_H/r ≈ 4`;
+- `(4LR)/r ≈ 1.6000e-3`;
 
-Any further initial-data work must be a genuinely new project-level numerical representation, such as analytically reduced constraints or higher-precision arithmetic, and must be separately preregistered before implementation.
+so the only coefficient degeneracy is the expected spherical `O(r)` behavior at `r=0`.
 
-Observational/tangent infrastructure may continue in parallel, but finite-eta nonlinear observational claims remain gated.
+The preferred next step is therefore no longer residual minimization. It is a separately preregistered numerical construction of this exact coupled first-order radial system.
+
+The historical Repair18d1 `Y4/Qmean` conditions remain projection-nullspace transversality functionals and are not treated as physical radial boundary conditions.
+
+A future reduced-radial construction must specify the regular-center and asymptotic-background boundary policy before execution and must still pass the original B4 differential certification
+
+`max epsilon_H,max epsilon_M <=1e-7`
+
+on both Nr=256 and Nr=512 before eta=0 short-time evolution is licensed.
 
 Full chronology and frozen provenance are maintained in:
 
