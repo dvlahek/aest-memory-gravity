@@ -10,46 +10,40 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-Repair19c2 is frozen as:
+Repair19c3 is frozen as:
 
-`NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
+`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_NONLINEAR_CLOSURE_FAIL`.
 
 Result JSON SHA-256:
 
-`6a724f46a70be8d23e7b9898fe6e70073879c12f77eefbdbddc63d87fb47a17c`.
+`aa19480ce4d41f649368f192f27d85b823e0247aa6f9bcc9eb7a9d23b60ac5b0`.
 
-All eight Repair19c2 gates pass.
+The Repair19c2-selected Jacobian is reproduced exactly, but exact nonlinear closure still fails:
 
-The preregistered derivative-fidelity rule selected exactly:
+- canonical PASS: `0/24`
+- lambda=1 PASS: `0/6`
+- all failures terminate through `backtracking_failed`
+- no corrected-state NPZ is written.
 
-- finite-difference method: `3-point`
-- explicit absolute physical-coordinate step: `3e-6`.
+The failure remains momentum dominated. For lambda=1, the best momentum residual is scale 20 / Nr256 at
 
-Across the six lambda=1 canonical cases, the selected Jacobian reduces the worst-case frozen-direction mismatch from
+`6.2117247534723366e-06`,
 
-`4.781774890514617e-2`
+while the Hamiltonian residual there is
 
-to
+`7.743932006594966e-11`.
 
-`1.3488978416629585e-4`,
+The selected `3-point, abs_step=3e-6` Jacobian fixes the first-step fidelity problem identified by Repair19c1/2, but after the first accepted step the requested Newton correction collapses from approximately `1e-5--1e-4` to `1e-9--1e-13`, while the finite-difference probe remains fixed at `3e-6`.
 
-an improvement factor of about `354.5`.
+This establishes a post-first-step derivative-scale floor.
 
-The median mismatch improves by about `49.5`.
+### Project decision
 
-The selected one-step exact residual ratios remain descriptive and are still of order `1e-4` to `1e-3`, so Repair19c2 does not itself certify nonlinear closure.
+Repair19c3 is the stopping point for open-ended nonlinear solver repair.
 
-### Next executable gate
+At most one separately preregistered post-first-step derivative-scale diagnostic is licensed before deciding if the strict `1e-7` closure track is worth continuing.
 
-Repair19c3 is preregistered, implemented, implementation-locked, and runner-ready.
-
-It reruns the exact same Repair19c orthonormal direct GELSY Gauss-Newton nonlinear projection with only the Repair19c2-selected Jacobian change:
-
-- grouped half-band-16 physical-coordinate Jacobian
-- `method='3-point'`
-- `abs_step=3e-6`.
-
-All physical variables, gauge conditions, line-search parameters, safety bounds, historical thresholds, correction-scaling gates, two-grid controls, branch retests, eta=0 restriction and radial points remain unchanged.
+In parallel, observational/data-side infrastructure may proceed immediately. No real-data analysis may be presented as a tested AeST prediction until the finite-eta model prediction and its numerical limitations are explicit.
 
 ---
 
@@ -605,33 +599,39 @@ The result confirms that finite-difference Jacobian fidelity was a major source 
 
 ### Repair19c3 — selected-Jacobian nonlinear closure
 
-Status:
+Class:
 
-**PREREGISTERED / IMPLEMENTED / IMPLEMENTATION-LOCKED / RUNNER READY / NOT YET EXECUTED**.
+`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_NONLINEAR_CLOSURE_FAIL`.
 
-Preregistration commit:
+Result-freeze commit:
 
-`39d36344c9746c51f57cc2f1d85c773b62df2d3c`.
+`b15eee7f15a5ef4dbb2c87050f4a55983d688d88`.
 
-Implementation commit:
+Frozen local outputs:
 
-`0f5ac90a7b618f9769bcdf2367aeecdec8f4217d`.
+- JSON SHA-256:
+  `aa19480ce4d41f649368f192f27d85b823e0247aa6f9bcc9eb7a9d23b60ac5b0`
+- evaluator log SHA-256:
+  `2483f37b8184783710b0f6e616d57c856e0291a3d136c3b682e58636754202b9`
+- local runner log SHA-256:
+  `79933aa6817daf52a084cb0fecb6c05ba673954f8583c1767befb5100de1c4f1`.
 
-Implementation-lock commit:
+Result:
 
-`d4dd685940fd3eb7d4d1b1dafa5e5d33a07db3ff`.
+- canonical PASS: `0/24`
+- lambda=1 PASS: `0/6`
+- selected first-step reproduction PASS
+- two-grid control PASS
+- field freeze PASS
+- no state NPZ written.
 
-Runner commit/current pre-run HEAD:
+Lambda=1 momentum residuals remain above `1e-7`; the best case is scale 20 / Nr256 at `6.2117247534723366e-06`.
 
-`0c0b9976dfe7c90e9484c584307123cd85451c7e`.
+The main new diagnostic fact is post-first-step scale separation: first corrections are `O(1e-5--1e-4)`, while later requested Newton steps collapse to `O(1e-9--1e-13)` under the still-fixed `3e-6` finite-difference probe.
 
-Runner blob:
+Interpretation:
 
-`f96b4343750dffbb37cfb46ea97a1235f9f9c48f`.
-
-Target full-pass class:
-
-`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_EXACT_NONLINEAR_CONSTRAINT_PASS`.
+the selected Jacobian repaired the parent-state directional fidelity but does not remain appropriately scaled throughout the nonlinear iteration. Repair19c3 does not establish physical infeasibility of the `(L,R_t)` ansatz.
 
 
 ---
