@@ -59,9 +59,10 @@ def abs_or_rel_array(a,b,limit=REPRO_LIMIT):
     return bool(np.all(good)),float(np.max(ae)),float(np.max(re))
 
 
-def source_flux(st,kind,beta,qbg,zbg,funcs,dY):
+def source_flux(st,kind,beta,qbg,zbg,funcs,dY,D=None):
     r=np.asarray(st['r'],float)
-    D=b4.dmat(r)
+    if D is None:
+        D=b4.dmat(r)
     n=len(r)
     L=b4.AI+np.asarray(st['L_minus_a'],float)
     R=b4.AI*r+np.asarray(st['R_minus_ar'],float)
@@ -192,7 +193,8 @@ def build_problem(parent,scale,h,qbg,zbg,funcs,dY,B):
     n=len(parent['r'])
     m=n-1
     W=cell_quadrature(parent['r'])
-    sf0=source_flux(parent,r19c.CANON_KIND,r19c.CANON_BETA,qbg,zbg,funcs,dY)
+    D=b4.dmat(np.asarray(parent['r'],float))
+    sf0=source_flux(parent,r19c.CANON_KIND,r19c.CANON_BETA,qbg,zbg,funcs,dY,D=D)
     if not sf0['finite']:
         raise RuntimeError(f'nonfinite B5 parent source/flux scale={scale} Nr={n}')
 
@@ -208,7 +210,7 @@ def build_problem(parent,scale,h,qbg,zbg,funcs,dY,B):
 
     def fun_x(x):
         st=r18a.apply_projection(parent,np.asarray(x,float),char_rt)
-        sf=source_flux(st,r19c.CANON_KIND,r19c.CANON_BETA,qbg,zbg,funcs,dY)
+        sf=source_flux(st,r19c.CANON_KIND,r19c.CANON_BETA,qbg,zbg,funcs,dY,D=D)
         if not sf['finite']:
             return np.full(2*m,1e100,float)
         cH=sf['FH'][1:]-sf['FH'][:-1]-W@sf['SH']
