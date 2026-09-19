@@ -162,6 +162,48 @@ def build_symbolic_audit():
     non_gr_source_affine_Lr=bool(
         all(zero(sp.diff(fb[k],Lr,2)) for k in non_gr_names)
     )
+
+    # Explicit structural audit of the additional frozen sectors used by source_arrays.
+    # j/J sector: Y=X^2, so the shift-radial flux derivative is exactly zero.
+    dyb=sp.diff(Y,b).subs(gauge).subs(subq)
+    dybr=sp.diff(Y,br).subs(gauge).subs(subq)
+    jv,Jv=sp.symbols('jv Jv', real=True)
+    jb_extra=-C*(L*R**2*jv*dyb)
+    jbr_extra=-C*(L*R**2*jv*dybr)
+
+    # K, dust and background momentum terms are purely local.  Their detailed
+    # frozen coefficients are irrelevant to solved-field derivative order.
+    K2s,Z0s,zs,ews,vs,varrhos,rhostd=sp.symbols(
+        'K2s Z0s zs ews vs varrhos rhostd', real=True
+    )
+    kb_extra=-8*K2s*L*R**2*ch*pr*Z0s*zs*ews
+    dustM_extra=2*L**2*R**2*varrhos*sp.cosh(vs)*sp.sinh(vs)
+    bgM_extra=sp.Integer(0)
+
+    extra_momentum=[
+        jb_extra,jbr_extra,kb_extra,dustM_extra,bgM_extra
+    ]
+    extra_momentum_structure=bool(
+        zero(dybr)
+        and all(not e.has(Rt) and not e.has(Rtr) and not e.has(Lr) for e in extra_momentum)
+    )
+
+    # Hamiltonian j/J, K, dust and background pieces are also local and carry
+    # no L_r, R_t or R_{t,r}.  Verify the Y-derived radial flux vanishes.
+    dyN=sp.diff(Y,N).subs(gauge).subs(subq)
+    dyNr=sp.diff(Y,Nr).subs(gauge).subs(subq)
+    jN_extra=-C*(L*R**2*Jv+L*R**2*jv*dyN)
+    jNr_extra=-C*(L*R**2*jv*dyNr)
+    kN_extra=sp.symbols('kN_extra', real=True)*L*R**2
+    dustH_extra=sp.symbols('dustH_extra', real=True)*L*R**2
+    bgH_extra=sp.symbols('bgH_extra', real=True)*L*R**2
+    extra_hamiltonian=[jN_extra,jNr_extra,kN_extra,dustH_extra,bgH_extra]
+    extra_hamiltonian_structure=bool(
+        zero(dyNr)
+        and all(not e.has(Lr) and not e.has(Rt) and not e.has(Rtr) for e in extra_hamiltonian)
+    )
+
+    g3=bool(g3 and extra_hamiltonian_structure)
     g4=bool(
         zero(SMgr-SMgr_target)
         and zero(FMgr-FMgr_target)
@@ -169,6 +211,7 @@ def build_symbolic_audit():
         and non_gr_rt_independent
         and non_gr_flux_no_Lr
         and non_gr_source_affine_Lr
+        and extra_momentum_structure
         and zero(sp.diff(Mgr,Rtr)+4*L*R)
         and not Mgr.has(Rt)
     )
@@ -209,6 +252,8 @@ def build_symbolic_audit():
             'M_nonGR_independent_of_Rt':non_gr_rt_independent,
             'M_nonGR_flux_independent_of_Lr':non_gr_flux_no_Lr,
             'M_nonGR_source_affine_in_Lr':non_gr_source_affine_Lr,
+            'extra_j_K_dust_background_H_structure':extra_hamiltonian_structure,
+            'extra_j_K_dust_background_M_structure':extra_momentum_structure,
         },
     }
 
