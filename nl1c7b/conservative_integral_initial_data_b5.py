@@ -30,6 +30,8 @@ R19C4_JSON_SHA256='a5a7416cd93120f543dbe0f8a70ddc735e9704212d7db5266de87980fe768
 R19C4_CLASS='NL1C7B4_REPAIR19C4_NO_MATERIAL_POST_FIRST_STEP_DERIVATIVE_WINDOW'
 R19C4_FREEZE_COMMIT='4237da31c972fc961a2f7c961450a529652baa51'
 PREREG_COMMIT='13a1e33cc170688441fe979a277c3826952de5e0'
+B5_INITIAL_FAIL_FREEZE_COMMIT='0c7c6fcc736c2f218b5704d2c6676a20c7944861'
+B5_REPAIR01_PREREG_COMMIT='33a89e4fce0701bf69923e0cfe60ca5aa4751ab4'
 
 METHOD='3-point'
 ABS_STEP=3e-6
@@ -632,6 +634,8 @@ def main():
             **hashes,
             'repair19c4_result_freeze_commit':R19C4_FREEZE_COMMIT,
             'b5_prereg_commit':PREREG_COMMIT,
+            'b5_initial_implementation_fail_freeze_commit':B5_INITIAL_FAIL_FREEZE_COMMIT,
+            'b5_repair01_prereg_commit':B5_REPAIR01_PREREG_COMMIT,
         },
         'constructor':{
             'unknowns':'orthonormal reduced coordinates z with x=B_orth z and x=(y_L,q_Rt)',
