@@ -10,6 +10,9 @@ on:
       - 'docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md'
       - 'docs/ge03_repair01_predata_python_import_path.md'
       - 'docs/ge03_repair01_python_import_path_implementation_lock.md'
+      - 'docs/ge03_repair02_predata_artifact_directory_resolution.md'
+      - 'docs/ge03_repair02_artifact_directory_resolution_implementation_lock.md'
+      - 'tools/ge03_resolve_v077_artifact_dir.sh'
       - '.github/workflows/ge03-weakly-nonlinear-y-memory-cross-source.yml'
 
 jobs:
@@ -34,6 +37,9 @@ jobs:
           test "$(git rev-parse HEAD:docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md)" = "5db45add047f6c7e28cc7845c7ce83fd2b1ec8de"
           test "$(git rev-parse HEAD:docs/ge03_repair01_predata_python_import_path.md)" = "ac255ae3f2cb932fd55f697df9e8054d57f1e1e1"
           test "$(git rev-parse HEAD:docs/ge03_repair01_python_import_path_implementation_lock.md)" = "430f39073f6fc3727e9652c62d1a77c9dbdbea79"
+          test "$(git rev-parse HEAD:docs/ge03_repair02_predata_artifact_directory_resolution.md)" = "67b836e3f2a1a1070fb4b501a4d7d9c8790bcd74"
+          test "$(git rev-parse HEAD:tools/ge03_resolve_v077_artifact_dir.sh)" = "d3fe4deb838245b91e5600bbbee7362366f9bb3e"
+          test "$(git rev-parse HEAD:docs/ge03_repair02_artifact_directory_resolution_implementation_lock.md)" = "ddcc932bce11f152e9201639c5ace5effae989f4"
           git merge-base --is-ancestor bceff2b86dd5f94cfe50ca722d4601400fc4ee49 HEAD
           git merge-base --is-ancestor 21664244deff23a7a05980aabcc95072aa42aaf9 HEAD
           git merge-base --is-ancestor 99bdd01ccda871390e14852ec9af7d6077409fb7 HEAD
@@ -41,6 +47,9 @@ jobs:
           git merge-base --is-ancestor 20401683cca5e30f910b58e6844e654ba041be45 HEAD
           git merge-base --is-ancestor 765840b1eb6ab84e158e22afd08e1c49b396a9c8 HEAD
           git merge-base --is-ancestor d599389b63f4f4299bfe67aa1aa8b9c653c5b1d0 HEAD
+          git merge-base --is-ancestor c70f559e2285f0d7ad627d1d7bdaa2e25a52b6df HEAD
+          git merge-base --is-ancestor 007c051e20824d936c9c5075db66276147786248 HEAD
+          git merge-base --is-ancestor 9f4a822e360a2ee5825b4a19c7fba30a3bee8490 HEAD
           echo GE03_LOCK_PASS
 
       - name: Install numerical dependencies
@@ -100,7 +109,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 ge03/weakly_nonlinear_y_memory_cross_source.py             --artifact-dir frozen_v077             --artifact-meta-json results/ge03_artifact_metadata.json             --json-out results/ge03_weakly_nonlinear_y_memory_cross_source.json             --npz-out results/ge03_weakly_nonlinear_y_memory_cross_source.npz             | tee results/ge03_weakly_nonlinear_y_memory_cross_source.log
+          ARTIFACT_DIR="$(bash tools/ge03_resolve_v077_artifact_dir.sh frozen_v077)"
+          echo "GE03_ARTIFACT_DIR=${ARTIFACT_DIR}"
+          python3 ge03/weakly_nonlinear_y_memory_cross_source.py             --artifact-dir "${ARTIFACT_DIR}"             --artifact-meta-json results/ge03_artifact_metadata.json             --json-out results/ge03_weakly_nonlinear_y_memory_cross_source.json             --npz-out results/ge03_weakly_nonlinear_y_memory_cross_source.npz             | tee results/ge03_weakly_nonlinear_y_memory_cross_source.log
 
       - name: Summarize GE03
         if: always()
