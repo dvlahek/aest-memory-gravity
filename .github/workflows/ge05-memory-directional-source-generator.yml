@@ -1,0 +1,94 @@
+name: GE05 memory directional source generator
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge05/**'
+      - 'docs/ge05_memory_directional_source_generator_implementation_lock.md'
+      - '.github/workflows/ge05-memory-directional-source-generator.yml'
+
+jobs:
+  memory-directional-source-generator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock and provenance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge05/predata_memory_directional_source_generator.json)" = "02debb3802e9cf7687e34de773edce535044a664"
+          test "$(git rev-parse HEAD:ge05/memory_directional_source_generator.py)" = "40837d77f89028da30c28899e2d0530a4401844e"
+          test "$(git rev-parse HEAD:docs/ge05_memory_directional_source_generator_implementation_lock.md)" = "ac3088bd7301ab650e51931d1631830ffb0201d0"
+          test "$(git rev-parse HEAD:nl1c3b/longitudinal_3plus1_memory_bridge.py)" = "f64e42186f489b37800f33d99f72668268211d23"
+          git merge-base --is-ancestor 4b56637730e0c91fe6ce44e8568f2687f19bdfab HEAD
+          git merge-base --is-ancestor 393657ff76e68bb751fd7859d762d2c5d0cc2479 HEAD
+          git merge-base --is-ancestor 1dd3c8745105dc38469f325123a1bc524ae179ad HEAD
+          echo GE05_LOCK_PASS
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge05/memory_directional_source_generator.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge05/predata_memory_directional_source_generator.json'))
+          assert d['classification']=='GE05_PREDATA_MEMORY_DIRECTIONAL_SOURCE_GENERATOR'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['finite_physical_eta'] is False
+          g=d['gates']
+          assert g['analytic_M1_vs_primary_fd_global_relative_L2_max']==1e-5
+          assert g['analytic_M2_vs_primary_fd_global_relative_L2_max']==1e-5
+          assert g['primary_vs_control_fd_M1_global_relative_L2_max']==1e-5
+          assert g['primary_vs_control_fd_M2_global_relative_L2_max']==1e-5
+          print('GE05_PREDATA_PASS')
+          PY
+
+      - name: Run GE05 generator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 ge05/memory_directional_source_generator.py             | tee results/ge05_memory_directional_source_generator.log
+
+      - name: Summarize GE05
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge05_memory_directional_source_generator.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge05_memory_directional_source_generator.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('GLOBAL_CONTROLS=',d['finite_difference']['global_controls'])
+          print('DIRECT_METRIC_M2_L2=',d['direct_metric_M2_combined_L2'])
+          for k,v in d['per_source'].items():
+              print(k,'M1=',v['analytic_M1_L2'],'M2=',v['analytic_M2_L2'])
+          PY
+          fi
+
+      - name: Upload GE05 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge05_memory_directional_source_generator
+          path: |
+            results/ge05_memory_directional_source_generator.json
+            results/ge05_memory_directional_source_generator.log
+            ge05/predata_memory_directional_source_generator.json
+            docs/ge05_memory_directional_source_generator_implementation_lock.md
+          if-no-files-found: warn
