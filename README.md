@@ -79,11 +79,11 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 Latest completed diagnostic:
 
-`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`.
+`NL1C7B4_REPAIR19C2_FINITE_DIFFERENCE_STEP_SCALE_CHARACTERIZED`.
 
-Repair19c1 shows that the first-step discrepancy is not an ordinary quadratic nonlinear remainder. The leading error is approximately first order in directional amplitude and is concentrated in the momentum block, while the Hamiltonian directional prediction remains locally accurate. This points to finite-difference/local-Jacobian fidelity loss, not to a demonstrated failure of the physical `(L,R_t)` ansatz.
+Repair19c2 confirms the Repair19c1 diagnosis that the frozen default finite-difference Jacobian was a dominant source of local momentum-direction error. The preregistered selection rule chose `3-point` differences with explicit physical-coordinate `abs_step=3e-6`, reducing the worst-case directional mismatch by about 354.5x and the median mismatch by about 49.5x relative to the frozen default control.
 
-Repair19c2 is preregistered, implemented, implementation-locked, and runner-ready. It audits 2-point and 3-point grouped Jacobians over a fixed absolute-step grid against a Richardson symmetric directional reference, with a preregistered derivative-fidelity selection rule.
+Repair19c3 is preregistered, implemented, implementation-locked, and runner-ready. It reruns the otherwise unchanged orthonormal direct GELSY Gauss-Newton nonlinear projection using exactly that selected Jacobian.
 
 Full chronology and frozen provenance are maintained in:
 
