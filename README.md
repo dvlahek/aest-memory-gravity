@@ -77,13 +77,15 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-On branch `nl1c7b-eta0-spherical-evolution`, the latest completed checkpoint is
+On branch `nl1c7b-eta0-spherical-evolution`, the latest completed nonlinear checkpoint is
 
-`NL1C7B4_REPAIR19B1_ORTHONORMAL_DIRECT_LINEAR_FEASIBILITY_LSMR_STAGNATION_PASS`.
+`NL1C7B4_REPAIR19C_ORTHONORMAL_DIRECT_GN_NONLINEAR_CLOSURE_FAIL`.
 
-This certifies direct linear residual-space feasibility of the same physical `(L,R_t)` correction pair in the exact orthonormal `Y4=0,Qmean=0` subspace and identifies the earlier LSMR result as numerical stagnation.
+Repair19c reproduces the certified orthonormal first linear step and preserves the exact gauge, parent state, field freeze, and two-grid correction control. However, 0/24 canonical nonlinear solves reach the historical `1e-7` exact H/M threshold. The final residual is momentum dominated.
 
-Repair19c is preregistered, implemented, implementation-locked, and runner-ready. It is the first deterministic direct-GELSY Gauss-Newton test of exact nonlinear eta=0 B4 closure at the unchanged historical `1e-7` threshold.
+The key numerical finding is that the frozen first GELSY Jacobian can predict near-zero linear residual while exact nonlinear evaluation of the same accepted step remains many orders of magnitude larger. Repair19c therefore does not motivate a new physical field or physics modification.
+
+The next gate is Repair19c1, a preregistered and implementation-locked directional Jacobian-fidelity audit. It evaluates the exact residual along the certified first-step direction from amplitude 1 down to 1/4096 to distinguish genuine nonlinear curvature from loss of local finite-difference derivative fidelity.
 
 Full chronology and frozen provenance are maintained in:
 
