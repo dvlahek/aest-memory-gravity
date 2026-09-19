@@ -77,34 +77,62 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## Physics-first gravitational elasticity
 
-The active theory direction is now the gravitational-elasticity interpretation.
+The active interpretation is now the already certified **NL0B covariant memory completion viewed as gravitational viscoelasticity**.
 
-Core statement:
+The canonical frozen action is the NL0B completed-square auxiliary-vector sector,
 
-> Inhomogeneous gravitational geometry deforms a preferred local congruence. Internal elastic strain modes store that deformation and return a stress to the metric. Eliminating the strain modes produces a causal memory kernel.
+`S_mem ~ integral sqrt(-g) sum_j [ |D_A U_j|^2 - |omega_j U_j-sqrt(eta w_j) X|^2 ]`,
 
-The conservative completion uses spatial traceless strain oscillators `epsilon_n^{mu nu}` coupled to the congruence shear `sigma_{mu nu}`:
+with
 
-`S_el = sum_n integral sqrt(-g) [ A_n/2 (D_u epsilon_n)^2 - A_n omega_n^2/2 epsilon_n^2 + g_n epsilon_n:sigma ]`.
+`X_mu=h_mu^nu nabla_nu phi`.
 
-This gives fixed-frequency positive spectral weights
+Define the elastic mismatch
 
-`w_n=g_n^2/A_n >= 0`
+`e_j=sqrt(eta w_j)X-omega_j U_j`.
 
-and directly explains why the fixed-frequency positive oscillator bath is the preferred memory representation.
+Gravity changes `X`; the internal modes cannot follow instantaneously; the mismatch stores positive elastic energy and returns the already certified AeST memory force.
 
-This direction retains the validated zero-regression, CLASS and fixed-oscillator infrastructure, while the B4–B8 spherical nonlinear-constraint programme is retained only as a later nonlinear-validation track.
+The positive Drude continuum has
 
-See:
+`K(A)=A/(1+A)`.
 
-- `docs/gravitational_elasticity_core_model.md`;
-- `docs/gravitational_elasticity_conservative_completion.md`.
+For `H=0`, `A=tau s`, so
 
-Immediate gates:
+`B/X=tau s/(1+tau s)`
 
-`quadratic action -> kinetic/stability audit -> one-mode linear cosmology -> weak-field spherical solution`.
+or equivalently
 
-No further B4–B8 solver tuning is part of the active path.
+`tau dB/dt + B = tau dX/dt`.
+
+Thus the frozen memory theory is a **Maxwell-type gravitational viscoelastic medium**.
+
+Physical division of labor:
+
+- AeST Y-sector: static / gradient-dependent modified-gravity response;
+- NL0B elastic-memory sector: history / rate-dependent response.
+
+The active theory chain is already substantially closed:
+
+- NL0B covariant memory completion: PASS;
+- NL0C weakly nonlinear Y-sector: PASS;
+- NL1A pseudospectral operator bridge: PASS;
+- NL1B2 directional second-order eta tangent: PASS;
+- NL1C5 spherical variational bridge: PASS;
+- NL1C6 spherical self-gravity closure: PASS.
+
+The B4-B8 sequence is retained as a failed/blocked cosmological nonlinear initial-data construction. It is no longer the active definition of the theory and no further B4-B8 solver tuning is planned.
+
+Canonical interpretation:
+
+- `docs/gravitational_elasticity_canonical_nl0b_interpretation.md`;
+- `docs/gravitational_maxwell_viscoelasticity.md`.
+
+The earlier shear-strain completion draft is retained only as an exploratory alternative and is not part of the active theory.
+
+Immediate physics target:
+
+`identify the dynamical regimes where tau/t_dyn ~ 1 and test the resulting elastic-memory response with the already validated linear and spherical action infrastructure`.
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
