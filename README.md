@@ -77,17 +77,21 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-Latest completed nonlinear checkpoint:
+Latest completed nonlinear diagnostic:
 
-`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_NONLINEAR_CLOSURE_FAIL`.
+`NL1C7B4_REPAIR19C4_NO_MATERIAL_POST_FIRST_STEP_DERIVATIVE_WINDOW`.
 
-Repair19c3 exactly reproduces the Repair19c2-selected `3-point, abs_step=3e-6` first Jacobian step and preserves provenance, gauge, field freeze and two-grid control, but 0/24 canonical solves reach the historical exact `1e-7` H/M closure threshold. The remaining failure is momentum dominated.
+Repair19c4 is a complete locked characterization with all nine gates passing. All six lambda=1 cases resolve an independent Richardson directional reference, and every case is already stable on the pair `1e-5 -> 3e-6`.
 
-The first-step finite-difference fidelity problem is substantially improved, but after that step the requested Newton corrections collapse to roughly `1e-9--1e-13` while the Jacobian probe remains fixed at `3e-6`. This identifies a post-first-step derivative-scale floor rather than a demonstrated failure of the physical `(L,R_t)` ansatz.
+The Repair19c3 control Jacobian `3-point, abs_step=3e-6` has worst-case post-first-step directional mismatch only `5.0393e-5`, well inside the preregistered `1e-3` fidelity bound. The frozen selection rule chooses `1e-8`, but the worst-case improvement is only about 15.8 percent and therefore does not satisfy the required fivefold material-improvement criterion.
 
-This is the stopping point for open-ended nonlinear solver repair. At most one separately preregistered post-first-step derivative-scale diagnostic is allowed before a project-level decision.
+The specific hypothesis that Repair19c3 stagnation is primarily caused by using a fixed `3e-6` post-first-step finite-difference probe is therefore rejected.
 
-Observational/data-side infrastructure may proceed in parallel now, but no real-data result is to be presented as a tested AeST prediction until a finite-eta prediction exists and the numerical limitations are stated.
+The remaining discrepancy occurs when the nonlinear solver requests physical corrections of roughly `1e-12--1e-9`: stable derivative information at larger probe scales does not translate into the predicted exact residual cancellation at those tiny state changes. This is consistent with a numerical resolution/conditioning/cancellation floor in the discretized state-to-residual map, not a demonstrated failure of the physical `(L,R_t)` ansatz.
+
+The finite-difference Gauss-Newton solver-repair track is now closed. No further FD step-scale diagnostic and no additional Repair19c-style closure rerun are licensed by this result.
+
+Any further initial-data work must be a project-level numerical reformulation. Eta=0 short-time evolution remains gated until a defensible exact initial state exists. Observational/data-side infrastructure may proceed in parallel, but finite-eta observational claims remain gated.
 
 Full chronology and frozen provenance are maintained in:
 
