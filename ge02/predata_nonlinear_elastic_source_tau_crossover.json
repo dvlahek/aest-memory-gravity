@@ -1,0 +1,107 @@
+{
+  "classification": "GE02_PREDATA_NONLINEAR_ELASTIC_SOURCE_TAU_CROSSOVER",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "purpose": "Map the finite-amplitude action-derived NL0B elastic restoring source and quadratic direct memory-energy source across the same analytic Maxwell/Drude tau crossover used by GE01.",
+  "dependencies": {
+    "nl0b": "NL0B_COVARIANT_MEMORY_COMPLETION_PASS",
+    "nl1c4": "NL1C4_EXPANDING_MEMORY_SOURCE_TRAJECTORY_PASS",
+    "v077_artifact_run_id": 34315590099,
+    "v077_artifact_id": 10090367181,
+    "v077_artifact_digest": "sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378",
+    "trace": "v076_v077_base_trace.dat"
+  },
+  "canonical_interpretation": {
+    "model": "gravitational Maxwell viscoelasticity",
+    "linear_response": "K(A)=A/(1+A)",
+    "finite_amplitude_sources": [
+      "B_x = X - sum_j w_j partial_x z_j",
+      "rhohat_mem = (1/4) sum_j w_j [ (partial_x z_{j,xi}/r_j)^2 + (partial_x z_j-X)^2 ]"
+    ],
+    "nonlinear_statement": "rhohat_mem is quadratic in the finite-amplitude action variables and is the eta-derivative coefficient of a direct metric-energy source at finite reference amplitude."
+  },
+  "tauH0_values": [
+    0.1,
+    0.3,
+    0.5,
+    0.7,
+    1,
+    3,
+    10
+  ],
+  "tau_selection_reason": "Same predeclared analytic Maxwell crossover grid as GE01; no outcome-informed tau selection.",
+  "frozen_reference": {
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "redshift_window": [
+      0.2,
+      1.5
+    ],
+    "H0_km_s_Mpc": 67.3324639084866,
+    "A_s": 2.1308864352626987e-9,
+    "n_s": 0.9666229454895277,
+    "k_pivot_Mpc_inv": 0.05,
+    "a0_m_s2": 1.2e-10,
+    "fourier_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "phases_rad": [
+      0.13,
+      0.71,
+      1.29,
+      2.03,
+      2.77,
+      3.41
+    ]
+  },
+  "numerical_configuration": {
+    "quadrature_control": 512,
+    "quadrature_primary": 1024,
+    "spatial_resolutions": [
+      256,
+      512
+    ],
+    "time_evolution": "complete common native trace history; no off-native time interpolation",
+    "spatial_derivative": "analytic Fourier derivative on exact integer modes"
+  },
+  "gates": {
+    "artifact_digest_exact": true,
+    "all_six_k_modes_relative_error_max": 1e-12,
+    "common_native_grid_relative_mismatch_max": 1e-12,
+    "minimum_common_native_times": 8,
+    "realspace_xrms_matches_analytic_relative_error_max": 1e-10,
+    "quadrature_B_rms_max_pointwise_relative_difference": 0.01,
+    "quadrature_rhohat_mem_max_pointwise_relative_difference": 0.01,
+    "spatial_B_rms_max_pointwise_relative_difference": 0.005,
+    "spatial_rhohat_mem_max_pointwise_relative_difference": 0.005,
+    "all_reported_quantities_finite": true,
+    "B_rms_positive_at_every_evaluation_time": true,
+    "rhohat_mem_positive_at_every_evaluation_time": true
+  },
+  "descriptive_outputs": [
+    "B_rms(z) for every tau",
+    "rhohat_mem_mean(z) for every tau",
+    "time-window L2 norm of B_rms for every tau",
+    "time-window L2 norm of rhohat_mem_mean for every tau",
+    "ratios of those norms to tauH0=10",
+    "redshift of maximum rhohat_mem_mean for every tau",
+    "monotonicity with tau reported descriptively only"
+  ],
+  "classification_rule": {
+    "pass": "all locked numerical/action-source gates pass at all seven tau values -> GE02_NONLINEAR_ELASTIC_SOURCE_TAU_CROSSOVER_PASS",
+    "fail": "otherwise -> GE02_NONLINEAR_ELASTIC_SOURCE_TAU_CROSSOVER_FAIL"
+  },
+  "claim_boundary": "PASS certifies a controlled finite-amplitude action-source tau map. It is nonlinear at the source/stress level, but it is not a self-consistent finite-eta nonlinear evolution, halo prediction, collapse trajectory, or observational result.",
+  "anti_tuning": "Do not change tau grid, mode set, phases, quadrature orders, spatial resolutions, redshift window or gates after inspecting GE02 output."
+}
