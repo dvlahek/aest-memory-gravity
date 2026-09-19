@@ -77,15 +77,13 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-On branch `nl1c7b-eta0-spherical-evolution`, the latest completed nonlinear checkpoint is
+Latest completed diagnostic:
 
-`NL1C7B4_REPAIR19C_ORTHONORMAL_DIRECT_GN_NONLINEAR_CLOSURE_FAIL`.
+`NL1C7B4_REPAIR19C1_FIRST_STEP_DIRECTIONAL_JACOBIAN_FIDELITY_CHARACTERIZED`.
 
-Repair19c reproduces the certified orthonormal first linear step and preserves the exact gauge, parent state, field freeze, and two-grid correction control. However, 0/24 canonical nonlinear solves reach the historical `1e-7` exact H/M threshold. The final residual is momentum dominated.
+Repair19c1 shows that the first-step discrepancy is not an ordinary quadratic nonlinear remainder. The leading error is approximately first order in directional amplitude and is concentrated in the momentum block, while the Hamiltonian directional prediction remains locally accurate. This points to finite-difference/local-Jacobian fidelity loss, not to a demonstrated failure of the physical `(L,R_t)` ansatz.
 
-The key numerical finding is that the frozen first GELSY Jacobian can predict near-zero linear residual while exact nonlinear evaluation of the same accepted step remains many orders of magnitude larger. Repair19c therefore does not motivate a new physical field or physics modification.
-
-The next gate is Repair19c1, a preregistered and implementation-locked directional Jacobian-fidelity audit. It evaluates the exact residual along the certified first-step direction from amplitude 1 down to 1/4096 to distinguish genuine nonlinear curvature from loss of local finite-difference derivative fidelity.
+Repair19c2 is preregistered, implemented, implementation-locked, and runner-ready. It audits 2-point and 3-point grouped Jacobians over a fixed absolute-step grid against a Richardson symmetric directional reference, with a preregistered derivative-fidelity selection rule.
 
 Full chronology and frozen provenance are maintained in:
 
