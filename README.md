@@ -154,6 +154,29 @@ This is a nonlinear source/stress result. It is not yet a self-consistent finite
 
 `identify the dynamical regimes where tau/t_dyn ~ 1 and test the resulting elastic-memory response with the already validated linear and spherical action infrastructure`.
 
+
+### Weakly nonlinear Y-memory source status
+
+GE03 remains frozen as
+
+`GE03_WEAKLY_NONLINEAR_Y_MEMORY_CROSS_SOURCE_FAIL`
+
+because its preregistered N256/N512 low-mode convergence gate failed at `1.16654e-3 > 5e-4`, despite all operator-identity, lambda-affinity, finite-difference and beta-scaling gates passing.
+
+GE04 independently characterizes the same frozen source and passes:
+
+`GE04_DY2_SPECTRAL_CONVERGENCE_PASS`.
+
+The high-resolution ladder gives approximately third-order convergence, with
+
+- N512/N1024: `~1.266e-4`;
+- N1024/N2048: `~1.75e-5`;
+- N2048/N4096: `~1.75e-6`.
+
+Therefore later weakly nonlinear state work must use N1024 primary and N2048 control for the nonanalytic Y-memory cross-source. GE03 is not relabelled.
+
+The descriptive high-resolution source geometry is nearly antiparallel to the baseline Y source throughout the frozen native window, with `||2DY2||/||2Y2||` increasing from about 0.015 to 0.097 per unit eta tangent.
+
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
 Latest completed construction result:
