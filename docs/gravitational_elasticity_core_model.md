@@ -1,318 +1,225 @@
-# Gravitational Elasticity — physics-first core model
+# Gravitational Elasticity — canonical core model
 
-## Purpose
+## Status
 
-The central physical idea is simple:
+This document states the active physics interpretation after consolidation with the already certified NL0B covariant memory completion.
 
-> gravity produces tidal deformation; the deformation is stored as an elastic strain; the resulting elastic stress backreacts on gravity.
+The active theory is the frozen NL0B auxiliary-vector action.
 
-The nonlinear B4–B8 spherical-constraint programme is retained as a historical validation track, but it is no longer the primary route to establish the model.
+Earlier exploratory language based on a directly tidal-tensor-driven strain is not the canonical model and must not be mixed with NL0B without a separate theory comparison.
 
-The primary route is now:
+## 1. Central idea
 
-1. define gravitationally driven strain;
-2. derive its causal memory response;
-3. couple the elastic stress to the standard gravitational field equations;
-4. validate the linear and weak-field limits;
-5. only then return to the fully nonlinear spherical problem.
+The project is based on one simple mechanism:
 
-No post-hoc reinterpretation of B4–B8 is made.
+> gravity changes a covariant deformation variable; internal elastic modes cannot follow that change instantaneously; the resulting mismatch stores energy and returns a restoring force to the gravitational sector.
 
----
+In the frozen AeST completion, the deformation driver is
 
-## 1. Physical principle
-
-A locally uniform gravitational acceleration can be removed in a freely falling frame.
-
-Therefore the quantity that can physically deform an elastic medium is not a coordinate acceleration `g_i`, but the tidal gravitational field.
-
-With a preferred unit timelike field `u^mu` already available in the AeST framework, define the spatial projector
-
-`h_{mu nu}=g_{mu nu}+u_mu u_nu`.
-
-Define the covariant tidal tensor
-
-`T_{mu nu}=h_mu^a h_nu^b R_{a c b d} u^c u^d`.
-
-It is spatial and symmetric.
-
-In the Newtonian weak-field limit,
-
-`T_ij -> partial_i partial_j Phi`.
-
-Thus the construction respects the equivalence-principle statement that only gravitational gradients produce local relative deformation.
-
----
-
-## 2. Internal elastic strain
-
-Introduce a spatial symmetric strain tensor `E_{mu nu}` satisfying
-
-`u^mu E_{mu nu}=0`.
-
-For the minimal causal model use the projected convected derivative
-
-`D_u E_{mu nu}=h_mu^a h_nu^b L_u E_{ab}`.
-
-The single-relaxation constitutive equation is
-
-`tau D_u E_{mu nu}+E_{mu nu}=alpha tau^2 T_{mu nu}`.
-
-Parameters:
-
-- `tau>0`: memory / relaxation time;
-- `alpha`: dimensionless gravitational compliance.
-
-The GR limit is `alpha=0`.
-
-The instantaneous-elastic limit is approached when the forcing changes slowly compared with `tau`:
-
-`E_{mu nu} ~= alpha tau^2 T_{mu nu}`.
-
----
-
-## 3. Memory is not added by hand
-
-For vanishing initial transient, the constitutive equation has the exact retarded solution
-
-`E_{mu nu}(t)=alpha tau integral_{-infinity}^t exp[-(t-t')/tau] T_{mu nu}(t') dt'`
-
-along the preferred congruence.
-
-Thus the gravitational response depends on the past tidal field.
-
-The memory kernel is
-
-`K(Delta t)=alpha tau exp(-Delta t/tau) Theta(Delta t)`.
-
-This is the simplest member of the positive memory family already explored numerically in the repository.
-
-A multi-timescale model is obtained only after the one-timescale model is validated:
-
-`E=sum_n E_n`
-
-with positive weights and fixed relaxation/oscillator scales.
-
-The existing fixed-frequency positive-bath work is therefore reinterpreted as a possible microscopic/conservative realization of the constitutive kernel, not as the starting point of the physics argument.
-
----
-
-## 4. Elastic stress
-
-Decompose the strain into trace and traceless pieces:
-
-`E = h^{mu nu} E_{mu nu}`
-
-and
-
-`E^TF_{mu nu}=E_{mu nu}-(E/3)h_{mu nu}`.
-
-The minimal isotropic elastic stress is
-
-`Pi_{mu nu}=K_E E h_{mu nu}+2 mu_E E^TF_{mu nu}`
+`X_mu=h_mu^nu nabla_nu phi`
 
 with
 
-- bulk modulus `K_E>=0`;
-- shear modulus `mu_E>=0`.
+`h_mu nu=g_mu nu+A_mu A_nu`.
 
-The elastic contribution enters the gravitational equations through a conserved total stress tensor.
+On homogeneous FLRW,
 
-The core phenomenological statement is
+`X_mu=0`.
 
-`G_{mu nu}=8 pi G (T^matter_{mu nu}+T^elastic_{mu nu})`.
+For scalar perturbations,
 
-A fully local conservative completion must supply the energy-density and energy-flux pieces required by `nabla_mu T_total^{mu nu}=0`.
+`X_hat{i}=(1/a) partial_i chi`
 
-Until that completion is written, only linear combinations whose conservation closure is explicit may be implemented.
+with the already certified AeST variable
 
-This is an explicit theory boundary, not a numerical issue.
+`chi=varphi+Q alpha=Q(u_A+alpha)`.
 
----
+Thus the elastic sector is driven by spatially inhomogeneous gravitational/AeST structure and vanishes on the homogeneous background.
 
-## 5. Minimal scalar cosmological sector
+## 2. Internal elastic coordinates
 
-For the first falsifiable implementation, do not evolve the full tensor.
+For each positive mode introduce an aether-orthogonal internal coordinate
 
-Use the scalar tidal amplitude built from the gauge-invariant Weyl/Bardeen potential
+`A^mu U_{j mu}=0`.
 
-`Phi_W=(Phi+Psi)/2`.
+The projected derivative along the aether is
 
-Define
+`D_A U_{j mu}=h_mu^nu A^rho nabla_rho U_{j nu}`.
 
-`T_k=-(k^2/a^2) Phi_W`.
+The frozen conservative action is
 
-Introduce one dimensionless scalar strain `s_k`:
+`S_mem=(16 pi Gtilde)^(-1) integral d4x sqrt(-g) (1/4) sum_j [
+ |D_A U_j|^2
+ - |omega_j U_j-sqrt(eta w_j)X|^2
+]`.
 
-`dot s_k + s_k/tau = alpha tau T_k`.
+with
 
-Its exact retarded solution is
+`omega_j>0, w_j>0, eta>=0`.
 
-`s_k(t)=alpha tau integral^t exp[-(t-t')/tau] T_k(t') dt'`.
+This action already passed NL0B.
 
-Let the scalar elastic anisotropic stress amplitude be
+## 3. Elastic strain
 
-`Pi^el_k = M_E s_k`
+Define the elastic mismatch
 
-with `M_E>=0`.
+`e_{j mu}=sqrt(eta w_j)X_mu-omega_j U_{j mu}`.
 
-This stress enters the standard traceless spatial Einstein equation.
+The stored potential energy of the internal mode is proportional to
 
-No modified Poisson equation is postulated independently.
+`|e_j|^2/4`.
 
-Matter remains minimally coupled and follows the standard conservation equations.
+This is the strain variable in the mechanical interpretation.
 
-Therefore all changes to growth and lensing occur through the self-consistent metric response to `Pi^el_k`.
+A change in gravity changes X immediately.
 
-### Zero-coupling gate
+U is dynamical and remains continuous.
+
+Therefore e becomes nonzero and generates a restoring force.
+
+## 4. Restoring stress / force
+
+Write
+
+`U_j=sqrt(eta) q_j`.
+
+The normalized backreaction is
+
+`B_mu=sum_j [w_j X_mu-omega_j sqrt(w_j)q_{j mu}]`.
+
+Algebraically,
+
+`B_mu=(1/sqrt(eta)) sum_j sqrt(w_j)e_{j mu}`
+
+for eta>0, with a regular normalized eta->0 limit.
+
+The already certified scalar AeST closure
+
+`Delta E_rhs=-(eta Q/2) B_chi,raw`
+
+is therefore the scalar projection of the elastic restoring force.
+
+## 5. Why this is memory
+
+The internal coordinates obey oscillator equations.
+
+On FLRW,
+
+`ddot q_j+3H dot q_j+omega_j^2 q_j
+ =omega_j sqrt(w_j) X`.
+
+Their present value depends on the past history of X.
+
+Eliminating q therefore gives a retarded nonlocal response for B.
+
+Memory is not added phenomenologically.
+
+It is the effective description obtained after internal elastic coordinates are eliminated.
+
+## 6. Maxwell limit
+
+The positive Drude continuum already frozen in the project gives
+
+`K(A)=A/(1+A)`
+
+with
+
+`A^2=tau^2 s(s+3H)`.
+
+At H=0,
+
+`A=tau s`
+
+on the causal branch, hence
+
+`B/X=tau s/(1+tau s)`.
+
+Therefore
+
+`tau dot B+B=tau dot X`.
+
+This is the Maxwell viscoelastic constitutive law.
+
+The model is therefore most cleanly described as **gravitational Maxwell viscoelasticity with a conservative microscopic bath**.
+
+## 7. Physical regimes
+
+### Slow gravity
+
+If the gravitational deformation changes on a timescale much longer than tau,
+
+`Omega tau <<1`,
+
+the internal sector follows it and the restoring mismatch is small.
+
+### Memory regime
 
 For
 
-`alpha M_E=0`
+`Omega tau ~1`,
 
-the model must reproduce the GR/LambdaCDM baseline exactly.
+the phase lag is largest and the history dependence is strongest.
 
-### Small-coupling gate
-
-For small
-
-`g_E = 8 pi G M_E alpha tau^2`
-
-all observable changes must be linear in `g_E` before any finite-coupling interpretation.
-
----
-
-## 6. Static spherical weak-field limit
+### Fast gravity
 
 For
 
-`ds^2=-(1+2 Psi)dt^2+(1-2 Phi)delta_ij dx^i dx^j`
+`Omega tau >>1`,
 
-the Newtonian tidal tensor is
+the internal state cannot follow quickly and the response approaches the unrelaxed elastic limit.
 
-`T_ij=partial_i partial_j Phi`.
+## 8. Static versus dynamic gravity
 
-For a spherical potential `Phi(r)`, the independent shear-driving tidal amplitude is
+The memory sector has
 
-`T_s = Phi''-Phi'/r`.
+`K(0)=0`.
 
-The static strain is
+Thus it does not create a permanent extra static force after complete relaxation.
 
-`s(r)=alpha tau^2 [Phi''(r)-Phi'(r)/r]`.
+Static modified-gravity behavior remains in the AeST Y-sector.
 
-The elastic radial/tangential stress difference is proportional to
+The active physical division is:
 
-`Pi_r-Pi_t = 2 mu_E s(r)`.
+- AeST Y-sector: static/gradient-dependent response;
+- NL0B elastic bath: time/history-dependent response.
 
-This gives a direct weak-field prediction:
+This separation is useful because it prevents the memory parameter tau from being misused as a static MOND fitting parameter.
 
-- no response to a uniform field;
-- no shear response in an exactly homogeneous FLRW background;
-- a nonzero response around an inhomogeneous gravitating source;
-- the sign and scale dependence are fixed by the tidal field and the positive elastic modulus.
+## 9. Existing theory status
 
-The first spherical calculation should use this weak-field system.
+The relevant successful chain is already:
 
-It should not start from the fully nonlinear B4–B8 initial-data machinery.
+- NL0B covariant memory completion: PASS;
+- NL0C weakly nonlinear Y-sector: PASS;
+- NL1A pseudospectral Y-operator bridge: PASS;
+- NL1B2 directional second-order eta tangent: PASS;
+- NL1C5 spherical variational bridge: PASS;
+- NL1C6 spherical self-gravity closure: PASS;
+- v0.77 native-state tangent affinity: PASS;
+- v0.78 time-interpolation closure: PASS.
 
----
+Therefore the theory and its controlled linear response are not waiting for B4-B8.
 
-## 7. What must be derived before further large numerics
+## 10. Meaning of the B4-B8 failure
 
-### GE1 — conservation closure
+B4-B8 attempted one specific nonlinear cosmological/spherical initial-data construction.
 
-Construct a local covariant completion, or an explicitly conservative auxiliary-state realization, for the elastic sector.
+That route became dominated by constraint discretization and boundary representation.
 
-Required output:
+Its failures do not invalidate the frozen covariant elastic action.
 
-`nabla_mu (T_matter^{mu nu}+T_elastic^{mu nu})=0`
+No further B4-B8 solver tuning belongs to the active programme.
 
-identically on the auxiliary equations of motion.
+## 11. Next physical question
 
-A dissipative single-`tau` constitutive law may be retained as an effective limit only if its energy sink/reservoir is represented explicitly.
+The main question is now
 
-### GE2 — linear stability and passivity
+> For which gravitational evolution timescales does tau/t_dyn become order unity, and what observable growth/lensing/collapse response follows from the already certified elastic action?
 
-Around FLRW and Minkowski require:
+This can first be answered in linear and weak-field dynamical regimes.
 
-- no ghost kinetic sign;
-- no exponentially growing mode in the zero-source homogeneous system;
-- causal retarded response;
-- non-negative spectral weights in any bath representation;
-- exact GR recovery at zero coupling.
+There is no reason to solve the full nonlinear cosmological initial-data problem before that question is answered.
 
-### GE3 — one-state CLASS proof
+## 12. Compact project statement
 
-Before any multi-mode bath:
-
-- one scalar strain state per `k`;
-- exact zero regression;
-- small-coupling tangent linearity;
-- resolution convergence;
-- lensing and growth outputs.
-
-Only if this passes should the positive fixed-frequency bath be restored.
-
-### GE4 — weak-field spherical proof
-
-Solve the linear/static spherical equations sourced by a smooth density profile.
-
-Test:
-
-- regular center;
-- asymptotic decay;
-- no free post-hoc boundary shift;
-- convergence under radial refinement.
-
-Only after GE1–GE4 pass is there a reason to return to a fully nonlinear spherical constraint construction.
-
----
-
-## 8. What is no longer the main problem
-
-The immediate scientific question is not
-
-> can a particular frozen `(L,R_t)` projection pass a `1e-7` discrete nonlinear constraint gate?
-
-The immediate scientific question is
-
-> does a causal, stable, conservative gravitationally driven elastic strain produce a distinct and testable metric response while reducing exactly to GR at zero coupling?
-
-B4–B8 remain useful numerical evidence about one nonlinear representation.
-
-They do not define the gravitational-elasticity idea.
-
----
-
-## 9. Minimal falsifiable parameter set
-
-Start with only
-
-- `tau`: memory time;
-- `g_E`: overall elastic gravitational coupling.
-
-Do not fit separate bulk/shear spectra initially.
-
-For the first scalar cosmology test, absorb `alpha M_E` into `g_E`.
-
-A successful first model must therefore produce a two-dimensional response surface
-
-`observable = observable(tau, g_E)`
-
-with an exact GR edge at `g_E=0`.
-
----
-
-## 10. Immediate project decision
-
-Freeze B4–B8 as the nonlinear exploratory track.
-
-Do not spend further time tuning its discretization.
-
-The active physics-first sequence is now:
-
-`GE1 conservation -> GE2 stability -> GE3 linear cosmology -> GE4 weak-field sphere -> nonlinear return only if justified`.
-
-The conceptual statement of the project is:
-
-> Gravitational curvature acts as the deformation driver of an elastic internal state. The state stores a causal memory of past tidal gravity and returns an elastic stress that backreacts on the metric.
+> Spatially inhomogeneous gravity drives internal covariant deformation modes. Their delayed response stores elastic energy and returns a restoring force to the gravitational sector. A positive conservative bath reduces macroscopically to a Maxwell-type gravitational viscoelastic memory law.
