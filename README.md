@@ -77,56 +77,50 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-Latest completed structural result:
+Latest completed construction result:
 
-`NL1C7B6_SYMBOLIC_RADIAL_REDUCTION_PASS`.
+`NL1C7B7_REDUCED_RADIAL_CONSTRUCTION_FAIL`.
 
-The previous pointwise differential Gauss-Newton route and the B5 conservative cell-integrated constructor both failed to produce a state satisfying the unchanged exact B4 differential constraint threshold `1e-7`.
+NL1C7B6 established that the exact eta=0 Hamiltonian and radial-momentum constraints reduce to a coupled first-order radial system for the same frozen physical pair `(L,R_t)`.
 
-NL1C7B6 therefore changed the numerical representation rather than tuning those solvers.
+NL1C7B7 then attempted to solve that system by treating `L(0)` as a scalar shooting parameter and imposing `L(r_max)=a_i`.
 
-Using the same frozen eta=0 physics and the same physical pair `(L,R_t)`, the exact Hamiltonian and radial-momentum constraints were reconstructed from the frozen action-derived source dictionary and reduced symbolically.
+The B7 implementation itself is structurally healthy:
 
-After exact-Q substitution:
+- frozen provenance passes;
+- all six parent H/M values reproduce exactly;
+- the local degree-8 / nine-node frozen-field representation passes;
+- the exact reduced RHS audit passes.
 
-- H is affine in `L_r`;
-- H is quadratic in algebraic `R_t`;
-- H contains no `R_{t,r}`;
-- M is affine in `R_{t,r}`;
-- the GR algebraic `R_t` terms cancel exactly in M;
-- all non-GR momentum sectors are independent of algebraic `R_t`;
-- no second derivative of either solved field is present.
+However, every primary and control shooting attempt fails because `ell(r_max)` has the same negative sign at both frozen bracket endpoints `ell_0=-0.5,+0.5`.
 
-The solved derivative coefficients are
+No candidate state is returned to the original B4 differential science gate.
 
-`A_H=[4 R R_r + 2 K_B R^2 cosh(u)sinh(u)(L_t+u_r) + 2 C R^2 phi_r]/L^2`
+Post-result center analysis identifies the reason the shooting parameter is nearly ineffective. At a regular spherical center, the exact Hamiltonian has leading form
+
+`H(0)=2L_0-2R_r(0)^2/L_0`.
+
+Thus exact regularity and positive L require
+
+`L(0)=R_r(0)`.
+
+So `L(0)` is not a free shooting parameter.
+
+Together with
+
+`R_t(0)=0`
 
 and
 
-`A_M=-4LR`.
+`R_{t,r}(0)=L_t(0)R_r(0)/L(0)=L_t(0)`,
 
-Hence, away from the analytic center,
+the regular center fixes the reduced first-order IVP with no free shooting parameter.
 
-`L_r=-B_H/A_H`
+B7 remains frozen as a construction FAIL. Its bracket must not be expanded and its root/integrator settings must not be tuned post hoc.
 
-and
+The preferred next step is a separately preregistered zero-free-parameter regular-center IVP that integrates the exact B6 radial system outward and treats both outer `L` and outer `R_t` background compatibility as predictions.
 
-`R_{t,r}=B_M/(4LR)`.
-
-All six frozen scale/grid cases pass the nondegeneracy audit on every noncenter point. The coefficients are positive and show no interior zero or sign change.
-
-Near the regular center,
-
-- `A_H/r ≈ 4`;
-- `(4LR)/r ≈ 1.6000e-3`;
-
-so the only coefficient degeneracy is the expected spherical `O(r)` behavior at `r=0`.
-
-The preferred next step is therefore no longer residual minimization. It is a separately preregistered numerical construction of this exact coupled first-order radial system.
-
-The historical Repair18d1 `Y4/Qmean` conditions remain projection-nullspace transversality functionals and are not treated as physical radial boundary conditions.
-
-A future reduced-radial construction must specify the regular-center and asymptotic-background boundary policy before execution and must still pass the original B4 differential certification
+Any returned state must still pass the unchanged original B4 differential certification
 
 `max epsilon_H,max epsilon_M <=1e-7`
 
