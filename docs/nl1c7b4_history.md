@@ -10,73 +10,78 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-NL1C7B6 is frozen as:
+NL1C7B7 is frozen as:
 
-`NL1C7B6_SYMBOLIC_RADIAL_REDUCTION_PASS`.
+`NL1C7B7_REDUCED_RADIAL_CONSTRUCTION_FAIL`.
 
-Result freeze commit:
+Result-freeze commit:
 
-`70c9fc2aa58b76bf3579260e54c6d85097769160`.
+`6bd01d8e4c825fe4f150a851c4dc402644b664cc`.
 
 Result JSON SHA-256:
 
-`ed1efdac5dee72d8c57cbda23d074213babd15fdf3bc7adc18e61789f862e635`.
+`449201305c535e24e592296f5e2a53e7fc0866b5cae2970a147c2bcebe12bfc6`.
 
-All seven NL1C7B6 gates PASS.
+B7 confirms that the exact B6 reduced equations and frozen-field radial representation are implemented consistently:
 
-The exact eta=0 spherical Hamiltonian and radial-momentum constraints admit a first-order radial reduction for the same frozen physical pair `(L,R_t)`.
+- provenance PASS;
+- parent H/M reproduction exact;
+- local degree-8 / nine-node derivative representation PASS;
+- exact reduced RHS structural audit PASS;
+- output-integrity boundary PASS.
 
-After the exact frozen Q substitution:
+The run fails before candidate-state construction.
 
-- H is affine in `L_r`;
-- H is quadratic in algebraic `R_t`;
-- H contains no `R_{t,r}`;
-- M is affine in `R_{t,r}`;
-- M is independent of algebraic `R_t` outside the GR flux/source cancellation;
-- no solved-field second derivative appears.
+For all six scale/grid cases and both preregistered launch radii, the scalar shooting residual `ell(r_max)` has the same negative sign at both frozen bracket endpoints `ell_0=-0.5,+0.5`.
 
-The exact solved derivative coefficients are
+No bracket expansion is licensed.
 
-`A_H=[4 R R_r + 2 K_B R^2 cosh(u)sinh(u)(L_t+u_r) + 2 C R^2 phi_r]/L^2`
+### Center degree-of-freedom correction
 
-and
+Post-result analytic inspection of the exact center Hamiltonian gives
 
-`A_M=-4LR`.
+`H(0)=2L_0-2R_r(0)^2/L_0`
 
-Thus, away from the analytic center,
+because all regular non-GR Hamiltonian terms vanish with at least `R^2` at the center.
 
-`L_r=-B_H/A_H`
+Therefore regularity plus H=0 requires
 
-and
+`L(0)=R_r(0)`
 
-`R_{t,r}=B_M/(4LR)`.
+for positive L.
 
-All six frozen lambda=1 parent cases pass the coefficient nondegeneracy audit on every noncenter point.
+Thus the B7 premise that `L(0)` supplies a free scalar shooting parameter is not the natural regular-center degree-of-freedom count.
 
-Near the center:
+Together with
 
-- `A_H/r ≈ 4`;
-- `(4LR)/r ≈ 1.6000e-3`;
+`R_t(0)=0`
 
-showing the expected regular linear center degeneracy rather than an interior singularity.
+and the regular momentum slope
+
+`R_{t,r}(0)=L_t(0)R_r(0)/L(0)=L_t(0)`,
+
+the regular center fixes the reduced first-order IVP with no free shooting parameter.
 
 ### Project decision
 
-The residual-minimization initial-data strategy is no longer the preferred route.
+B7 remains a frozen construction FAIL and is not relabelled.
 
-The next licensed step is a separately preregistered numerical construction of the exact reduced first-order radial system.
+Do not expand the B7 bracket or tune its root/integrator parameters.
 
-The historical Repair18d1 `Y4/Qmean` functionals remain projection-nullspace gauges and must not be silently reused as radial physical boundary conditions.
+The next licensed project-level representation is a separately preregistered zero-free-parameter regular-center IVP using the exact B6 radial equations.
 
-The numerical construction must specify its regular-center and asymptotic-background boundary policy before execution.
+Both outer conditions,
 
-The final independent science gate remains the unchanged original B4 differential certification
+- `L(r_max)` background compatibility;
+- `R_t(r_max)` background compatibility,
+
+must be predictions rather than fitted conditions.
+
+Any candidate state must still pass the unchanged original B4 differential certification
 
 `max epsilon_H,max epsilon_M <=1e-7`
 
-on both Nr=256 and Nr=512.
-
-Eta=0 short-time evolution remains gated until such a state is certified.
+on Nr=256 and Nr=512 before eta=0 evolution is licensed.
 
 ---
 
@@ -789,3 +794,33 @@ The center ratios `A_H/r` and `(4LR)/r` are finite and nearly constant, confirmi
 This PASS licenses a separately preregistered reduced-radial numerical construction.
 
 It does not yet certify initial data or license evolution.
+
+
+### NL1C7B7 — reduced-radial shooting construction
+
+Class:
+
+`NL1C7B7_REDUCED_RADIAL_CONSTRUCTION_FAIL`.
+
+Result-freeze commit:
+
+`6bd01d8e4c825fe4f150a851c4dc402644b664cc`.
+
+Frozen local outputs:
+
+- JSON SHA-256:
+  `449201305c535e24e592296f5e2a53e7fc0866b5cae2970a147c2bcebe12bfc6`;
+- evaluator log SHA-256:
+  `2364fda0d150af059a32e3640534c0fb9ee6b5a063676c67fe5639eed2e1d221`;
+- full runner log SHA-256:
+  `05ee332f4e24aafb0493626eb880b894a5f1664a68bcd320dd0801aa9741c206`.
+
+All implementation-structure gates pass, but all six primary and all six control shooting attempts have no sign change on the frozen `ell_0 in [-0.5,+0.5]` bracket.
+
+No state is returned to the independent B4 differential gate.
+
+The exact regular-center Hamiltonian instead fixes
+
+`L(0)=R_r(0)`.
+
+Therefore the next project-level construction should be a zero-free-parameter regular-center IVP, not a wider B7 shooting search.
