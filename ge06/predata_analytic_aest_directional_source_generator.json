@@ -1,0 +1,72 @@
+{
+  "classification": "GE06_PREDATA_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Generate and independently validate the first and second perturbative directional coefficients L[V] and Q[V,V] of the memory-off analytic Einstein+AeST scalar-longitudinal 3+1 source system, with the nonanalytic Y sector explicitly excluded because it is handled by GE04/NL1B2.",
+  "dependencies": {
+    "nl1b2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS",
+    "nl1c6": "NL1C6_SPHERICAL_SELF_GRAVITY_CLOSURE_PASS",
+    "ge04": "GE04_DY2_SPECTRAL_CONVERGENCE_PASS",
+    "ge05": "GE05_MEMORY_DIRECTIONAL_SOURCE_GENERATOR_PASS"
+  },
+  "frozen_action_structure": {
+    "geometry": "longitudinal plane-symmetric 3+1 coframe theta0=N dt, theta1=L(dx+b dt), theta2=R dy, theta3=R dz",
+    "gravitational_kinetic": "N L R^2[-4 kL kR-2 kR^2]",
+    "plane_spatial_curvature_after_boundary_reduction": "2 N R_x^2/L + 4 N_x R R_x/L",
+    "aest_analytic": "N L R^2[K_B E^2+2(2-K_B) E X-(2-K_B) X^2+2 K(Q)]",
+    "excluded_from_GE06": "-(2-K_B) J(Y), handled separately by Y2 and DY2"
+  },
+  "audit_parameters": {
+    "note": "Representative dimensionless values are used only for numerical generator conditioning; the functional Exp K(Q) form and exact coefficient identities are unchanged.",
+    "KB": 0.1,
+    "K2": 0.4,
+    "Q0": 0.2,
+    "Z0": 0.7
+  },
+  "expansion_background": {
+    "N": 1,
+    "b": 0,
+    "u": 0,
+    "L_equals_R": "a(t)",
+    "a_of_t": "1+0.08 sin(t)+0.02 cos(2t)",
+    "Q_of_t": "0.2+0.03 cos(t)",
+    "spatial_gradients": 0
+  },
+  "target_blocks": {
+    "first_directional": "L[V] = first epsilon derivative of every memory-off analytic Euler-Lagrange source",
+    "second_directional": "Q[V,V] = second epsilon derivative of every memory-off analytic Euler-Lagrange source",
+    "required_sources": [
+      "metric_lapse",
+      "metric_longitudinal_scale",
+      "metric_transverse_scale",
+      "metric_shift",
+      "aether_rapidity",
+      "scalar_phi"
+    ]
+  },
+  "deterministic_audit": {
+    "periodic_time_points": 48,
+    "periodic_space_points": 64,
+    "finite_difference_steps": [
+      0.001,
+      0.0003
+    ],
+    "first_order_direction": "fixed multi-harmonic deterministic perturbations in N,L,R,b,u,phi"
+  },
+  "gates": {
+    "exact_exp_KQQ_identity": true,
+    "all_required_source_blocks_generated": true,
+    "analytic_L_vs_primary_fd_global_relative_L2_max": 0.00001,
+    "analytic_Q_vs_primary_fd_global_relative_L2_max": 0.00001,
+    "primary_vs_control_fd_L_global_relative_L2_max": 0.00001,
+    "primary_vs_control_fd_Q_global_relative_L2_max": 0.00001,
+    "all_outputs_finite": true
+  },
+  "classification_rule": {
+    "pass": "all locked generator and finite-difference gates pass -> GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "fail": "otherwise -> GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_FAIL"
+  },
+  "claim_boundary": "PASS certifies the memory-off analytic Einstein+AeST directional L/Q source generator in the controlled scalar-longitudinal plane-symmetric sector. It does not include the already separated Y operator, matter nonlinearities, solve Z20/Z21, introduce finite eta, or make observational/collapse claims.",
+  "anti_tuning": "Do not change the action terms, representative audit parameters, background functions, deterministic direction, grid sizes, finite-difference steps or thresholds after inspecting GE06 output."
+}
