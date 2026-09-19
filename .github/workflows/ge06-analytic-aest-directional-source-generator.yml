@@ -1,0 +1,95 @@
+name: GE06 analytic AeST directional source generator
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge06/**'
+      - 'docs/ge06_analytic_aest_directional_source_generator_implementation_lock.md'
+      - '.github/workflows/ge06-analytic-aest-directional-source-generator.yml'
+
+jobs:
+  analytic-aest-directional-source-generator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock and provenance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge06/predata_analytic_aest_directional_source_generator.json)" = "007cd6c726735b3979191f7a7cd1c6b3cac9c854"
+          test "$(git rev-parse HEAD:ge06/analytic_aest_directional_source_generator.py)" = "a7afe0035054a9dca55d74a6497c081422114b4c"
+          test "$(git rev-parse HEAD:docs/ge06_analytic_aest_directional_source_generator_implementation_lock.md)" = "962427b4a52ba084081f9328670f672c0109471e"
+          test "$(git rev-parse HEAD:nl1c6/spherical_self_gravity_g1_g10.py)" = "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f"
+          git merge-base --is-ancestor de71bd33fa44b9ec7f9242621d3156bb0a30713a HEAD
+          git merge-base --is-ancestor 36473d6cb9428844e6b922787bc5204662bea7a9 HEAD
+          git merge-base --is-ancestor 191de2754143364c506d1af142309160c9bf6a6b HEAD
+          echo GE06_LOCK_PASS
+
+      - name: Install numerical dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge06/analytic_aest_directional_source_generator.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge06/predata_analytic_aest_directional_source_generator.json'))
+          assert d['classification']=='GE06_PREDATA_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['finite_physical_eta'] is False
+          g=d['gates']
+          assert g['analytic_L_vs_primary_fd_global_relative_L2_max']==1e-5
+          assert g['analytic_Q_vs_primary_fd_global_relative_L2_max']==1e-5
+          assert g['primary_vs_control_fd_L_global_relative_L2_max']==1e-5
+          assert g['primary_vs_control_fd_Q_global_relative_L2_max']==1e-5
+          print('GE06_PREDATA_PASS')
+          PY
+
+      - name: Run GE06 generator
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 ge06/analytic_aest_directional_source_generator.py             | tee results/ge06_analytic_aest_directional_source_generator.log
+
+      - name: Summarize GE06
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge06_analytic_aest_directional_source_generator.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge06_analytic_aest_directional_source_generator.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('GLOBAL_CONTROLS=',d['finite_difference']['global_controls'])
+          for k,v in d['per_source'].items():
+              print(k,'L=',v['analytic_L_L2'],'Q=',v['analytic_Q_L2'],
+                    'eL=',v['analytic_vs_primary_fd_L_relative_L2'],
+                    'eQ=',v['analytic_vs_primary_fd_Q_relative_L2'])
+          PY
+          fi
+
+      - name: Upload GE06 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge06_analytic_aest_directional_source_generator
+          path: |
+            results/ge06_analytic_aest_directional_source_generator.json
+            results/ge06_analytic_aest_directional_source_generator.log
+            ge06/predata_analytic_aest_directional_source_generator.json
+            docs/ge06_analytic_aest_directional_source_generator_implementation_lock.md
+          if-no-files-found: warn
