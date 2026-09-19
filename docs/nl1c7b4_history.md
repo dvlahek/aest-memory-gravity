@@ -10,58 +10,79 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-Repair19c4 is frozen as:
+NL1C7B5 Repair01 is frozen as:
 
-`NL1C7B4_REPAIR19C4_NO_MATERIAL_POST_FIRST_STEP_DERIVATIVE_WINDOW`.
+`NL1C7B5_CONSERVATIVE_DIFFERENTIAL_CERTIFICATION_FAIL`.
 
 Result freeze commit:
 
-`4237da31c972fc961a2f7c961450a529652baa51`.
+`2a2739db609ffb58e899baa7308199fd8dbc528b`.
 
 Result JSON SHA-256:
 
-`a5a7416cd93120f543dbe0f8a70ddc735e9704212d7db5266de87980fe768c18`.
+`bfeae8019b69f23e0fa659c6c3e0134353b85e0dcd67f0337c14d6f50b887c8d`.
 
-All nine Repair19c4 implementation/science-integrity gates pass.
+The analytic regular-center repair succeeds as an implementation repair:
 
-All six lambda=1 canonical cases resolve an independent symmetric Richardson directional reference. In every case the first stable reference pair is `1e-5 -> 3e-6`, so the frozen Repair19c3 post-first-step control probe already lies inside a stable derivative window.
+- all six initial conservative residuals are finite;
+- provenance PASS;
+- conservative source/flux decomposition PASS;
+- orthonormal gauge representation PASS;
+- complete conservative construction PASS;
+- exact-Q/gauge/field-freeze safety PASS;
+- two-grid correction-amplitude control PASS;
+- output integrity PASS;
+- claim boundary PASS.
 
-The Repair19c3 control
+The decisive original B4 differential certification fails in all six cases.
 
-`3-point, abs_step=3e-6`
+Across the frozen cases, the final exact differential residuals are approximately:
 
-has worst-case full and momentum directional-action mismatch approximately
+- Hamiltonian:
+  `4.238e-2--4.246e-2`;
+- momentum:
+  effectively `1.0`.
 
-`5.0393e-5`,
+The historical exact threshold remains
 
-well below the preregistered `1e-3` fidelity bound.
+`1e-7`.
 
-The frozen lexicographic rule selects `1e-8`, but its worst-case mismatch is only approximately 15.8 percent smaller than the control and its median mismatch is worse. It therefore fails the preregistered fivefold material-improvement rule.
+The conservative objective itself also does not approach zero under the frozen construction. Full conservative L2 falls only from approximately `0.03810` to `0.03398`. All six TRF solves reach the frozen `max_nfev=200` limit.
 
-Repair19c4 therefore rejects the specific hypothesis that Repair19c3 stagnation is primarily caused by the fixed post-first-step finite-difference probe `abs_step=3e-6`.
+The correction-amplitude two-grid ratios are stable and pass:
 
-The remaining discrepancy is between a stable derivative measured over perturbations of order `1e-5--3e-6` and exact state-to-residual realization under requested Newton corrections of order `1e-12--1e-9`.
-
-This is consistent with a numerical resolution, cancellation, conditioning or discretized residual-evaluation floor, but Repair19c4 does not uniquely identify which mechanism dominates.
+- scale 5: `1.7236598675`;
+- scale 10: `1.7218237729`;
+- scale 20: `1.7225161300`.
 
 ### Project decision
 
-The finite-difference Gauss-Newton solver-repair track terminates at Repair19c4.
+The B5 conservative initial-data track terminates here.
 
-The frozen decision boundary now forbids:
+No B5a/B5b solver-parameter repair is licensed.
 
-- further finite-difference step-scale diagnostics;
-- another Repair19c-style nonlinear closure rerun selected from this sweep;
-- threshold relaxation;
-- relabelling Repair19c3.
+In particular, do not:
 
-Repair19c4 does **not** establish physical insufficiency of the frozen `(L,R_t)` ansatz.
+- increase `max_nfev`;
+- alter TRF settings;
+- change finite-difference step;
+- add multistart, continuation or damping;
+- relax the `1e-7` differential threshold;
+- remove radial points;
+- add a new physical field inside B5.
 
-Any further initial-data work must be a project-level numerical reformulation rather than another member of the Repair19c finite-difference tuning sequence.
+Two independently preregistered double-precision two-field construction strategies have now failed to produce an exact B4-certified state:
 
-Eta=0 short-time evolution remains gated because no exact `1e-7` constraint-certified state exists yet.
+1. pointwise differential Gauss-Newton through Repair19c4;
+2. conservative cell-integrated construction through B5 Repair01.
 
-Observational/data-side infrastructure may continue in parallel, but no result may be presented as a tested finite-eta AeST prediction until a defensible eta=0 initial-data/evolution path and finite-eta observable construction exist.
+This still does **not** establish physical nonexistence of an exact frozen `(L,R_t)` state.
+
+Eta=0 short-time evolution remains unlicensed because no exact `1e-7` initial state exists.
+
+Any further initial-data work must be a genuinely new project-level representation, such as analytically reduced constraints or higher-precision arithmetic, and must be separately preregistered before implementation.
+
+Observational/tangent infrastructure may continue in parallel, but no finite-eta nonlinear AeST observational claim is licensed from this track.
 
 ---
 
@@ -699,3 +720,46 @@ No material new derivative window is identified.
 No final nonlinear closure execution is licensed.
 
 The finite-difference Gauss-Newton repair track terminates without a claim that the physical `(L,R_t)` ansatz is impossible.
+
+
+### NL1C7B5 Repair01 — conservative differential certification
+
+Class:
+
+`NL1C7B5_CONSERVATIVE_DIFFERENTIAL_CERTIFICATION_FAIL`.
+
+Result-freeze commit:
+
+`2a2739db609ffb58e899baa7308199fd8dbc528b`.
+
+Frozen local outputs:
+
+- JSON SHA-256:
+  `bfeae8019b69f23e0fa659c6c3e0134353b85e0dcd67f0337c14d6f50b887c8d`;
+- evaluator log SHA-256:
+  `af3096b43a25bb40916262e36ea1346721e195cf0bab26d7ff6276cce1ab9df5`;
+- full runner log SHA-256:
+  `120320347eb706f4581629ac69e857c6b3fb76b3dc7d80d96215db8237fd6ae8`.
+
+The original first B5 execution remains separately frozen as an implementation FAIL.
+
+Repair01 supplies only the analytic regular-center limits `S_H(0)=S_M(0)=0`.
+
+All implementation/integrity gates then pass except the original differential exact-constraint gate.
+
+Final worst-case exact residuals:
+
+- H:
+  `0.04245571532982025`;
+- M:
+  `0.9999999999999901`.
+
+All six frozen cases fail the unchanged `1e-7` differential certification.
+
+Two-grid correction-amplitude control passes on all three physical scales with ratios approximately `1.72`.
+
+No state NPZ is written.
+
+No B5 solver-parameter follow-up is licensed.
+
+The result does not prove physical nonexistence of the frozen `(L,R_t)` ansatz.
