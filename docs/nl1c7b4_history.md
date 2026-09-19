@@ -10,40 +10,58 @@ It records scientific classifications exactly as obtained. A failed or implement
 
 ## Current checkpoint
 
-Repair19c3 is frozen as:
+Repair19c4 is frozen as:
 
-`NL1C7B4_REPAIR19C3_SELECTED_JACOBIAN_NONLINEAR_CLOSURE_FAIL`.
+`NL1C7B4_REPAIR19C4_NO_MATERIAL_POST_FIRST_STEP_DERIVATIVE_WINDOW`.
+
+Result freeze commit:
+
+`4237da31c972fc961a2f7c961450a529652baa51`.
 
 Result JSON SHA-256:
 
-`aa19480ce4d41f649368f192f27d85b823e0247aa6f9bcc9eb7a9d23b60ac5b0`.
+`a5a7416cd93120f543dbe0f8a70ddc735e9704212d7db5266de87980fe768c18`.
 
-The Repair19c2-selected Jacobian is reproduced exactly, but exact nonlinear closure still fails:
+All nine Repair19c4 implementation/science-integrity gates pass.
 
-- canonical PASS: `0/24`
-- lambda=1 PASS: `0/6`
-- all failures terminate through `backtracking_failed`
-- no corrected-state NPZ is written.
+All six lambda=1 canonical cases resolve an independent symmetric Richardson directional reference. In every case the first stable reference pair is `1e-5 -> 3e-6`, so the frozen Repair19c3 post-first-step control probe already lies inside a stable derivative window.
 
-The failure remains momentum dominated. For lambda=1, the best momentum residual is scale 20 / Nr256 at
+The Repair19c3 control
 
-`6.2117247534723366e-06`,
+`3-point, abs_step=3e-6`
 
-while the Hamiltonian residual there is
+has worst-case full and momentum directional-action mismatch approximately
 
-`7.743932006594966e-11`.
+`5.0393e-5`,
 
-The selected `3-point, abs_step=3e-6` Jacobian fixes the first-step fidelity problem identified by Repair19c1/2, but after the first accepted step the requested Newton correction collapses from approximately `1e-5--1e-4` to `1e-9--1e-13`, while the finite-difference probe remains fixed at `3e-6`.
+well below the preregistered `1e-3` fidelity bound.
 
-This establishes a post-first-step derivative-scale floor.
+The frozen lexicographic rule selects `1e-8`, but its worst-case mismatch is only approximately 15.8 percent smaller than the control and its median mismatch is worse. It therefore fails the preregistered fivefold material-improvement rule.
+
+Repair19c4 therefore rejects the specific hypothesis that Repair19c3 stagnation is primarily caused by the fixed post-first-step finite-difference probe `abs_step=3e-6`.
+
+The remaining discrepancy is between a stable derivative measured over perturbations of order `1e-5--3e-6` and exact state-to-residual realization under requested Newton corrections of order `1e-12--1e-9`.
+
+This is consistent with a numerical resolution, cancellation, conditioning or discretized residual-evaluation floor, but Repair19c4 does not uniquely identify which mechanism dominates.
 
 ### Project decision
 
-Repair19c3 is the stopping point for open-ended nonlinear solver repair.
+The finite-difference Gauss-Newton solver-repair track terminates at Repair19c4.
 
-At most one separately preregistered post-first-step derivative-scale diagnostic is licensed before deciding if the strict `1e-7` closure track is worth continuing.
+The frozen decision boundary now forbids:
 
-In parallel, observational/data-side infrastructure may proceed immediately. No real-data analysis may be presented as a tested AeST prediction until the finite-eta model prediction and its numerical limitations are explicit.
+- further finite-difference step-scale diagnostics;
+- another Repair19c-style nonlinear closure rerun selected from this sweep;
+- threshold relaxation;
+- relabelling Repair19c3.
+
+Repair19c4 does **not** establish physical insufficiency of the frozen `(L,R_t)` ansatz.
+
+Any further initial-data work must be a project-level numerical reformulation rather than another member of the Repair19c finite-difference tuning sequence.
+
+Eta=0 short-time evolution remains gated because no exact `1e-7` constraint-certified state exists yet.
+
+Observational/data-side infrastructure may continue in parallel, but no result may be presented as a tested finite-eta AeST prediction until a defensible eta=0 initial-data/evolution path and finite-eta observable construction exist.
 
 ---
 
@@ -647,3 +665,37 @@ A GitHub Actions green status is not by itself a scientific PASS.
 Local WSL runs remain local and are never described as official runs.
 
 Frozen evaluators, thresholds, source coefficients, signs, point sets, and earlier classifications are not silently changed to rescue a later result.
+
+
+### Repair19c4 — terminal post-first-step derivative-scale diagnostic
+
+Class:
+
+`NL1C7B4_REPAIR19C4_NO_MATERIAL_POST_FIRST_STEP_DERIVATIVE_WINDOW`.
+
+Result freeze commit:
+
+`4237da31c972fc961a2f7c961450a529652baa51`.
+
+Frozen local output:
+
+- JSON SHA-256:
+  `a5a7416cd93120f543dbe0f8a70ddc735e9704212d7db5266de87980fe768c18`
+- evaluator log SHA-256:
+  `776f5918b9df72d71b496c762d6f16a59974241363b1a9776d066e75a43001b2`
+- full local runner log SHA-256:
+  `88c65f9d86a5e7f1956a8d96a142aa00ba89f212a4a4a378857dd26aec270ccd`.
+
+All nine gates PASS.
+
+All six Richardson references resolve, each first on the pair `1e-5 -> 3e-6`.
+
+The `3e-6` control worst-case directional mismatch is `5.039306870066481e-5`.
+
+The frozen selection chooses `1e-8` with worst-case mismatch `4.242603857525267e-5`, only a factor `1.1877863310589492` better than the control and therefore far short of the required fivefold improvement.
+
+No material new derivative window is identified.
+
+No final nonlinear closure execution is licensed.
+
+The finite-difference Gauss-Newton repair track terminates without a claim that the physical `(L,R_t)` ansatz is impossible.
