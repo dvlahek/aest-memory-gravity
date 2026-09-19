@@ -1,3 +1,18 @@
+# Status note
+
+This document records an exploratory shear-strain completion proposed during the physics-first reset.
+
+It is **not the active canonical theory**.
+
+The active theory is the already certified NL0B covariant completed-square auxiliary-vector action, reinterpreted as gravitational viscoelasticity in:
+
+- `docs/gravitational_elasticity_canonical_nl0b_interpretation.md`;
+- `docs/gravitational_maxwell_viscoelasticity.md`.
+
+The shear-coupled construction below is retained only for provenance and possible future comparison. It must not be mixed with the frozen NL0B theory without a separate preregistered theory comparison.
+
+---
+
 # Gravitational Elasticity — conservative completion
 
 ## Decision
