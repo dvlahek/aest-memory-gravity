@@ -77,21 +77,53 @@ The continuum field-theory construction, eta=0 CLASS baseline, leading AeST adia
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
-Latest completed nonlinear diagnostic:
+Latest completed initial-data result:
 
-`NL1C7B4_REPAIR19C4_NO_MATERIAL_POST_FIRST_STEP_DERIVATIVE_WINDOW`.
+`NL1C7B5_CONSERVATIVE_DIFFERENTIAL_CERTIFICATION_FAIL`.
 
-Repair19c4 is a complete locked characterization with all nine gates passing. All six lambda=1 cases resolve an independent Richardson directional reference, and every case is already stable on the pair `1e-5 -> 3e-6`.
+The original B5 execution first exposed an implementation-only regular-center problem: the conservative cell quadrature used raw lambdified source values at `r=0`, where removable spherical-coordinate `0/0` forms occur. That result remains frozen as an implementation FAIL.
 
-The Repair19c3 control Jacobian `3-point, abs_step=3e-6` has worst-case post-first-step directional mismatch only `5.0393e-5`, well inside the preregistered `1e-3` fidelity bound. The frozen selection rule chooses `1e-8`, but the worst-case improvement is only about 15.8 percent and therefore does not satisfy the required fivefold material-improvement criterion.
+B5 Repair01 replaces only the analytic regular-center source limits
 
-The specific hypothesis that Repair19c3 stagnation is primarily caused by using a fixed `3e-6` post-first-step finite-difference probe is therefore rejected.
+`S_H(0)=S_M(0)=0`
 
-The remaining discrepancy occurs when the nonlinear solver requests physical corrections of roughly `1e-12--1e-9`: stable derivative information at larger probe scales does not translate into the predicted exact residual cancellation at those tiny state changes. This is consistent with a numerical resolution/conditioning/cancellation floor in the discretized state-to-residual map, not a demonstrated failure of the physical `(L,R_t)` ansatz.
+and leaves all noncenter equations, quadrature rules, solver settings, Jacobian settings and science thresholds unchanged.
 
-The finite-difference Gauss-Newton solver-repair track is now closed. No further FD step-scale diagnostic and no additional Repair19c-style closure rerun are licensed by this result.
+After that repair:
 
-Any further initial-data work must be a project-level numerical reformulation. Eta=0 short-time evolution remains gated until a defensible exact initial state exists. Observational/data-side infrastructure may proceed in parallel, but finite-eta observational claims remain gated.
+- all six conservative initial residuals are finite;
+- provenance and source/flux decomposition pass;
+- orthonormal gauge representation passes;
+- all six conservative construction attempts complete;
+- exact-Q, gauge and field-freeze checks pass;
+- two-grid correction-amplitude control passes;
+- output integrity and claim-boundary checks pass.
+
+The decisive unchanged B4 differential constraint certification fails on all six cases.
+
+Final exact differential residuals are approximately:
+
+- Hamiltonian: `4.24e-2`;
+- momentum: `1.0`;
+
+against the unchanged historical threshold
+
+`1e-7`.
+
+The conservative objective itself decreases only from approximately `0.03810` to `0.03398` in full L2. All six frozen TRF solves reach `max_nfev=200`.
+
+Per the preregistered project boundary, no B5a/B5b solver-parameter repair is licensed. Increasing the iteration budget, changing TRF settings, trying another finite-difference step, adding multistart/continuation or relaxing the exact threshold would be post-hoc changes.
+
+The nonlinear initial-data program has therefore exhausted two independently preregistered double-precision two-field construction strategies:
+
+1. pointwise differential Gauss-Newton through Repair19c4;
+2. conservative cell-integrated construction through B5 Repair01.
+
+This does not prove physical nonexistence of the frozen `(L,R_t)` ansatz. It does mean that eta=0 short-time evolution remains gated because no exact `1e-7` certified initial state exists.
+
+Any further initial-data work must be a genuinely new project-level numerical representation, such as analytically reduced constraints or higher-precision arithmetic, and must be separately preregistered before implementation.
+
+Observational/tangent infrastructure may continue in parallel, but finite-eta nonlinear observational claims remain gated.
 
 Full chronology and frozen provenance are maintained in:
 
