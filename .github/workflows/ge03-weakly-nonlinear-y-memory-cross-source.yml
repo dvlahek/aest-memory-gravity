@@ -7,7 +7,9 @@ on:
     branches: [physics-first-gravitational-elasticity]
     paths:
       - 'ge03/**'
-      - 'docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md'
+      - 'docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md
+            docs/ge03_repair01_predata_python_import_path.md
+            docs/ge03_repair01_python_import_path_implementation_lock.md'
       - '.github/workflows/ge03-weakly-nonlinear-y-memory-cross-source.yml'
 
 jobs:
@@ -28,11 +30,17 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD:ge03/predata_weakly_nonlinear_y_memory_cross_source.json)" = "9b5a21aa77f4e8bcacb0e41cc9f0d83285a62395"
-          test "$(git rev-parse HEAD:ge03/weakly_nonlinear_y_memory_cross_source.py)" = "c80a76a190d749b0a2c57d35449ed01ad2205a03"
+          test "$(git rev-parse HEAD:ge03/weakly_nonlinear_y_memory_cross_source.py)" = "9f8836668d83c6874ca58fd8dc2c7f2de187c1d7"
           test "$(git rev-parse HEAD:docs/ge03_weakly_nonlinear_y_memory_cross_source_implementation_lock.md)" = "5db45add047f6c7e28cc7845c7ce83fd2b1ec8de"
+          test "$(git rev-parse HEAD:docs/ge03_repair01_predata_python_import_path.md)" = "ac255ae3f2cb932fd55f697df9e8054d57f1e1e1"
+          test "$(git rev-parse HEAD:docs/ge03_repair01_python_import_path_implementation_lock.md)" = "430f39073f6fc3727e9652c62d1a77c9dbdbea79"
           git merge-base --is-ancestor bceff2b86dd5f94cfe50ca722d4601400fc4ee49 HEAD
           git merge-base --is-ancestor 21664244deff23a7a05980aabcc95072aa42aaf9 HEAD
           git merge-base --is-ancestor 99bdd01ccda871390e14852ec9af7d6077409fb7 HEAD
+          git merge-base --is-ancestor 1d04c93bf8f0c93455038499a5fcd55c7714a968 HEAD
+          git merge-base --is-ancestor 20401683cca5e30f910b58e6844e654ba041be45 HEAD
+          git merge-base --is-ancestor 765840b1eb6ab84e158e22afd08e1c49b396a9c8 HEAD
+          git merge-base --is-ancestor d599389b63f4f4299bfe67aa1aa8b9c653c5b1d0 HEAD
           echo GE03_LOCK_PASS
 
       - name: Install numerical dependencies
