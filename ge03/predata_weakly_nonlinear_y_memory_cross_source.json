@@ -1,0 +1,119 @@
+{
+  "classification": "GE03_PREDATA_WEAKLY_NONLINEAR_Y_MEMORY_CROSS_SOURCE",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Evaluate and independently finite-difference verify the exact NL1B2 weakly nonlinear Y-sector memory cross-source DY2[chi10;chi11] using the retained v0.77 native accepted-source traces.",
+  "dependencies": {
+    "nl0c": "NL0C_Y_SECTOR_WEAKLY_NONLINEAR_PASS",
+    "nl1a": "NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE_PASS",
+    "nl1b2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS",
+    "v077": "V077_NATIVE_STATE_TANGENT_AFFINITY_PASS",
+    "artifact_run_id": 34315590099,
+    "artifact_id": 10090367181,
+    "artifact_digest": "sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378"
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "a0_m_s2": 1.2e-10,
+    "beta0_co_primary": [
+      1,
+      0.5,
+      0.1
+    ],
+    "tauH0": 10,
+    "physical_eta": "eta=0 directional tangent only"
+  },
+  "retained_traces": {
+    "base": "v076_v077_base_trace.dat",
+    "tangent_lambdas": [
+      10,
+      5,
+      2.5,
+      1.25
+    ],
+    "plus_pattern": "v076_v077_plus_{lambda}_trace.dat",
+    "minus_pattern": "v076_v077_minus_{lambda}_trace.dat"
+  },
+  "frozen_signal_band": {
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "redshift_window": [
+      0.2,
+      1.5
+    ],
+    "fourier_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "phases_rad": [
+      0.13,
+      0.71,
+      1.29,
+      2.03,
+      2.77,
+      3.41
+    ]
+  },
+  "reconstruction": {
+    "real_space_field": "chi_R(x,t)=sum_i sqrt(2 Delta_i P_R(k_i)) chi_i(t) cos(k_i x+phase_i)",
+    "baseline_direction": "chi10 = retained memory-off base chi",
+    "memory_direction": "chi11_lambda = [chi(+lambda)-chi(-lambda)]/(2 lambda)",
+    "primary_chi11": "four-lambda mean after the lambda-affinity gate",
+    "physical_gradient": "grad_phys chi = (1/a) grad_comoving chi",
+    "nonlinear_operator_normalization": "O_beta[chi]=(1/(1+beta0))*div_phys(|grad_phys chi| grad_phys chi); the common prefactor 2(2-KB)/a0 is reported separately and not used in numerical conditioning gates"
+  },
+  "exact_cross_source": {
+    "formula": "DO_beta[chi10;chi11]=(1/(1+beta0))*div_phys[|g| h + (g.h/|g|) g], with g=grad_phys chi10, h=grad_phys chi11 and bracket=0 at |g|=0",
+    "nl1b2_physical_term": "2 DY2 enters the Z21 equation"
+  },
+  "numerics": {
+    "spatial_resolutions": [
+      256,
+      512
+    ],
+    "derivative": "FFT pseudospectral",
+    "nonlinear_flux_dealiasing": "2/3 rule",
+    "finite_difference_relative_direction_step_primary": 0.0001,
+    "finite_difference_relative_direction_step_control": 0.00003,
+    "finite_difference_step_definition": "delta_chi = h * ||chi10||_2/max(||chi11||_2,1e-300) * chi11",
+    "native_times_only": true
+  },
+  "gates": {
+    "artifact_digest_exact": true,
+    "all_requested_k_relative_miss_max": 1e-12,
+    "common_native_grid_relative_mismatch_max": 1e-12,
+    "minimum_native_times_in_window": 8,
+    "chi11_four_lambda_affinity_relative_L2_max": 0.005,
+    "chi11_four_lambda_cosine_min": 0.9999,
+    "analytic_vs_fd_DY2_relative_L2_max": 0.0001,
+    "primary_vs_control_fd_DY2_relative_L2_max": 0.0001,
+    "Nx256_vs_Nx512_low_mode_DY2_relative_L2_max": 0.0005,
+    "beta0_scaling_relative_error_max": 1e-12,
+    "all_outputs_finite": true
+  },
+  "descriptive_outputs": [
+    "L2 norm of baseline Y2 source at each native time",
+    "L2 norm of DY2 cross-source at each native time",
+    "cosine between Y2 and DY2 at each native time",
+    "ratio ||2 DY2||/||2 Y2|| per unit eta tangent",
+    "low-mode spectral distribution of DY2",
+    "sign of integrated inner product <Y2,DY2> reported descriptively only"
+  ],
+  "classification_rule": {
+    "pass": "all gates pass for every native time and all three beta0 values -> GE03_WEAKLY_NONLINEAR_Y_MEMORY_CROSS_SOURCE_PASS",
+    "fail": "otherwise -> GE03_WEAKLY_NONLINEAR_Y_MEMORY_CROSS_SOURCE_FAIL"
+  },
+  "claim_boundary": "PASS certifies the weakly nonlinear Y-memory cross-source entering the exact eta=0 second-order hierarchy. It does not solve Z21, introduce finite eta, simulate nonlinear collapse, or constitute observational evidence.",
+  "anti_tuning": "Do not change lambdas, modes, phases, redshift window, resolutions, finite-difference steps, beta0 values or gates after inspecting GE03 output."
+}
