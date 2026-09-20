@@ -1,0 +1,126 @@
+name: GE08 Repair01 source derivative semantics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge08/**'
+      - 'docs/ge08_repair01_predata_source_derivative_semantics.md'
+      - 'docs/ge08_repair01_source_derivative_semantics_implementation_lock.md'
+      - '.github/workflows/ge08-repair01-source-derivative-semantics.yml'
+
+jobs:
+  repair01-state-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:docs/ge08_repair01_predata_source_derivative_semantics.md)" = "4562cb507f76fb99c58ef5c3e537c3af4e3d571a"
+          test "$(git rev-parse HEAD:ge08/apply_full_state_trace_patch.py)" = "20a3afe24a73b3512c5b5ea639466b8ca9bc3b8c"
+          test "$(git rev-parse HEAD:ge08/repair01_full_first_order_state_bridge.py)" = "8e7fe47d5fa7adc0e67a899aa4d62dcba7fe350a"
+          test "$(git rev-parse HEAD:docs/ge08_repair01_source_derivative_semantics_implementation_lock.md)" = "512dac9f1ee36d8babaf5012e23a1afba3924f39"
+          git merge-base --is-ancestor 0bdcaf65e65de48cb099d428123984c7074f0e4a HEAD
+          git merge-base --is-ancestor 5834ea8168c35db19170b00a1e124454e1aefb1b HEAD
+          git merge-base --is-ancestor b0e445c8abd3bb093af69ce025efec871a6c7bd7 HEAD
+          echo GE08_REPAIR01_LOCK_PASS
+
+      - name: Checkout pinned CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_ge08r1
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply validated AeST chain and unchanged GE08 trace patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_ge08r1
+          python3 v019i/apply_ic_patch.py class_ge08r1
+          python3 v019j/apply_memory_patch.py class_ge08r1
+          python3 v019w/apply_variational_forcing_patch.py class_ge08r1
+          python3 v019y/apply_output_precision_patch.py class_ge08r1
+          python3 v023/apply_source_grid_trace_patch.py class_ge08r1
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_ge08r1
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_ge08r1
+          python3 ge08/apply_full_state_trace_patch.py class_ge08r1
+
+      - name: Build CLASS and classy
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C class_ge08r1 -j2 class
+          make -C class_ge08r1 -j2 classy
+
+      - name: Predata and patch audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile ge08/repair01_full_first_order_state_bridge.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/ge08_repair01_predata_source_derivative_semantics.md').read_text()
+          assert 'GE08_REPAIR01_FULL_FIRST_ORDER_STATE_BRIDGE_PASS_MATTER_INCOMPLETE' in p
+          assert '1e-12' in p
+          q=Path('class_ge08r1/source/perturbations.c').read_text()
+          n=Path('class_ge08r1/tools/evolver_ndf15.c').read_text()
+          assert 'dy[pv->index_pt_phi] = pvecmetric[ppw->index_mt_phi_prime];' in q
+          assert 'dy[pv->index_pt_alpha_aest] = a*(E_aest-psi_aest);' in q
+          assert 'interp_from_dif(t_vec[next],tnew,ynew,h,dif,k,yinterp,ypinterp,yppinterp,interpidx,neq,2);' in n
+          assert '(*output)(t_vec[next],yinterp+1,ypinterp+1,next,parameters_and_workspace_for_derivs' in n
+          print('GE08_REPAIR01_PREDATA_SEMANTICS_PASS')
+          PY
+
+      - name: Run GE08 Repair01
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 ge08/repair01_full_first_order_state_bridge.py             --class-root class_ge08r1             --json-out results/ge08_repair01_full_first_order_state_bridge.json             --npz-out results/ge08_repair01_full_first_order_state_bridge.npz             | tee results/ge08_repair01_full_first_order_state_bridge.log
+
+      - name: Summarize GE08 Repair01
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge08_repair01_full_first_order_state_bridge.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge08_repair01_full_first_order_state_bridge.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('TRACE_COUNTS=',d['trace_counts'])
+          print('BRIDGE_ERRORS=',d['bridge_errors'])
+          print('SOURCE_DERIVATIVE_SEMANTICS=',d['source_derivative_semantics'])
+          print('BRIDGE_GATES=',d['bridge_gates'])
+          print('MATTER_COMPLETENESS=',d['matter_completeness'])
+          print('PROJECT_BOUNDARY=',d['project_boundary'])
+          PY
+          fi
+
+      - name: Upload GE08 Repair01 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge08_repair01_source_derivative_semantics
+          path: |
+            results/ge08_repair01_full_first_order_state_bridge.json
+            results/ge08_repair01_full_first_order_state_bridge.npz
+            results/ge08_repair01_full_first_order_state_bridge.log
+            results/ge08_legacy_chi_trace.dat
+            results/ge08_full_state_trace.dat
+            results/ge08_full_state_trace_patch.json
+            docs/ge08_repair01_predata_source_derivative_semantics.md
+            docs/ge08_repair01_source_derivative_semantics_implementation_lock.md
+          if-no-files-found: warn
