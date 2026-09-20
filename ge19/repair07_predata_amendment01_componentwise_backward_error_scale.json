@@ -1,0 +1,31 @@
+{
+  "classification": "GE19_REPAIR07_PREDATA_AMENDMENT01_COMPONENTWISE_BACKWARD_ERROR_SCALE",
+  "created_before_repair07_result": true,
+  "parent_repair07_predata_commit": "ec93b9ebe23a5a5f0af3611c3291eb53fc55d777",
+  "reason": "The original Repair07 prereg allowed ||C||_inf ||w||_inf as a cancellation-safe row scale. Before any Repair07 result, this is tightened to a componentwise backward-error scale so unrelated large state components cannot artificially enlarge the denominator.",
+  "replacement_scale": {
+    "row": "C_row",
+    "state": "w",
+    "source": "s",
+    "residual": "r = C_row @ w - s",
+    "scale": "max(abs(C_row @ w), abs(s), sum_i abs(C_row_i * w_i), TINY)",
+    "metric": "abs(r)/scale"
+  },
+  "advantages": [
+    "dimensionally tied to the actual terms in the constraint equation",
+    "cancellation safe",
+    "does not reward unrelated large components of w",
+    "returns O(1) for a genuine same-sign uncancelled constraint violation",
+    "returns small values only when the residual is small relative to the actual operator contributions"
+  ],
+  "unchanged": [
+    "constraint residual numerators",
+    "source signs",
+    "shift and anisotropy equations",
+    "1e-6 thresholds",
+    "Repair06 solver and DAE partition",
+    "all physics and Stage-B settings"
+  ],
+  "no_physics_change": true,
+  "no_threshold_relaxation": true
+}
