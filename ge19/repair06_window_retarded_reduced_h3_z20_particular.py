@@ -241,6 +241,82 @@ def build_stable_ge06_generator(mod6):
     )
 
 
+
+def _full_stable_z_normalize(expr):
+    """Algebraically normalize the complete stable-Z coefficient.
+
+    Exp arguments were already canonicalized by Repair03/04.  This additional
+    pass expands the substituted Q0+Z0*Zb polynomial structure so exact
+    Q0 cancellations occur symbolically before float64 lambdification.
+    """
+    out=sp.expand(expr)
+    out=sp.cancel(out)
+    out=canonicalize_exp_products(out)
+    out=sp.factor_terms(out)
+    out=canonicalize_exp_products(out)
+    return out
+
+
+def build_stable_ge06_generator_v2(mod6):
+    """Repair06 full stable-Z normalization of the algebraically same c1/c2."""
+    base=build_stable_ge06_generator(mod6)
+    c1={k:_full_stable_z_normalize(v) for k,v in base.coeff1_expr.items()}
+    c2={k:_full_stable_z_normalize(v) for k,v in base.coeff2_expr.items()}
+
+    frozen_args=tuple(mod6.direction_args)
+    Zb=base.Zb_symbol
+    stable_args=(frozen_args[0],frozen_args[1],Zb,*frozen_args[3:])
+    dpt=frozen_args[15]
+    aa=frozen_args[0]
+    K2s=frozen_args[20]
+    Q0s=frozen_args[21]
+    Z0s=frozen_args[22]
+
+    audit1=symbolic_exp_audit(c1,Zb,Q0s,Z0s)
+    audit2=symbolic_exp_audit(c2,Zb,Q0s,Z0s)
+
+    # Exact principal identity of the Exp branch after full normalization.
+    phi_t_dpt=sp.factor_terms(sp.cancel(sp.expand(sp.diff(c1["phi_t"],dpt))))
+    phi_t_expected=8*K2s*aa**3*(1+2*Zb**2)*sp.exp(Zb**2)
+    phi_t_identity=bool(
+        sp.simplify(sp.cancel(sp.expand(phi_t_dpt-phi_t_expected)))==0
+    )
+    if not phi_t_identity:
+        raise RuntimeError(
+            "full stable-Z phi_t/dpt identity failed: "
+            f"got={phi_t_dpt} expected={phi_t_expected}"
+        )
+
+    if not (
+        audit1["all_exp_args_equivalent_to_Zb_squared"]
+        and audit1["all_exp_args_Q0_free"]
+        and audit1["all_exp_args_Z0_free"]
+        and audit2["all_exp_args_equivalent_to_Zb_squared"]
+        and audit2["all_exp_args_Q0_free"]
+        and audit2["all_exp_args_Z0_free"]
+    ):
+        raise RuntimeError(
+            f"full stable-Z exponential audit failed: c1={audit1} c2={audit2}"
+        )
+
+    f1={k:sp.lambdify(stable_args,v,"numpy",cse=False) for k,v in c1.items()}
+    f2={k:sp.lambdify(stable_args,v,"numpy",cse=False) for k,v in c2.items()}
+    return SimpleNamespace(
+        f_c1=f1,
+        f_c2=f2,
+        coeff1_expr=c1,
+        coeff2_expr=c2,
+        Zb_symbol=Zb,
+        frozen_symbol_contract=base.frozen_symbol_contract,
+        symbolic_exp_audit={"c1":audit1,"c2":audit2},
+        full_stable_z_audit={
+            "phi_t_dpt_exact_identity":phi_t_identity,
+            "phi_t_dpt_expression":str(phi_t_dpt),
+            "phi_t_dpt_expected":str(phi_t_expected),
+        },
+    )
+
+
 def ge06_physical_parameter_probe(stable):
     """Overflow-only probe at the frozen physical parameter scales."""
     aa=np.asarray([0.4,0.55,0.7,1.0/1.2],float)
@@ -1709,7 +1785,7 @@ def main():
     npz=np.load(ge18_npz_path)
 
     mod6_frozen=load_frozen_generator(ROOT/"ge06"/"analytic_aest_directional_source_generator.py","ge19_ge06")
-    mod6=build_stable_ge06_generator(mod6_frozen)
+    mod6=build_stable_ge06_generator_v2(mod6_frozen)
     ge06_equivalence=ge06_stable_benign_equivalence(mod6_frozen,mod6)
     ge06_physical_probe=ge06_physical_parameter_probe(mod6)
     mod7=load_frozen_generator(ROOT/"ge07"/"pressureless_matter_directional_source_generator.py","ge19_ge07")
@@ -1841,6 +1917,7 @@ def main():
         "repair05_predata":"GE19_REPAIR05_PREDATA_EQUILIBRATED_LINEAR_SOLVE",
         "repair06_predata":"GE19_REPAIR06_PREDATA_CANONICAL_MOMENTUM_TIME_MARCH",
         "repair06_predata_amendment01":"GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
+        "repair06_predata_amendment02":"GE19_REPAIR06_PREDATA_AMENDMENT02_FULL_STABLE_Z_POLYNOMIAL_NORMALIZATION",
             "failure_stage":"Stage_A_reduced_H1_reclosure",
             "provenance":provenance,
             "stage_A_reduced_H1":{
@@ -2033,6 +2110,7 @@ def main():
         "repair05_predata":"GE19_REPAIR05_PREDATA_EQUILIBRATED_LINEAR_SOLVE",
         "repair06_predata":"GE19_REPAIR06_PREDATA_CANONICAL_MOMENTUM_TIME_MARCH",
         "repair06_predata_amendment01":"GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
+        "repair06_predata_amendment02":"GE19_REPAIR06_PREDATA_AMENDMENT02_FULL_STABLE_Z_POLYNOMIAL_NORMALIZATION",
         "scope":"m=1..40 projection of one window-retarded reduced-matter baseline H3 directional particular state. Formal epsilon->0 coefficient only.",
         "equation":"L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
         "provenance":provenance,
