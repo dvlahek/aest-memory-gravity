@@ -1,0 +1,78 @@
+name: GE19 Repair03 prelock audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair03_*'
+      - '.github/workflows/ge19-repair03-prelock-audit.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile Repair03
+        run: python3 -m py_compile ge19/repair03_window_retarded_reduced_h3_z20_particular.py
+
+      - name: Execute canonical Exp audit
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+
+          root=Path.cwd()
+          spec=importlib.util.spec_from_file_location(
+              "ge19r3",
+              root/"ge19/repair03_window_retarded_reduced_h3_z20_particular.py"
+          )
+          m=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(m)
+
+          g=m.load_frozen_generator(
+              (root/"ge06/analytic_aest_directional_source_generator.py").resolve(),
+              "ge19r3_ge06"
+          )
+          stable=m.build_stable_ge06_generator(g)
+
+          contract=stable.frozen_symbol_contract
+          assert contract["frozen_args_length"]==23, contract
+          assert contract["stable_args_length"]==23, contract
+          assert contract["all_frozen_args_symbols"], contract
+          assert contract["all_stable_args_symbols"], contract
+          assert contract["frozen_args_unique"], contract
+          assert contract["stable_args_unique"], contract
+
+          audit=stable.symbolic_exp_audit
+          for order in ("c1","c2"):
+              a=audit[order]
+              assert a["all_exp_args_equivalent_to_Zb_squared"], a
+              assert a["all_exp_args_Q0_free"], a
+              assert a["all_exp_args_Z0_free"], a
+
+          benign=m.ge06_stable_benign_equivalence(g,stable)
+          assert benign["all_stable_outputs_finite"], benign
+          assert benign["coeff1_source_global_relative_L2"]<=1e-10, benign
+          assert benign["coeff2_source_global_relative_L2"]<=1e-10, benign
+
+          physical=m.ge06_physical_parameter_probe(stable)
+          assert physical["c1"]["all_partials_finite"], physical
+          assert physical["c2"]["all_partials_finite"], physical
+
+          p=json.loads((root/"ge19/repair03_predata_canonical_exp_product_evaluation.json").read_text())
+          assert p["classification"]=="GE19_REPAIR03_PREDATA_CANONICAL_EXP_PRODUCT_EVALUATION"
+
+          print("SYMBOL_CONTRACT=",contract)
+          print("SYMBOLIC_EXP_AUDIT=",audit)
+          print("BENIGN_EQUIVALENCE=",benign)
+          print("PHYSICAL_PARAMETER_PROBE=",physical)
+          print("GE19_REPAIR03_PRELOCK_AUDIT_PASS")
+          PY
