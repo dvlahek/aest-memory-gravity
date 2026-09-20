@@ -201,8 +201,7 @@ def main():
         y2=np.asarray(a2(xx),float)
         H2=np.asarray(h2(xx),float)*g9.H0_CLASS
 
-        floor=max(float(np.max(np.abs(y1)))*1e-15,1e-300)
-        valid=np.abs(y1)>floor
+        valid=np.isfinite(y1) & np.isfinite(y2) & (np.abs(y1)>1e-300)
         ratio=np.full_like(y1,np.nan)
         ratio[valid]=y2[valid]/y1[valid]
         if not np.any(valid):
