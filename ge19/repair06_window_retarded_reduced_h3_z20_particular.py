@@ -947,7 +947,7 @@ def _canonical_operator_matrices(mod6,mod7,bg,tag,k,xq):
     Cmat,bp,base_diag=_local_linear_matrix(mod6,mod7,bg,tag,k,xq)
 
     Az=Cmat[0:6][:,_ZIDX]
-    Aq=Cmat[0:6][:_QIDX]
+    Aq=Cmat[0:6][:,_QIDX]
     Ry=np.zeros((6,8),complex)
     Ry[0:4,4:8]=np.eye(4)
     Ry[:,0:4]-=Aq
