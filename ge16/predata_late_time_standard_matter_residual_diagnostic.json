@@ -1,0 +1,64 @@
+{
+  "classification": "GE16_PREDATA_LATE_TIME_STANDARD_MATTER_RESIDUAL_DIAGNOSTIC",
+  "created_after_GE08_result": true,
+  "uses_new_CLASS_run": false,
+  "uses_new_physics": false,
+  "purpose": "Quantify the frozen GE08 late-time standard-sector deviation from an effective pressureless fluid when the effective dust is matched to the full standard-sector density and momentum, and distinguish this from the inferior baryon-only approximation.",
+  "parent": {
+    "classification": "GE08_REPAIR01_FULL_FIRST_ORDER_STATE_BRIDGE_PASS_MATTER_INCOMPLETE",
+    "artifact_id": 10598944561,
+    "artifact_digest": "sha256:d237aaf4b8f7314992de8dc1a0b432b4fb81eb80fe08352ac3f9d95cfc54982d"
+  },
+  "frozen_window": {
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "redshift": [
+      0.2,
+      1.5
+    ],
+    "selected_rows": 48
+  },
+  "definitions": {
+    "standard_sector": "CLASS total scalar stress minus frozen AeST effective-dark scalar stress",
+    "matched_effective_dust": "retain exact standard_delta_rho and standard_momentum; set standard_delta_p=0 and standard_shear=0",
+    "baryon_only": "use baryon_delta_rho and baryon momentum rho_b*theta_b",
+    "pressure_ratio_global": "||delta_p_std||_2 / ||delta_rho_std||_2",
+    "shear_ratio_global": "||shear_std||_2 / ||delta_rho_std||_2",
+    "pressure_ratio_pointwise": "max |delta_p_std/delta_rho_std|",
+    "shear_ratio_pointwise": "max |shear_std/delta_rho_std|",
+    "non_baryon_density_fraction": "||delta_rho_std-delta_rho_b||_2/||delta_rho_std||_2",
+    "non_baryon_momentum_fraction": "||mom_std-rho_b theta_b||_2/||mom_std||_2"
+  },
+  "diagnostic_gates": {
+    "artifact_digest_exact": true,
+    "parent_classification_exact": true,
+    "exactly_48_selected_rows": true,
+    "exactly_6_k_modes": true,
+    "exactly_8_native_times": true,
+    "reproduce_GE08_global_pressure_ratio_abs_error_max": 1e-15,
+    "reproduce_GE08_global_shear_ratio_abs_error_max": 1e-15,
+    "reproduce_GE08_baryon_density_mismatch_abs_error_max": 1e-15,
+    "all_quantities_finite": true
+  },
+  "no_approximation_acceptance_gate": true,
+  "outputs": [
+    "global and pointwise matched-dust pressure/shear omission ratios",
+    "same ratios per k",
+    "same ratios per native redshift",
+    "baryon-only density and momentum mismatch",
+    "non-baryon residual density and momentum amplitudes",
+    "pressure/shear relative to the non-baryon residual density"
+  ],
+  "terminal_classifications": {
+    "pass": "GE16_LATE_TIME_STANDARD_MATTER_RESIDUAL_DIAGNOSTIC_PASS",
+    "fail": "GE16_LATE_TIME_STANDARD_MATTER_RESIDUAL_DIAGNOSTIC_FAIL"
+  },
+  "claim_boundary": "GE16 is diagnostic only. PASS does not license the effective-dust approximation or Z20. A later model-choice lock must set its truncation budget independently and explicitly.",
+  "anti_tuning": "Do not convert observed GE16 residual amplitudes into a retrospective preregistration threshold inside GE16."
+}
