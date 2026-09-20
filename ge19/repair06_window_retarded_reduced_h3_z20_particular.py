@@ -1298,6 +1298,7 @@ def solve_case_canonical(mod6,mod7,bg,tag,sources_by_beta):
             max(q["initial_algebraic_scaled_residual"] for q in initdiag),
             rdiag["radau_block_scaled_relative_L2_residual_max"],
             odiag["algebraic_scaled_relative_L2_residual_max"],
+            odiag["lapse_noether_row_relative_residual_max"],
         )
         solve_res[:,jm]=base
         con_res[:,jm,0]=odiag["shift_constraint_relative_L2_max"]
