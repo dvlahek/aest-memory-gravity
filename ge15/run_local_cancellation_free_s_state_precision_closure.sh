@@ -13,7 +13,7 @@ echo "=== GE15 lock audit ==="
 test "$(git rev-parse HEAD:ge15/predata_cancellation_free_s_state_precision_closure.json)" = "18cc9e69fad27429fe91b6cb7168c087349c5b8d"
 test "$(git rev-parse HEAD:ge15/apply_cancellation_free_s_state_patch.py)" = "66b919b362b05721d1023441ab4a7c18f86f500c"
 test "$(git rev-parse HEAD:ge15/cancellation_free_s_state_precision_closure.py)" = "8e918742f7563dc64a1e94220dff63ac29d9e388"
-test "$(git rev-parse HEAD:docs/ge15_cancellation_free_s_state_precision_closure_implementation_lock.md)" = "439d1004aa89e3d59924be5fc6f5a2e3f4a47c4f"
+test "$(git rev-parse HEAD:docs/ge15_cancellation_free_s_state_precision_closure_implementation_lock.md)" = "99123c89616ed9264d6540549e4d5260484024a7"
 echo "GE15_LOCK_PASS"
 
 python3 -m py_compile   ge15/apply_cancellation_free_s_state_patch.py   ge15/cancellation_free_s_state_precision_closure.py
