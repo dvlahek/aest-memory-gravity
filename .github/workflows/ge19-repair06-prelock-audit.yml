@@ -66,7 +66,8 @@ jobs:
               (root/"ge06/analytic_aest_directional_source_generator.py").resolve(),
               "r6_ge06"
           )
-          m6=r6.build_stable_ge06_generator(g6)
+          m6=r6.build_stable_ge06_generator_v2(g6)
+          assert m6.full_stable_z_audit["phi_t_dpt_exact_identity"], m6.full_stable_z_audit
           m7=r6.load_frozen_generator(
               (root/"ge07/pressureless_matter_directional_source_generator.py").resolve(),
               "r6_ge07"
@@ -119,6 +120,10 @@ jobs:
               stage_points += [float(x[i]+h/3.0), float(x[i+1])]
           for xx in stage_points:
               Cx,bpx,bdx=r6._local_linear_matrix(m6,m7,bg,"C_star",k,xx)
+              # pphi principal row is analytically proportional to
+              # (1+2 Z^2) exp(Z^2) and must never collapse to zero.
+              pphi_principal=float(np.max(np.abs(Cx[2,r6._ZIDX])))
+              assert np.isfinite(pphi_principal) and pphi_principal>0.0, (xx,pphi_principal)
               old=Cx[0:6][:,r6._ZIDX]
               n=np.asarray([
                   1.0,0.0,bpx["a"]*bpx["H"],
