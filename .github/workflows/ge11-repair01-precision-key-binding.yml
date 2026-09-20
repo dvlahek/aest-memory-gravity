@@ -31,7 +31,7 @@ jobs:
           test "$(git rev-parse HEAD:ge11/pre/R2_repair01.pre)" = "63c3be3891a9b4178b179a3f728e72245ea63934"
           test "$(git rev-parse HEAD:ge11/repair01_dense_local_jet_fixed_refinement.py)" = "778e6a617af9f9584e4c1107f4c24bda561e6022"
           test "$(git rev-parse HEAD:docs/ge11_repair01_precision_key_binding_implementation_lock.md)" = "70fa794b32f7bb6461974c0e2aa4cba17902d602"
-          test "$(git rev-parse HEAD:docs/ge11_dense_local_jet_fixed_refinement_result_freeze.md)" = "2069864ee07effa64edc79ee5bf6ed7f69177f40"
+          test "$(git rev-parse HEAD:docs/ge11_dense_local_jet_fixed_refinement_result_freeze.md)" = "3882f54912ada367b0abf8c08cc6ba59c592fc21"
           test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
           git merge-base --is-ancestor 89d39bf9cd015d90cb76d60cf9a0ed324066a385 HEAD
           git merge-base --is-ancestor d6c65f47581be4afd2c86ca03a2a9cbea137aef4 HEAD
