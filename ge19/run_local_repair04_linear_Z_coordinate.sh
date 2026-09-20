@@ -8,7 +8,7 @@ mkdir -p results
 echo "=== GE19 Repair04 lock audit ==="
 test "$(git rev-parse HEAD:ge19/repair04_predata_linear_operator_Z_coordinate_and_provenance.json)" = "c16cb534db9215a057ffff93ab005f44284901ca"
 test "$(git rev-parse HEAD:ge19/repair04_window_retarded_reduced_h3_z20_particular.py)" = "35a8f4b6039e435e7d658e3b5cac34fdc7737f13"
-test "$(git rev-parse HEAD:docs/ge19_repair04_linear_Z_coordinate_implementation_lock.md)" = "9d1d6d66a3237a7ad2859813656095d15d4f93fc"
+test "$(git rev-parse HEAD:docs/ge19_repair04_linear_Z_coordinate_implementation_lock.md)" = "5474e7d71a979d39564e9a743f75649ca1c275b7"
 test "$(git rev-parse HEAD:.github/workflows/ge19-repair04-prelock-audit.yml)" = "8107889c62a6abbbf5847337ac21685a4edd6847"
 test "$(git rev-parse HEAD:docs/ge19_repair03_reduced_h1_result_freeze.md)" = "6542c64474361c734be9c9a217a719978afd478b"
 
@@ -19,6 +19,7 @@ test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py
 git merge-base --is-ancestor 90d5131f8c835dea066aa78e0992b94af7462b5a HEAD
 git merge-base --is-ancestor 3e1f2a7e66c8eac5aa220e041e8fd9279be1855e HEAD
 git merge-base --is-ancestor cba58cc46fbeb83e3d69ed7887dad08cd02a9292 HEAD
+git merge-base --is-ancestor 6301872b811000558303e62e7d5e6659efa5ff13 HEAD
 
 echo "GE19_REPAIR04_LOCK_PASS"
 
