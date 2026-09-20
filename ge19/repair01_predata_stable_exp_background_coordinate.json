@@ -1,0 +1,64 @@
+{
+  "classification": "GE19_REPAIR01_PREDATA_STABLE_EXP_BACKGROUND_COORDINATE",
+  "created_before_repair01_result": true,
+  "parent": {
+    "classification": "GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL",
+    "freeze_commit": "7c90c952eb765424b6b7ded1143ede31b241d745",
+    "failure": "physical-parameter GE06 Exp coefficient evaluation overflowed before reduced-H1 LU"
+  },
+  "diagnosis": "The frozen GE06 symbolic generator is analytically correct, but physical Exp evaluation reconstructed the stiff background coordinate through floating-point (Q_b-Q0)/Z0 with Z0=1e-17. Pinned CLASS instead reconstructs the dimensionless positive Exp coordinate from the conserved K_Q and only then evaluates Q,K,K_Q,K_QQ.",
+  "permitted_change_only": [
+    "reconstruct stable positive Exp background coordinate Z from the frozen GE15 background state",
+    "supply Q_action=Q0+Z0 Z to the unchanged GE06 f_c1/f_c2 symbolic coefficient functions",
+    "use the same Q_action in the reduced H1/H3 AeST background factors that represent the same action background",
+    "report naive trace-subtraction coordinate only as a diagnostic"
+  ],
+  "exact_reconstruction": {
+    "KQ_from_frozen_background": "3*(rho_dark+p_dark)/Q_trace",
+    "x": "KQ/(4*K2*Z0)",
+    "equation": "x = Z exp(Z^2)",
+    "Newton_variable": "y=Z^2",
+    "Newton_equation": "y + 0.5 ln(y) = ln(x)",
+    "Q_action": "Q0+Z0*sqrt(y)",
+    "K_action": "2*K2*Z0^2*(exp(y)-1)",
+    "KQQ_action": "4*K2*exp(y)*(1+2*y)",
+    "rho_reconstructed": "(Q_action*KQ-K_action)/3",
+    "p_reconstructed": "K_action/3",
+    "cad2_reconstructed": "KQ/(Q_action*KQQ_action)"
+  },
+  "reconstruction_gates": {
+    "all_stable_background_values_finite": true,
+    "Z_positive": true,
+    "rho_dark_reconstruction_global_relative_L2_max": 1e-10,
+    "p_dark_reconstruction_global_relative_L2_max": 1e-8,
+    "cad2_dark_reconstruction_global_relative_L2_max": 1e-8,
+    "KQ_a3_constancy_global_relative_L2_max": 1e-10,
+    "physical_GE06_linear_operator_matrix_all_finite": true
+  },
+  "unchanged_stage_A_gates": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 0.000001,
+    "anisotropy_constraint_relative_L2_max": 0.000001,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "unchanged_stage_B_gates": {
+    "spatial_N1024_vs_N2048_source_low_modes_m1_40_global_relative_L2_max": 0.0005,
+    "primary_linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 0.000001,
+    "anisotropy_constraint_relative_L2_max": 0.000001,
+    "primary64_vs_control32_state_low_mode_global_relative_L2_max": 0.005,
+    "all_three_beta0_and_all_three_C_cases_complete": true,
+    "all_outputs_finite": true
+  },
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "historical_parent_relabel": false,
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  },
+  "claim_boundary": "Repair01 changes only the numerically stable representation of the same frozen Exp background in the GE06 component-generator path. A PASS still has the original GE19 reduced-H1/H3 claim boundary."
+}
