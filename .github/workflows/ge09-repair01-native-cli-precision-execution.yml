@@ -86,7 +86,7 @@ jobs:
           assert 'perturb_sampling_stepsize = 0.0025' in p
           src=Path('ge09/repair01_dense_accepted_step_local_jet_bridge.py').read_text()
           assert 'v019p/pre/p3.pre' in src
-          assert 'get_perturbations' not in src
+          assert 'from classy import Class' not in src
           patch=json.load(open('results/ge09_dense_accepted_step_trace_patch.json'))
           assert patch['classification']=='GE09_DENSE_ACCEPTED_STEP_TRACE_PATCH_PASS'
           assert patch['physics_modified'] is False
