@@ -1,0 +1,102 @@
+{
+  "classification": "GE13_PREDATA_AEST_MODE_AMPLITUDE_ONSET_LOCALIZATION",
+  "created_after_GE12": true,
+  "uses_new_CLASS_run": false,
+  "uses_new_precision_level": false,
+  "uses_new_physics": false,
+  "purpose": "Using only the frozen GE11 Repair01 dense R1/R2 traces and frozen GE12 localization, determine if the late-time AeST discrepancy is a per-k time-stable amplitude factor and localize when each mode departs from the common early-time branch.",
+  "frozen_parents": {
+    "ge11_repair01": {
+      "classification": "GE11_REPAIR01_DENSE_LOCAL_JET_FIXED_REFINEMENT_FAIL",
+      "workflow_run": 35497478790,
+      "artifact_id": 10600652596,
+      "artifact_digest": "sha256:b35a3a0c8bbd22483bd04c006b20ceb97d3c7f263e178382026cba2983628ecc",
+      "R1_dense_sha256": "c50aae91fee94f00e1cbb5bd3c4d9352f15d892e91b230fad690f06c43e25fbd",
+      "R2_dense_sha256": "5a9480f69744db59ab8ca7fbdef56398c5fe38493730976d92b25873f46379b1"
+    },
+    "ge12": {
+      "classification": "GE12_GE11_R1_R2_STATE_DIVERGENCE_LOCALIZED",
+      "workflow_run": 35500848748,
+      "artifact_id": 10602610942,
+      "artifact_digest": "sha256:2b44a0c38d1a3aadcb05f1ed743560a68817e720dcb4d2cc41fe040d0b409fd9",
+      "result_json_sha256": "a374e3c66dcf7e73591c19acd22ae75a119798d73a222ea9678dac317b12380c"
+    }
+  },
+  "frozen_modes_h_Mpc": [
+    0.03,
+    0.05,
+    0.08,
+    0.1,
+    0.15,
+    0.2
+  ],
+  "frozen_channels": [
+    "alpha_aest",
+    "E_aest",
+    "chi",
+    "ut_kernel"
+  ],
+  "late_window": {
+    "z_min": 0.2,
+    "z_max": 1.5,
+    "common_ln_a_nodes": 64,
+    "interpolation": "same GE09 CubicHermite/PCHIP representation",
+    "diagnostics": [
+      "per-k least-squares R2/R1 scale",
+      "per-k post-rescaling relative L2",
+      "per-k cosine",
+      "spread among alpha,E,chi,ut_kernel scales"
+    ]
+  },
+  "full_history_onset": {
+    "interpolation": "same accepted-step CubicHermite alpha representation for each precision level",
+    "common_ln_a_samples_per_k": 4096,
+    "lower_endpoint": "later of the two first accepted R1/R2 endpoints for that k",
+    "upper_endpoint": "a=1/(1+0.2)",
+    "ratio": "alpha_R2/alpha_R1",
+    "departure_thresholds": [
+      0.001,
+      0.01,
+      0.05,
+      0.1
+    ],
+    "reports": [
+      "first a and z where |ratio-1| exceeds each threshold",
+      "k/(aH) at each crossing using the R2 PCHIP background H",
+      "late plateau scale over z=0.2--1.5",
+      "first accepted endpoint alpha mismatch",
+      "ratio evolution in 16 equal ln(a) bins"
+    ]
+  },
+  "frozen_IC_audit": {
+    "required_source_identities": [
+      "alpha_i=-a theta_i/k^2",
+      "E_i=0",
+      "delta_A=(1+w_A)delta_c"
+    ],
+    "interpretation": "The audit is static provenance only; it does not certify omitted finite-gradient IC terms."
+  },
+  "diagnostic_gates": {
+    "both_parent_artifact_digests_exact": true,
+    "both_parent_classifications_exact": true,
+    "dense_trace_hashes_exact": true,
+    "ge12_late_scales_reproduced_abs_error_max": 1e-12,
+    "common_history_interpolation_finite": true,
+    "frozen_IC_source_identities_present": true,
+    "all_reported_quantities_finite": true
+  },
+  "no_gate_physics_outputs": [
+    "per-k scale values",
+    "post-rescaling residuals",
+    "departure epochs",
+    "k/(aH) values",
+    "plateau timing",
+    "interpretation as IC, horizon-entry, approximation-switch or homogeneous-mode behavior"
+  ],
+  "terminal_classifications": {
+    "pass": "GE13_AEST_MODE_AMPLITUDE_ONSET_LOCALIZED",
+    "fail": "GE13_AEST_MODE_AMPLITUDE_ONSET_DIAGNOSTIC_FAIL"
+  },
+  "claim_boundary": "GE13 is diagnostic only. It cannot relabel GE11, select R1/R2, add R3, modify ICs, claim a physical instability, or license Z20.",
+  "anti_tuning": "Do not change the parent artifacts, channels, departure thresholds, history grid, late window, IC identities, or reconstruction rules after inspecting GE13."
+}
