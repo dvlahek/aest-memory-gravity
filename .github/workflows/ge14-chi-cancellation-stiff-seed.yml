@@ -1,0 +1,120 @@
+name: GE14 chi cancellation stiff seed
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge14/**'
+      - 'docs/ge14_chi_cancellation_stiff_seed_implementation_lock.md'
+      - '.github/workflows/ge14-chi-cancellation-stiff-seed.yml'
+
+jobs:
+  chi-cancellation-stiff-seed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge14/predata_chi_cancellation_stiff_seed.json)" = "67677bbee68c9b99f540246f2aef7b74171b1358"
+          test "$(git rev-parse HEAD:ge14/chi_cancellation_stiff_seed_audit.py)" = "94692ff867def90c0d0ab5f0271307fb076398d1"
+          test "$(git rev-parse HEAD:docs/ge14_chi_cancellation_stiff_seed_implementation_lock.md)" = "7aa176b018992e231e19faa59a47ff67177459ec"
+          git merge-base --is-ancestor bd6bbdbbe64aa35fc17bfdb403c8768d36250f65 HEAD
+          git merge-base --is-ancestor a96219dd52279d268d356bd6592b8a0a79506cd0 HEAD
+          git merge-base --is-ancestor 7fc36f506a8fab1767ec177f4a4a2ff26490b542 HEAD
+          echo GE14_LOCK_PASS
+
+      - name: Install dependency
+        run: python3 -m pip install --user numpy
+
+      - name: Verify frozen GE11 artifact metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10600652596"             -o results/ge14_parent_artifact_metadata.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('results/ge14_parent_artifact_metadata.json'))
+          assert a['id']==10600652596
+          assert a['workflow_run']['id']==35497478790
+          assert a['digest']=='sha256:b35a3a0c8bbd22483bd04c006b20ceb97d3c7f263e178382026cba2983628ecc'
+          assert a['expired'] is False
+          print('GE14_PARENT_ARTIFACT_PASS')
+          PY
+
+      - name: Download frozen GE11 Repair01 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10600652596
+          path: frozen_ge11
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35497478790
+
+      - name: Predata implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge14/chi_cancellation_stiff_seed_audit.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge14/predata_chi_cancellation_stiff_seed.json'))
+          assert d['classification']=='GE14_PREDATA_CHI_CANCELLATION_STIFF_SEED_AUDIT'
+          assert d['uses_new_CLASS_run'] is False
+          assert d['gates']['cancellation_residual_machine_epsilon_units_max']==8.0
+          assert d['gates']['stiff_term_reproduces_full_Eprime_relative_error_max']==1e-6
+          print('GE14_PREDATA_PASS')
+          PY
+
+      - name: Run GE14 audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge14/chi_cancellation_stiff_seed_audit.py             --artifact-root frozen_ge11             --artifact-meta-json results/ge14_parent_artifact_metadata.json             --json-out results/ge14_chi_cancellation_stiff_seed.json             | tee results/ge14_chi_cancellation_stiff_seed.log
+
+      - name: Summarize GE14
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge14_chi_cancellation_stiff_seed.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge14_chi_cancellation_stiff_seed.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('SUMMARY=',d['summary'])
+          print('GATES=',d['gates'])
+          for tag in ('R1','R2'):
+              print(tag)
+              for r in d[tag]:
+                  print('k=',r['k_Mpc'],
+                        'eps_units=',r['machine_epsilon_units'],
+                        'stiff_rel=',r['stiff_vs_trace_relative_error'],
+                        'grad_over_stiff=',r['finite_gradient_over_stiff_abs_ratio'])
+          PY
+          fi
+
+      - name: Upload GE14 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge14_chi_cancellation_stiff_seed
+          path: |
+            results/ge14_parent_artifact_metadata.json
+            results/ge14_chi_cancellation_stiff_seed.json
+            results/ge14_chi_cancellation_stiff_seed.log
+            ge14/predata_chi_cancellation_stiff_seed.json
+            docs/ge14_chi_cancellation_stiff_seed_implementation_lock.md
+          if-no-files-found: warn
