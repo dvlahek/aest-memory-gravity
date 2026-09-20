@@ -1,0 +1,4 @@
+# GE11 fixed refinement R1
+# Exactly factor-2 tighter than frozen p3 in both settings.
+tol_perturb_integration = 2.5e-8
+perturb_sampling_stepsize = 0.00125
