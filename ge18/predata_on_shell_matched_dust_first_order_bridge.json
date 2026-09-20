@@ -1,0 +1,87 @@
+{
+  "classification": "GE18_PREDATA_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE",
+  "created_before_result": true,
+  "uses_new_CLASS_run": false,
+  "uses_new_physics": false,
+  "purpose": "Construct an on-shell pressureless first-order standard-matter surrogate on the frozen GE15 R1 metric, initialized from the full CLASS standard-sector density and momentum, and quantify its drift from the full standard sector before using GE07 in H3.",
+  "dependencies": {
+    "ge15": "GE15_CANCELLATION_FREE_S_STATE_PRECISION_CLOSURE_PASS",
+    "ge16": "GE16_LATE_TIME_STANDARD_MATTER_RESIDUAL_DIAGNOSTIC_PASS",
+    "ge17": "GE17_LATE_TIME_STANDARD_BACKGROUND_DUST_DIAGNOSTIC_PASS"
+  },
+  "required_local_GE15_files": [
+    "results/ge15_R1_dense_accepted_step_trace.dat",
+    "results/ge15_R1_cli_background.dat",
+    "results/ge15_R1_cli_perturbations_k0_s.dat",
+    "results/ge15_R1_cli_perturbations_k1_s.dat",
+    "results/ge15_R1_cli_perturbations_k2_s.dat",
+    "results/ge15_R1_cli_perturbations_k3_s.dat",
+    "results/ge15_R1_cli_perturbations_k4_s.dat",
+    "results/ge15_R1_cli_perturbations_k5_s.dat",
+    "results/ge15_cancellation_free_s_state_precision_closure.json"
+  ],
+  "frozen_window": {
+    "z": [
+      0.2,
+      1.5
+    ],
+    "common_ln_a_nodes": 64,
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ]
+  },
+  "dust_background_CLASS_units": {
+    "C_min": 2.566238549760586e-9,
+    "C_star": 2.568543329983919e-9,
+    "C_max": 2.5714842087496506e-9,
+    "rho_d": "C/a^3"
+  },
+  "full_standard_state_from_CLASS": {
+    "delta_rho_std": "rho_g delta_g + rho_b delta_b + rho_ur delta_ur + rho_ncdm delta_ncdm",
+    "momentum_std": "(4/3 rho_g) theta_g + rho_b theta_b + (4/3 rho_ur) theta_ur + (rho_ncdm+p_ncdm) theta_ncdm"
+  },
+  "on_shell_dust_equations_CLASS_conventions": {
+    "delta_prime": "-theta + 3 phi_prime",
+    "theta_prime": "-(aH) theta + k^2 psi",
+    "independent_variable": "ln a",
+    "initial_condition": "at a=1/(1+1.5), match absolute standard-sector delta_rho and momentum for each k"
+  },
+  "exact_GE07_map": {
+    "action_background_varrho": "3 rho_d = 3 C/a^3",
+    "action_density_direction": "delta_varrho = 3 rho_d delta_d",
+    "dust_potential_cosine_amplitude": "T1=a theta_d/k^2",
+    "T_t_direction": "delta T_t = psi",
+    "T_x_sine_coefficient": "-a theta_d/k",
+    "normalization_reason": "CLASS background densities use (8piG/3)rho while GE07 varrho=8piG rho"
+  },
+  "numerical_controls": {
+    "primary_integrator": "DOP853 rtol=1e-11 atol=1e-13",
+    "control_integrator": "DOP853 rtol=2e-12 atol=2e-14",
+    "primary_control_density_global_relative_L2_max": 1e-8,
+    "primary_control_momentum_global_relative_L2_max": 1e-8,
+    "initial_absolute_density_match_relative_max": 1e-10,
+    "initial_absolute_momentum_match_relative_max": 1e-10,
+    "T_potential_identity_abs_or_rel_max": 1e-9,
+    "all_outputs_finite": true
+  },
+  "reported_model_errors": [
+    "central C_star dust versus full standard delta_rho global and pointwise relative error",
+    "central C_star dust versus full standard momentum global and pointwise relative error",
+    "same errors per k and versus redshift",
+    "C_min and C_max envelope errors",
+    "difference between central and envelope dust states",
+    "GE07 directional variables on the 64-node common grid"
+  ],
+  "no_approximation_acceptance_gate": true,
+  "terminal_classifications": {
+    "pass": "GE18_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_PASS",
+    "fail": "GE18_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_FAIL"
+  },
+  "claim_boundary": "PASS certifies the on-shell reduced dust construction and quantifies its first-order model error. It does not declare the reduced model exact or by itself certify a full-species Z20.",
+  "anti_tuning": "Do not add or relax a model-error acceptance threshold after observing GE18. Model errors are descriptive and must propagate into the later reduced-H3 Z20 envelope."
+}
