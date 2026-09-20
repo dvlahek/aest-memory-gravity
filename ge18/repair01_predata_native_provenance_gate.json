@@ -1,0 +1,73 @@
+{
+  "classification": "GE18_REPAIR01_PREDATA_NATIVE_PROVENANCE_GATE",
+  "created_before_repair01_result": true,
+  "parent": {
+    "classification": "GE18_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_FAIL",
+    "result_freeze_commit": "971efa7634fe93387c69b463771d801a264dd2cf",
+    "failed_gate": "metric_and_background_cross_file_abs_or_rel_le_1e8",
+    "observed": 7.590304690330285e-8
+  },
+  "diagnosis": "The failed gate compares the frozen GE09 dense-state Hermite/PCHIP representation with an independently PCHIP-interpolated raw CLASS/background representation at 64 non-native nodes. Native dense trace versus raw CLASS perturbations is exactly consistent (abs-or-rel max 0.0). The failed quantity is therefore an interpolation-representation diagnostic, not a native provenance or physics-consistency test.",
+  "permitted_change_only": [
+    "remove the 64-node mixed-interpolation quantity from PASS/FAIL",
+    "retain it as a reported diagnostic",
+    "use frozen native dense trace SHA and native dense-vs-raw CLASS control as provenance gates"
+  ],
+  "unchanged_controls": {
+    "density_primary_control_global_relative_L2_max": 1e-8,
+    "momentum_primary_control_global_relative_L2_max": 1e-8,
+    "initial_absolute_density_match_relative_max": 1e-10,
+    "initial_absolute_momentum_match_relative_max": 1e-10,
+    "T_potential_identity_abs_or_rel_max": 1e-9,
+    "all_outputs_finite": true,
+    "C_values": {
+      "C_min": 2.566238549760586e-9,
+      "C_star": 2.568543329983919e-9,
+      "C_max": 2.5714842087496506e-9
+    },
+    "frozen_window_z": [
+      0.2,
+      1.5
+    ],
+    "common_ln_a_nodes": 64,
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "dust_equations": {
+      "delta_prime": "-theta + 3 phi_prime",
+      "theta_prime": "-(aH) theta + k^2 psi"
+    },
+    "initial_condition": "match full standard-sector absolute density and momentum at z=1.5",
+    "GE07_map": {
+      "action_background_varrho": "3 C/a^3",
+      "action_density_direction": "3 rho_d delta_d",
+      "T1": "a theta_d/k^2",
+      "T_t_direction": "psi",
+      "T_x_sine_coefficient": "-a theta_d/k"
+    }
+  },
+  "provenance_gates": {
+    "local_GE15_classification_PASS": true,
+    "R1_dense_trace_hash_matches_GE15_result": true,
+    "dense_trace_vs_raw_CLASS_abs_or_rel_max": 1e-12,
+    "requested_k_relative_miss_max": 1e-12
+  },
+  "diagnostic_only": [
+    "mixed 64-node dense-representation versus raw-file PCHIP mismatch",
+    "central and envelope reduced-matter model errors versus full standard CLASS matter"
+  ],
+  "no_new_CLASS_run": true,
+  "no_new_physics": true,
+  "no_model_error_acceptance_gate": true,
+  "historical_parent_relabel": false,
+  "terminal_classifications": {
+    "pass": "GE18_REPAIR01_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_PASS",
+    "fail": "GE18_REPAIR01_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_FAIL"
+  },
+  "claim_boundary": "PASS certifies the on-shell reduced-dust Z10 bridge under the already frozen reduced model, with descriptive full-standard-matter discrepancy propagated later as a systematic. It does not certify a full-species Z20."
+}
