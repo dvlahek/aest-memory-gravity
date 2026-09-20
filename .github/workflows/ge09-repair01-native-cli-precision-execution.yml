@@ -1,0 +1,137 @@
+name: GE09 Repair01 native CLI precision execution
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge09/**'
+      - 'docs/ge09_repair01_predata_native_cli_precision_execution.md'
+      - 'docs/ge09_repair01_native_cli_precision_execution_implementation_lock.md'
+      - '.github/workflows/ge09-repair01-native-cli-precision-execution.yml'
+
+jobs:
+  native-cli-local-jet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge09/predata_dense_accepted_step_local_jet_bridge.json)" = "239a0296a25b3740e67c02759c1998560c37de4f"
+          test "$(git rev-parse HEAD:docs/ge09_repair01_predata_native_cli_precision_execution.md)" = "53076ce1e6b0a8446f0adedc6c9d73f75650898c"
+          test "$(git rev-parse HEAD:ge09/apply_dense_accepted_step_trace_patch.py)" = "23b0cd22ebab499aee0ce03e6b3b678fe727ef55"
+          test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "27627e9163894174708dec82dfa4951e7f8ecb42"
+          test "$(git rev-parse HEAD:docs/ge09_repair01_native_cli_precision_execution_implementation_lock.md)" = "262a378a5ae76bf767673ee5f2e1c5f1cb24cd41"
+          test "$(git rev-parse HEAD:v019p/pre/p3.pre)" = "c44d2491747a5a1ac805e25de502a9ff33748f65"
+          git merge-base --is-ancestor d5b849c8d8d6dc657815740871bcd977d8cc6316 HEAD
+          git merge-base --is-ancestor 4bccfea123e8c1b227db05269130c5ce65fe6303 HEAD
+          git merge-base --is-ancestor 0e1bf33c297600cecbfd231c531718d5db914814 HEAD
+          git merge-base --is-ancestor 64f7d04bff2e0e0a44b6024cfc2f1dc197bfc21d HEAD
+          echo GE09_REPAIR01_LOCK_PASS
+
+      - name: Checkout pinned CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_ge09r1
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply validated AeST chain and diagnostic traces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_ge09r1
+          python3 v019i/apply_ic_patch.py class_ge09r1
+          python3 v019j/apply_memory_patch.py class_ge09r1
+          python3 v019w/apply_variational_forcing_patch.py class_ge09r1
+          python3 v019y/apply_output_precision_patch.py class_ge09r1
+          python3 v023/apply_source_grid_trace_patch.py class_ge09r1
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_ge09r1
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_ge09r1
+          python3 ge08/apply_full_state_trace_patch.py class_ge09r1
+          python3 ge09/apply_dense_accepted_step_trace_patch.py class_ge09r1
+
+      - name: Build CLASS executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C class_ge09r1 -j2 class
+
+      - name: Predata implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile ge09/repair01_dense_accepted_step_local_jet_bridge.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('ge09/predata_dense_accepted_step_local_jet_bridge.json'))
+          assert d['classification']=='GE09_PREDATA_DENSE_ACCEPTED_STEP_LOCAL_JET_BRIDGE'
+          assert d['gates']['source_grid_state_validation_abs_or_rel_max']==1e-4
+          assert d['gates']['primary_vs_decimated_control_global_relative_L2_max']==5e-4
+          assert d['gates']['primary_vs_decimated_control_pointwise_abs_or_rel_max']==2e-3
+          p=Path('v019p/pre/p3.pre').read_text()
+          assert 'tol_perturb_integration = 5.e-8' in p
+          assert 'perturb_sampling_stepsize = 0.0025' in p
+          src=Path('ge09/repair01_dense_accepted_step_local_jet_bridge.py').read_text()
+          assert 'v019p/pre/p3.pre' in src
+          assert 'get_perturbations' not in src
+          patch=json.load(open('results/ge09_dense_accepted_step_trace_patch.json'))
+          assert patch['classification']=='GE09_DENSE_ACCEPTED_STEP_TRACE_PATCH_PASS'
+          assert patch['physics_modified'] is False
+          print('GE09_REPAIR01_PREDATA_IMPLEMENTATION_PASS')
+          PY
+
+      - name: Run GE09 Repair01
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge09/repair01_dense_accepted_step_local_jet_bridge.py             --class-root class_ge09r1             --json-out results/ge09_repair01_dense_accepted_step_local_jet_bridge.json             --npz-out results/ge09_repair01_dense_accepted_step_local_jet_bridge.npz             | tee results/ge09_repair01_dense_accepted_step_local_jet_bridge.log
+
+      - name: Summarize GE09 Repair01
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge09_repair01_dense_accepted_step_local_jet_bridge.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge09_repair01_dense_accepted_step_local_jet_bridge.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('TRACE=',d['trace'])
+          print('SOURCE_GRID_VALIDATION=',d['source_grid_validation'])
+          print('JET_CONTROL=',d['jet_control'])
+          print('EXACT_CONTROLS=',d['exact_internal_controls'])
+          print('GATES=',d['gates'])
+          print('PROJECT_BOUNDARY=',d['project_boundary'])
+          PY
+          fi
+
+      - name: Upload GE09 Repair01 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge09_repair01_native_cli_local_jet
+          path: |
+            results/ge09_repair01_dense_accepted_step_local_jet_bridge.json
+            results/ge09_repair01_dense_accepted_step_local_jet_bridge.npz
+            results/ge09_repair01_dense_accepted_step_local_jet_bridge.log
+            results/ge09_repair01_cli_class.log
+            results/ge09_dense_accepted_step_trace.dat
+            results/ge09_source_state_trace.dat
+            results/ge09_dense_accepted_step_trace_patch.json
+            results/ge09_cli_perturbations_k*_s.dat
+            ge09/predata_dense_accepted_step_local_jet_bridge.json
+            docs/ge09_repair01_predata_native_cli_precision_execution.md
+            docs/ge09_repair01_native_cli_precision_execution_implementation_lock.md
+          if-no-files-found: warn
