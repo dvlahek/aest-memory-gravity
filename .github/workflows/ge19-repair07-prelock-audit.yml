@@ -1,0 +1,134 @@
+name: GE19 Repair07 prelock constraint audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair07_*'
+      - '.github/workflows/ge19-repair07-prelock-audit.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile Repair07
+        run: python3 -m py_compile ge19/repair07_window_retarded_reduced_h3_z20_particular.py
+
+      - name: Audit frozen physics and constraint metric
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, inspect, math
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          def load(path,name):
+              spec=importlib.util.spec_from_file_location(name,path)
+              mod=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(mod)
+              return mod
+
+          r6=load(root/"ge19/repair06_window_retarded_reduced_h3_z20_particular.py","r6")
+          r7=load(root/"ge19/repair07_window_retarded_reduced_h3_z20_particular.py","r7")
+
+          # Physics, sources, DAE partition and integrator are unchanged.
+          frozen=[
+              "build_stable_ge06_generator_v2",
+              "stable_exp_background_from_native",
+              "reference_reduced_mode_state",
+              "main_and_constraints",
+              "_canonical_operator_matrices",
+              "_initial_canonical_state",
+              "_source_interp",
+              "_zero_source_interp",
+              "_radau2_integrate_canonical",
+              "source_real_reduced",
+              "linear_operator_batch",
+              "build_matrix",
+          ]
+          for name in frozen:
+              a=inspect.getsource(getattr(r6,name))
+              b=inspect.getsource(getattr(r7,name))
+              assert a==b, f"frozen function changed: {name}"
+
+          for name in [
+              "KB","CV","K2","Q0","Z0","A0_MPC_INV",
+              "BETAS","C_TAGS","C_VALUES","FOURIER_N","PHASES","M_SOLVE",
+              "NT_PRIMARY","NT_CONTROL","NX_PRIMARY","NX_SPATIAL_CONTROL",
+              "SOURCE_SPATIAL_MAX","LINEAR_RES_MAX","CONSTRAINT_MAX",
+              "TIME_STATE_MAX","GE15_GE18_METRIC_MAX","GE18_NPZ_SHA"
+          ]:
+              a=getattr(r6,name); b=getattr(r7,name)
+              if isinstance(a,np.ndarray): assert np.array_equal(a,b), name
+              else: assert a==b, name
+
+          # The new metric must reject genuine violations.
+          m=r7._constraint_backward_error(
+              np.asarray([1.0,1.0],complex),
+              np.asarray([1.0,1.0],complex),
+              0.0,
+              1.0,1.0
+          )
+          assert abs(m["metric"]-1.0)<=1e-15, m
+
+          # Exact cancellation must be zero, not undefined/O(1).
+          c=r7._constraint_backward_error(
+              np.asarray([1.0,-1.0],complex),
+              np.asarray([1.0,1.0],complex),
+              0.0,
+              1.0,-1.0
+          )
+          assert c["metric"]==0.0, c
+          assert c["scale"]>=2.0-1e-15, c
+
+          # Near cancellation must measure the small backward error against
+          # the actual term magnitudes.
+          eps=2.0**-45
+          q=r7._constraint_backward_error(
+              np.asarray([1.0,-1.0+eps],complex),
+              np.asarray([1.0,1.0],complex),
+              0.0,
+              1.0,-1.0+eps
+          )
+          assert q["metric"]<1e-12, q
+          assert q["contribution_scale"]>1.9, q
+
+          # Nonzero source exactly matched must give zero.
+          z=r7._constraint_backward_error(
+              np.asarray([2.0,-0.5],complex),
+              np.asarray([3.0,4.0],complex),
+              4.0,
+              6.0,-2.0
+          )
+          assert z["metric"]==0.0, z
+
+          # Existing stable-Z generator audits remain unchanged.
+          g6=r7.load_frozen_generator(
+              (root/"ge06/analytic_aest_directional_source_generator.py").resolve(),
+              "r7_ge06"
+          )
+          m6=r7.build_stable_ge06_generator_v2(g6)
+          benign=r7.ge06_stable_benign_equivalence(g6,m6)
+          physical=r7.ge06_physical_parameter_probe(m6)
+          assert benign["all_stable_outputs_finite"], benign
+          assert benign["coeff1_source_global_relative_L2"]<=1e-10, benign
+          assert benign["coeff2_source_global_relative_L2"]<=1e-10, benign
+          assert physical["c1"]["all_partials_finite"], physical
+          assert physical["c2"]["all_partials_finite"], physical
+
+          print("GENUINE_VIOLATION_METRIC =",m)
+          print("EXACT_CANCELLATION_METRIC =",c)
+          print("NEAR_CANCELLATION_METRIC =",q)
+          print("EXACT_SOURCE_MATCH_METRIC =",z)
+          print("BENIGN_EQUIVALENCE =",benign)
+          print("PHYSICAL_PARAMETER_PROBE =",physical)
+          print("GE19_REPAIR07_PRELOCK_AUDIT_PASS")
+          PY
