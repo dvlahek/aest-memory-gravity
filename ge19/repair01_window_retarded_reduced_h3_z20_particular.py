@@ -26,6 +26,9 @@ import math
 import os
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
+
+import sympy as sp
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
@@ -109,6 +112,75 @@ def load_frozen_generator(path:Path,name:str):
             return mod
         finally:
             os.chdir(old)
+
+
+
+def build_stable_ge06_generator(mod6):
+    """Re-lambdify the frozen GE06 symbolic partials in stable Exp coordinate Zb.
+
+    The frozen action/partial_map is unchanged.  Only the background
+    parametrization is changed before taking the same epsilon derivatives:
+    pt_background = Q0 + Z0*Zb.
+    """
+    Zb=sp.symbols("Zb",positive=True,real=True)
+    expansion=dict(mod6.expansion)
+    expansion[mod6.pt]=mod6.Q0+mod6.Z0*Zb+mod6.eps*mod6.dpt
+
+    direction_args=(
+        mod6.aa,mod6.adot,Zb,
+        mod6.dN,mod6.dL,mod6.dR,mod6.db,mod6.du,
+        mod6.dLt,mod6.dLx,mod6.dRt,mod6.dRx,mod6.dbx,
+        mod6.dut,mod6.dux,mod6.dpt,mod6.dpx,mod6.dNx,
+        mod6.KB,mod6.C,mod6.K2,mod6.Q0,mod6.Z0,
+    )
+    coeff1={}
+    coeff2={}
+    for key,expr in mod6.partial_map.items():
+        ee=expr.subs(expansion)
+        # Deliberately avoid simplify(): the frozen GE06 simplify/CSE path can
+        # separate exp((Qb-Q0)^2/Z0^2) into individually overflowing factors.
+        coeff1[key]=sp.diff(ee,mod6.eps).subs(mod6.eps,0)
+        coeff2[key]=sp.diff(ee,mod6.eps,2).subs(mod6.eps,0)
+
+    f1={k:sp.lambdify(direction_args,v,"numpy",cse=False) for k,v in coeff1.items()}
+    f2={k:sp.lambdify(direction_args,v,"numpy",cse=False) for k,v in coeff2.items()}
+    return SimpleNamespace(f_c1=f1,f_c2=f2,Zb_symbol=Zb)
+
+
+def ge06_stable_benign_equivalence(mod6,stable):
+    """Compare stable re-expression to the frozen GE06 benign audit regime."""
+    T,X,dt,dx,a,adot,qb,direction=mod6.deterministic_grid()
+    loc=mod6.direction_locals(direction,dt,dx)
+    Zb=(np.asarray(qb,float)-mod6.Q0V)/mod6.Z0V
+    vals=(
+        a,adot,Zb,*loc,
+        mod6.KBV,mod6.CV,mod6.K2V,mod6.Q0V,mod6.Z0V,
+    )
+    p1={k:fn(*vals) for k,fn in stable.f_c1.items()}
+    p2={k:fn(*vals) for k,fn in stable.f_c2.items()}
+    s1=mod6.assemble(p1,dt,dx,direction["N"].shape)
+    s2=mod6.assemble(p2,dt,dx,direction["N"].shape)
+    f1,f2=mod6.analytic_sources(a,adot,qb,direction,dt,dx)
+    names=mod6.SOURCE_NAMES
+    v1=np.concatenate([np.asarray(s1[k],float).ravel() for k in names])
+    w1=np.concatenate([np.asarray(f1[k],float).ravel() for k in names])
+    v2=np.concatenate([np.asarray(s2[k],float).ravel() for k in names])
+    w2=np.concatenate([np.asarray(f2[k],float).ravel() for k in names])
+    return {
+        "coeff1_source_global_relative_L2":rel_l2(v1,w1),
+        "coeff2_source_global_relative_L2":rel_l2(v2,w2),
+        "all_stable_outputs_finite":bool(np.all(np.isfinite(v1)) and np.all(np.isfinite(v2))),
+    }
+
+
+def eval_stable_partials(fnmap,vals,shape,label):
+    out={}
+    for name,fn in fnmap.items():
+        v=np.broadcast_to(np.asarray(fn(*vals)),shape).copy()
+        if not np.all(np.isfinite(v)):
+            raise RuntimeError(f"non-finite stable GE06 partial {label}:{name}")
+        out[name]=v
+    return out
 
 
 def fd4_matrix(n:int,x0:float,x1:float)->np.ndarray:
@@ -611,10 +683,10 @@ def source_real_reduced(mod6,mod7,bg,tag,beta,nx,reduced_state):
     z=np.zeros_like(N)
     aa=bg["a"][:,None]
     adot=(bg["a"]*bg["H"])[:,None]
-    Qb=bg["Q_action"][:,None]
+    Zb=bg["Z_action"][:,None]
 
     vals6=(
-        aa,adot,Qb,
+        aa,adot,Zb,
         N,S,S,z,u,
         dot["S20"],spatial["S20"],
         dot["S20"],spatial["S20"],z,
@@ -622,8 +694,7 @@ def source_real_reduced(mod6,mod7,bg,tag,beta,nx,reduced_state):
         dot["phi20"],spatial["phi20"],spatial["N20"],
         KB,CV,K2,Q0,Z0,
     )
-    p6={name:fn(*vals6) for name,fn in mod6.f_c2.items()}
-    p6=broadcast_partials(p6,N.shape)
+    p6=eval_stable_partials(mod6.f_c2,vals6,N.shape,"c2")
     q6=assemble_ga_local(
         p6,Dt,spatial_real=True,
         kfund=float(g9.K_REQ[0]/FOURIER_N[0])
@@ -669,8 +740,8 @@ def source_real(mod6,mod7,bg,jets,npz,tag,beta,nx):
     ga,matter,chi=build_first_order_real(bg,jets,npz,tag,nx)
     aa=bg["a"][:,None]
     adot=(bg["a"]*bg["H"])[:,None]
-    Qb=bg["Q_action"][:,None]
-    vals6=(aa,adot,Qb,
+    Zb=bg["Z_action"][:,None]
+    vals6=(aa,adot,Zb,
            ga["N"],ga["L"],ga["R"],ga["b"],ga["u"],
            ga["Lt"],ga["Lx"],ga["Rt"],ga["Rx"],ga["bx"],
            ga["ut"],ga["ux"],ga["pt"],ga["px"],ga["Nx"],
@@ -730,8 +801,7 @@ def linear_operator_batch(mod6,mod7,bg,tag,k,Y,return_parts=False):
            dS,ik*S,dS,ik*S,z,
            du,ik*u,dp,ik*phi,ik*N,
            KB,CV,K2,Q0,Z0)
-    p6={name:fn(*vals6) for name,fn in mod6.f_c1.items()}
-    p6=broadcast_partials(p6,N.shape)
+    p6=eval_stable_partials(mod6.f_c1,vals6,N.shape,"c1")
     l6=assemble_ga_local(p6,Dt,k=k)
 
     rhob=(3.0*C_VALUES[tag]/bg["a"]**3)[:,None]
@@ -883,7 +953,9 @@ def main():
     ge18_npz_sha=sha256(ge18_npz_path)
     npz=np.load(ge18_npz_path)
 
-    mod6=load_frozen_generator(ROOT/"ge06"/"analytic_aest_directional_source_generator.py","ge19_ge06")
+    mod6_frozen=load_frozen_generator(ROOT/"ge06"/"analytic_aest_directional_source_generator.py","ge19_ge06")
+    mod6=build_stable_ge06_generator(mod6_frozen)
+    ge06_equivalence=ge06_stable_benign_equivalence(mod6_frozen,mod6)
     mod7=load_frozen_generator(ROOT/"ge07"/"pressureless_matter_directional_source_generator.py","ge19_ge07")
 
     bg64,state64,jets64=build_ge15_reference(dense,NT_PRIMARY)
@@ -966,6 +1038,7 @@ def main():
         "GE15_R1_frozen_64node_jet_abs_or_rel_max":ge15_jet_err,
         "stable_exp_background_native_diagnostic":bg64["stable_exp_native_diagnostic"],
         "stable_exp_background_native_gates":bg64["stable_exp_native_gates"],
+        "stable_GE06_benign_equivalence":ge06_equivalence,
         "GE18_repair01_npz_sha256":ge18_npz_sha,
         "GE18_repair01_npz_expected_sha256":GE18_NPZ_SHA,
         "GE18_repair01_npz_hash_exact":ge18_npz_sha==GE18_NPZ_SHA,
@@ -983,6 +1056,9 @@ def main():
         and metric_err<=GE15_GE18_METRIC_MAX
         and all(bg64["stable_exp_native_gates"].values())
         and all(bg32["stable_exp_native_gates"].values())
+        and ge06_equivalence["all_stable_outputs_finite"]
+        and ge06_equivalence["coeff1_source_global_relative_L2"]<=1e-10
+        and ge06_equivalence["coeff2_source_global_relative_L2"]<=1e-10
     )
 
     # Amendment01 stop rule: do not construct or interpret H3 if reduced H1
@@ -994,6 +1070,7 @@ def main():
             "predata_amendment":"GE19_PREDATA_AMENDMENT01_REDUCED_H1_RECLOSURE",
         "repair01_predata":"GE19_REPAIR01_PREDATA_STABLE_EXP_BACKGROUND_COORDINATE",
         "repair01_predata_amendment":"GE19_REPAIR01_PREDATA_AMENDMENT01_NATIVE_I0_RECONSTRUCTION",
+        "repair01_predata_amendment02":"GE19_REPAIR01_PREDATA_AMENDMENT02_STABLE_SYMBOLIC_RELAMBDIFICATION",
             "failure_stage":"Stage_A_reduced_H1_reclosure",
             "provenance":provenance,
             "stage_A_reduced_H1":{
@@ -1126,6 +1203,15 @@ def main():
         "stable_Exp_background_native_reconstruction_all_gates":bool(
             all(bg64["stable_exp_native_gates"].values())
             and all(bg32["stable_exp_native_gates"].values())
+        ),
+        "stable_GE06_benign_coeff1_equivalence_global_relative_L2_le_1e10":bool(
+            ge06_equivalence["coeff1_source_global_relative_L2"]<=1e-10
+        ),
+        "stable_GE06_benign_coeff2_equivalence_global_relative_L2_le_1e10":bool(
+            ge06_equivalence["coeff2_source_global_relative_L2"]<=1e-10
+        ),
+        "stable_GE06_benign_outputs_finite":bool(
+            ge06_equivalence["all_stable_outputs_finite"]
         ),
         "GE15_R1_reconstructed_jet_vs_frozen_64node_representation_abs_or_rel_le_1e10":bool(ge15_jet_err<=1e-10),
         "GE15_GE18_metric_bridge_abs_or_rel_le_1e10":bool(metric_err<=GE15_GE18_METRIC_MAX),
