@@ -1,0 +1,25 @@
+{
+  "classification": "GE19_REPAIR01_PREDATA_AMENDMENT02_STABLE_SYMBOLIC_RELAMBDIFICATION",
+  "timing": "before any GE19 Repair01 science execution/output",
+  "parent_repair01_predata_commit": "57148a617503d8bf06c51dbe8fba308a7531fc9d",
+  "diagnosis_extension": "The first implementation-failure log shows that the frozen GE06 lambdified CSE algebraically separated the physically finite Exp factor exp((Qb-Q0)^2/Z0^2) into individually overflowing positive and compensating negative exponential factors. Supplying a more accurate Qb alone therefore cannot guarantee numerical stability.",
+  "permitted_numerical_reexpression": {
+    "source": "use the frozen GE06 partial_map derived from the exact frozen action",
+    "stable_background_coordinate": "introduce symbolic Zb and substitute the homogeneous background scalar derivative as pt_background=Q0+Z0*Zb before taking the epsilon directional derivatives",
+    "expansion": "use the same GE06 directional substitutions for every perturbation/local-jet variable",
+    "coefficients": "recompute exactly coeff1=d/d epsilon and coeff2=d^2/d epsilon^2 at epsilon=0 from the frozen partial_map",
+    "simplification": "substitute Qb=Q0+Z0*Zb before lambdify so the Exp background is represented through finite exp(Zb^2) factors",
+    "runtime_input": "Zb is the stable positive coordinate reconstructed from native conserved I0",
+    "unchanged_action": true,
+    "unchanged_equation_assembly": true,
+    "unchanged_directional_ordering": true
+  },
+  "mandatory_equivalence_controls": {
+    "benign_parameter_control": "on the original GE06 benign deterministic audit regime, stable-reexpressed coeff1/coeff2 must agree with frozen GE06 f_c1/f_c2 source assembly to global relative L2 <=1e-10",
+    "physical_background_finiteness": "all stable-reexpressed c1/c2 local partials used by GE19 must be finite on the physical Exp background",
+    "original_GE06_files_unchanged": true
+  },
+  "no_science_threshold_change": true,
+  "no_result_informed_change": true,
+  "claim_boundary": "This amendment only prevents algebraically introduced overflow/underflow in the numerical representation of the already frozen GE06 symbolic action derivatives."
+}
