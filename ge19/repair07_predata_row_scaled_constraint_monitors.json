@@ -1,0 +1,80 @@
+{
+  "classification": "GE19_REPAIR07_PREDATA_ROW_SCALED_CONSTRAINT_MONITORS",
+  "created_before_repair07_result": true,
+  "parent_repair06_freeze_commit": "670990858ea38c56dbad1402eb360b7152d01350",
+  "trigger": {
+    "repair06_classification": "GE19_REPAIR06_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "stage": "Stage_A_reduced_H1_reclosure",
+    "passed_controls": {
+      "linear_system_relative_L2_max": 4.198335271454888e-16,
+      "initial_dynamic_match_abs_or_rel_max": 5.826069165486057e-14,
+      "primary64_vs_control32_state_global_relative_L2_max": 0.000131712788922018,
+      "all_outputs_finite": true
+    },
+    "failed_monitors": {
+      "shift_constraint_relative_L2_max": 1.9979693163943717,
+      "anisotropy_constraint_relative_L2_max": 1.0
+    }
+  },
+  "diagnosis": "Repair06 constraint numerators are evaluated on a numerically well-closed canonical solution, but the shift/anisotropy denominator uses only already-cancelled physical pieces. Near a homogeneous zero constraint this is roundoff divided by roundoff. The anisotropy equation is simultaneously an enforced algebraic row with O(1e-16) scaled residual, proving the old anisotropy monitor is not a stable residual measure.",
+  "permitted_change_only": [
+    "replace the shift monitor denominator by max(|lhs|,|source|,||C_shift||_inf ||w||_inf,tiny)",
+    "replace the anisotropy monitor denominator by max(|lhs|,|source|,||C_aniso||_inf ||w||_inf,tiny)",
+    "keep the exact shift residual numerator (C_shift w - source_shift) unchanged",
+    "keep the exact anisotropy residual numerator (C_aniso w - source_anisotropy) unchanged",
+    "report both old piece-normalized diagnostics and new row-scaled gate diagnostics for transparency",
+    "apply the same row-scaled monitor definition in Stage A and Stage B"
+  ],
+  "explicit_nonchanges": [
+    "GE06 and GE07 generators",
+    "stable Z_action coordinate and full stable-Z normalization",
+    "canonical state variables and momentum definitions",
+    "Noether-regularized DAE partition",
+    "Radau-IIA coefficients and time grids",
+    "initial conditions and initial matching rules",
+    "all equation signs and source signs",
+    "all C values, beta values, Fourier modes and spatial grids",
+    "linear-system residual definition",
+    "64/32 convergence definition",
+    "shift threshold 1e-6",
+    "anisotropy threshold 1e-6",
+    "all Stage-B thresholds",
+    "Repair06 historical classification"
+  ],
+  "row_scaled_constraint_contract": {
+    "shift_row": "C_shift = Cmat[10] + Cmat[11]",
+    "anisotropy_row": "C_aniso = Cmat[12] + Cmat[13]",
+    "residual": "r = C_row @ w - source",
+    "scale": "max(abs(C_row @ w), abs(source), max(abs(C_row))*max(abs(w)), TINY)",
+    "metric": "abs(r)/scale",
+    "thresholds_unchanged": {
+      "shift": 1e-6,
+      "anisotropy": 1e-6
+    }
+  },
+  "mandatory_diagnostics": [
+    "old piece-normalized shift max",
+    "old piece-normalized anisotropy max",
+    "row-scaled shift max",
+    "row-scaled anisotropy max",
+    "absolute shift residual max",
+    "absolute anisotropy residual max",
+    "constraint-row operator scale max"
+  ],
+  "stage_A_gates_unchanged": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 1e-6,
+    "anisotropy_constraint_relative_L2_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "historical_repair06_relabel": false,
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR07_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR07_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR07_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  }
+}
