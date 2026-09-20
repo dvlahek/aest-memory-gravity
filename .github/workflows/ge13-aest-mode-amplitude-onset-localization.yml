@@ -2,12 +2,6 @@ name: GE13 AeST mode amplitude onset localization
 
 on:
   workflow_dispatch:
-  push:
-    branches: [physics-first-gravitational-elasticity]
-    paths:
-      - 'ge13/**'
-      - 'docs/ge13_aest_mode_amplitude_onset_localization_implementation_lock.md'
-      - '.github/workflows/ge13-aest-mode-amplitude-onset-localization.yml'
 
 jobs:
   amplitude-onset-localization:
