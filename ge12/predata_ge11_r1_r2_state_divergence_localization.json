@@ -1,0 +1,87 @@
+{
+  "classification": "GE12_PREDATA_GE11_R1_R2_STATE_DIVERGENCE_LOCALIZATION",
+  "created_after_frozen_GE11_repair01_fail": true,
+  "uses_new_physics": false,
+  "uses_new_CLASS_run": false,
+  "purpose": "Localize the large GE11 Repair01 R1/R2 complete-jet disagreement in the underlying first-order state, derived AeST combinations, or state-to-jet dictionary using only the frozen Repair01 artifact.",
+  "frozen_parent": {
+    "classification": "GE11_REPAIR01_DENSE_LOCAL_JET_FIXED_REFINEMENT_FAIL",
+    "result_freeze_commit": "4ae63a5ee8edd76836b6271f1259966d3cd00ce3",
+    "workflow_run": 35497478790,
+    "artifact_id": 10600652596,
+    "artifact_digest": "sha256:b35a3a0c8bbd22483bd04c006b20ceb97d3c7f263e178382026cba2983628ecc",
+    "R1_dense_sha256": "c50aae91fee94f00e1cbb5bd3c4d9352f15d892e91b230fad690f06c43e25fbd",
+    "R2_dense_sha256": "5a9480f69744db59ab8ca7fbdef56398c5fe38493730976d92b25873f46379b1",
+    "cross_jet_global_relative_L2_max": 0.45886068704381233,
+    "cross_jet_pointwise_abs_or_rel_max": 0.7829092344800966
+  },
+  "frozen_representation": {
+    "common_variable": "ln(a)",
+    "common_nodes": 64,
+    "redshift_window": [
+      0.2,
+      1.5
+    ],
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "state_interpolation": "exact same GE09/GE11 build_interps and eval_state functions",
+    "jet_mapping": "exact same GE09 jet_from_state function"
+  },
+  "state_channels": [
+    "phi",
+    "psi",
+    "delta_dark",
+    "theta_dark",
+    "alpha_aest",
+    "E_aest",
+    "Q",
+    "H_over_H0",
+    "rho_dark",
+    "p_dark",
+    "cad2_dark",
+    "phi_prime_interp",
+    "delta_dark_prime_interp",
+    "theta_dark_prime_interp",
+    "alpha_aest_prime_interp",
+    "E_aest_prime_interp"
+  ],
+  "derived_channels": [
+    "uA=a*theta_dark/k^2",
+    "varphi=Q*uA",
+    "chi=Q*(uA+alpha_aest)",
+    "Pi=cad2*delta_dark+cad2*k^2/(3*a^2*rho_dark)*(KB*E_aest+(2-KB)*chi)",
+    "pt=Q*(psi+Pi/(1+p_dark/rho_dark))",
+    "ut_kernel=H*alpha_aest-E_aest+psi",
+    "u_kernel=alpha_aest"
+  ],
+  "diagnostics": [
+    "global relative L2 and pointwise abs-or-rel for every raw and derived channel",
+    "cosine similarity for every channel",
+    "least-squares multiplicative R2/R1 scale and post-rescaling residual for alpha_aest, theta_dark, E_aest, uA, varphi, chi, Pi, pt, ut_kernel",
+    "per-k global relative L2 for alpha_aest, theta_dark, E_aest, chi, varphi, pt",
+    "time dependence of the R2/R1 best-fit scale in eight equal ln(a) bins",
+    "reconstructed complete-jet R1/R2 disagreement and exact reproduction of the frozen parent maxima"
+  ],
+  "gates": {
+    "artifact_digest_exact": true,
+    "parent_classification_exact": true,
+    "dense_trace_hashes_exact": true,
+    "common_grid_nodes_exact_64": true,
+    "reconstructed_parent_cross_jet_global_relative_L2_abs_error_max": 1e-12,
+    "reconstructed_parent_cross_jet_pointwise_abs_or_rel_abs_error_max": 1e-12,
+    "exact_derived_identity_abs_or_rel_max": 1e-12,
+    "all_quantities_finite": true
+  },
+  "terminal_classifications": {
+    "pass": "GE12_GE11_R1_R2_STATE_DIVERGENCE_LOCALIZED",
+    "fail": "GE12_GE11_R1_R2_STATE_DIVERGENCE_DIAGNOSTIC_FAIL"
+  },
+  "claim_boundary": "GE12 is diagnostic only. It cannot relabel GE11 Repair01, select R1 or R2, add R3, change precision values, alter the local-jet dictionary, license Z20, or make a physical instability claim.",
+  "anti_tuning": "Do not change the common grid, channel set, parent artifact, localization metrics or reconstruction gates after inspecting GE12 output."
+}
