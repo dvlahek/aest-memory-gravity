@@ -60,6 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p results
           python3 ge07/pressureless_matter_directional_source_generator.py             | tee results/ge07_pressureless_matter_directional_source_generator.log
 
       - name: Summarize GE07
