@@ -1106,6 +1106,7 @@ def solve_case(mod6,mod7,bg,tag,sources_by_beta):
     states=np.zeros((nb,len(M_SOLVE),6,nt),complex)
     solve_res=np.zeros((nb,len(M_SOLVE)),float)
     con_res=np.zeros((nb,len(M_SOLVE),2),float)
+    equilibration=[]
     for jm,m in enumerate(M_SOLVE):
         k=float(m*g9.K_REQ[0]/FOURIER_N[0])
         A,Cmat=build_matrix(mod6,mod7,bg,tag,k)
@@ -1121,6 +1122,7 @@ def solve_case(mod6,mod7,bg,tag,sources_by_beta):
             X,eqdiag=equilibrated_solve(A,Bbc)
         except Exception as exc:
             raise RuntimeError(f"equilibrated sparse solve failed tag={tag} m={m}: {exc}") from exc
+        equilibration.append({"m":int(m),**eqdiag})
         for ib in range(nb):
             y=X[:,ib].reshape(6,nt)
             states[ib,jm]=y
@@ -1133,7 +1135,7 @@ def solve_case(mod6,mod7,bg,tag,sources_by_beta):
                 rhs=BC[sl,ib]
                 con_scale=max(np.linalg.norm(B[:,ib]),np.linalg.norm(lhs),np.linalg.norm(rhs),TINY)
                 con_res[ib,jm,ic]=np.linalg.norm(cr[sl])/con_scale
-    return states,solve_res,con_res
+    return states,solve_res,con_res,equilibration
 
 
 def source_bundle(mod6,mod7,bg,jets,npz,tag,nx):
@@ -1394,7 +1396,7 @@ def main():
     aniso_max=0.0
     solve_rows=[]
     for tag in C_TAGS:
-        st,res,con=solve_case(mod6,mod7,bg64,tag,src1024[tag])
+        st,res,con,eqdiag=solve_case(mod6,mod7,bg64,tag,src1024[tag])
         state64_by_C[tag]=st
         solve_max=max(solve_max,float(np.max(res)))
         shift_max=max(shift_max,float(np.max(con[:,:,0])))
@@ -1404,6 +1406,7 @@ def main():
             "linear_system_relative_L2_max":float(np.max(res)),
             "shift_constraint_relative_L2_max":float(np.max(con[:,:,0])),
             "anisotropy_constraint_relative_L2_max":float(np.max(con[:,:,1])),
+            "equilibrated_solve_diagnostics":eqdiag,
         })
 
     src32={}
@@ -1414,7 +1417,7 @@ def main():
         src32[tag]=source_bundle_reduced(
             mod6,mod7,bg32,tag,NX_PRIMARY,h1_32[tag]
         )
-        st32,res32,con32=solve_case(mod6,mod7,bg32,tag,src32[tag])
+        st32,res32,con32,eqdiag32=solve_case(mod6,mod7,bg32,tag,src32[tag])
         state32_by_C[tag]=st32
         p32=interpolate_state_to(bg64["x"],state64_by_C[tag],bg32["x"])
         by_field={}
@@ -1422,7 +1425,12 @@ def main():
             e=rel_l2(p32[:,:,iv,:],st32[:,:,iv,:])
             by_field[name]=e
             time_max=max(time_max,e)
-        time_rows.append({"C":tag,"by_field_relative_L2":by_field,"max":max(by_field.values())})
+        time_rows.append({
+            "C":tag,
+            "by_field_relative_L2":by_field,
+            "max":max(by_field.values()),
+            "control_equilibrated_solve_diagnostics":eqdiag32,
+        })
 
     # C-envelope around central state, separately for each beta.
     envelope=[]
@@ -1505,6 +1513,8 @@ def main():
         "classification":classification,
         "predata_classification":"GE19_PREDATA_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR",
         "predata_amendment":"GE19_PREDATA_AMENDMENT01_REDUCED_H1_RECLOSURE",
+        "repair04_predata":"GE19_REPAIR04_PREDATA_LINEAR_OPERATOR_Z_COORDINATE_AND_PROVENANCE",
+        "repair05_predata":"GE19_REPAIR05_PREDATA_EQUILIBRATED_LINEAR_SOLVE",
         "scope":"m=1..40 projection of one window-retarded reduced-matter baseline H3 directional particular state. Formal epsilon->0 coefficient only.",
         "equation":"L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
         "provenance":provenance,
