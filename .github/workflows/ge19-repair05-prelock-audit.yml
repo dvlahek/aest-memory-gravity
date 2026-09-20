@@ -1,0 +1,128 @@
+name: GE19 Repair05 prelock equilibration audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair05_*'
+      - '.github/workflows/ge19-repair05-prelock-audit.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile Repair05
+        run: python3 -m py_compile ge19/repair05_window_retarded_reduced_h3_z20_particular.py
+
+      - name: Audit frozen physics and equilibrated solve
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import inspect
+          from pathlib import Path
+          import numpy as np
+          from scipy.sparse import csr_matrix, diags
+
+          root=Path.cwd()
+
+          def load(path,name):
+              spec=importlib.util.spec_from_file_location(name,path)
+              mod=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(mod)
+              return mod
+
+          r4=load(root/"ge19/repair04_window_retarded_reduced_h3_z20_particular.py","r4")
+          r5=load(root/"ge19/repair05_window_retarded_reduced_h3_z20_particular.py","r5")
+
+          # Physics/operator and boundary-row construction must be byte-for-byte
+          # identical at function-source level.
+          frozen_functions=[
+              "reference_reduced_mode_state",
+              "source_real_reduced",
+              "linear_operator_batch",
+              "build_matrix",
+              "apply_bc_rhs",
+              "reduced_h1_time_control",
+          ]
+          for name in frozen_functions:
+              a=inspect.getsource(getattr(r4,name))
+              b=inspect.getsource(getattr(r5,name))
+              assert a==b, f"frozen function changed: {name}"
+
+          frozen_constants=[
+              "KB","CV","K2","Q0","Z0","A0_MPC_INV",
+              "BETAS","C_TAGS","C_VALUES","NT_PRIMARY","NT_CONTROL",
+              "NX_PRIMARY","NX_SPATIAL_CONTROL","SOURCE_SPATIAL_MAX",
+              "LINEAR_RES_MAX","CONSTRAINT_MAX","TIME_STATE_MAX",
+              "GE15_GE18_METRIC_MAX","GE18_NPZ_SHA",
+              "DYNAMIC_FIELD_INDEX","DYNAMIC_EQ_INDEX",
+          ]
+          for name in frozen_constants:
+              a=getattr(r4,name); b=getattr(r5,name)
+              if isinstance(a,np.ndarray):
+                  assert np.array_equal(a,b), name
+              else:
+                  assert a==b, name
+
+          # Deterministic badly scaled but algebraically well-conditioned core.
+          n=48
+          base=np.eye(n,dtype=complex)
+          for i in range(n-1):
+              base[i,i+1]=0.08+0.03j
+              base[i+1,i]=-0.04+0.02j
+          row_phys=np.logspace(-24,24,n)
+          col_phys=np.logspace(20,-20,n)
+          A=diags(row_phys) @ csr_matrix(base) @ diags(col_phys)
+
+          x1=np.linspace(0.5,1.5,n)+1j*np.linspace(-0.2,0.3,n)
+          x2=np.cos(np.linspace(0,2,n))+0.1j*np.sin(np.linspace(0,3,n))
+          B=np.column_stack([A@x1,A@x2])
+
+          X,d=r5.equilibrated_solve(A,B,max_refine=4)
+          rr=[]
+          for j in range(B.shape[1]):
+              ax=A@X[:,j]
+              rr.append(np.linalg.norm(ax-B[:,j])/max(np.linalg.norm(ax),np.linalg.norm(B[:,j]),r5.TINY))
+
+          assert np.all(np.isfinite(X)), d
+          assert max(rr)<=1e-12, (rr,d)
+          assert d["final_unscaled_relative_L2_max"]<=1e-12, d
+          assert d["scaled_matrix_abs_max"]<=1.0+1e-12, d
+          assert d["row_max_dynamic_range"]>1e20, d
+
+          # Single-RHS API must obey the same original-system residual.
+          xs,ds=r5.equilibrated_solve(A,B[:,0],max_refine=4)
+          axs=A@xs
+          rs=np.linalg.norm(axs-B[:,0])/max(np.linalg.norm(axs),np.linalg.norm(B[:,0]),r5.TINY)
+          assert rs<=1e-12, (rs,ds)
+
+          # Repair04 stable coordinate audit remains true in Repair05 because
+          # the physical operator source is frozen.
+          g6=r5.load_frozen_generator(
+              (root/"ge06/analytic_aest_directional_source_generator.py").resolve(),
+              "r5_ge06"
+          )
+          stable=r5.build_stable_ge06_generator(g6)
+          benign=r5.ge06_stable_benign_equivalence(g6,stable)
+          physical=r5.ge06_physical_parameter_probe(stable)
+          assert benign["all_stable_outputs_finite"], benign
+          assert benign["coeff1_source_global_relative_L2"]<=1e-10, benign
+          assert benign["coeff2_source_global_relative_L2"]<=1e-10, benign
+          assert physical["c1"]["all_partials_finite"], physical
+          assert physical["c2"]["all_partials_finite"], physical
+
+          print("SYNTHETIC_MULTI_RHS_RESIDUAL_MAX=",max(rr))
+          print("SYNTHETIC_SINGLE_RHS_RESIDUAL=",rs)
+          print("EQUILIBRATION_DIAGNOSTIC=",d)
+          print("BENIGN_EQUIVALENCE=",benign)
+          print("PHYSICAL_PARAMETER_PROBE=",physical)
+          print("GE19_REPAIR05_PRELOCK_AUDIT_PASS")
+          PY
