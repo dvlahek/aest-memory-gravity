@@ -1,0 +1,47 @@
+{
+  "classification": "GE14_PREDATA_CHI_CANCELLATION_STIFF_SEED_AUDIT",
+  "created_before_result": true,
+  "uses_new_CLASS_run": false,
+  "uses_observational_data": false,
+  "purpose": "Test if the frozen GE11 R1/R2 precision bifurcation is seeded by catastrophic cancellation in chi=Q(a theta/k^2+alpha), followed by amplification through the stiff KQ*chi term in the E equation.",
+  "parent": {
+    "ge11_classification": "GE11_REPAIR01_DENSE_LOCAL_JET_FIXED_REFINEMENT_FAIL",
+    "ge13_classification": "GE13_AEST_MODE_AMPLITUDE_ONSET_LOCALIZED",
+    "ge11_artifact_id": 10600652596,
+    "ge11_artifact_digest": "sha256:b35a3a0c8bbd22483bd04c006b20ceb97d3c7f263e178382026cba2983628ecc"
+  },
+  "frozen_equations": {
+    "chi": "chi=Q(v+alpha), v=a theta/k^2",
+    "Pi": "Pi=cad2*delta + cad2*k^2/(3 a^2 rho)[KB E+(2-KB)chi]",
+    "Eprime": "E'=a/KB[KQ chi-(2-KB)(Q Pi/(1+w)+(H+Q)chi-3 cad2 H Q alpha)]-aH E",
+    "background_identity": "KQ=3(rho+p)/Q for the CLASS AeST background slots"
+  },
+  "diagnostic_at_first_common_accepted_endpoint_each_k": {
+    "cancellation_residual": "s=v+alpha",
+    "machine_epsilon_units": "|s|/(eps*max(|v|,|alpha|))",
+    "stiff_seed_term": "T_stiff=(a/KB) KQ chi",
+    "finite_gradient_direct_term": "T_grad=-(a/KB)(2-KB)Q cad2[delta/(1+w)-3H alpha]",
+    "full_trace_derivative": "E_aest_prime"
+  },
+  "gates": {
+    "exact_parent_dense_trace_hashes": true,
+    "all_six_modes_present": true,
+    "cancellation_residual_machine_epsilon_units_max": 8,
+    "stiff_term_reproduces_full_Eprime_relative_error_max": 0.000001,
+    "full_exact_Eprime_reconstruction_relative_error_max": 1e-12,
+    "all_quantities_finite": true
+  },
+  "descriptive_outputs": [
+    "per-k s, chi and machine-epsilon units for R1 and R2",
+    "per-k T_stiff/Eprime",
+    "per-k |T_grad/T_stiff|",
+    "sign comparison between initial stiff seed and late R2/R1 amplitude shift",
+    "exact cancellation-free variable equations for s=v+alpha"
+  ],
+  "classification_rule": {
+    "localized": "all gates pass -> GE14_CHI_CANCELLATION_STIFF_SEED_LOCALIZED",
+    "fail": "otherwise -> GE14_CHI_CANCELLATION_STIFF_SEED_DIAGNOSTIC_FAIL"
+  },
+  "claim_boundary": "PASS localizes the numerical seed mechanism only. It does not relabel GE11, prove that all later growth is numerical, alter ICs, or license Z20.",
+  "anti_tuning": "Do not change endpoint selection, equations, KB, frozen artifact, epsilon-unit gate or derivative-reconstruction gates after inspecting GE14 output."
+}
