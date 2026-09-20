@@ -800,6 +800,7 @@ def equilibrated_solve(A,B,max_refine=4):
 
 
 
+
 def _scalar_complex(v):
     a=np.asarray(v,complex)
     if a.size!=1:
@@ -820,9 +821,17 @@ def _bg_point(bg,xq):
     }
 
 
-def _local_c1_partials(mod6,mod7,bg,tag,k,xq,N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot):
+def _raw_local_outputs(mod6,mod7,bg,tag,k,xq,w):
+    """Raw c1 outputs for one unit-direction vector.
+
+    w=(N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot).  This routine is used only
+    on zero/unit basis vectors to extract the exact local linear map.  Actual
+    physical states are never re-evaluated through cancellation-prone raw
+    formulas.
+    """
+    N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot=np.asarray(w,complex)
     bp=_bg_point(bg,xq)
-    aa=bp["a"]; H=bp["H"]; adot=aa*H; Zb=bp["Z_action"]
+    aa=bp["a"]; adot=aa*bp["H"]; Zb=bp["Z_action"]
     ik=1j*float(k)
     vals6=(
         aa,adot,Zb,
@@ -835,7 +844,58 @@ def _local_c1_partials(mod6,mod7,bg,tag,k,xq,N,dr,S,u,phi,T,Sdot,udot,phidot,Tdo
     rhob=3.0*C_VALUES[tag]/aa**3
     vals7=(aa,rhob,N,S,S,0.0,dr,Tdot,ik*T)
     p7={name:_scalar_complex(fn(*vals7)) for name,fn in mod7.f_c1.items()}
-    return bp,p6,p7
+
+    pS=p6["L_t"]+p6["R_t"]
+    pu=p6["u_t"]
+    pphi=p6["phi_t"]
+    pT=p7["T_t"]
+    EN=p6["N_f"]-ik*p6["N_x"]+p7["N_f"]
+    Erho=p7["rho_f"]
+
+    non_iso=p6["L_f"]+p6["R_f"]-ik*(p6["L_x"]+p6["R_x"])+p7["L_f"]+p7["R_f"]
+    non_u=p6["u_f"]-ik*p6["u_x"]
+    non_phi=-ik*p6["phi_x"]
+    non_T=-ik*p7["T_x"]
+
+    shift_ga=p6["b_f"]-ik*p6["b_x"]
+    shift_m=p7["b_f"]
+    aniso_ga=(p6["L_f"]-ik*p6["L_x"])-0.5*(p6["R_f"]-ik*p6["R_x"])
+    aniso_m=p7["L_f"]-0.5*p7["R_f"]
+
+    return np.asarray([
+        pS,pu,pphi,pT,EN,Erho,
+        non_iso,non_u,non_phi,non_T,
+        shift_ga,shift_m,aniso_ga,aniso_m,
+        p6["L_t"],p6["R_t"],
+    ],complex),bp
+
+
+_CANONICAL_LOCAL_CACHE={}
+
+
+def _local_linear_matrix(mod6,mod7,bg,tag,k,xq):
+    # Cache is process-local and keyed only by immutable frozen numerical data.
+    key=(id(bg),str(tag),float(k),round(float(xq),15))
+    if key in _CANONICAL_LOCAL_CACHE:
+        return _CANONICAL_LOCAL_CACHE[key]
+
+    z=np.zeros(10,complex)
+    o0,bp=_raw_local_outputs(mod6,mod7,bg,tag,k,xq,z)
+    Cmat=np.empty((len(o0),10),complex)
+    for j in range(10):
+        e=np.zeros(10,complex); e[j]=1.0
+        oj,_=_raw_local_outputs(mod6,mod7,bg,tag,k,xq,e)
+        Cmat[:,j]=oj-o0
+
+    # First-order directional coefficients are exactly homogeneous linear
+    # functions.  Keep the zero offset only as a diagnostic.
+    zero_abs=float(np.max(np.abs(o0)))
+    if not np.all(np.isfinite(Cmat)):
+        raise RuntimeError("non-finite canonical local linear matrix")
+
+    out=(Cmat,bp,{"raw_zero_output_abs_max":zero_abs})
+    _CANONICAL_LOCAL_CACHE[key]=out
+    return out
 
 
 def _dense_equilibrated_solve(A,B):
@@ -857,110 +917,104 @@ def _dense_equilibrated_solve(A,B):
     Bs=Dr[:,None]*B
     Y=np.linalg.solve(As,Bs)
     X=Dc[:,None]*Y
-    R=A@X-B
-    rel=[]
+
+    Rs=As@Y-Bs
+    Ru=A@X-B
+    scaled=[]
+    unscaled=[]
     for j in range(B.shape[1]):
-        rel.append(float(np.linalg.norm(R[:,j])/max(np.linalg.norm(A@X[:,j]),np.linalg.norm(B[:,j]),TINY)))
+        scaled.append(float(np.linalg.norm(Rs[:,j])/max(np.linalg.norm(As@Y[:,j]),np.linalg.norm(Bs[:,j]),TINY)))
+        unscaled.append(float(np.linalg.norm(Ru[:,j])/max(np.linalg.norm(A@X[:,j]),np.linalg.norm(B[:,j]),TINY)))
     diag={
         "row_dynamic_range":float(np.max(row)/np.min(row)),
         "column_dynamic_range":float(np.max(col)/np.min(col)),
         "scaled_condition_2":float(np.linalg.cond(As)),
-        "relative_L2_residual_max":float(max(rel,default=0.0)),
+        "scaled_relative_L2_residual_max":float(max(scaled,default=0.0)),
+        "unscaled_matrix_product_relative_L2_residual_max":float(max(unscaled,default=0.0)),
     }
     return (X[:,0] if one else X),diag
 
 
-def _canonical_map(mod6,mod7,bg,tag,k,xq,q,z):
-    # q=(S,u,phi,T); z=(N,dr,Sdot,udot,phidot,Tdot)
-    S,u,phi,T=q
-    N,dr,Sdot,udot,phidot,Tdot=z
-    bp,p6,p7=_local_c1_partials(
-        mod6,mod7,bg,tag,k,xq,N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot
-    )
-    ik=1j*float(k)
-    pS=p6["L_t"]+p6["R_t"]
-    pu=p6["u_t"]
-    pphi=p6["phi_t"]
-    pT=p7["T_t"]
-    EN=p6["N_f"]-ik*p6["N_x"]+p7["N_f"]
-    Erho=p7["rho_f"]
-    return np.asarray([pS,pu,pphi,pT,EN,Erho],complex),bp,p6,p7
+_QIDX=np.asarray([2,3,4,5],int)
+_ZIDX=np.asarray([0,1,6,7,8,9],int)
 
 
-def _solve_local_from_canonical(mod6,mod7,bg,tag,k,xq,y,rhs):
-    y=np.asarray(y,complex)
-    q=y[:4]; p=y[4:]
-    rhs=np.asarray(rhs,complex)
-    z0=np.zeros(6,complex)
-    f0,_,_,_=_canonical_map(mod6,mod7,bg,tag,k,xq,q,z0)
-    M=np.empty((6,6),complex)
-    for j in range(6):
-        ej=np.zeros(6,complex); ej[j]=1.0
-        fj,_,_,_=_canonical_map(mod6,mod7,bg,tag,k,xq,q,ej)
-        M[:,j]=fj-f0
-    target=np.concatenate([p,rhs[[0,5]]])
-    z,diag=_dense_equilibrated_solve(M,target-f0)
-    vals,bp,p6,p7=_canonical_map(mod6,mod7,bg,tag,k,xq,q,z)
-    rr=vals-target
-    diag=dict(diag)
-    diag["map_relative_L2_residual"]=float(
-        np.linalg.norm(rr)/max(np.linalg.norm(vals),np.linalg.norm(target),TINY)
-    )
-    return np.asarray(z,complex),bp,p6,p7,diag
+def _canonical_operator_matrices(mod6,mod7,bg,tag,k,xq):
+    """Return stable local canonical ODE/algebraic matrices.
+
+    y=(S,u,phi,T,pS,pu,pphi,pT), rhs has the six main EL components.
+    """
+    Cmat,bp,base_diag=_local_linear_matrix(mod6,mod7,bg,tag,k,xq)
+
+    Az=Cmat[0:6][:,_ZIDX]
+    Aq=Cmat[0:6][:_QIDX]
+    Ry=np.zeros((6,8),complex)
+    Ry[0:4,4:8]=np.eye(4)
+    Ry[:,0:4]-=Aq
+    Rr=np.zeros((6,6),complex)
+    Rr[4,0]=1.0
+    Rr[5,5]=1.0
+
+    ZY,d1=_dense_equilibrated_solve(Az,Ry)
+    ZR,d2=_dense_equilibrated_solve(Az,Rr)
+
+    WY=np.zeros((10,8),complex)
+    WR=np.zeros((10,6),complex)
+    WY[_QIDX,0:4]=np.eye(4)
+    WY[_ZIDX,:]=ZY
+    WR[_ZIDX,:]=ZR
+
+    M=np.zeros((8,8),complex)
+    F=np.zeros((8,6),complex)
+    M[0:4,:]=ZY[2:6,:]/bp["H"]
+    F[0:4,:]=ZR[2:6,:]/bp["H"]
+
+    dyn_rhs=np.zeros((4,6),complex)
+    dyn_rhs[0,1]=1.0
+    dyn_rhs[1,2]=1.0
+    dyn_rhs[2,3]=1.0
+    dyn_rhs[3,4]=1.0
+    M[4:8,:]=(Cmat[6:10]@WY)/bp["H"]
+    F[4:8,:]=(Cmat[6:10]@WR-dyn_rhs)/bp["H"]
+
+    diag={
+        **base_diag,
+        "algebraic_scaled_condition_2":float(max(d1["scaled_condition_2"],d2["scaled_condition_2"])),
+        "algebraic_scaled_residual_max":float(max(d1["scaled_relative_L2_residual_max"],d2["scaled_relative_L2_residual_max"])),
+        "algebraic_unscaled_matrix_product_residual_max":float(max(
+            d1["unscaled_matrix_product_relative_L2_residual_max"],
+            d2["unscaled_matrix_product_relative_L2_residual_max"],
+        )),
+    }
+    return M,F,ZY,ZR,WY,WR,Cmat,bp,diag
 
 
 def _initial_canonical_state(mod6,mod7,bg,tag,k,x0,q0,v0,rhs0):
     q0=np.asarray(q0,complex)
     v0=np.asarray(v0,complex)
     rhs0=np.asarray(rhs0,complex)
+    Cmat,bp,base_diag=_local_linear_matrix(mod6,mod7,bg,tag,k,x0)
 
-    # Solve only the two nondynamical variables while preserving the
-    # preregistered dynamic values and cosmic-time derivatives exactly.
-    def algebraic(nr):
-        N,dr=nr
-        z=np.asarray([N,dr,*v0],complex)
-        vals,_,_,_=_canonical_map(mod6,mod7,bg,tag,k,x0,q0,z)
-        return vals[[4,5]]
-
-    a0=algebraic(np.zeros(2,complex))
-    M=np.empty((2,2),complex)
-    for j in range(2):
-        e=np.zeros(2,complex); e[j]=1.0
-        M[:,j]=algebraic(e)-a0
-    nr,diag=_dense_equilibrated_solve(M,rhs0[[0,5]]-a0)
-    z=np.asarray([nr[0],nr[1],*v0],complex)
-    vals,bp,p6,p7=_canonical_map(mod6,mod7,bg,tag,k,x0,q0,z)
-    p=vals[:4]
+    w=np.zeros(10,complex)
+    w[_QIDX]=q0
+    w[[6,7,8,9]]=v0
+    A=Cmat[[4,5]][:,[0,1]]
+    target=rhs0[[0,5]]-Cmat[[4,5]]@w
+    nr,diag=_dense_equilibrated_solve(A,target)
+    w[0]=nr[0]; w[1]=nr[1]
+    p=Cmat[0:4]@w
     y0=np.concatenate([q0,p])
-    return y0,z,diag
 
-
-def _canonical_rhs_eval(mod6,mod7,bg,tag,k,xq,y,rhs):
-    z,bp,p6,p7,diag=_solve_local_from_canonical(mod6,mod7,bg,tag,k,xq,y,rhs)
-    N,dr,Sdot,udot,phidot,Tdot=z
-    ik=1j*float(k)
-    non=np.asarray([
-        p6["L_f"]+p6["R_f"]-ik*(p6["L_x"]+p6["R_x"])+p7["L_f"]+p7["R_f"],
-        p6["u_f"]-ik*p6["u_x"],
-        -ik*p6["phi_x"],
-        -ik*p7["T_x"],
-    ],complex)
-    pdot=non-np.asarray(rhs[1:5],complex)
-    qdot=np.asarray([Sdot,udot,phidot,Tdot],complex)
-    dydx=np.concatenate([qdot,pdot])/bp["H"]
-    return dydx,z,p6,p7,diag
-
-
-def _canonical_affine_matrix(mod6,mod7,bg,tag,k,xq):
-    zero=np.zeros(6,complex)
-    y0=np.zeros(8,complex)
-    f0,*_=_canonical_rhs_eval(mod6,mod7,bg,tag,k,xq,y0,zero)
-    M=np.empty((8,8),complex)
-    for j in range(8):
-        e=np.zeros(8,complex); e[j]=1.0
-        fj,*_=_canonical_rhs_eval(mod6,mod7,bg,tag,k,xq,e,zero)
-        M[:,j]=fj-f0
-    return M,f0
+    alg=Cmat[[4,5]]@w-rhs0[[0,5]]
+    alg_scaled=float(diag["scaled_relative_L2_residual_max"])
+    return y0,w,{
+        **base_diag,
+        "initial_algebraic_scaled_residual":alg_scaled,
+        "initial_algebraic_unscaled_matrix_product_residual":float(
+            np.linalg.norm(alg)/max(np.linalg.norm(Cmat[[4,5]]@w),np.linalg.norm(rhs0[[0,5]]),TINY)
+        ),
+        "initial_algebraic_scaled_condition_2":diag["scaled_condition_2"],
+    }
 
 
 def _source_interp(xgrid,source_by_beta,m):
@@ -996,6 +1050,8 @@ def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun):
     Y[:,:,0]=Y0.T
     step_res=[]
     step_cond=[]
+    local_cond=[]
+    local_zero=[]
 
     a11=5.0/12.0; a12=-1.0/12.0
     a21=3.0/4.0; a22=1.0/4.0
@@ -1007,21 +1063,18 @@ def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun):
     for i in range(len(x)-1):
         h=float(x[i+1]-x[i])
         x1=float(x[i]+c1*h); x2=float(x[i]+c2*h)
-        M1,f01=_canonical_affine_matrix(mod6,mod7,bg,tag,k,x1)
-        M2,f02=_canonical_affine_matrix(mod6,mod7,bg,tag,k,x2)
+        M1,Fmap1,*rest1=_canonical_operator_matrices(mod6,mod7,bg,tag,k,x1)
+        M2,Fmap2,*rest2=_canonical_operator_matrices(mod6,mod7,bg,tag,k,x2)
+        d1=rest1[-1]; d2=rest2[-1]
+        local_cond.extend([d1["algebraic_scaled_condition_2"],d2["algebraic_scaled_condition_2"]])
+        local_zero.extend([d1["raw_zero_output_abs_max"],d2["raw_zero_output_abs_max"]])
 
         R1=np.asarray(rhsfun(x1),complex)
         R2=np.asarray(rhsfun(x2),complex)
         if R1.ndim==1: R1=R1[:,None]
         if R2.ndim==1: R2=R2[:,None]
-        F1=np.empty((8,ncol),complex)
-        F2=np.empty((8,ncol),complex)
-        for j in range(ncol):
-            z=np.zeros(8,complex)
-            ff1,*_=_canonical_rhs_eval(mod6,mod7,bg,tag,k,x1,z,R1[:,j])
-            ff2,*_=_canonical_rhs_eval(mod6,mod7,bg,tag,k,x2,z,R2[:,j])
-            F1[:,j]=ff1
-            F2[:,j]=ff2
+        F1=Fmap1@R1
+        F2=Fmap2@R2
 
         K=np.block([
             [I-h*a11*M1, -h*a12*M2],
@@ -1037,20 +1090,20 @@ def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun):
         G2=M2@Y2+F2
         nxt=cur+h*(b1*G1+b2*G2)
 
-        rr=K@stages-RHS
-        step_res.append(float(np.linalg.norm(rr)/max(np.linalg.norm(K@stages),np.linalg.norm(RHS),TINY)))
+        step_res.append(diag["scaled_relative_L2_residual_max"])
         step_cond.append(diag["scaled_condition_2"])
         cur=nxt
         Y[:,:,i+1]=cur.T
 
     return Y,{
-        "radau_block_relative_L2_residual_max":float(max(step_res,default=0.0)),
+        "radau_block_scaled_relative_L2_residual_max":float(max(step_res,default=0.0)),
         "radau_scaled_condition_2_max":float(max(step_cond,default=0.0)),
+        "local_algebraic_scaled_condition_2_max":float(max(local_cond,default=0.0)),
+        "raw_zero_output_abs_max":float(max(local_zero,default=0.0)),
     }
 
 
 def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
-    # Y shape [ncol,8,nt]
     ncol,_,nt=Y.shape
     state=np.empty((ncol,6,nt),complex)
     dots=np.empty((ncol,4,nt),complex)
@@ -1058,45 +1111,60 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
     shift=np.zeros(ncol,float)
     aniso=np.zeros(ncol,float)
     momentum_ratio=0.0
+    local_cond=0.0
 
     for it,xq in enumerate(bg["x"]):
         rr=np.asarray(rhsfun(float(xq)),complex)
         rc=np.asarray(conrhsfun(float(xq)),complex)
         if rr.ndim==1: rr=rr[:,None]
         if rc.ndim==1: rc=rc[:,None]
+        M,F,ZY,ZR,WY,WR,Cmat,bp,opdiag=_canonical_operator_matrices(
+            mod6,mod7,bg,tag,k,float(xq)
+        )
+        local_cond=max(local_cond,opdiag["algebraic_scaled_condition_2"])
         for j in range(ncol):
             y=Y[j,:,it]
-            z,bp,p6,p7,diag=_solve_local_from_canonical(
-                mod6,mod7,bg,tag,k,float(xq),y,rr[:,j]
-            )
+            w=WY@y+WR@rr[:,j]
+            z=w[_ZIDX]
             N,dr,Sdot,udot,phidot,Tdot=z
             S,u,phi,T=y[:4]
             state[j,:,it]=np.asarray([N,S,u,phi,T,dr],complex)
             dots[j,:,it]=np.asarray([Sdot,udot,phidot,Tdot],complex)
-            alg_res[j]=max(alg_res[j],diag["map_relative_L2_residual"])
 
-            ik=1j*float(k)
-            gshift=p6["b_f"]-ik*p6["b_x"]
-            mshift=p7["b_f"]
-            slhs=gshift+mshift
-            sres=slhs-rc[0,j]
-            sden=max(abs(gshift),abs(mshift),abs(rc[0,j]),TINY)
+            target=np.concatenate([y[4:8],rr[[0,5],j]])
+            lhs=Cmat[0:6]@w
+            # Use row-scaled backward error, because raw physical rows span
+            # ~1e25 and direct unscaled subtraction is cancellation dominated.
+            rows=np.max(np.abs(Cmat[0:6]),axis=1)
+            rs=(lhs-target)/rows
+            ls=lhs/rows
+            ts=target/rows
+            alg_res[j]=max(
+                alg_res[j],
+                float(np.linalg.norm(rs)/max(np.linalg.norm(ls),np.linalg.norm(ts),TINY))
+            )
+
+            sga=Cmat[10]@w
+            sm=Cmat[11]@w
+            sres=sga+sm-rc[0,j]
+            sden=max(abs(sga),abs(sm),abs(rc[0,j]),TINY)
             shift[j]=max(shift[j],float(abs(sres)/sden))
 
-            gan=(p6["L_f"]-ik*p6["L_x"])-0.5*(p6["R_f"]-ik*p6["R_x"])
-            man=p7["L_f"]-0.5*p7["R_f"]
-            alhs=gan+man
-            ares=alhs-rc[1,j]
-            aden=max(abs(gan),abs(man),abs(rc[1,j]),TINY)
+            aga=Cmat[12]@w
+            am=Cmat[13]@w
+            ares=aga+am-rc[1,j]
+            aden=max(abs(aga),abs(am),abs(rc[1,j]),TINY)
             aniso[j]=max(aniso[j],float(abs(ares)/aden))
 
+            pL=Cmat[14]@w; pR=Cmat[15]@w
             momentum_ratio=max(
                 momentum_ratio,
-                float(abs(p6["R_t"]-2.0*p6["L_t"])/max(abs(p6["R_t"]),2.0*abs(p6["L_t"]),TINY))
+                float(abs(pR-2.0*pL)/max(abs(pR),2.0*abs(pL),TINY))
             )
 
     return state,dots,{
-        "algebraic_map_relative_L2_residual_max":float(np.max(alg_res)),
+        "algebraic_scaled_relative_L2_residual_max":float(np.max(alg_res)),
+        "local_algebraic_scaled_condition_2_max":float(local_cond),
         "shift_constraint_relative_L2_max":float(np.max(shift)),
         "anisotropy_constraint_relative_L2_max":float(np.max(aniso)),
         "pRt_minus_2pLt_relative_max":float(momentum_ratio),
@@ -1108,39 +1176,32 @@ def solve_reduced_h1_case_canonical(mod6,mod7,bg,tag,reference,reference_dot):
     nt=len(bg["x"])
     state=np.empty((len(FOURIER_N),6,nt),complex)
     dots=np.empty((len(FOURIER_N),4,nt),complex)
-    lin=[]
-    shift=[]
-    aniso=[]
-    init=[]
-    march=[]
-
+    lin=[]; shift=[]; aniso=[]; init=[]; march=[]
     rhsfun,confun=_zero_source_interp(1)
+
     for ik,m in enumerate(FOURIER_N):
         k=float(m*g9.K_REQ[0]/FOURIER_N[0])
         q0=np.asarray(reference[ik,[1,2,3,4],0],complex)
         v0=np.asarray(reference_dot[ik,:,0],complex)
-        y0,z0,idiag=_initial_canonical_state(
+        y0,w0,idiag=_initial_canonical_state(
             mod6,mod7,bg,tag,k,float(bg["x"][0]),q0,v0,np.zeros(6,complex)
         )
-        Y,rdiag=_radau2_integrate_canonical(
-            mod6,mod7,bg,tag,k,y0[:,None],rhsfun
-        )
+        Y,rdiag=_radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0[:,None],rhsfun)
         st,dd,odiag=_reconstruct_canonical_solution(
             mod6,mod7,bg,tag,k,Y,rhsfun,confun
         )
-        state[ik]=st[0]
-        dots[ik]=dd[0]
+        state[ik]=st[0]; dots[ik]=dd[0]
         lin.append(max(
-            idiag["relative_L2_residual_max"],
-            rdiag["radau_block_relative_L2_residual_max"],
-            odiag["algebraic_map_relative_L2_residual_max"],
+            idiag["initial_algebraic_scaled_residual"],
+            rdiag["radau_block_scaled_relative_L2_residual_max"],
+            odiag["algebraic_scaled_relative_L2_residual_max"],
         ))
         shift.append(odiag["shift_constraint_relative_L2_max"])
         aniso.append(odiag["anisotropy_constraint_relative_L2_max"])
         for j in range(4):
             init.append(aor([state[ik,j+1,0]],[q0[j]]))
             init.append(aor([dots[ik,j,0]],[v0[j]]))
-        march.append({"m":int(m),**rdiag,**odiag})
+        march.append({"m":int(m),**idiag,**rdiag,**odiag})
 
     return state,dots,{
         "linear_system_relative_L2_max":float(max(lin,default=math.inf)),
@@ -1163,26 +1224,28 @@ def solve_case_canonical(mod6,mod7,bg,tag,sources_by_beta):
         rhsfun,confun=_source_interp(bg["x"],sources_by_beta,m)
         r0=np.asarray(rhsfun(float(bg["x"][0])),complex)
         y0=np.empty((8,nb),complex)
+        initdiag=[]
         for ib in range(nb):
-            q0=np.zeros(4,complex)
-            v0=np.zeros(4,complex)
-            yi,_,_= _initial_canonical_state(
-                mod6,mod7,bg,tag,k,float(bg["x"][0]),q0,v0,r0[:,ib]
+            yi,_,di=_initial_canonical_state(
+                mod6,mod7,bg,tag,k,float(bg["x"][0]),
+                np.zeros(4,complex),np.zeros(4,complex),r0[:,ib]
             )
             y0[:,ib]=yi
+            initdiag.append(di)
         Y,rdiag=_radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun)
         st,dd,odiag=_reconstruct_canonical_solution(
             mod6,mod7,bg,tag,k,Y,rhsfun,confun
         )
         states[:,jm]=st
         base=max(
-            rdiag["radau_block_relative_L2_residual_max"],
-            odiag["algebraic_map_relative_L2_residual_max"],
+            max(q["initial_algebraic_scaled_residual"] for q in initdiag),
+            rdiag["radau_block_scaled_relative_L2_residual_max"],
+            odiag["algebraic_scaled_relative_L2_residual_max"],
         )
         solve_res[:,jm]=base
         con_res[:,jm,0]=odiag["shift_constraint_relative_L2_max"]
         con_res[:,jm,1]=odiag["anisotropy_constraint_relative_L2_max"]
-        diagnostics.append({"m":int(m),**rdiag,**odiag})
+        diagnostics.append({"m":int(m),"initial":initdiag,**rdiag,**odiag})
     return states,solve_res,con_res,diagnostics
 
 
