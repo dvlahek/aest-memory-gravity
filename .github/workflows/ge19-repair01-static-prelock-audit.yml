@@ -1,0 +1,69 @@
+name: GE19 Repair01 static prelock audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair01_*'
+      - '.github/workflows/ge19-repair01-static-prelock-audit.yml'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python dependencies
+        run: python3 -m pip install numpy scipy
+      - name: Compile Repair01
+        run: python3 -m py_compile ge19/repair01_window_retarded_reduced_h3_z20_particular.py
+      - name: Audit frozen Repair01 wiring
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import ast, json
+          from pathlib import Path
+
+          p=Path("ge19/repair01_window_retarded_reduced_h3_z20_particular.py")
+          s=p.read_text()
+          ast.parse(s)
+
+          r=json.loads(Path("ge19/repair01_predata_stable_exp_background_coordinate.json").read_text())
+          a=json.loads(Path("ge19/repair01_predata_amendment01_native_I0_reconstruction.json").read_text())
+          assert r["classification"]=="GE19_REPAIR01_PREDATA_STABLE_EXP_BACKGROUND_COORDINATE"
+          assert a["classification"]=="GE19_REPAIR01_PREDATA_AMENDMENT01_NATIVE_I0_RECONSTRUCTION"
+
+          required=[
+            "def exp_Z_from_KQ",
+            "def stable_exp_background_from_native",
+            'Qb=bg["Q_action"][:,None]',
+            'bg["Q_action"][:,None]*real["u20"]',
+            '"stable_exp_background_native_gates"',
+            '"stable_Exp_background_native_reconstruction_all_gates"',
+            "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+            "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+            "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL",
+          ]
+          for x in required:
+            assert x in s, x
+
+          # Frozen numerical thresholds remain unchanged.
+          expected=[
+            "SOURCE_SPATIAL_MAX=5.0e-4",
+            "LINEAR_RES_MAX=1.0e-8",
+            "CONSTRAINT_MAX=1.0e-6",
+            "TIME_STATE_MAX=5.0e-3",
+            "GE15_GE18_METRIC_MAX=1.0e-10",
+          ]
+          for x in expected:
+            assert x in s, x
+
+          # Stage-A stop still precedes all active Stage-B source construction.
+          stop=s.index("if not (provenance_pass and stage_A_pass)")
+          stageb=s.index("# Stage B:",stop)
+          assert stageb>stop
+          tail=s[stageb:]
+          assert "source_bundle_reduced(" in tail
+
+          print("GE19_REPAIR01_STATIC_PRELOCK_AUDIT_PASS")
+          PY
