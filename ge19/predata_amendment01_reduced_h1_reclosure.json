@@ -1,0 +1,52 @@
+{
+  "classification": "GE19_PREDATA_AMENDMENT01_REDUCED_H1_RECLOSURE",
+  "timing": "created after GE19 preregistration/initial implementation review but before any GE19 science execution or output",
+  "parent_predata_commit": "c1808a3e6e746dfdda08c34a957f2db64bb66e0e",
+  "reason": "The H3 hierarchy requires Z10 to solve the same reduced Einstein+AeST+dust linear system used in L_total. GE18 certifies the pressureless matter subsystem on the frozen GE15 full-standard-matter metric, but it did not re-solve metric/AeST backreaction after replacing the full standard sector by effective dust. Therefore an internally coupled reduced H1 reclosure is a logical prerequisite to the Z20 source.",
+  "no_result_informed_change": true,
+  "stage_A_reduced_H1": {
+    "equation": "L_total Z10_reduced = 0",
+    "matter_model": "same C_min/C_star/C_max pressureless model frozen by GE18",
+    "modes": "only the six frozen input Fourier modes m={3,5,8,10,15,20}",
+    "gauge": [
+      "b10=0",
+      "L10=R10=S10"
+    ],
+    "initial_surface_z": 1.5,
+    "dynamic_fields": [
+      "S10",
+      "u10",
+      "phi10",
+      "T10"
+    ],
+    "initial_values_and_derivatives": "match the frozen physically weighted GE15 metric/AeST direction and GE18 dust bridge exactly at z=1.5",
+    "nondynamical_fields": [
+      "N10",
+      "delta_varrho10"
+    ],
+    "interpretation": "unique window-reclosed reduced first-order state for the later GE19 H3 source; it is not a replacement/relabel of the full-standard CLASS solution"
+  },
+  "stage_A_gates": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 0.000001,
+    "anisotropy_constraint_relative_L2_max": 0.000001,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "stage_B_change": "GE19 Q_total and Y2 must be evaluated on Z10_reduced from Stage A, not directly on the frozen GE15+GE18 mixed first-order trajectory. The GE15/GE18 trajectories remain provenance and comparison references.",
+  "unchanged_from_original_GE19": [
+    "H3 equation and signs",
+    "beta0={1,0.5,0.1}",
+    "C_min/C_star/C_max",
+    "frozen phases and primordial weighting",
+    "Nx=1024/2048 source control",
+    "Nt=64/32 state control",
+    "m=1..40 Z20 projection",
+    "window-retarded zero-homogeneous Z20 convention",
+    "all original GE19 thresholds",
+    "no finite eta or physical-amplitude interpretation"
+  ],
+  "stop_rule": "If Stage A fails any frozen H1 reclosure gate, GE19 terminates FAIL before constructing/interpreting Z20. Do not tune the reduced matter model, initial match, gauge or thresholds.",
+  "claim_boundary": "A later GE19 PASS requires both an internally on-shell reduced Z10 and the preregistered window-retarded Z20 particular solve. Historical GE15/GE18 classifications remain unchanged."
+}
