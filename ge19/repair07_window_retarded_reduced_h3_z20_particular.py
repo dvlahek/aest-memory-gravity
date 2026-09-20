@@ -1356,7 +1356,7 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
         "anisotropy_constraint_absolute_residual_max":float(np.max(aniso_abs)),
         "shift_constraint_row_scale_max":float(np.max(shift_scale)),
         "anisotropy_constraint_row_scale_max":float(np.max(aniso_scale)),
-        "constraint_monitor_normalization":"row_scaled_operator",
+        "constraint_monitor_normalization":"componentwise_backward_error",
         "pRt_minus_2pLt_relative_max":float(momentum_ratio),
         "all_outputs_finite":bool(np.all(np.isfinite(state)) and np.all(np.isfinite(dots))),
     }
