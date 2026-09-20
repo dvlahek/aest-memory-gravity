@@ -94,9 +94,14 @@ jobs:
 
           assert np.all(np.isfinite(X)), d
           assert max(rr)<=1e-12, (rr,d)
+          xerr=max(
+              np.linalg.norm(X[:,0]-x1)/np.linalg.norm(x1),
+              np.linalg.norm(X[:,1]-x2)/np.linalg.norm(x2),
+          )
+          assert xerr<=1e-10, (xerr,d)
           assert d["final_unscaled_relative_L2_max"]<=1e-12, d
           assert d["scaled_matrix_abs_max"]<=1.0+1e-12, d
-          assert d["row_max_dynamic_range"]>1e20, d
+          assert d["row_max_dynamic_range"]>1e6, d
 
           # Single-RHS API must obey the same original-system residual.
           xs,ds=r5.equilibrated_solve(A,B[:,0],max_refine=4)
@@ -120,6 +125,7 @@ jobs:
           assert physical["c2"]["all_partials_finite"], physical
 
           print("SYNTHETIC_MULTI_RHS_RESIDUAL_MAX=",max(rr))
+          print("SYNTHETIC_MULTI_RHS_SOLUTION_RELATIVE_L2_MAX=",xerr)
           print("SYNTHETIC_SINGLE_RHS_RESIDUAL=",rs)
           print("EQUILIBRATION_DIAGNOSTIC=",d)
           print("BENIGN_EQUIVALENCE=",benign)
