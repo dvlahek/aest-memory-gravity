@@ -1,0 +1,103 @@
+name: GE10 GE09 source interpolation localization
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge10/**'
+      - 'docs/ge10_ge09_source_interpolation_localization_implementation_lock.md'
+      - '.github/workflows/ge10-ge09-source-interpolation-localization.yml'
+
+jobs:
+  localization:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge10/predata_ge09_source_interpolation_localization.json)" = "0f128f46c23a12af48fe695e56b356da518f80bb"
+          test "$(git rev-parse HEAD:ge10/ge09_source_interpolation_localization.py)" = "6762e53b80c21dbb907abc6f01080dd38cfa634c"
+          test "$(git rev-parse HEAD:docs/ge10_ge09_source_interpolation_localization_implementation_lock.md)" = "52c5253e39df485e1104aa0b1483463ae46f37a4"
+          test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
+          test "$(git rev-parse HEAD:docs/ge09_dense_accepted_step_local_jet_bridge_result_freeze.md)" = "67eb2b1008a360560da486f592b57be23ffff54a"
+          git merge-base --is-ancestor b362517f5892cebd08f6b8435d9390aba47c4eef HEAD
+          git merge-base --is-ancestor a896f662c41c3500115c214fe79414e7b1b556d0 HEAD
+          git merge-base --is-ancestor 4a76eac8d3bcd80753f59ad4290b6379be4dbfc0 HEAD
+          echo GE10_LOCK_PASS
+
+      - name: Install dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify frozen GE09 artifact metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10600457104"             -o results/ge10_parent_artifact_metadata.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('results/ge10_parent_artifact_metadata.json'))
+          assert a['id']==10600457104
+          assert a['workflow_run']['id']==35494446296
+          assert a['digest']=='sha256:494639b2074336e704e06cf18b8875bc88d71c62cebfdb687e8e4c3f5270da38'
+          assert a['expired'] is False
+          print('GE10_PARENT_ARTIFACT_PASS')
+          PY
+
+      - name: Download frozen GE09 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10600457104
+          path: frozen_ge09
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35494446296
+
+      - name: Run GE10
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge10/ge09_source_interpolation_localization.py
+          python3 ge10/ge09_source_interpolation_localization.py             --artifact-root frozen_ge09             --artifact-meta-json results/ge10_parent_artifact_metadata.json             --json-out results/ge10_ge09_source_interpolation_localization.json             | tee results/ge10_ge09_source_interpolation_localization.log
+
+      - name: Summarize GE10
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge10_ge09_source_interpolation_localization.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge10_ge09_source_interpolation_localization.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('REPRODUCTION=',d['reproduction'])
+          print('STRIDE=',d['stride_convergence'])
+          print('WORST=',d['historical_worst_row'])
+          print('GATES=',d['gates'])
+          PY
+          fi
+
+      - name: Upload GE10 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge10_ge09_source_interpolation_localization
+          path: |
+            results/ge10_parent_artifact_metadata.json
+            results/ge10_ge09_source_interpolation_localization.json
+            results/ge10_ge09_source_interpolation_localization.log
+            ge10/predata_ge09_source_interpolation_localization.json
+            docs/ge10_ge09_source_interpolation_localization_implementation_lock.md
+          if-no-files-found: warn
