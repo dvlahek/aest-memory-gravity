@@ -1,0 +1,76 @@
+{
+  "classification": "GE19_REPAIR03_PREDATA_CANONICAL_EXP_PRODUCT_EVALUATION",
+  "created_before_repair03_result": true,
+  "parent": {
+    "classification": "GE19_REPAIR02_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL",
+    "freeze_commit": "0a35d95cd8186894167dcba79cbfe2da6f09ef03",
+    "error": "RuntimeError('non-finite stable GE06 partial c1:N_f')"
+  },
+  "root_cause": "After the correct frozen-symbol capture and Qb=Q0+Z0*Zb substitution, the already-expanded frozen GE06 partial_map still contains products of exponentials that are algebraically equal to exp(Zb^2) but overflow when evaluated as separate factors at physical Q0/Z0.",
+  "exact_identity": "exp(Q0^2/Z0^2)*exp((Q0+Z0*Zb)^2/Z0^2)*exp(-2*Q0*(Q0+Z0*Zb)/Z0^2)=exp(Zb^2)",
+  "permitted_change_only": [
+    "after the frozen background substitution and epsilon differentiation, canonicalize multiplicative products of exp(...) factors term by term",
+    "combine exponential factors symbolically before lambdify",
+    "simplify only the combined exponential argument by exact expand+cancel",
+    "retain cse=False and the Repair02 frozen symbolic argument tuple"
+  ],
+  "canonicalization_contract": {
+    "split": "operate independently on top-level additive terms",
+    "combine": "sympy.powsimp(term, force=True, combine='exp')",
+    "exp_argument_normalization": "for every exp(arg), replace arg by cancel(expand(arg))",
+    "second_combine": "repeat powsimp(..., combine='exp') after argument normalization",
+    "forbidden": "no global simplify(), no numerical substitution during symbolic canonicalization"
+  },
+  "mandatory_symbolic_audit": {
+    "every_remaining_exp_argument_exactly_equivalent_to_Zb_squared": true,
+    "no_remaining_exp_argument_contains_Q0": true,
+    "no_remaining_exp_argument_contains_Z0": true
+  },
+  "mandatory_pre_science_controls": {
+    "Repair02_symbol_contract_PASS": true,
+    "benign_GE06_coeff1_source_global_relative_L2_max": 1e-10,
+    "benign_GE06_coeff2_source_global_relative_L2_max": 1e-10,
+    "benign_outputs_finite": true,
+    "physical_parameter_probe_all_c1_partials_finite": true,
+    "physical_parameter_probe_all_c2_partials_finite": true
+  },
+  "physical_probe_parameters": {
+    "KB": 0.0665,
+    "C": 1.9335,
+    "K2": 9500,
+    "Q0_Mpc_inv": 0.0001,
+    "Z0_Mpc_inv": 1e-17,
+    "a_samples": [
+      0.4,
+      0.55,
+      0.7,
+      0.8333333333333334
+    ],
+    "Zb_samples": [
+      0.01,
+      0.1,
+      0.5,
+      1
+    ],
+    "purpose": "numerical overflow audit only; not a science state or GE19 source evaluation"
+  },
+  "inherited_without_change": [
+    "Repair01 native conserved-I0 reconstruction and gates",
+    "Repair02 frozen symbol tuple capture",
+    "all GE19 Stage-A gates",
+    "all GE19 Stage-B gates",
+    "modes, phases, beta0 and C values",
+    "time/spatial resolutions",
+    "gauge, matching surface and window-retarded convention",
+    "matter model and claim boundary"
+  ],
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "historical_parent_relabel": false,
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR03_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR03_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR03_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  },
+  "claim_boundary": "Repair03 changes only exact symbolic evaluation order of the already frozen GE06 Exp factors. Any later PASS retains the original GE19 reduced-H1/window-retarded reduced-H3 particular scope."
+}
