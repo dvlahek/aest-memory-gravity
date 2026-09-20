@@ -1,0 +1,24 @@
+{
+  "classification": "GE19_REPAIR01_PREDATA_AMENDMENT01_NATIVE_I0_RECONSTRUCTION",
+  "timing": "before any GE19 Repair01 execution/output",
+  "parent_repair01_predata_commit": "57148a617503d8bf06c51dbe8fba308a7531fc9d",
+  "reason": "The Exp background conserved charge should be reconstructed from native GE15 accepted background endpoints, not from PCHIP-interpolated 64/32 nodes. This mirrors the CLASS law K_Q=I0/a^3 and prevents interpolation error from being interpreted as charge non-conservation.",
+  "frozen_method": {
+    "native_rows": "use the deduplicated accepted-step rows of the first frozen k mode over the GE19 window",
+    "KQ_native": "3*(rho_dark+p_dark)/Q_trace",
+    "I0_samples": "a^3*KQ_native",
+    "I0_representative": "median(I0_samples)",
+    "uniform_grid_KQ": "I0_representative/a^3",
+    "Exp_coordinate": "solve KQ/(4*K2*Z0)=Z exp(Z^2) on positive branch",
+    "Q_action": "Q0+Z0*Z"
+  },
+  "native_reconstruction_gates": {
+    "I0_samples_global_relative_L2_about_median_max": 1e-10,
+    "rho_dark_native_reconstruction_global_relative_L2_max": 1e-10,
+    "p_dark_native_reconstruction_global_relative_L2_max": 1e-8,
+    "cad2_dark_native_reconstruction_global_relative_L2_max": 1e-8
+  },
+  "unchanged_repair01_and_GE19_gates": true,
+  "no_result_informed_change": true,
+  "claim_boundary": "This amendment changes only how the same exact conserved Exp background is reconstructed numerically. It does not change the theory, first-order direction, matter model, H1/H3 equations or any science threshold."
+}
