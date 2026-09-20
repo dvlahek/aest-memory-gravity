@@ -1,0 +1,4 @@
+# GE11 Repair01 fixed refinement R2
+# Same frozen numerical values as GE11; only active pinned-CLASS key names.
+tol_perturbations_integration = 1.25e-8
+perturbations_sampling_stepsize = 0.000625
