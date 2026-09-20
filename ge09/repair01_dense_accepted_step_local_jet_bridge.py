@@ -242,14 +242,14 @@ def read_class_perturbation(path):
     kline=next((x for x in lines if x.startswith("#scalar perturbations for mode k")),None)
     if kline is None:
         raise RuntimeError(f"missing scalar-mode k header in {path}")
-    mm=re.search(r"k\\s*=\\s*([0-9eE+\\-.]+)",kline)
+    mm=re.search(r"k\s*=\s*([0-9eE+\-.]+)",kline)
     if mm is None:
         raise RuntimeError(f"cannot parse scalar-mode k header in {path}")
     kval=float(mm.group(1))
     hline=next((x for x in lines if x.startswith("#") and "1:tau" in x and "2:a" in x),None)
     if hline is None:
         raise RuntimeError(f"missing numbered perturbation header in {path}")
-    pairs=re.findall(r"(\\d+):(.+?)(?=\\s+\\d+:|$)",hline.lstrip("#").strip())
+    pairs=re.findall(r"(\d+):(.+?)(?=\s+\d+:|$)",hline.lstrip("#").strip())
     names={title.strip():int(num)-1 for num,title in pairs}
     data=np.loadtxt(path,comments="#",ndmin=2)
     required=("tau [Mpc]","a","phi","psi","delta_cdm","theta_cdm")
@@ -336,7 +336,7 @@ def main():
     ini=class_root/"ge09_repair01_cli.ini"
     text=v63.rewrite_ini(v63.BASE.read_text(),str(prefix))
     text=text.replace("lensing = yes","lensing = no")
-    text += "k_output_values = " + ", ".join(f"{k:.17g}" for k in K_REQ) + "\\n"
+    text += "k_output_values = " + ", ".join(f"{k:.17g}" for k in K_REQ) + "\n"
     ini.write_text(text)
 
     env=os.environ.copy()
