@@ -1,0 +1,126 @@
+name: GE08 full first order state bridge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge08/**'
+      - 'docs/ge08_full_first_order_state_bridge_implementation_lock.md'
+      - '.github/workflows/ge08-full-first-order-state-bridge.yml'
+
+jobs:
+  full-state-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge08/predata_full_first_order_state_bridge.json)" = "250499e1df0a6442a53f4142d236a43ac5e5a113"
+          test "$(git rev-parse HEAD:ge08/apply_full_state_trace_patch.py)" = "20a3afe24a73b3512c5b5ea639466b8ca9bc3b8c"
+          test "$(git rev-parse HEAD:ge08/full_first_order_state_bridge.py)" = "75ba7446053b257fc8b3ab28faea7a1d2756b8cc"
+          test "$(git rev-parse HEAD:docs/ge08_full_first_order_state_bridge_implementation_lock.md)" = "b37a510c32175f5700d54135c671361a1b41d65b"
+          git merge-base --is-ancestor e1b64e3c5e6a3141fde4f746d32bbc7743c4888c HEAD
+          git merge-base --is-ancestor 105cbdda9b8cbd3ba456e855bc3bb3cd5de4ae95 HEAD
+          git merge-base --is-ancestor 8578a61c59a824b3fa490c2b257d7af2ef13d370 HEAD
+          git merge-base --is-ancestor b38b2269aa665648732c5eacadc8e88236801535 HEAD
+          echo GE08_LOCK_PASS
+
+      - name: Checkout pinned CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_ge08
+
+      - name: Install Python build dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply validated AeST chain and GE08 diagnostic patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_ge08
+          python3 v019i/apply_ic_patch.py class_ge08
+          python3 v019j/apply_memory_patch.py class_ge08
+          python3 v019w/apply_variational_forcing_patch.py class_ge08
+          python3 v019y/apply_output_precision_patch.py class_ge08
+          python3 v023/apply_source_grid_trace_patch.py class_ge08
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_ge08
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_ge08
+          python3 ge08/apply_full_state_trace_patch.py class_ge08
+
+      - name: Build CLASS and classy
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C class_ge08 -j2 class
+          make -C class_ge08 -j2 classy
+
+      - name: Predata and patch audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile ge08/apply_full_state_trace_patch.py ge08/full_first_order_state_bridge.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge08/predata_full_first_order_state_bridge.json'))
+          assert d['classification']=='GE08_PREDATA_FULL_FIRST_ORDER_STATE_BRIDGE_AUDIT'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['finite_physical_eta'] is False
+          assert d['bridge_gates']['old_chi_trace_reproduction_abs_or_rel_max']==1e-12
+          assert d['matter_completeness']['exact_pressureless_readiness_relative_L2_max']==1e-12
+          p=json.load(open('results/ge08_full_state_trace_patch.json'))
+          assert p['classification']=='GE08_FULL_STATE_TRACE_PATCH_PASS'
+          assert p['physics_modified'] is False
+          print('GE08_PREDATA_PATCH_PASS')
+          PY
+
+      - name: Run GE08 bridge audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/^lensing = yes$/lensing = no/' v019/ini/aest_exp.ini
+          python3 ge08/full_first_order_state_bridge.py             --class-root class_ge08             --json-out results/ge08_full_first_order_state_bridge.json             --npz-out results/ge08_full_first_order_state_bridge.npz             | tee results/ge08_full_first_order_state_bridge.log
+
+      - name: Summarize GE08
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge08_full_first_order_state_bridge.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge08_full_first_order_state_bridge.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('TRACE_COUNTS=',d['trace_counts'])
+          print('BRIDGE_ERRORS=',d['bridge_errors'])
+          print('BRIDGE_GATES=',d['bridge_gates'])
+          print('MATTER_COMPLETENESS=',d['matter_completeness'])
+          print('PROJECT_BOUNDARY=',d['project_boundary'])
+          PY
+          fi
+
+      - name: Upload GE08 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge08_full_first_order_state_bridge
+          path: |
+            results/ge08_full_first_order_state_bridge.json
+            results/ge08_full_first_order_state_bridge.npz
+            results/ge08_full_first_order_state_bridge.log
+            results/ge08_legacy_chi_trace.dat
+            results/ge08_full_state_trace.dat
+            results/ge08_full_state_trace_patch.json
+            ge08/predata_full_first_order_state_bridge.json
+            docs/ge08_full_first_order_state_bridge_implementation_lock.md
+          if-no-files-found: warn
