@@ -1,0 +1,73 @@
+{
+  "classification": "GE19_REPAIR04_PREDATA_LINEAR_OPERATOR_Z_COORDINATE_AND_PROVENANCE",
+  "created_before_repair04_result": true,
+  "parent": {
+    "classification": "GE19_REPAIR03_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "freeze_commit": "ed177f28f72289d3389e17c3b2b0da0f42a1177a",
+    "diagnosis": "Stage-A used the wrong third GE06 argument in linear_operator_batch: Q_action was passed where the stable generator requires Z_action. A separate non-preregistered per-k interpolated-background mismatch gate also blocked provenance despite stronger exact controls."
+  },
+  "permitted_change_only": [
+    "in active linear_operator_batch, pass bg['Z_action'] as the third stable GE06 argument",
+    "retain bg['Q_action'] only where the physical theory actually requires Q, such as X1=Q u + grad(phi)/a",
+    "remove GE15_background_mode_mismatch from provenance PASS/FAIL and retain it as a descriptive diagnostic",
+    "add executable pre-science wiring audit proving the linear operator receives Z_action and not Q_action"
+  ],
+  "explicit_nonchanges": [
+    "Repair03 stable Exp background reconstruction",
+    "Repair03 canonical exponential symbolic representation",
+    "GE06 and GE07 frozen source files",
+    "Stage-A equations and science thresholds",
+    "Stage-B equations and science thresholds",
+    "matter model",
+    "modes, phases, beta0 and C values",
+    "64/32 time grids",
+    "1024/2048 spatial controls",
+    "gauge",
+    "initial matching prescription",
+    "window-retarded Z20 convention"
+  ],
+  "provenance_controls_after_repair": {
+    "GE15_dense_hash_exact": true,
+    "GE15_frozen_64node_complete_jet_abs_or_rel_max": 1e-10,
+    "GE18_npz_hash_exact": true,
+    "GE15_GE18_metric_bridge_abs_or_rel_max": 1e-10,
+    "requested_k_relative_miss_max": 1e-12,
+    "stable_native_Exp_background_all_gates": true,
+    "stable_GE06_benign_equivalence_coeff1_max": 1e-10,
+    "stable_GE06_benign_equivalence_coeff2_max": 1e-10,
+    "stable_GE06_physical_probe_all_partials_finite": true,
+    "per_k_interpolated_background_mode_mismatch": "diagnostic_only"
+  },
+  "mandatory_pre_science_wiring_audit": {
+    "stable_GE06_signature_third_argument": "Zb",
+    "active_linear_operator_third_argument_source": "bg['Z_action']",
+    "active_linear_operator_must_not_pass_Q_action_as_third_argument": true,
+    "deterministic_operator_probe_all_finite": true
+  },
+  "unchanged_stage_A_gates": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 0.000001,
+    "anisotropy_constraint_relative_L2_max": 0.000001,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "unchanged_stage_B_gates": {
+    "spatial_N1024_vs_N2048_source_low_modes_m1_40_global_relative_L2_max": 0.0005,
+    "primary_linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 0.000001,
+    "anisotropy_constraint_relative_L2_max": 0.000001,
+    "primary64_vs_control32_state_low_mode_global_relative_L2_max": 0.005,
+    "all_three_beta0_and_all_three_C_cases_complete": true,
+    "all_outputs_finite": true
+  },
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR04_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR04_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR04_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  },
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "historical_parent_relabel": false,
+  "claim_boundary": "Repair04 changes only the stable GE06 background coordinate wiring in the active linear operator and removes one non-preregistered interpolation sanity check from provenance gating. Any PASS retains the original GE19 reduced-H1/window-retarded reduced-H3 particular scope."
+}
