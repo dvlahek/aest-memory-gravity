@@ -1214,6 +1214,40 @@ def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun,conrhsfun):
     }
 
 
+
+def _constraint_backward_error(row,w,source,piece_a=None,piece_b=None):
+    """Cancellation-safe scalar constraint backward error.
+
+    The gate metric is |row@w-source| divided by the sum of magnitudes of
+    the actual row contributions (plus lhs/source guards).  Optional pieces
+    reproduce the historical piece-normalized diagnostic only.
+    """
+    row=np.asarray(row,complex)
+    w=np.asarray(w,complex)
+    source=complex(source)
+    lhs=complex(row@w)
+    residual=lhs-source
+    contribution_scale=float(np.sum(np.abs(row*w)))
+    scale=max(abs(lhs),abs(source),contribution_scale,TINY)
+    metric=float(abs(residual)/scale)
+    old=None
+    if piece_a is not None and piece_b is not None:
+        old=float(
+            abs(residual)
+            / max(abs(complex(piece_a)),abs(complex(piece_b)),abs(source),TINY)
+        )
+    return {
+        "metric":metric,
+        "old_piece_metric":old,
+        "absolute_residual":float(abs(residual)),
+        "scale":float(scale),
+        "lhs_abs":float(abs(lhs)),
+        "source_abs":float(abs(source)),
+        "contribution_scale":contribution_scale,
+    }
+
+
+
 def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
     ncol,_,nt=Y.shape
     state=np.empty((ncol,6,nt),complex)
@@ -1286,29 +1320,23 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
             # The residual numerators and source signs are unchanged.
             sga=Cmat[10]@w
             sm=Cmat[11]@w
-            srow=Cmat[10]+Cmat[11]
-            slhs=srow@w
-            sres=slhs-rc[0,j]
-            sold=max(abs(sga),abs(sm),abs(rc[0,j]),TINY)
-            sop=max(float(np.sum(np.abs(srow*w))),TINY)
-            sden=max(abs(slhs),abs(rc[0,j]),sop,TINY)
-            shift_piece[j]=max(shift_piece[j],float(abs(sres)/sold))
-            shift[j]=max(shift[j],float(abs(sres)/sden))
-            shift_abs[j]=max(shift_abs[j],float(abs(sres)))
-            shift_scale[j]=max(shift_scale[j],float(sden))
+            smet=_constraint_backward_error(
+                Cmat[10]+Cmat[11],w,rc[0,j],sga,sm
+            )
+            shift_piece[j]=max(shift_piece[j],smet["old_piece_metric"])
+            shift[j]=max(shift[j],smet["metric"])
+            shift_abs[j]=max(shift_abs[j],smet["absolute_residual"])
+            shift_scale[j]=max(shift_scale[j],smet["scale"])
 
             aga=Cmat[12]@w
             am=Cmat[13]@w
-            arow=Cmat[12]+Cmat[13]
-            alhs=arow@w
-            ares=alhs-rc[1,j]
-            aold=max(abs(aga),abs(am),abs(rc[1,j]),TINY)
-            aop=max(float(np.sum(np.abs(arow*w))),TINY)
-            aden=max(abs(alhs),abs(rc[1,j]),aop,TINY)
-            aniso_piece[j]=max(aniso_piece[j],float(abs(ares)/aold))
-            aniso[j]=max(aniso[j],float(abs(ares)/aden))
-            aniso_abs[j]=max(aniso_abs[j],float(abs(ares)))
-            aniso_scale[j]=max(aniso_scale[j],float(aden))
+            amet=_constraint_backward_error(
+                Cmat[12]+Cmat[13],w,rc[1,j],aga,am
+            )
+            aniso_piece[j]=max(aniso_piece[j],amet["old_piece_metric"])
+            aniso[j]=max(aniso[j],amet["metric"])
+            aniso_abs[j]=max(aniso_abs[j],amet["absolute_residual"])
+            aniso_scale[j]=max(aniso_scale[j],amet["scale"])
 
             pL=Cmat[14]@w; pR=Cmat[15]@w
             momentum_ratio=max(
