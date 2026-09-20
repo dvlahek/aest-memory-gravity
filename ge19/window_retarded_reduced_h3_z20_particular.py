@@ -150,6 +150,71 @@ def reconstruct_modes(cos_coeff,sin_coeff,amplitudes,nx):
     return out
 
 
+
+def positive_mode_coeff(cos_coeff,sin_coeff,amp,phase):
+    """FFT +m coefficient for amp[c cos(m theta+phase)+s sin(...)]."""
+    return 0.5*float(amp)*(np.asarray(cos_coeff)-1j*np.asarray(sin_coeff))*np.exp(1j*float(phase))
+
+
+def reconstruct_positive_modes(coeff,nx):
+    """coeff shape [6,nt] for positive modes; return real [nt,nx]."""
+    coeff=np.asarray(coeff,complex)
+    theta=2*np.pi*np.arange(nx,dtype=float)/nx
+    out=np.zeros((coeff.shape[1],nx),float)
+    for i,m in enumerate(FOURIER_N):
+        out += 2.0*np.real(coeff[i,:,None]*np.exp(1j*m*theta)[None,:])
+    return out
+
+
+def ge15_frozen_npz_jet_error(npz_path,bg,jets):
+    """Compare reconstructed GE15 R1 64-node jet against its frozen NPZ."""
+    d=np.load(npz_path)
+    x=np.asarray(d["ln_a"],float)
+    if x.shape!=bg["x"].shape or aor(x,bg["x"])>1e-14:
+        return math.inf
+    err=0.0
+    for name in g9.JET_NAMES:
+        cc,ss=jet_mode_arrays(jets,name)
+        err=max(err,aor(cc,np.asarray(d[f"R1_cos_{name}"],float)))
+        err=max(err,aor(ss,np.asarray(d[f"R1_sin_{name}"],float)))
+    return float(err)
+
+
+def reference_reduced_mode_state(bg,jets,npz,tag):
+    """Frozen mixed GE15+GE18 first-order reference in +m Fourier coefficients.
+
+    Returns state [input_mode,field,time] and dynamic cosmic-time derivatives
+    [input_mode,dynamic_field,time] for S,u,phi,T.
+    """
+    nt=len(bg["x"])
+    amps,_,_=amplitudes()
+    state=np.zeros((len(FOURIER_N),6,nt),complex)
+    dot=np.zeros((len(FOURIER_N),4,nt),complex)
+    z=np.zeros(nt,float)
+
+    Tcos=ge18_coeff(npz,tag,"T_cos",bg["x"])
+    drcos=ge18_coeff(npz,tag,"drho_action",bg["x"])
+    Ttcos=ge18_coeff(npz,tag,"dTt",bg["x"])
+
+    for ik in range(len(FOURIER_N)):
+        amp=amps[ik]; ph=PHASES[ik]
+        jc,js,diag=jets[ik]
+
+        state[ik,0]=positive_mode_coeff(jc["N"],js["N"],amp,ph)
+        state[ik,1]=positive_mode_coeff(jc["L"],js["L"],amp,ph)
+        state[ik,2]=positive_mode_coeff(jc["u"],js["u"],amp,ph)
+        state[ik,3]=positive_mode_coeff(np.asarray(diag["varphi"],float),z,amp,ph)
+        state[ik,4]=positive_mode_coeff(Tcos[ik],z,amp,ph)
+        state[ik,5]=positive_mode_coeff(drcos[ik],z,amp,ph)
+
+        dot[ik,0]=positive_mode_coeff(jc["Lt"],js["Lt"],amp,ph)
+        dot[ik,1]=positive_mode_coeff(jc["ut"],js["ut"],amp,ph)
+        dot[ik,2]=positive_mode_coeff(jc["pt"],js["pt"],amp,ph)
+        dot[ik,3]=positive_mode_coeff(Ttcos[ik],z,amp,ph)
+
+    return state,dot
+
+
 def spectral_dx(a,kfund):
     arr=np.asarray(a)
     nx=arr.shape[-1]
@@ -301,6 +366,179 @@ def main_and_constraints(ga,ma):
     main=np.stack([EN,EL+ER,ga["u"],ga["phi"],ma["T"],ma["rho"]],axis=0)
     con=np.stack([Eb,EL-0.5*ER],axis=0)
     return main,con
+
+
+
+def solve_reduced_h1_case(mod6,mod7,bg,tag,reference,reference_dot):
+    """Solve L_total Z10_reduced=0 on the six frozen input modes."""
+    nt=len(bg["x"])
+    Dx=fd4_matrix(nt,bg["x"][0],bg["x"][-1])
+    Dt=bg["H"][:,None]*Dx
+    state=np.zeros((len(FOURIER_N),6,nt),complex)
+    sys_res=[]
+    shift_res=[]
+    aniso_res=[]
+    initial_err=[]
+
+    for ik,m in enumerate(FOURIER_N):
+        k=float(m*g9.K_REQ[0]/FOURIER_N[0])
+        A,_=build_matrix(mod6,mod7,bg,tag,k)
+        B=np.zeros(6*nt,complex)
+
+        # build_matrix already replaced these rows with value / dt conditions.
+        for jd,(vi,ei) in enumerate(zip(DYNAMIC_FIELD_INDEX,DYNAMIC_EQ_INDEX)):
+            B[ei*nt+0]=reference[ik,vi,0]
+            B[ei*nt+1]=reference_dot[ik,jd,0]
+
+        try:
+            lu=splu(A.tocsc())
+            X=lu.solve(B)
+        except Exception as exc:
+            raise RuntimeError(f"reduced H1 sparse solve failed C={tag} m={m}: {exc}") from exc
+
+        y=X.reshape(6,nt)
+        state[ik]=y
+        rr=A@X-B
+        sys_res.append(
+            np.linalg.norm(rr)/max(np.linalg.norm(A@X),np.linalg.norm(B),TINY)
+        )
+
+        # Native main/constraint operator, with separate blocks for a
+        # cancellation-safe constraint normalization.
+        main,con,mga,cga,mm,cm=linear_operator_batch(
+            mod6,mod7,bg,tag,k,y[:,:,None],return_parts=True
+        )
+        for ic,store in ((0,shift_res),(1,aniso_res)):
+            num=np.linalg.norm(con[ic,:,0])
+            den=max(
+                np.linalg.norm(cga[ic,:,0]),
+                np.linalg.norm(cm[ic,:,0]),
+                TINY,
+            )
+            store.append(float(num/den))
+
+        for jd,vi in enumerate(DYNAMIC_FIELD_INDEX):
+            initial_err.append(aor([y[vi,0]],[reference[ik,vi,0]]))
+            dyi=Dt@y[vi]
+            initial_err.append(aor([dyi[0]],[reference_dot[ik,jd,0]]))
+
+    return state,{
+        "linear_system_relative_L2_max":float(max(sys_res,default=math.inf)),
+        "shift_constraint_relative_L2_max":float(max(shift_res,default=math.inf)),
+        "anisotropy_constraint_relative_L2_max":float(max(aniso_res,default=math.inf)),
+        "initial_dynamic_match_abs_or_rel_max":float(max(initial_err,default=math.inf)),
+        "all_outputs_finite":bool(np.all(np.isfinite(state))),
+    }
+
+
+def reduced_h1_time_control(x64,state64,x32,state32):
+    p64=interpolate_state_to(x64,state64,x32)
+    by_field={}
+    mx=0.0
+    for iv,name in enumerate(FIELDS):
+        e=rel_l2(p64[:,iv,:],state32[:,iv,:])
+        by_field[name]=e
+        mx=max(mx,e)
+    return {"by_field_relative_L2":by_field,"max":float(mx)}
+
+
+def mixed_reference_comparison(reduced,reference):
+    by={}
+    for iv,name in enumerate(FIELDS):
+        by[name]=rel_l2(reduced[:,iv,:],reference[:,iv,:])
+    return {"by_field_relative_L2":by,"max":float(max(by.values()))}
+
+
+def reduced_state_real(bg,state,nx):
+    """Reconstruct reduced Z10 and its local derivatives in real space."""
+    nt=len(bg["x"])
+    Dx=fd4_matrix(nt,bg["x"][0],bg["x"][-1])
+    Dt=bg["H"][:,None]*Dx
+
+    real={}
+    dot={}
+    for iv,name in enumerate(FIELDS):
+        coeff=np.asarray(state[:,iv,:],complex)
+        real[name]=reconstruct_positive_modes(coeff,nx)
+        dcoeff=np.asarray([Dt@coeff[ik] for ik in range(len(FOURIER_N))],complex)
+        dot[name]=reconstruct_positive_modes(dcoeff,nx)
+
+    kfund=float(g9.K_REQ[0]/FOURIER_N[0])
+    spatial={name:spectral_dx(real[name],kfund) for name in FIELDS}
+    return real,dot,spatial
+
+
+def y2_source_from_reduced(bg,real,spatial,beta):
+    """Exact directional NL0C source from X1=Q u1 + (partial_x phi1)/a."""
+    a=bg["a"][:,None]
+    X=bg["Q"][:,None]*real["u20"] + spatial["phi20"]/a
+    flux=np.abs(X)*X
+    kfund=float(g9.K_REQ[0]/FOURIER_N[0])
+    div=spectral_dx(flux,kfund)/a
+    return (2.0*(2.0-KB)/((1.0+beta)*A0_MPC_INV))*div
+
+
+def source_real_reduced(mod6,mod7,bg,tag,beta,nx,reduced_state):
+    """H3 source evaluated on the internally reclosed reduced H1 state."""
+    nt=len(bg["x"])
+    Dx=fd4_matrix(nt,bg["x"][0],bg["x"][-1])
+    Dt=bg["H"][:,None]*Dx
+    real,dot,spatial=reduced_state_real(bg,reduced_state,nx)
+
+    N=real["N20"]; S=real["S20"]; u=real["u20"]; ph=real["phi20"]
+    T=real["T20"]; dr=real["delta_varrho20"]
+    z=np.zeros_like(N)
+    aa=bg["a"][:,None]
+    adot=(bg["a"]*bg["H"])[:,None]
+    Qb=bg["Q"][:,None]
+
+    vals6=(
+        aa,adot,Qb,
+        N,S,S,z,u,
+        dot["S20"],spatial["S20"],
+        dot["S20"],spatial["S20"],z,
+        dot["u20"],spatial["u20"],
+        dot["phi20"],spatial["phi20"],spatial["N20"],
+        KB,CV,K2,Q0,Z0,
+    )
+    p6={name:fn(*vals6) for name,fn in mod6.f_c2.items()}
+    p6=broadcast_partials(p6,N.shape)
+    q6=assemble_ga_local(
+        p6,Dt,spatial_real=True,
+        kfund=float(g9.K_REQ[0]/FOURIER_N[0])
+    )
+
+    rhob=(3.0*C_VALUES[tag]/bg["a"]**3)[:,None]
+    vals7=(
+        aa,rhob,N,S,S,z,dr,dot["T20"],spatial["T20"]
+    )
+    p7={name:fn(*vals7) for name,fn in mod7.f_c2.items()}
+    p7=broadcast_partials(p7,N.shape)
+    q7=assemble_m_local(
+        p7,Dt,spatial_real=True,
+        kfund=float(g9.K_REQ[0]/FOURIER_N[0])
+    )
+
+    qmain,qcon=main_and_constraints(q6,q7)
+    y=y2_source_from_reduced(bg,real,spatial,beta)
+    rhs=-qmain
+    rhs[3] += -2.0*y
+    rhscon=-qcon
+
+    zma={k:np.zeros_like(v) for k,v in q7.items()}
+    zga={k:np.zeros_like(v) for k,v in q6.items()}
+    qmain_ga,_=main_and_constraints(q6,zma)
+    qmain_m,_=main_and_constraints(zga,q7)
+    ypiece=np.zeros_like(qmain)
+    ypiece[3]=-2.0*y
+    return {
+        "rhs":rhs,
+        "rhs_constraint":rhscon,
+        "Q_ga":-qmain_ga,
+        "Q_matter":-qmain_m,
+        "Y_H3":ypiece,
+        "X1":bg["Q"][:,None]*real["u20"]+spatial["phi20"]/bg["a"][:,None],
+    }
 
 
 def source_real(mod6,mod7,bg,jets,npz,tag,beta,nx):
@@ -473,6 +711,16 @@ def source_bundle(mod6,mod7,bg,jets,npz,tag,nx):
     return out
 
 
+
+def source_bundle_reduced(mod6,mod7,bg,tag,nx,reduced_state):
+    out={}
+    for beta in BETAS:
+        out[beta]=rhs_fourier(
+            source_real_reduced(mod6,mod7,bg,tag,beta,nx,reduced_state)
+        )
+    return out
+
+
 def interpolate_state_to(x0,state,x):
     # [beta,m,field,time]
     sh=state.shape[:-1]+(len(x),)
@@ -493,6 +741,7 @@ def main():
     required=[
         rd/"ge15_R1_dense_accepted_step_trace.dat",
         rd/"ge15_cancellation_free_s_state_precision_closure.json",
+        rd/"ge15_cancellation_free_s_state_precision_closure.npz",
         rd/"ge18_repair01_on_shell_matched_dust_first_order_bridge.json",
         rd/"ge18_repair01_on_shell_matched_dust_first_order_bridge.npz",
     ]
@@ -519,6 +768,9 @@ def main():
     bg64,state64,jets64=build_ge15_reference(dense,NT_PRIMARY)
     bg32,state32,jets32=build_ge15_reference(dense,NT_CONTROL)
 
+    ge15_npz_path=rd/"ge15_cancellation_free_s_state_precision_closure.npz"
+    ge15_jet_err=ge15_frozen_npz_jet_error(ge15_npz_path,bg64,jets64)
+
     # GE15/GE18 metric bridge check on native 64-node representation.
     metric_err=0.0
     for name,jetname in (("dN","N"),("dL","L"),("dR","R"),("db","b"),("dTt","N")):
@@ -533,7 +785,116 @@ def main():
     amps,widths,PR=amplitudes()
     kfund=float(g9.K_REQ[0]/FOURIER_N[0])
 
-    # Primary source at both spatial resolutions, for every matter/beta case.
+    # ------------------------------------------------------------------
+    # Stage A: mandatory internally coupled reduced H1 reclosure.
+    # ------------------------------------------------------------------
+    ref64={}; refdot64={}; ref32={}; refdot32={}
+    h1_64={}; h1_32={}
+    h1_rows=[]
+    h1_time_rows=[]
+    h1_reference_rows=[]
+    h1_sys_max=0.0
+    h1_shift_max=0.0
+    h1_aniso_max=0.0
+    h1_init_max=0.0
+    h1_time_max=0.0
+    h1_finite=True
+
+    for tag in C_TAGS:
+        ref64[tag],refdot64[tag]=reference_reduced_mode_state(bg64,jets64,npz,tag)
+        ref32[tag],refdot32[tag]=reference_reduced_mode_state(bg32,jets32,npz,tag)
+
+        st64,ctl64=solve_reduced_h1_case(
+            mod6,mod7,bg64,tag,ref64[tag],refdot64[tag]
+        )
+        st32,ctl32=solve_reduced_h1_case(
+            mod6,mod7,bg32,tag,ref32[tag],refdot32[tag]
+        )
+        h1_64[tag]=st64
+        h1_32[tag]=st32
+
+        tc=reduced_h1_time_control(bg64["x"],st64,bg32["x"],st32)
+        cmp=mixed_reference_comparison(st64,ref64[tag])
+        h1_rows.append({"C":tag,"primary":ctl64,"control":ctl32})
+        h1_time_rows.append({"C":tag,**tc})
+        h1_reference_rows.append({"C":tag,**cmp})
+
+        h1_sys_max=max(h1_sys_max,ctl64["linear_system_relative_L2_max"],ctl32["linear_system_relative_L2_max"])
+        h1_shift_max=max(h1_shift_max,ctl64["shift_constraint_relative_L2_max"],ctl32["shift_constraint_relative_L2_max"])
+        h1_aniso_max=max(h1_aniso_max,ctl64["anisotropy_constraint_relative_L2_max"],ctl32["anisotropy_constraint_relative_L2_max"])
+        h1_init_max=max(h1_init_max,ctl64["initial_dynamic_match_abs_or_rel_max"],ctl32["initial_dynamic_match_abs_or_rel_max"])
+        h1_time_max=max(h1_time_max,tc["max"])
+        h1_finite=bool(h1_finite and ctl64["all_outputs_finite"] and ctl32["all_outputs_finite"])
+
+    stage_A_gates={
+        "linear_system_relative_L2_residual_le_1e8":bool(h1_sys_max<=1e-8),
+        "shift_constraint_relative_L2_le_1e6":bool(h1_shift_max<=1e-6),
+        "anisotropy_constraint_relative_L2_le_1e6":bool(h1_aniso_max<=1e-6),
+        "primary64_vs_control32_state_global_relative_L2_le_5e3":bool(h1_time_max<=5e-3),
+        "initial_dynamic_match_abs_or_rel_le_1e10":bool(h1_init_max<=1e-10),
+        "all_outputs_finite":bool(h1_finite),
+    }
+    stage_A_pass=bool(all(stage_A_gates.values()))
+
+    provenance={
+        "GE15_parent_PASS":True,
+        "GE18_repair01_parent_PASS":True,
+        "GE15_R1_dense_sha256":dense_sha,
+        "GE15_R1_dense_expected_sha256":dense_expected,
+        "GE15_R1_dense_hash_exact":dense_sha==dense_expected,
+        "GE15_R1_frozen_64node_jet_abs_or_rel_max":ge15_jet_err,
+        "GE18_repair01_npz_sha256":ge18_npz_sha,
+        "GE18_repair01_npz_expected_sha256":GE18_NPZ_SHA,
+        "GE18_repair01_npz_hash_exact":ge18_npz_sha==GE18_NPZ_SHA,
+        "GE15_GE18_metric_bridge_abs_or_rel_max":metric_err,
+        "GE15_background_mode_mismatch_max":max(bg64["bg_mode_mismatch"],bg32["bg_mode_mismatch"]),
+        "requested_k_relative_miss_max":max(bg64["kmiss"],bg32["kmiss"]),
+    }
+
+    provenance_pass=bool(
+        provenance["GE15_R1_dense_hash_exact"]
+        and provenance["GE18_repair01_npz_hash_exact"]
+        and provenance["requested_k_relative_miss_max"]<=1e-12
+        and provenance["GE15_background_mode_mismatch_max"]<=1e-10
+        and ge15_jet_err<=1e-10
+        and metric_err<=GE15_GE18_METRIC_MAX
+    )
+
+    # Amendment01 stop rule: do not construct or interpret H3 if reduced H1
+    # is not internally on shell.
+    if not (provenance_pass and stage_A_pass):
+        result={
+            "classification":"GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+            "predata_classification":"GE19_PREDATA_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR",
+            "predata_amendment":"GE19_PREDATA_AMENDMENT01_REDUCED_H1_RECLOSURE",
+            "failure_stage":"Stage_A_reduced_H1_reclosure",
+            "provenance":provenance,
+            "stage_A_reduced_H1":{
+                "controls":{
+                    "max_linear_system_relative_L2":h1_sys_max,
+                    "max_shift_constraint_relative_L2":h1_shift_max,
+                    "max_anisotropy_constraint_relative_L2":h1_aniso_max,
+                    "max_initial_dynamic_match_abs_or_rel":h1_init_max,
+                    "primary64_vs_control32_state_global_relative_L2_max":h1_time_max,
+                    "rows":h1_rows,
+                    "time_grid_rows":h1_time_rows,
+                    "reduced_vs_mixed_reference_descriptive":h1_reference_rows,
+                },
+                "gates":stage_A_gates,
+                "pass":False,
+            },
+            "stop_rule_applied":True,
+            "Z20_constructed":False,
+            "claim_boundary":"Stage A failed or provenance failed, so amendment01 forbids construction or interpretation of Z20. No H3 threshold or model choice is changed."
+        }
+        outj=Path(args.json_out); outj.parent.mkdir(parents=True,exist_ok=True)
+        outj.write_text(json.dumps(result,indent=2,allow_nan=False)+"\n")
+        print(json.dumps(result,indent=2,allow_nan=False))
+        raise SystemExit(2)
+
+    # ------------------------------------------------------------------
+    # Stage B: H3 source on Z10_reduced, then window-retarded Z20.
+    # ------------------------------------------------------------------
     src1024={}; src2048={}
     spatial_rows=[]
     spatial_max=0.0
@@ -541,8 +902,12 @@ def main():
     zero_mode_rows=[]
     source_piece_norms=[]
     for tag in C_TAGS:
-        src1024[tag]=source_bundle(mod6,mod7,bg64,jets64,npz,tag,NX_PRIMARY)
-        src2048[tag]=source_bundle(mod6,mod7,bg64,jets64,npz,tag,NX_SPATIAL_CONTROL)
+        src1024[tag]=source_bundle_reduced(
+            mod6,mod7,bg64,tag,NX_PRIMARY,h1_64[tag]
+        )
+        src2048[tag]=source_bundle_reduced(
+            mod6,mod7,bg64,tag,NX_SPATIAL_CONTROL,h1_64[tag]
+        )
         for beta in BETAS:
             a=src1024[tag][beta]["rhs"][:,:,1:41]
             b=src2048[tag][beta]["rhs"][:,:,1:41]
@@ -567,7 +932,6 @@ def main():
                 "Y_cosine_analytic_plus_dust":cosine(yy,qga+qm),
             })
 
-    # Solve primary Nt=64.
     state64_by_C={}
     solve_max=0.0
     shift_max=0.0
@@ -586,13 +950,14 @@ def main():
             "anisotropy_constraint_relative_L2_max":float(np.max(con[:,:,1])),
         })
 
-    # Independent time-grid control Nt=32, same Nx=1024.
     src32={}
     state32_by_C={}
     time_rows=[]
     time_max=0.0
     for tag in C_TAGS:
-        src32[tag]=source_bundle(mod6,mod7,bg32,jets32,npz,tag,NX_PRIMARY)
+        src32[tag]=source_bundle_reduced(
+            mod6,mod7,bg32,tag,NX_PRIMARY,h1_32[tag]
+        )
         st32,res32,con32=solve_case(mod6,mod7,bg32,tag,src32[tag])
         state32_by_C[tag]=st32
         p32=interpolate_state_to(bg64["x"],state64_by_C[tag],bg32["x"])
@@ -629,28 +994,11 @@ def main():
         and all(np.all(np.isfinite(v)) for v in state32_by_C.values())
     )
 
-    provenance={
-        "GE15_parent_PASS":True,
-        "GE18_repair01_parent_PASS":True,
-        "GE15_R1_dense_sha256":dense_sha,
-        "GE15_R1_dense_expected_sha256":dense_expected,
-        "GE15_R1_dense_hash_exact":dense_sha==dense_expected,
-        "GE18_repair01_npz_sha256":ge18_npz_sha,
-        "GE18_repair01_npz_expected_sha256":GE18_NPZ_SHA,
-        "GE18_repair01_npz_hash_exact":ge18_npz_sha==GE18_NPZ_SHA,
-        "GE15_GE18_metric_bridge_abs_or_rel_max":metric_err,
-        "GE15_background_mode_mismatch_max":max(bg64["bg_mode_mismatch"],bg32["bg_mode_mismatch"]),
-        "requested_k_relative_miss_max":max(bg64["kmiss"],bg32["kmiss"]),
-    }
-
     gates={
-        "frozen_input_provenance_exact":bool(
-            provenance["GE15_R1_dense_hash_exact"]
-            and provenance["GE18_repair01_npz_hash_exact"]
-            and provenance["requested_k_relative_miss_max"]<=1e-12
-            and provenance["GE15_background_mode_mismatch_max"]<=1e-10
-        ),
+        "frozen_input_provenance_exact":bool(provenance_pass),
+        "GE15_R1_reconstructed_jet_vs_frozen_64node_representation_abs_or_rel_le_1e10":bool(ge15_jet_err<=1e-10),
         "GE15_GE18_metric_bridge_abs_or_rel_le_1e10":bool(metric_err<=GE15_GE18_METRIC_MAX),
+        "reduced_H1_stage_A_all_gates":bool(stage_A_pass),
         "all_sources_finite":bool(all_sources_finite),
         "spatial_N1024_vs_N2048_source_m1_40_global_relative_L2_le_5e4":bool(spatial_max<=SOURCE_SPATIAL_MAX),
         "primary_linear_system_relative_L2_residual_le_1e8":bool(solve_max<=LINEAR_RES_MAX),
@@ -671,9 +1019,24 @@ def main():
     result={
         "classification":classification,
         "predata_classification":"GE19_PREDATA_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR",
+        "predata_amendment":"GE19_PREDATA_AMENDMENT01_REDUCED_H1_RECLOSURE",
         "scope":"m=1..40 projection of one window-retarded reduced-matter baseline H3 directional particular state. Formal epsilon->0 coefficient only.",
         "equation":"L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
         "provenance":provenance,
+        "stage_A_reduced_H1":{
+            "pass":stage_A_pass,
+            "controls":{
+                "max_linear_system_relative_L2":h1_sys_max,
+                "max_shift_constraint_relative_L2":h1_shift_max,
+                "max_anisotropy_constraint_relative_L2":h1_aniso_max,
+                "max_initial_dynamic_match_abs_or_rel":h1_init_max,
+                "primary64_vs_control32_state_global_relative_L2_max":h1_time_max,
+                "rows":h1_rows,
+                "time_grid_rows":h1_time_rows,
+                "reduced_vs_mixed_reference_descriptive":h1_reference_rows,
+            },
+            "gates":stage_A_gates,
+        },
         "frozen_direction":{
             "k_h_per_Mpc":g9.K_H.tolist(),
             "integer_modes":FOURIER_N.tolist(),
@@ -725,6 +1088,7 @@ def main():
         },
         "gates":gates,
         "project_boundary":{
+            "reduced_H1_reclosure_certified":stage_A_pass,
             "window_retarded_reduced_H3_particular_certified":passed,
             "homogeneous_primordial_Z20_certified":False,
             "full_species_Z20_certified":False,
@@ -748,6 +1112,8 @@ def main():
         "a_control":bg32["a"],
     }
     for tag in C_TAGS:
+        save[f"{tag}_Z10_reduced_primary"]=h1_64[tag]
+        save[f"{tag}_Z10_reduced_control"]=h1_32[tag]
         save[f"{tag}_Z20_primary"]=state64_by_C[tag]
         save[f"{tag}_Z20_control"]=state32_by_C[tag]
         for ib,beta in enumerate(BETAS):
