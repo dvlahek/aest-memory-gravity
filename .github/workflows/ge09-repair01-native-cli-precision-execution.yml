@@ -10,6 +10,8 @@ on:
       - 'docs/ge09_repair01_native_cli_precision_execution_implementation_lock.md'
       - 'docs/ge09_repair01a_predata_standard_library_import_repair.md'
       - 'docs/ge09_repair01a_standard_library_import_repair_implementation_lock.md'
+      - 'docs/ge09_repair01b_predata_native_cli_root_canonicalization.md'
+      - 'docs/ge09_repair01b_native_cli_root_canonicalization_implementation_lock.md'
       - '.github/workflows/ge09-repair01-native-cli-precision-execution.yml'
 
 jobs:
@@ -29,10 +31,12 @@ jobs:
           test "$(git rev-parse HEAD:ge09/predata_dense_accepted_step_local_jet_bridge.json)" = "239a0296a25b3740e67c02759c1998560c37de4f"
           test "$(git rev-parse HEAD:docs/ge09_repair01_predata_native_cli_precision_execution.md)" = "53076ce1e6b0a8446f0adedc6c9d73f75650898c"
           test "$(git rev-parse HEAD:ge09/apply_dense_accepted_step_trace_patch.py)" = "23b0cd22ebab499aee0ce03e6b3b678fe727ef55"
-          test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "06c012763add5f28fa72bbcc77296f101e0a816f"
+          test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "03e4d82e83f620155bba2ee9ff51dac017ea7912"
           test "$(git rev-parse HEAD:docs/ge09_repair01_native_cli_precision_execution_implementation_lock.md)" = "262a378a5ae76bf767673ee5f2e1c5f1cb24cd41"
           test "$(git rev-parse HEAD:docs/ge09_repair01a_predata_standard_library_import_repair.md)" = "3ddff2e0044f126b0bda9d6ccdd38daa0e0266fa"
           test "$(git rev-parse HEAD:docs/ge09_repair01a_standard_library_import_repair_implementation_lock.md)" = "d86a406c4346e21af166cf5b20a7dd908efd9eb8"
+          test "$(git rev-parse HEAD:docs/ge09_repair01b_predata_native_cli_root_canonicalization.md)" = "8ba32af0d1ac44193dfa63cbfc6c657592ee6269"
+          test "$(git rev-parse HEAD:docs/ge09_repair01b_native_cli_root_canonicalization_implementation_lock.md)" = "d14434de93be478684cf9e2ab698c39de587779a"
           test "$(git rev-parse HEAD:v019p/pre/p3.pre)" = "c44d2491747a5a1ac805e25de502a9ff33748f65"
           git merge-base --is-ancestor d5b849c8d8d6dc657815740871bcd977d8cc6316 HEAD
           git merge-base --is-ancestor 4bccfea123e8c1b227db05269130c5ce65fe6303 HEAD
@@ -41,7 +45,10 @@ jobs:
           git merge-base --is-ancestor 35e1e7f59bcda1170d731fbb54f5aa28e95a6b08 HEAD
           git merge-base --is-ancestor 4cedb7c755f22272886d4d0bb43ed26a750c806c HEAD
           git merge-base --is-ancestor 0a0a1f1bc7a7dec666ff17df9ec92b83dd233221 HEAD
-          echo GE09_REPAIR01A_LOCK_PASS
+          git merge-base --is-ancestor 1424d9254b71b35eff68a9626d1165a437ed6593 HEAD
+          git merge-base --is-ancestor d21f651b2d314db34c7375f60fa0fbc873839efa HEAD
+          git merge-base --is-ancestor 422cf594731cc68e6b1fab2452a66cac3b22e549 HEAD
+          echo GE09_REPAIR01B_LOCK_PASS
 
       - name: Checkout pinned CLASS
         uses: actions/checkout@v4
