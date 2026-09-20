@@ -87,24 +87,41 @@ jobs:
           v=np.asarray([1e-9,-2e-9,3e-10,-4e-9],complex)
           rhs=np.zeros(6,complex)
 
-          y0,z0,idg=r6._initial_canonical_state(
+          y0,w0,idg=r6._initial_canonical_state(
               m6,m7,bg,"C_star",k,float(x[0]),q,v,rhs
           )
-          f,z,p6,p7,dg=r6._canonical_rhs_eval(
-              m6,m7,bg,"C_star",k,float(x[0]),y0,rhs
+          M0,F0,ZY0,ZR0,WY0,WR0,C0,bp0,od0=r6._canonical_operator_matrices(
+              m6,m7,bg,"C_star",k,float(x[0])
           )
+          wrec=WY0@y0+WR0@rhs
+          zrec=wrec[r6._ZIDX]
           assert np.all(np.isfinite(y0))
-          assert np.all(np.isfinite(f))
-          assert dg["map_relative_L2_residual"]<=1e-10, dg
-          assert idg["relative_L2_residual_max"]<=1e-10, idg
-          assert np.max(np.abs(z[2:]-v))<=1e-12, (z,v)
+          assert np.all(np.isfinite(M0))
+          assert idg["initial_algebraic_scaled_residual"]<=1e-10, idg
+          assert od0["algebraic_scaled_residual_max"]<=1e-10, od0
+          assert np.max(np.abs(zrec[2:]-v))<=1e-12, (zrec,v)
 
-          # Canonical map must be affine-linear in state.
-          M,f0=r6._canonical_affine_matrix(m6,m7,bg,"C_star",k,float(x[5]))
+          # Stable local linear representation must remain affine and the
+          # isotropic momentum identity p_Rt=2 p_Lt must hold.
+          M,F,ZY,ZR,WY,WR,C,bp,od=r6._canonical_operator_matrices(
+              m6,m7,bg,"C_star",k,float(x[5])
+          )
           y=np.asarray([1,2,3,4,5,6,7,8],complex)*1e-8
-          fy,*_=r6._canonical_rhs_eval(m6,m7,bg,"C_star",k,float(x[5]),y,rhs)
-          linerr=np.linalg.norm(fy-(M@y+f0))/max(np.linalg.norm(fy),1e-300)
-          assert linerr<=1e-10, linerr
+          rtest=np.asarray([1,-2,3,-4,5,-6],complex)*1e-12
+          fy=M@y+F@rtest
+          w=WY@y+WR@rtest
+          target=np.concatenate([y[4:8],rtest[[0,5]]])
+          rows=np.max(np.abs(C[0:6]),axis=1)
+          linerr=np.linalg.norm((C[0:6]@w-target)/rows)/max(
+              np.linalg.norm((C[0:6]@w)/rows),
+              np.linalg.norm(target/rows),
+              1e-300
+          )
+          assert linerr<=1e-10, (linerr,od)
+          pL=C[14]@w; pR=C[15]@w
+          prat=abs(pR-2*pL)/max(abs(pR),2*abs(pL),1e-300)
+          assert prat<=1e-12, prat
+          assert np.all(np.isfinite(fy))
 
           # Zero state / zero source must remain zero under the Radau march.
           zfun,cfun=r6._zero_source_interp(1)
@@ -112,7 +129,7 @@ jobs:
               m6,m7,bg,"C_star",k,np.zeros((8,1),complex),zfun
           )
           assert np.max(np.abs(Y))<=1e-20, np.max(np.abs(Y))
-          assert rdg["radau_block_relative_L2_residual_max"]<=1e-10, rdg
+          assert rdg["radau_block_scaled_relative_L2_residual_max"]<=1e-10, rdg
 
           # Stable Exp controls remain unchanged.
           benign=r6.ge06_stable_benign_equivalence(g6,m6)
@@ -123,8 +140,8 @@ jobs:
           assert physical["c1"]["all_partials_finite"]
           assert physical["c2"]["all_partials_finite"]
 
-          print("CANONICAL_INITIAL_MAP =",dg)
-          print("CANONICAL_AFFINE_RELATIVE_ERROR =",linerr)
+          print("CANONICAL_INITIAL_MAP =",idg)
+          print("CANONICAL_AFFINE_SCALED_RELATIVE_ERROR =",linerr)\n          print("CANONICAL_PRT_RATIO_ERROR =",prat)
           print("RADAU_ZERO_DIAGNOSTIC =",rdg)
           print("BENIGN_EQUIVALENCE =",benign)
           print("PHYSICAL_PARAMETER_PROBE =",physical)
