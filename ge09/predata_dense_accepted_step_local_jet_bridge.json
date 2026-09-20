@@ -1,0 +1,174 @@
+{
+  "classification": "GE09_PREDATA_DENSE_ACCEPTED_STEP_LOCAL_JET_BRIDGE",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Construct a derivative-aware common-time representation of the complete first-order local jet required by the certified GE06 Einstein+AeST Q generator, using only successful NDF15 step endpoints with freshly evaluated physical RHS values.",
+  "dependencies": {
+    "ge08_repair01": "GE08_REPAIR01_FULL_FIRST_ORDER_STATE_BRIDGE_PASS_MATTER_INCOMPLETE",
+    "ge06": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "ge04": "GE04_DY2_SPECTRAL_CONVERGENCE_PASS",
+    "class_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "p": 0,
+    "tauH0": 10,
+    "eta": 0,
+    "gauge": "Newtonian",
+    "perturbation_integrator": "CLASS default ndf15",
+    "perturbation_tolerance": 5e-8,
+    "perturb_sampling_stepsize": 0.0025,
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "z_window": [
+      0.2,
+      1.5
+    ]
+  },
+  "trace_semantics": {
+    "location": "perturbations_print_variables() on successful NDF15 step endpoints",
+    "required_lifecycle": "NDF15 explicitly calls perturbations_derivs(tnew,ynew,f0) immediately before perturbations_print_variables(tnew,ynew,f0)",
+    "rejected_or_internal_derivative_stages_excluded": true,
+    "fields": [
+      "k",
+      "tau",
+      "a",
+      "H_over_H0",
+      "Q",
+      "rho_dark",
+      "p_dark",
+      "cad2_dark",
+      "phi",
+      "psi",
+      "phi_prime",
+      "delta_dark",
+      "delta_dark_prime",
+      "theta_dark",
+      "theta_dark_prime",
+      "alpha_aest",
+      "alpha_prime",
+      "E_aest",
+      "E_aest_prime"
+    ]
+  },
+  "common_time_representation": {
+    "variable": "ln(a)",
+    "common_nodes": 64,
+    "a_min": 0.4,
+    "a_max": 0.8333333333333334,
+    "primary": "all successful accepted-step endpoints in the frozen window",
+    "control": "deterministic every-second accepted endpoint per k, retaining first and last endpoint",
+    "derivative_aware_fields": [
+      "phi",
+      "delta_dark",
+      "theta_dark",
+      "alpha_aest",
+      "E_aest"
+    ],
+    "derivative_conversion": "dF/dln(a)=F_prime/(a H), with prime the fresh conformal physical RHS",
+    "interpolation_derivative_aware": "scipy CubicHermiteSpline",
+    "interpolation_algebraic": [
+      "psi",
+      "Q",
+      "H",
+      "rho_dark",
+      "p_dark",
+      "cad2_dark"
+    ],
+    "interpolation_algebraic_method": "scipy PchipInterpolator",
+    "no_off_window_extrapolation": true
+  },
+  "ge06_local_jet_dictionary": {
+    "background": [
+      "a",
+      "adot=a H",
+      "Q"
+    ],
+    "directional_entries": [
+      "N",
+      "L",
+      "R",
+      "b",
+      "u",
+      "Lt",
+      "Lx",
+      "Rt",
+      "Rx",
+      "bx",
+      "ut",
+      "ux",
+      "pt",
+      "px",
+      "Nx"
+    ],
+    "metric": [
+      "N1=psi",
+      "L1=R1=-a phi",
+      "b1=0",
+      "Lt1=Rt1=-a H phi-phi_prime",
+      "Lx1=Rx1=-a partial_x(phi)",
+      "bx1=0",
+      "Nx1=partial_x(psi)"
+    ],
+    "aether": [
+      "a u1=partial_x(alpha)",
+      "ux1=(1/a) partial_x^2(alpha)",
+      "ut1=-H u1+(1/a) partial_x(E-psi)"
+    ],
+    "scalar": [
+      "u_A=a theta_dark/k^2",
+      "varphi=Q u_A",
+      "px1=partial_x(varphi)",
+      "Pi_dark=cad2_dark*delta_dark+cad2_dark*k^2/(3 a^2 rho_dark)*(KB E_aest+(2-KB) chi)",
+      "pt1=Q*(psi+Pi_dark/(1+w_dark))"
+    ],
+    "exact_internal_control": "pt1 must equal the independent product-rule expression from Qdot=-3 H Q cad2_dark and the fresh physical theta_dark_prime"
+  },
+  "frozen_fourier_reconstruction": {
+    "log_k_weights": "same NL1C4 log-trapezoid weights",
+    "primordial_amplitude": "sqrt(2*w_k*A_s*(k/kpivot)^(n_s-1))",
+    "integer_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "phases_rad": [
+      0.13,
+      0.71,
+      1.29,
+      2.03,
+      2.77,
+      3.41
+    ],
+    "spatial_derivatives": "analytic Fourier derivatives only; no finite differences",
+    "later_primary_spatial_N": 1024,
+    "later_control_spatial_N": 2048
+  },
+  "gates": {
+    "lifecycle_static_identity": true,
+    "trace_vs_CLASS_get_perturbations_abs_or_rel_max": 1e-12,
+    "minimum_accepted_points_per_k_in_window": 16,
+    "common_grid_nodes_exact": 64,
+    "source_grid_state_validation_abs_or_rel_max": 0.0001,
+    "primary_vs_decimated_control_global_relative_L2_max": 0.0005,
+    "primary_vs_decimated_control_pointwise_abs_or_rel_max": 0.002,
+    "pt_closed_vs_product_rule_abs_or_rel_max": 1e-12,
+    "all_complete_jet_entries_finite": true
+  },
+  "terminal_classifications": {
+    "pass": "GE09_DENSE_ACCEPTED_STEP_LOCAL_JET_BRIDGE_PASS",
+    "fail": "GE09_DENSE_ACCEPTED_STEP_LOCAL_JET_BRIDGE_FAIL"
+  },
+  "continuation": "PASS certifies the complete GE06 first-order local jet representation only. It still does not license Z20 because GE08 Repair01 showed exact full-CLASS pressureless matter incompleteness. Matter closure remains a separate required step.",
+  "anti_tuning": "Do not change the accepted-step trace location, common ln(a) grid, interpolation classes, decimation rule, Fourier representative, thresholds, k/z window, or jet dictionary after inspecting GE09 output."
+}
