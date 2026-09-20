@@ -1,0 +1,69 @@
+{
+  "classification": "GE17_PREDATA_LATE_TIME_STANDARD_BACKGROUND_DUST_DIAGNOSTIC",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "uses_new_physics": false,
+  "purpose": "Quantify how closely the full frozen CLASS standard-sector background can be represented by one conserved pressureless effective fluid over the same late-time H3 window, without yet accepting that approximation.",
+  "dependencies": {
+    "ge16": "GE16_LATE_TIME_STANDARD_MATTER_RESIDUAL_DIAGNOSTIC_PASS",
+    "pinned_CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology_source": "v063.theory_response_map.class_params"
+  },
+  "frozen_window": {
+    "redshift": [
+      0.2,
+      1.5
+    ],
+    "audit_redshifts": [
+      0.247619,
+      0.31201,
+      0.45116,
+      0.60419,
+      0.77247,
+      0.95756,
+      1.16117,
+      1.38524
+    ]
+  },
+  "standard_background_definition": {
+    "density": "rho_std = rho_b + rho_g + rho_ur + sum rho_ncdm",
+    "pressure": "p_std = rho_g/3 + rho_ur/3 + sum p_ncdm",
+    "aest_density": "rho_aest = patched CLASS rho_cdm slot",
+    "vacuum": "rho_lambda excluded from rho_std and from clustering denominator",
+    "total_clustering_density": "rho_cluster = rho_std + rho_aest"
+  },
+  "dust_consistency_diagnostics": {
+    "equation_of_state": "w_std=p_std/rho_std",
+    "clustering_weighted_pressure": "p_std/rho_cluster",
+    "total_background_weighted_pressure": "p_std/rho_tot",
+    "conserved_dust_normalization": "C(a)=a^3 rho_std(a)",
+    "C_variation_global": "max(C)/min(C)-1 over 0.2<=z<=1.5",
+    "best_constant_dust_fit": "C_star = mean(C) over all native background rows in the window",
+    "best_fit_density_error": "rho_dust=C_star/a^3 versus rho_std, report global L2 and max pointwise relative error",
+    "continuity_residual": "d ln rho_std/d ln a + 3, evaluated numerically and compared descriptively with -3 w_std"
+  },
+  "diagnostic_gates": {
+    "exact_pinned_CLASS_commit": true,
+    "all_required_background_columns_present": true,
+    "at_least_64_native_background_rows_in_window": true,
+    "total_density_species_reconstruction_relative_L2_max": 1e-12,
+    "continuity_identity_global_relative_L2_max": 0.00001,
+    "all_outputs_finite": true
+  },
+  "no_approximation_acceptance_gate": true,
+  "outputs": [
+    "global and max |w_std|",
+    "global and max |p_std/rho_cluster|",
+    "global and max |p_std/rho_tot|",
+    "C(a) variation",
+    "best conserved-dust density-fit errors",
+    "same quantities at the eight frozen H3 audit redshifts",
+    "inferred AeST background pressure from total pressure budget as a provenance check"
+  ],
+  "terminal_classifications": {
+    "pass": "GE17_LATE_TIME_STANDARD_BACKGROUND_DUST_DIAGNOSTIC_PASS",
+    "fail": "GE17_LATE_TIME_STANDARD_BACKGROUND_DUST_DIAGNOSTIC_FAIL"
+  },
+  "claim_boundary": "PASS validates the background decomposition and dust-consistency diagnostics only. It does not accept the effective-dust approximation or license Z20.",
+  "anti_tuning": "Do not introduce an approximation-acceptance threshold into GE17 after seeing the output."
+}
