@@ -141,7 +141,8 @@ jobs:
           assert physical["c2"]["all_partials_finite"]
 
           print("CANONICAL_INITIAL_MAP =",idg)
-          print("CANONICAL_AFFINE_SCALED_RELATIVE_ERROR =",linerr)\n          print("CANONICAL_PRT_RATIO_ERROR =",prat)
+          print("CANONICAL_AFFINE_SCALED_RELATIVE_ERROR =",linerr)
+          print("CANONICAL_PRT_RATIO_ERROR =",prat)
           print("RADAU_ZERO_DIAGNOSTIC =",rdg)
           print("BENIGN_EQUIVALENCE =",benign)
           print("PHYSICAL_PARAMETER_PROBE =",physical)
