@@ -1,0 +1,117 @@
+{
+  "classification": "GE11_REPAIR01_PREDATA_PRECISION_KEY_BINDING",
+  "created_after_frozen_GE11_fail": true,
+  "uses_new_physics": false,
+  "uses_new_science_thresholds": false,
+  "purpose": "Re-execute the preregistered GE11 R1/R2 numerical values using the active precision-parameter names of the pinned CLASS commit after the frozen GE11 run established that the historical singular keys were ignored.",
+  "parent": {
+    "classification": "GE11_DENSE_LOCAL_JET_FIXED_REFINEMENT_FAIL",
+    "result_freeze_commit": "ebca1a3828d6280a008946b4a64c1c102bd724e3",
+    "workflow_run": 35495077694,
+    "artifact_id": 10600443147,
+    "artifact_digest": "sha256:cfacfd970606accfcc7fc816ca0d754c4fc87321d1e793f1e0b1b7d90cbbf9d6"
+  },
+  "pinned_CLASS": {
+    "commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "active_keys": [
+      "tol_perturbations_integration",
+      "perturbations_sampling_stepsize"
+    ],
+    "source": "include/precisions.h"
+  },
+  "frozen_numerical_values": {
+    "R1": {
+      "tol_perturbations_integration": 2.5e-8,
+      "perturbations_sampling_stepsize": 0.00125
+    },
+    "R2": {
+      "tol_perturbations_integration": 1.25e-8,
+      "perturbations_sampling_stepsize": 0.000625
+    }
+  },
+  "historical_runtime_reference": {
+    "meaning": "The frozen GE09/GE10/GE11 parent traces are the actual pinned-CLASS runtime with obsolete singular precision keys ignored.",
+    "accepted_points_per_k": [
+      17,
+      17,
+      20,
+      20,
+      22,
+      30
+    ],
+    "max_ln_a_gap_per_k": [
+      0.043892916349146716,
+      0.04748747310334933,
+      0.04502616770712542,
+      0.04425855292928327,
+      0.037237892493284463,
+      0.03764573147119232
+    ],
+    "source_validation_max": 0.00010032254188771416
+  },
+  "frozen_representation": {
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "redshift_window": [
+      0.2,
+      1.5
+    ],
+    "common_ln_a_nodes": 64,
+    "interpolation": "CubicHermiteSpline using fresh physical RHS/(aH) for derivative-aware fields; PCHIP for algebraic/background fields",
+    "internal_control": "every-second accepted endpoint",
+    "local_jet_entries": [
+      "N",
+      "L",
+      "R",
+      "b",
+      "u",
+      "Lt",
+      "Lx",
+      "Rt",
+      "Rx",
+      "bx",
+      "ut",
+      "ux",
+      "pt",
+      "px",
+      "Nx"
+    ]
+  },
+  "inherited_single_level_gates": {
+    "dense_trace_vs_CLASS_table_abs_or_rel_max": 1e-12,
+    "minimum_accepted_points_per_k_in_window": 16,
+    "common_grid_nodes": 64,
+    "source_grid_state_validation_abs_or_rel_max": 0.0001,
+    "primary_vs_decimated_global_relative_L2_max": 0.0005,
+    "primary_vs_decimated_pointwise_abs_or_rel_max": 0.002,
+    "pt_identity_abs_or_rel_max": 1e-12,
+    "all_entries_finite": true
+  },
+  "refinement_gates": {
+    "accepted_points_R1_not_less_than_historical_runtime_each_k": true,
+    "accepted_points_R2_not_less_than_R1_each_k": true,
+    "max_ln_a_gap_R1_not_greater_than_historical_runtime_each_k": true,
+    "max_ln_a_gap_R2_not_greater_than_R1_each_k": true,
+    "source_validation_R2_not_greater_than_R1": true,
+    "R1_vs_R2_complete_jet_global_relative_L2_max": 0.0005,
+    "R1_vs_R2_complete_jet_pointwise_abs_or_rel_max": 0.002
+  },
+  "implementation_gates": {
+    "active_precision_keys_present_in_pinned_CLASS": true,
+    "obsolete_singular_keys_absent_from_repair_precision_files": true,
+    "R1_and_R2_dense_trace_hashes_must_differ": true
+  },
+  "terminal_classifications": {
+    "pass": "GE11_REPAIR01_DENSE_LOCAL_JET_FIXED_REFINEMENT_PASS",
+    "fail": "GE11_REPAIR01_DENSE_LOCAL_JET_FIXED_REFINEMENT_FAIL",
+    "implementation_fail": "GE11_REPAIR01_PRECISION_BINDING_IMPLEMENTATION_FAIL"
+  },
+  "claim_boundary": "PASS certifies only the complete GE06 first-order local jet under the corrected fixed R1/R2 precision binding. Historical GE09 and GE11 remain FAIL. GE08 Repair01 standard-matter incompleteness remains active, so PASS does not license Z20.",
+  "anti_tuning": "Do not change either R1/R2 numerical pair, add R3, relax the 1e-4 source gate, alter interpolation, drop source rows, or change local-jet controls after observing Repair01."
+}
