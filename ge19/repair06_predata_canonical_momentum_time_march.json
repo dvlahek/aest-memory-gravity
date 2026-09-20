@@ -1,0 +1,88 @@
+{
+  "classification": "GE19_REPAIR06_PREDATA_CANONICAL_MOMENTUM_TIME_MARCH",
+  "created_before_repair06_result": true,
+  "parent_repair05_freeze_commit": "9a23f885cb96005a3a0199abe545f8283ba44027",
+  "diagnosis": "Repair05 proved diagonal equilibration is insufficient on the corrected physical Stage-A system: actual matrix row dynamic range is O(1e24), original-system residuals remain O(1), and 64/32 states disagree O(1). The next target is the global centered-collocation realization, not the frozen continuum equations.",
+  "permitted_change_only": [
+    "replace the global centered time-collocation solve by a canonical-momentum initial-value realization of the same first-order directional Euler-Lagrange equations",
+    "use q=(S,u,phi,T) and canonical momenta p=(pS,pu,pphi,pT), with pS equal to the sum of longitudinal and transverse isotropic canonical momenta used by the frozen EL+ER equation",
+    "solve N and delta_varrho algebraically from the same lapse and dust-density equations at each stage",
+    "recover cosmic-time velocities from the same frozen canonical-momentum definitions",
+    "advance the canonical state on the same Nt=64 and Nt=32 output grids with a deterministic L-stable two-stage Radau-IIA fixed-step method",
+    "apply the same canonical evolution to Stage B with the preregistered H3 RHS",
+    "evaluate independent algebraic, momentum-definition, Euler-equation, constraint and 64/32 controls without relaxing thresholds"
+  ],
+  "radau_iia_2stage": {
+    "order": 3,
+    "L_stable": true,
+    "c": [0.3333333333333333, 1.0],
+    "A": [[0.4166666666666667, -0.08333333333333333], [0.75, 0.25]],
+    "b": [0.75, 0.25]
+  },
+  "canonical_contract": {
+    "dynamic_coordinates": ["S", "u", "phi", "T"],
+    "momenta": ["pS=p_Lt+p_Rt", "pu=p_ut", "pphi=p_phi_t", "pT=p_T_t"],
+    "algebraic_unknowns_each_stage": ["N", "delta_varrho", "Sdot", "udot", "phidot", "Tdot"],
+    "algebraic_equations_each_stage": [
+      "four frozen canonical momentum definitions",
+      "frozen lapse equation equals supplied RHS lapse component",
+      "frozen dust-density equation equals supplied RHS density component"
+    ],
+    "momentum_evolution": [
+      "pSdot = non-time isotropic EL part - RHS_isotropic",
+      "pudot = non-time aether EL part - RHS_aether",
+      "pphidot = non-time scalar EL part - RHS_scalar",
+      "pTdot = non-time dust-potential EL part - RHS_dust_potential"
+    ],
+    "time_coordinate": "x=ln(a), with d/dx=(1/H)d/dt"
+  },
+  "initial_condition_contract": {
+    "surface": "z=1.5",
+    "dynamic_values": "exact frozen GE15/GE18 physically weighted values",
+    "dynamic_cosmic_time_derivatives": "exact frozen GE15/GE18 values",
+    "N_and_delta_varrho": "solved from the same two algebraic equations at the initial surface; not separately prescribed",
+    "initial_momenta": "computed from the frozen momentum definitions using the prescribed dynamic values and derivatives and algebraically solved N/delta_varrho"
+  },
+  "unchanged": [
+    "stable GE06 Z_action coordinate",
+    "canonical Exp representation",
+    "GE06 and GE07 frozen source generators",
+    "continuum Euler-Lagrange equations and signs",
+    "gauge b=0 and L=R=S",
+    "GE15 and GE18 frozen parents",
+    "C_min/C_star/C_max",
+    "beta0={1,0.5,0.1}",
+    "six frozen first-order input modes",
+    "m=1..40 Stage-B projection",
+    "Nt=64/32 output grids",
+    "Nx=1024/2048 source grids",
+    "window-retarded Stage-B initial convention",
+    "all Stage-A and Stage-B PASS/FAIL thresholds",
+    "claim boundary"
+  ],
+  "stage_A_gates_unchanged": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 1e-6,
+    "anisotropy_constraint_relative_L2_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "stage_B_gates_unchanged": {
+    "source_spatial_relative_L2_max": 0.0005,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 1e-6,
+    "anisotropy_constraint_relative_L2_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "all_beta0_and_C_cases_complete": true,
+    "all_outputs_finite": true
+  },
+  "historical_repair05_relabel": false,
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR06_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR06_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR06_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  }
+}
