@@ -1,0 +1,100 @@
+{
+  "classification": "GE08_PREDATA_FULL_FIRST_ORDER_STATE_BRIDGE_AUDIT",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Extract the complete eta=0 first-order AeST/metric state on the same accepted CLASS perturbation source grid used by the validated chi trace, establish the exact Newtonian-gauge to longitudinal 3+1 dictionary needed for H3, and determine if the remaining standard-matter sector is exactly representable by the already certified pressureless GE07 closure.",
+  "dependencies": {
+    "pinned_CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "nl0b": "NL0B_COVARIANT_MEMORY_COMPLETION_PASS",
+    "ge06": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "ge07": "GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "legacy_trace_patch": "V023_ETA0_ACCEPTED_SOURCE_GRID_TRACE"
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "p": 0,
+    "tauH0": 10,
+    "eta": 0,
+    "gauge": "Newtonian",
+    "cosmology_source": "v063.theory_response_map.class_params"
+  },
+  "accepted_grid": {
+    "location": "perturbations_sources() after perturbations_einstein() on scalar source samples",
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "redshift_audit_window": [
+      0.2,
+      1.5
+    ],
+    "no_derivative_stage_trace": true
+  },
+  "traced_fields": [
+    "k",
+    "tau",
+    "a",
+    "H_over_H0",
+    "Q",
+    "phi_newtonian",
+    "psi_newtonian",
+    "phi_prime_conformal",
+    "delta_dark",
+    "theta_dark",
+    "alpha_aest",
+    "E_aest",
+    "alpha_prime_from_dy",
+    "delta_b",
+    "theta_b",
+    "delta_m_native",
+    "theta_m_native",
+    "total_delta_rho",
+    "total_rho_plus_p_theta",
+    "total_delta_p",
+    "total_rho_plus_p_shear",
+    "rho_dark",
+    "p_dark",
+    "cad2_dark",
+    "rho_b"
+  ],
+  "exact_dictionary": {
+    "metric": "ds^2=-(1+2 psi)dt^2+a^2(1-2 phi)dx^2, so deltaN=psi, deltaL/a=deltaR/a=-phi, delta b=0",
+    "aether_potential": "u_A=a theta_dark/k^2",
+    "scalar_perturbation": "varphi=Q u_A",
+    "chi": "chi=varphi+Q alpha=Q(a theta_dark/k^2+alpha)",
+    "rapidity": "at linear order A_x=a r=partial_x alpha, so the longitudinal rapidity Fourier-gradient amplitude is r_L=(k/a) alpha up to the fixed Fourier derivative phase",
+    "E_identity": "alpha_prime_conformal=a(E_aest-psi)"
+  },
+  "bridge_gates": {
+    "old_chi_trace_reproduction_abs_or_rel_max": 1e-12,
+    "alpha_prime_identity_abs_or_rel_max": 1e-12,
+    "phi_prime_dy_identity_abs_or_rel_max": 1e-12,
+    "native_delta_m_trace_vs_CLASS_source_abs_or_rel_max": 1e-12,
+    "all_requested_k_relative_miss_max": 1e-12,
+    "common_native_grid_relative_mismatch_max": 1e-12,
+    "minimum_native_times_in_window": 8,
+    "all_traced_values_finite": true
+  },
+  "matter_completeness": {
+    "dark_subtraction": "subtract the AeST effective-dark delta-rho, momentum and pressure contributions from CLASS total stress-energy; AeST contributes no direct scalar anisotropic shear in the frozen v0.19 bridge",
+    "standard_density": "delta_rho_std=delta_rho_total-rho_dark*delta_dark",
+    "standard_momentum": "mom_std=mom_total-(rho_dark+p_dark)*theta_dark",
+    "dark_pressure": "Pi_dark=cad2_dark*delta_dark+cad2_dark*k^2/(3 a^2 rho_dark)*(KB E_aest+(2-KB)chi)",
+    "standard_pressure": "delta_p_std=delta_p_total-rho_dark*Pi_dark",
+    "standard_shear": "shear_std=rho_plus_p_shear_total",
+    "exact_pressureless_readiness_relative_L2_max": 1e-12,
+    "readiness_rule": "H3 pressureless CLASS-reference readiness requires both ||delta_p_std||/||delta_rho_std|| and ||shear_std||/||delta_rho_std|| <=1e-12 on the frozen audit window. Failure does not fail the state bridge; it classifies the full cosmological H3 matter closure as incomplete."
+  },
+  "terminal_classifications": {
+    "ready": "GE08_FULL_FIRST_ORDER_STATE_BRIDGE_H3_READY",
+    "bridge_pass_matter_incomplete": "GE08_FULL_FIRST_ORDER_STATE_BRIDGE_PASS_MATTER_INCOMPLETE",
+    "fail": "GE08_FULL_FIRST_ORDER_STATE_BRIDGE_FAIL"
+  },
+  "claim_boundary": "GE08 only certifies first-order state extraction/dictionary and exact pressureless-matter completeness on the frozen late-time CLASS reference. It does not solve Z20 or Z21, introduce finite eta, or make nonlinear-collapse/observational claims.",
+  "anti_tuning": "Do not change the trace location, field list, state dictionary, k/redshift window, bridge thresholds, pressureless-readiness threshold or terminal rules after inspecting GE08 output."
+}
