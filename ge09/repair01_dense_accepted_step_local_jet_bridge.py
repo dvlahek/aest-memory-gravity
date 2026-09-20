@@ -333,7 +333,7 @@ def main():
     class_root=Path(args.class_root).resolve()
     prefix=ROOT/"results"/"ge09_cli"
     for i in range(len(K_REQ)):
-        p=Path(str(prefix)+f"perturbations_k{i}_s.dat")
+        p=Path(str(prefix)+f"_perturbations_k{i}_s.dat")
         if p.exists(): p.unlink()
     ini=class_root/"ge09_repair01_cli.ini"
     text=v63.rewrite_ini(v63.BASE.read_text(),str(prefix))
@@ -360,7 +360,7 @@ def main():
             check=True,
         )
 
-    pt=[read_class_perturbation(Path(str(prefix)+f"perturbations_k{i}_s.dat"))
+    pt=[read_class_perturbation(Path(str(prefix)+f"_perturbations_k{i}_s.dat"))
         for i in range(len(K_REQ))]
 
     dense_rows=read_table(dense)
