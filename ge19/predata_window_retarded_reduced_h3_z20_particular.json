@@ -1,0 +1,168 @@
+{
+  "classification": "GE19_PREDATA_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR",
+  "created_before_result": true,
+  "purpose": "Compute the first baseline reduced-H3 directional second-order particular state Z20 on the frozen GE15/GE18 first-order reference, with a fixed window-retarded zero-homogeneous convention and explicit matter-reduction/systematic boundaries.",
+  "dependencies": {
+    "nl1b2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS",
+    "nl1a": "NL1A_PSEUDOSPECTRAL_OPERATOR_BRIDGE_PASS",
+    "ge04": "GE04_DY2_SPECTRAL_CONVERGENCE_PASS",
+    "ge06": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "ge07": "GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "ge15": "GE15_CANCELLATION_FREE_S_STATE_PRECISION_CLOSURE_PASS",
+    "ge18_repair01": "GE18_REPAIR01_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_PASS"
+  },
+  "target_equation": "L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10], with L_total=L_Einstein+AeST+L_dust and Q_total=Q_Einstein+AeST+Q_dust.",
+  "scope": {
+    "memory_eta": 0,
+    "finite_eta": false,
+    "physical_interpretation": "formal epsilon->0 directional second-order coefficient only",
+    "not_a_physical_amplitude_resummation": true,
+    "reason": "NL1C0 already established that the actual primordial-amplitude retained band is high-gradient; GE19 therefore does not evaluate the deep-MOND directional coefficient as a finite-amplitude nonlinear prediction."
+  },
+  "frozen_first_order_direction": {
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "integer_box_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "phases_rad": [
+      0.13,
+      0.71,
+      1.29,
+      2.03,
+      2.77,
+      3.41
+    ],
+    "amplitude": "sqrt(2 w_i P_R(k_i)) with the frozen GE04/NL1C4 logarithmic trapezoid weights and P_R=A_s(k/k_pivot)^(n_s-1)",
+    "A_s": 2.1308864352626987e-9,
+    "n_s": 0.9666229454895277,
+    "k_pivot_Mpc_inv": 0.05,
+    "metric_AeST_source": "GE15 R1 cancellation-free dense trace/local jet",
+    "matter_source": "GE18 Repair01 on-shell matched dust"
+  },
+  "reduced_matter_backgrounds": {
+    "C_min": 2.566238549760586e-9,
+    "C_star": 2.568543329983919e-9,
+    "C_max": 2.5714842087496506e-9,
+    "central": "C_star",
+    "all_three_solved": true,
+    "external_full_standard_first_order_systematic": {
+      "density_global_relative_L2": 0.0013765302104657398,
+      "momentum_global_relative_L2": 0.006891936293682233,
+      "treatment": "reported separately; not represented by the C_min/C_max envelope and not converted into a fake off-shell dust solve"
+    }
+  },
+  "beta0_co_primary": [
+    1,
+    0.5,
+    0.1
+  ],
+  "Y2": {
+    "operator": "2(2-K_B)/[(1+beta0)a0] div_phys(|grad_phys chi10| grad_phys chi10)",
+    "KB": 0.0665,
+    "a0_m_s2": 1.2e-10,
+    "a0_natural_Mpc_inv": 0.000041199352008117163,
+    "implementation": "real-space flux with exact FFT spatial derivatives and 2/3 flux dealiasing",
+    "H3_factor": "RHS contains -2 Y2"
+  },
+  "gauge_and_fields": {
+    "representation": "plane-symmetric scalar Newtonian gauge on the second-order directional coefficient",
+    "gauge_conditions": [
+      "b20=0",
+      "L20=R20=S20"
+    ],
+    "unknown_fields": [
+      "N20",
+      "S20",
+      "u20",
+      "phi20",
+      "T20",
+      "delta_varrho20"
+    ],
+    "solved_equations": [
+      "total lapse equation",
+      "isotropic spatial equation E_L+E_R",
+      "aether-rapidity equation",
+      "AeST scalar equation",
+      "dust-potential equation",
+      "dust-density normalization equation"
+    ],
+    "independent_constraint_monitors": [
+      "total shift equation",
+      "spatial anisotropy equation E_L-E_R/2"
+    ]
+  },
+  "window_retarded_particular_convention": {
+    "start_z": 1.5,
+    "end_z": 0.2,
+    "dynamic_fields": [
+      "S20",
+      "u20",
+      "phi20",
+      "T20"
+    ],
+    "initial_homogeneous_conditions": [
+      "field value = 0 at z=1.5",
+      "cosmic-time derivative = 0 at z=1.5"
+    ],
+    "nondynamical_fields": [
+      "N20",
+      "delta_varrho20"
+    ],
+    "interpretation": "This fixes one window-local particular Green-function solution. Earlier-time/primordial second-order history appears inside the omitted homogeneous solution and remains uncertified."
+  },
+  "discretization": {
+    "time_coordinate": "ln(a)",
+    "primary_time_nodes": 64,
+    "control_time_nodes": 32,
+    "time_derivative": "fourth-order finite-difference matrix in ln(a), converted by d/dt=H d/dln(a)",
+    "spatial_primary_Nx": 1024,
+    "spatial_control_Nx": 2048,
+    "spatial_derivative": "exact FFT",
+    "nonlinear_flux_dealiasing": "2/3",
+    "solved_fourier_modes": "m=1..40; m=0 is reported as an unsolved background/backreaction source and excluded from the particular structure-state solve",
+    "linear_solve": "square collocation system; replace the first two rows of each dynamical-field equation by the frozen value/derivative initial conditions; scipy sparse direct solve"
+  },
+  "numerical_gates": {
+    "frozen_input_provenance_exact": true,
+    "GE15_R1_reconstructed_jet_vs_frozen_64node_representation_abs_or_rel_max": 1e-10,
+    "GE18_npz_sha256": "b6ccaf2257fbb09df701c43bc9a593a3f68238826277a510a0b3b531ea9fa6fe",
+    "all_sources_finite": true,
+    "spatial_N1024_vs_N2048_source_low_modes_m1_40_global_relative_L2_max": 0.0005,
+    "primary_linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_relative_L2_max": 0.000001,
+    "anisotropy_constraint_relative_L2_max": 0.000001,
+    "primary64_vs_control32_state_low_mode_global_relative_L2_max": 0.005,
+    "all_three_beta0_and_all_three_C_cases_complete": true,
+    "all_outputs_finite": true
+  },
+  "descriptive_outputs": [
+    "per beta0 and C: Fourier Z20 particular coefficients m=1..40 across 64 ln(a) nodes",
+    "source decomposition into analytic Einstein+AeST Q, dust Q, and Y2",
+    "m=0 source trajectory reported but not solved",
+    "per-mode and global equation residuals",
+    "shift and anisotropy constraint residuals",
+    "64-vs-32 time-grid state convergence",
+    "C_min/C_max spread around C_star",
+    "beta0 dependence",
+    "ratio of Y2 source norm to analytic+dust quadratic source norm"
+  ],
+  "terminal_classifications": {
+    "pass": "GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  },
+  "anti_tuning": "No gate, beta0, C value, phase, Fourier-mode range, time/spatial resolution, gauge condition, boundary convention or source normalization may be changed after inspecting GE19 output.",
+  "claim_boundary": "A PASS certifies one reduced-matter, window-retarded particular directional Z20 solution. It does not certify the primordial/homogeneous second-order mode, a full-species Z20, finite eta, a physical-amplitude nonlinear evolution, collapse, halo physics, lensing or an observational signal."
+}
