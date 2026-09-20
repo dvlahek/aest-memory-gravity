@@ -1,0 +1,354 @@
+# GE19 window-retarded reduced-H3 Z20 particular — implementation lock
+
+## Status
+
+Implementation locked before the first GE19 science execution.
+
+No GE19 numerical science payload has been inspected.
+
+Static prelock audit:
+
+- GitHub Actions run: `35521110806`;
+- conclusion: `success`;
+- audited HEAD: `4f28901ea4c9c871bcf82ca6207a62e73d4bf122`.
+
+The static audit compiled the GE19 script and verified that Stage B occurs only after the Amendment01 Stage-A stop rule.
+
+## Original preregistration
+
+Commit:
+
+`c1808a3e6e746dfdda08c34a957f2db64bb66e0e`.
+
+File:
+
+`ge19/predata_window_retarded_reduced_h3_z20_particular.json`.
+
+Frozen blob:
+
+`4339e87d2e9aa38f09bb1d7cd0a43305f10286e1`.
+
+## Pre-result Amendment01
+
+Commit:
+
+`1e3dd6c3d08a18b35ad42ab08b3ce9a2cb8382f1`.
+
+File:
+
+`ge19/predata_amendment01_reduced_h1_reclosure.json`.
+
+Frozen blob:
+
+`180b41bd6e74fecb522a50415aadef0fd1442390`.
+
+Amendment01 was created after implementation review but before any GE19 science execution/output.
+
+It adds one mandatory prerequisite:
+
+[
+L_{m total} Z_{10}^{m reduced}=0.
+]
+
+The H3 source may be constructed only from this internally reclosed reduced first-order state.
+
+## Final implementation
+
+Stage-A/H3 implementation commit:
+
+`dcfe59d85c53f244fa6c3c131575d14566339089`.
+
+File:
+
+`ge19/window_retarded_reduced_h3_z20_particular.py`.
+
+Frozen blob:
+
+`bcb3b9aabbea6be1e20c2b381652d90fc1012918`.
+
+Static-audit workflow blob:
+
+`109713ca676f4b2b241c10a34966009ed3857cfb`.
+
+## Frozen imported source generators
+
+GE06 analytic Einstein+AeST generator:
+
+- file: `ge06/analytic_aest_directional_source_generator.py`;
+- blob: `a7afe0035054a9dca55d74a6497c081422114b4c`;
+- frozen parent classification:
+  `GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS`.
+
+GE07 pressureless-matter generator:
+
+- file: `ge07/pressureless_matter_directional_source_generator.py`;
+- blob: `cde8da77a80799cef00fc7c09c3633310fc9e3d4`;
+- frozen parent classification:
+  `GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS`.
+
+GE09/GE15 local-jet dictionary dependency:
+
+- file: `ge09/repair01_dense_accepted_step_local_jet_bridge.py`;
+- blob: `509fa9d7bb323034bbf77b26792f35e1cc2ff7c7`.
+
+GE18 Repair01 bridge implementation:
+
+- file: `ge18/repair01_on_shell_matched_dust_first_order_bridge.py`;
+- blob: `b469b3c44eb8cf6c2545f80fccce5ad811ba8c33`.
+
+GE18 Repair01 result freeze:
+
+- file:
+  `docs/ge18_repair01_on_shell_matched_dust_first_order_bridge_result_freeze.md`;
+- blob:
+  `fffcb475ea4279bd608df8e70cbf20f3e0f33b74`;
+- classification:
+  `GE18_REPAIR01_ON_SHELL_MATCHED_DUST_FIRST_ORDER_BRIDGE_PASS`.
+
+## Frozen local input provenance
+
+GE19 consumes the already completed local files:
+
+- `results/ge15_R1_dense_accepted_step_trace.dat`;
+- `results/ge15_cancellation_free_s_state_precision_closure.json`;
+- `results/ge15_cancellation_free_s_state_precision_closure.npz`;
+- `results/ge18_repair01_on_shell_matched_dust_first_order_bridge.json`;
+- `results/ge18_repair01_on_shell_matched_dust_first_order_bridge.npz`.
+
+The GE15 R1 dense-trace SHA must equal the value stored in the GE15 PASS JSON.
+
+The reconstructed GE15 R1 64-node complete local jet must agree with the frozen GE15 NPZ representation to abs-or-rel <= `1e-10`.
+
+The GE18 Repair01 NPZ SHA-256 is frozen as
+
+`b6ccaf2257fbb09df701c43bc9a593a3f68238826277a510a0b3b531ea9fa6fe`.
+
+## Stage A — reduced H1 reclosure
+
+For each
+
+[
+Cin{C_{min},C_star,C_{max}}
+]
+
+and each frozen input mode
+
+[
+min{3,5,8,10,15,20},
+]
+
+solve the same reduced linear system
+
+[
+L_{m total}Z_{10}^{m reduced}=0.
+]
+
+Gauge:
+
+[
+b_{10}=0,qquad L_{10}=R_{10}=S_{10}.
+]
+
+Unknown state:
+
+[
+(N_{10},S_{10},u_{10},phi_{10},T_{10},deltaarrho_{10}).
+]
+
+Dynamic fields:
+
+[
+(S_{10},u_{10},phi_{10},T_{10}).
+]
+
+At `z=1.5`, their values and cosmic-time derivatives are matched exactly to the physically weighted GE15 metric/AeST and GE18 dust references.
+
+The nondynamical lapse and dust-density perturbations are solved by the reduced equations and are not pinned to the mixed reference.
+
+### Stage-A gates
+
+Unchanged from Amendment01:
+
+- linear-system relative L2 residual <= `1e-8`;
+- shift constraint relative L2 <= `1e-6`;
+- anisotropy constraint relative L2 <= `1e-6`;
+- primary 64 versus control 32 state global relative L2 <= `5e-3`;
+- initial dynamic value/derivative abs-or-rel mismatch <= `1e-10`;
+- all outputs finite.
+
+Constraint residuals are normalized against the separately evaluated Einstein+AeST and dust linear blocks, not against a cancellation-small total.
+
+### Mandatory stop rule
+
+If Stage A or frozen provenance fails, GE19 terminates
+
+`GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL`
+
+before constructing or interpreting any H3 source or Z20 state.
+
+No Stage-A threshold repair is licensed inside this execution.
+
+## Stage B — reduced H3 source
+
+Only after Stage-A PASS, construct
+
+[
+L_{m total}Z_{20}
+=
+-Q_{m total}(Z_{10}^{m reduced},Z_{10}^{m reduced})
+-2Y_2[Z_{10}^{m reduced}].
+]
+
+The analytic Einstein+AeST and dust quadratic terms are generated by the frozen GE06/GE07 action derivatives.
+
+The Y source is evaluated directly from the reclosed first-order projected spatial scalar gradient
+
+[
+X_1=Q,u_{10}+rac{1}{a}partial_xphi_{10},
+]
+
+as
+
+[
+Y_2=
+rac{2(2-K_B)}{(1+eta_0)a_0}
+rac1apartial_xleft(|X_1|X_1ight).
+]
+
+This is the same NL0C/NL1A directional operator, written without reconstructing an intermediate alpha variable.
+
+## Frozen first-order direction
+
+Retain exactly:
+
+- `k_h/Mpc = {0.03,0.05,0.08,0.10,0.15,0.20}`;
+- integer periodic-box modes
+  `{3,5,8,10,15,20}`;
+- phases
+  `{0.13,0.71,1.29,2.03,2.77,3.41}`;
+- frozen primordial weighting
+  `sqrt(2 w_i P_R(k_i))`.
+
+No phase or mode selection may change after execution.
+
+## Frozen matter backgrounds
+
+CLASS-density units:
+
+- `C_min=2.566238549760586e-9`;
+- `C_star=2.568543329983919e-9`;
+- `C_max=2.5714842087496506e-9`.
+
+All three are mandatory.
+
+The larger GE18 full-standard-versus-dust discrepancy remains an external reduced-model systematic and is not replaced by the C envelope.
+
+## Frozen Y-sector controls
+
+Co-primary:
+
+[
+eta_0in{1,0.5,0.1}.
+]
+
+[
+a_0=1.2	imes10^{-10} {m m,s^{-2}}
+=4.1199352008117163	imes10^{-5} {m Mpc^{-1}}
+]
+
+in the frozen natural-unit conversion.
+
+Spatial nonlinear flux uses exact FFT derivatives and 2/3 dealiasing.
+
+## Z20 particular convention
+
+GE19 solves only
+
+[
+Z_{20}^{m particular}
+]
+
+under the frozen window-retarded convention.
+
+At `z=1.5`, the homogeneous components of
+
+- `S20`;
+- `u20`;
+- `phi20`;
+- `T20`
+
+have zero value and zero cosmic-time derivative.
+
+`N20` and `delta_varrho20` remain nondynamical variables fixed by the equations.
+
+This convention does not assert that the primordial/historical homogeneous second-order mode is physically zero.
+
+## Frozen numerical representation
+
+Time:
+
+- primary: 64 uniform `ln(a)` nodes;
+- control: 32 uniform `ln(a)` nodes;
+- fourth-order finite-difference derivative in `ln(a)`;
+- `d/dt=H d/dln(a)`.
+
+Spatial source:
+
+- primary `Nx=1024`;
+- control `Nx=2048`;
+- exact FFT derivatives;
+- 2/3 nonlinear-flux dealiasing.
+
+Z20 modes:
+
+`m=1..40`.
+
+The generated `m=0` source is reported but not solved as a structure perturbation because it is a second-order background/backreaction sector.
+
+Linear collocation solve uses sparse direct LU.
+
+## Stage-B science gates
+
+Unchanged from original GE19:
+
+- all sources finite;
+- Nx1024 versus Nx2048 source low modes `m=1..40` global relative L2 <= `5e-4`;
+- primary linear-system relative L2 residual <= `1e-8`;
+- shift constraint relative L2 <= `1e-6`;
+- anisotropy constraint relative L2 <= `1e-6`;
+- primary64 versus control32 state low-mode global relative L2 <= `5e-3`;
+- all three beta0 and all three C cases complete;
+- all outputs finite.
+
+No gate has been changed after seeing GE19 science output because no science execution has occurred.
+
+## Terminal classes
+
+PASS:
+
+`GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS`.
+
+Science FAIL:
+
+`GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL`.
+
+Implementation/provenance exception:
+
+`GE19_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL`.
+
+## Claim boundary
+
+A PASS certifies:
+
+1. an internally on-shell reduced first-order state under the frozen matched-dust model;
+2. one window-retarded, reduced-matter, low-mode directional H3 particular state.
+
+It does not certify:
+
+- the omitted homogeneous/primordial Z20 component;
+- a full-species second-order CLASS solution;
+- physical-amplitude nonlinear evolution;
+- finite eta;
+- Z21;
+- collapse/halo dynamics;
+- lensing or observational evidence.
