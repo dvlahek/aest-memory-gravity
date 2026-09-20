@@ -1,0 +1,4 @@
+# GE11 fixed refinement R2
+# Exactly factor-2 tighter than R1 in both settings.
+tol_perturb_integration = 1.25e-8
+perturb_sampling_stepsize = 0.000625
