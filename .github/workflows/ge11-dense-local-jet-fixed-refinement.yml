@@ -2,12 +2,6 @@ name: GE11 dense local jet fixed refinement
 
 on:
   workflow_dispatch:
-  push:
-    branches: [physics-first-gravitational-elasticity]
-    paths:
-      - 'ge11/**'
-      - 'docs/ge11_dense_local_jet_fixed_refinement_implementation_lock.md'
-      - '.github/workflows/ge11-dense-local-jet-fixed-refinement.yml'
 
 jobs:
   fixed-refinement:
