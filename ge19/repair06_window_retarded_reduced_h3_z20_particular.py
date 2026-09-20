@@ -947,6 +947,64 @@ def _raw_local_outputs(mod6,mod7,bg,tag,k,xq,w):
 
 
 _CANONICAL_LOCAL_CACHE={}
+_CANONICAL_SYMBOLIC_JAC_CACHE={}
+
+
+def _symbol_by_name(exprs,name):
+    hits=set()
+    for expr in exprs:
+        hits.update(z for z in expr.free_symbols if z.name==name)
+    if len(hits)!=1:
+        raise RuntimeError(f"expected one symbol named {name}, found {len(hits)}")
+    return next(iter(hits))
+
+
+def _build_symbolic_directional_jacobians(mod6,mod7):
+    """Exact coefficient matrices of the frozen first-order directional maps.
+
+    Coefficients are differentiated symbolically before numerical evaluation.
+    This avoids unit-minus-zero subtraction at the physical Exp scales.
+    """
+    key=(id(mod6),id(mod7))
+    if key in _CANONICAL_SYMBOLIC_JAC_CACHE:
+        return _CANONICAL_SYMBOLIC_JAC_CACHE[key]
+
+    keys6=(
+        "N_f","N_x","L_f","L_t","L_x","R_f","R_t","R_x",
+        "b_f","b_x","u_f","u_t","u_x","phi_t","phi_x",
+    )
+    expr6=[mod6.coeff1_expr[k] for k in keys6]
+    dnames6=(
+        "dN","dL","dR","db","du","dLt","dLx","dRt","dRx",
+        "dbx","dut","dux","dpt","dpx","dNx",
+    )
+    bnames6=("aa","adot","Zb","KB","C","K2","Q0","Z0")
+    ds6=[_symbol_by_name(expr6,n) for n in dnames6]
+    bs6=[_symbol_by_name(expr6,n) for n in bnames6]
+    J6=sp.Matrix([[sp.diff(e,d) for d in ds6] for e in expr6])
+    # Exact linearity audit.
+    for e in expr6:
+        rem=sp.expand(e-sum(sp.diff(e,d)*d for d in ds6))
+        if sp.simplify(rem)!=0:
+            raise RuntimeError(f"GE06 c1 partial is not homogeneous linear: {e}")
+    fJ6=sp.lambdify(bs6,J6,"numpy",cse=True)
+
+    keys7=("N_f","L_f","R_f","b_f","rho_f","T_t","T_x")
+    expr7=[mod7.coeff1[k] for k in keys7]
+    dnames7=("dN","dL","dR","db","drho","dTt","dTx")
+    bnames7=("aa","rhob")
+    ds7=[_symbol_by_name(expr7,n) for n in dnames7]
+    bs7=[_symbol_by_name(expr7,n) for n in bnames7]
+    J7=sp.Matrix([[sp.diff(e,d) for d in ds7] for e in expr7])
+    for e in expr7:
+        rem=sp.expand(e-sum(sp.diff(e,d)*d for d in ds7))
+        if sp.simplify(rem)!=0:
+            raise RuntimeError(f"GE07 c1 partial is not homogeneous linear: {e}")
+    fJ7=sp.lambdify(bs7,J7,"numpy",cse=True)
+
+    out=(keys6,fJ6,keys7,fJ7)
+    _CANONICAL_SYMBOLIC_JAC_CACHE[key]=out
+    return out
 
 
 def _local_linear_matrix(mod6,mod7,bg,tag,k,xq):
@@ -955,21 +1013,88 @@ def _local_linear_matrix(mod6,mod7,bg,tag,k,xq):
     if key in _CANONICAL_LOCAL_CACHE:
         return _CANONICAL_LOCAL_CACHE[key]
 
-    z=np.zeros(10,complex)
-    o0,bp=_raw_local_outputs(mod6,mod7,bg,tag,k,xq,z)
-    Cmat=np.empty((len(o0),10),complex)
-    for j in range(10):
-        e=np.zeros(10,complex); e[j]=1.0
-        oj,_=_raw_local_outputs(mod6,mod7,bg,tag,k,xq,e)
-        Cmat[:,j]=oj-o0
+    bp=_bg_point(bg,xq)
+    aa=bp["a"]; adot=aa*bp["H"]; Zb=bp["Z_action"]
+    rhob=3.0*C_VALUES[tag]/aa**3
+    ik=1j*float(k)
 
-    # First-order directional coefficients are exactly homogeneous linear
-    # functions.  Keep the zero offset only as a diagnostic.
-    zero_abs=float(np.max(np.abs(o0)))
+    keys6,fJ6,keys7,fJ7=_build_symbolic_directional_jacobians(mod6,mod7)
+    J6=np.asarray(fJ6(aa,adot,Zb,KB,CV,K2,Q0,Z0),complex)
+    J7=np.asarray(fJ7(aa,rhob),complex)
+    if J6.shape!=(15,15) or J7.shape!=(7,7):
+        raise RuntimeError(f"bad exact directional Jacobian shapes: {J6.shape}, {J7.shape}")
+    if not np.all(np.isfinite(J6)) or not np.all(np.isfinite(J7)):
+        raise RuntimeError("non-finite exact directional Jacobian")
+
+    # w=(N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot).
+    D6=np.zeros((15,10),complex)
+    D6[0,0]=1.0                 # dN
+    D6[1,2]=1.0                 # dL=S
+    D6[2,2]=1.0                 # dR=S
+    D6[4,3]=1.0                 # du=u
+    D6[5,6]=1.0                 # dLt=Sdot
+    D6[6,2]=ik                  # dLx
+    D6[7,6]=1.0                 # dRt=Sdot
+    D6[8,2]=ik                  # dRx
+    D6[10,7]=1.0                # dut=udot
+    D6[11,3]=ik                 # dux
+    D6[12,8]=1.0                # dpt=phidot
+    D6[13,4]=ik                 # dpx
+    D6[14,0]=ik                 # dNx
+    P6=J6@D6
+    i6={name:i for i,name in enumerate(keys6)}
+
+    D7=np.zeros((7,10),complex)
+    D7[0,0]=1.0                 # dN
+    D7[1,2]=1.0                 # dL=S
+    D7[2,2]=1.0                 # dR=S
+    D7[4,1]=1.0                 # drho
+    D7[5,9]=1.0                 # dTt=Tdot
+    D7[6,5]=ik                  # dTx
+    P7=J7@D7
+    i7={name:i for i,name in enumerate(keys7)}
+
+    pS=P6[i6["L_t"]]+P6[i6["R_t"]]
+    pu=P6[i6["u_t"]]
+    pphi=P6[i6["phi_t"]]
+    pT=P7[i7["T_t"]]
+    EN=P6[i6["N_f"]]-ik*P6[i6["N_x"]]+P7[i7["N_f"]]
+    Erho=P7[i7["rho_f"]]
+
+    non_iso=(
+        P6[i6["L_f"]]+P6[i6["R_f"]]
+        -ik*(P6[i6["L_x"]]+P6[i6["R_x"]])
+        +P7[i7["L_f"]]+P7[i7["R_f"]]
+    )
+    non_u=P6[i6["u_f"]]-ik*P6[i6["u_x"]]
+    non_phi=-ik*P6[i6["phi_x"]]
+    non_T=-ik*P7[i7["T_x"]]
+
+    shift_ga=P6[i6["b_f"]]-ik*P6[i6["b_x"]]
+    shift_m=P7[i7["b_f"]]
+    aniso_ga=(
+        P6[i6["L_f"]]-ik*P6[i6["L_x"]]
+        -0.5*(P6[i6["R_f"]]-ik*P6[i6["R_x"]])
+    )
+    aniso_m=P7[i7["L_f"]]-0.5*P7[i7["R_f"]]
+
+    Cmat=np.asarray([
+        pS,pu,pphi,pT,EN,Erho,
+        non_iso,non_u,non_phi,non_T,
+        shift_ga,shift_m,aniso_ga,aniso_m,
+        P6[i6["L_t"]],P6[i6["R_t"]],
+    ],complex)
     if not np.all(np.isfinite(Cmat)):
-        raise RuntimeError("non-finite canonical local linear matrix")
+        raise RuntimeError("non-finite canonical exact local linear matrix")
 
-    out=(Cmat,bp,{"raw_zero_output_abs_max":zero_abs})
+    # Analytic coefficient sanity: p_phi must carry a nonzero phi-dot
+    # coefficient throughout the frozen positive-Z window.
+    pphi_phidot=abs(Cmat[2,8])
+    out=(Cmat,bp,{
+        "raw_zero_output_abs_max":0.0,
+        "exact_symbolic_directional_jacobian":True,
+        "pphi_phidot_coefficient_abs":float(pphi_phidot),
+    })
     _CANONICAL_LOCAL_CACHE[key]=out
     return out
 
