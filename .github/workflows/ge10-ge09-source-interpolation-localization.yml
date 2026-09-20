@@ -2,14 +2,6 @@ name: GE10 GE09 source interpolation localization
 
 on:
   workflow_dispatch:
-  push:
-    branches: [physics-first-gravitational-elasticity]
-    paths:
-      - 'ge10/**'
-      - 'docs/ge10_ge09_source_interpolation_localization_implementation_lock.md'
-      - 'docs/ge10_repair01_predata_pythonpath_runner.md'
-      - 'docs/ge10_repair01_pythonpath_runner_implementation_lock.md'
-      - '.github/workflows/ge10-ge09-source-interpolation-localization.yml'
 
 jobs:
   localization:
