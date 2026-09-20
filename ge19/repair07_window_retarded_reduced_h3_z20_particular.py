@@ -1290,7 +1290,7 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
             slhs=srow@w
             sres=slhs-rc[0,j]
             sold=max(abs(sga),abs(sm),abs(rc[0,j]),TINY)
-            sop=max(np.max(np.abs(srow))*max(np.max(np.abs(w)),TINY),TINY)
+            sop=max(float(np.sum(np.abs(srow*w))),TINY)
             sden=max(abs(slhs),abs(rc[0,j]),sop,TINY)
             shift_piece[j]=max(shift_piece[j],float(abs(sres)/sold))
             shift[j]=max(shift[j],float(abs(sres)/sden))
@@ -1303,7 +1303,7 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
             alhs=arow@w
             ares=alhs-rc[1,j]
             aold=max(abs(aga),abs(am),abs(rc[1,j]),TINY)
-            aop=max(np.max(np.abs(arow))*max(np.max(np.abs(w)),TINY),TINY)
+            aop=max(float(np.sum(np.abs(arow*w))),TINY)
             aden=max(abs(alhs),abs(rc[1,j]),aop,TINY)
             aniso_piece[j]=max(aniso_piece[j],float(abs(ares)/aold))
             aniso[j]=max(aniso[j],float(abs(ares)/aden))
@@ -1949,6 +1949,7 @@ def main():
         "repair06_predata_amendment01":"GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
         "repair06_predata_amendment02":"GE19_REPAIR06_PREDATA_AMENDMENT02_FULL_STABLE_Z_POLYNOMIAL_NORMALIZATION",
         "repair07_predata":"GE19_REPAIR07_PREDATA_ROW_SCALED_CONSTRAINT_MONITORS",
+        "repair07_predata_amendment01":"GE19_REPAIR07_PREDATA_AMENDMENT01_COMPONENTWISE_BACKWARD_ERROR_SCALE",
             "failure_stage":"Stage_A_reduced_H1_reclosure",
             "provenance":provenance,
             "stage_A_reduced_H1":{
@@ -2143,6 +2144,7 @@ def main():
         "repair06_predata_amendment01":"GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
         "repair06_predata_amendment02":"GE19_REPAIR06_PREDATA_AMENDMENT02_FULL_STABLE_Z_POLYNOMIAL_NORMALIZATION",
         "repair07_predata":"GE19_REPAIR07_PREDATA_ROW_SCALED_CONSTRAINT_MONITORS",
+        "repair07_predata_amendment01":"GE19_REPAIR07_PREDATA_AMENDMENT01_COMPONENTWISE_BACKWARD_ERROR_SCALE",
         "scope":"m=1..40 projection of one window-retarded reduced-matter baseline H3 directional particular state. Formal epsilon->0 coefficient only.",
         "equation":"L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
         "provenance":provenance,
