@@ -1,0 +1,62 @@
+name: GE19 static prelock audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/**'
+      - '.github/workflows/ge19-static-prelock-audit.yml'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python dependencies
+        run: python3 -m pip install numpy scipy
+      - name: Compile GE19
+        run: python3 -m py_compile ge19/window_retarded_reduced_h3_z20_particular.py
+      - name: Audit amendment wiring
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import ast, json
+          from pathlib import Path
+
+          p=Path("ge19/window_retarded_reduced_h3_z20_particular.py")
+          s=p.read_text()
+          ast.parse(s)
+
+          a=json.loads(Path("ge19/predata_amendment01_reduced_h1_reclosure.json").read_text())
+          assert a["classification"]=="GE19_PREDATA_AMENDMENT01_REDUCED_H1_RECLOSURE"
+
+          required=[
+              "def solve_reduced_h1_case",
+              "def source_real_reduced",
+              "def source_bundle_reduced",
+              "stage_A_pass",
+              "if not (provenance_pass and stage_A_pass)",
+              "source_bundle_reduced(",
+              '"reduced_H1_stage_A_all_gates"',
+              '"Z10_constructed":False',
+          ]
+          # The stop payload uses Z20_constructed, not Z10_constructed.
+          required.remove('"Z10_constructed":False')
+          required.append('"Z20_constructed":False')
+          for x in required:
+              assert x in s, x
+
+          # Stage B calls must occur after the amendment stop rule.
+          stop=s.index("if not (provenance_pass and stage_A_pass)")
+          b=s.index("src1024={}",stop)
+          assert b>stop
+          tail=s[b:]
+          assert "source_bundle_reduced(" in tail
+
+          # No Stage-B mixed-reference source call after the stop boundary.
+          assert "source_bundle(mod6,mod7,bg64,jets64" not in tail
+          assert "source_bundle(mod6,mod7,bg32,jets32" not in tail
+
+          print("GE19_STATIC_PRELOCK_AUDIT_PASS")
+          PY
