@@ -1,0 +1,132 @@
+name: GE19 Repair06 prelock canonical audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair06_*'
+      - '.github/workflows/ge19-repair06-prelock-audit.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile Repair06
+        run: python3 -m py_compile ge19/repair06_window_retarded_reduced_h3_z20_particular.py
+
+      - name: Audit frozen physics and canonical realization
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, inspect, math
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          def load(path,name):
+              spec=importlib.util.spec_from_file_location(name,path)
+              mod=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(mod)
+              return mod
+
+          r5=load(root/"ge19/repair05_window_retarded_reduced_h3_z20_particular.py","r5")
+          r6=load(root/"ge19/repair06_window_retarded_reduced_h3_z20_particular.py","r6")
+
+          # Frozen physical source/operator pieces are source-identical.
+          frozen=[
+              "build_stable_ge06_generator",
+              "stable_exp_background_from_native",
+              "reference_reduced_mode_state",
+              "y2_source_from_reduced",
+              "linear_operator_batch",
+              "build_matrix",
+          ]
+          for name in frozen:
+              assert inspect.getsource(getattr(r5,name))==inspect.getsource(getattr(r6,name)), name
+
+          for name in [
+              "KB","CV","K2","Q0","Z0","A0_MPC_INV","BETAS","C_TAGS","C_VALUES",
+              "FOURIER_N","PHASES","M_SOLVE","NT_PRIMARY","NT_CONTROL",
+              "NX_PRIMARY","NX_SPATIAL_CONTROL","SOURCE_SPATIAL_MAX",
+              "LINEAR_RES_MAX","CONSTRAINT_MAX","TIME_STATE_MAX",
+              "GE15_GE18_METRIC_MAX","GE18_NPZ_SHA"
+          ]:
+              a=getattr(r5,name); b=getattr(r6,name)
+              if isinstance(a,np.ndarray): assert np.array_equal(a,b), name
+              else: assert a==b, name
+
+          g6=r6.load_frozen_generator(
+              (root/"ge06/analytic_aest_directional_source_generator.py").resolve(),
+              "r6_ge06"
+          )
+          m6=r6.build_stable_ge06_generator(g6)
+          m7=r6.load_frozen_generator(
+              (root/"ge07/pressureless_matter_directional_source_generator.py").resolve(),
+              "r6_ge07"
+          )
+
+          # Physical-scale synthetic background, no local science parents.
+          x=np.linspace(math.log(0.4),math.log(1/1.2),16)
+          a=np.exp(x)
+          H=np.full_like(x,1.0e-4)
+          Z=np.linspace(4.45,4.68,len(x))
+          bg={
+              "x":x,"a":a,"H":H,
+              "Q_action":r6.Q0+r6.Z0*Z,
+              "Z_action":Z,
+          }
+          k=0.01
+          q=np.asarray([2e-6,3e-6,-4e-7,5e-6],complex)
+          v=np.asarray([1e-9,-2e-9,3e-10,-4e-9],complex)
+          rhs=np.zeros(6,complex)
+
+          y0,z0,idg=r6._initial_canonical_state(
+              m6,m7,bg,"C_star",k,float(x[0]),q,v,rhs
+          )
+          f,z,p6,p7,dg=r6._canonical_rhs_eval(
+              m6,m7,bg,"C_star",k,float(x[0]),y0,rhs
+          )
+          assert np.all(np.isfinite(y0))
+          assert np.all(np.isfinite(f))
+          assert dg["map_relative_L2_residual"]<=1e-10, dg
+          assert idg["relative_L2_residual_max"]<=1e-10, idg
+          assert np.max(np.abs(z[2:]-v))<=1e-12, (z,v)
+
+          # Canonical map must be affine-linear in state.
+          M,f0=r6._canonical_affine_matrix(m6,m7,bg,"C_star",k,float(x[5]))
+          y=np.asarray([1,2,3,4,5,6,7,8],complex)*1e-8
+          fy,*_=r6._canonical_rhs_eval(m6,m7,bg,"C_star",k,float(x[5]),y,rhs)
+          linerr=np.linalg.norm(fy-(M@y+f0))/max(np.linalg.norm(fy),1e-300)
+          assert linerr<=1e-10, linerr
+
+          # Zero state / zero source must remain zero under the Radau march.
+          zfun,cfun=r6._zero_source_interp(1)
+          Y,rdg=r6._radau2_integrate_canonical(
+              m6,m7,bg,"C_star",k,np.zeros((8,1),complex),zfun
+          )
+          assert np.max(np.abs(Y))<=1e-20, np.max(np.abs(Y))
+          assert rdg["radau_block_relative_L2_residual_max"]<=1e-10, rdg
+
+          # Stable Exp controls remain unchanged.
+          benign=r6.ge06_stable_benign_equivalence(g6,m6)
+          physical=r6.ge06_physical_parameter_probe(m6)
+          assert benign["all_stable_outputs_finite"]
+          assert benign["coeff1_source_global_relative_L2"]<=1e-10
+          assert benign["coeff2_source_global_relative_L2"]<=1e-10
+          assert physical["c1"]["all_partials_finite"]
+          assert physical["c2"]["all_partials_finite"]
+
+          print("CANONICAL_INITIAL_MAP =",dg)
+          print("CANONICAL_AFFINE_RELATIVE_ERROR =",linerr)
+          print("RADAU_ZERO_DIAGNOSTIC =",rdg)
+          print("BENIGN_EQUIVALENCE =",benign)
+          print("PHYSICAL_PARAMETER_PROBE =",physical)
+          print("GE19_REPAIR06_PRELOCK_AUDIT_PASS")
+          PY
