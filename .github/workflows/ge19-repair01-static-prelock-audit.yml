@@ -30,16 +30,23 @@ jobs:
 
           r=json.loads(Path("ge19/repair01_predata_stable_exp_background_coordinate.json").read_text())
           a=json.loads(Path("ge19/repair01_predata_amendment01_native_I0_reconstruction.json").read_text())
+          b=json.loads(Path("ge19/repair01_predata_amendment02_stable_symbolic_relambdification.json").read_text())
           assert r["classification"]=="GE19_REPAIR01_PREDATA_STABLE_EXP_BACKGROUND_COORDINATE"
           assert a["classification"]=="GE19_REPAIR01_PREDATA_AMENDMENT01_NATIVE_I0_RECONSTRUCTION"
+          assert b["classification"]=="GE19_REPAIR01_PREDATA_AMENDMENT02_STABLE_SYMBOLIC_RELAMBDIFICATION"
 
           required=[
             "def exp_Z_from_KQ",
             "def stable_exp_background_from_native",
-            'Qb=bg["Q_action"][:,None]',
+            "def build_stable_ge06_generator",
+            "def ge06_stable_benign_equivalence",
+            "def eval_stable_partials",
+            'Zb=bg["Z_action"][:,None]',
             'bg["Q_action"][:,None]*real["u20"]',
             '"stable_exp_background_native_gates"',
             '"stable_Exp_background_native_reconstruction_all_gates"',
+            '"stable_GE06_benign_coeff1_equivalence_global_relative_L2_le_1e10"',
+            '"stable_GE06_benign_coeff2_equivalence_global_relative_L2_le_1e10"',
             "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
             "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
             "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL",
