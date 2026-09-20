@@ -1,0 +1,94 @@
+name: GE17 late time standard background dust diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge17/**'
+      - 'docs/ge17_late_time_standard_background_dust_diagnostic_implementation_lock.md'
+      - '.github/workflows/ge17-late-time-standard-background-dust-diagnostic.yml'
+
+jobs:
+  background-dust-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge17/predata_late_time_standard_background_dust_diagnostic.json)" = "452b94e117c2d7f692c4dcdcfd0c3a8d0033fdee"
+          test "$(git rev-parse HEAD:ge17/late_time_standard_background_dust_diagnostic.py)" = "e7ca357404a1d24170564c243b626e051e532f96"
+          test "$(git rev-parse HEAD:docs/ge17_late_time_standard_background_dust_diagnostic_implementation_lock.md)" = "0b67bcf08b09056174ecdaad3d33202432db366a"
+          git merge-base --is-ancestor 0d0f2593130667c546ba785c889a174624ccfbfd HEAD
+          git merge-base --is-ancestor 269e4fdce534c70e9b4c85fcebd98b3115bbbd0d HEAD
+          git merge-base --is-ancestor f36b9355649ca1243619895ed8b424c0a001c9bf HEAD
+          echo GE17_LOCK_PASS
+
+      - name: Checkout pinned CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_ge17
+
+      - name: Install dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply AeST background patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_ge17
+          python3 -m py_compile ge17/late_time_standard_background_dust_diagnostic.py
+
+      - name: Build classy
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C class_ge17 -j2 classy
+
+      - name: Run GE17
+        shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}/class_ge17/python
+        run: |
+          set -euo pipefail
+          python3 ge17/late_time_standard_background_dust_diagnostic.py             --class-root class_ge17             --json-out results/ge17_late_time_standard_background_dust_diagnostic.json             --npz-out results/ge17_late_time_standard_background_dust_diagnostic.npz             | tee results/ge17_late_time_standard_background_dust_diagnostic.log
+
+      - name: Summarize GE17
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge17_late_time_standard_background_dust_diagnostic.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge17_late_time_standard_background_dust_diagnostic.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('SUMMARY=',d['summary'])
+          print('AUDIT_REDSHIFTS=')
+          for z,v in d['audit_redshifts'].items():
+              print(z,v)
+          PY
+          fi
+
+      - name: Upload GE17 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge17_late_time_standard_background_dust_diagnostic
+          path: |
+            results/ge17_late_time_standard_background_dust_diagnostic.json
+            results/ge17_late_time_standard_background_dust_diagnostic.npz
+            results/ge17_late_time_standard_background_dust_diagnostic.log
+            ge17/predata_late_time_standard_background_dust_diagnostic.json
+            docs/ge17_late_time_standard_background_dust_diagnostic_implementation_lock.md
+          if-no-files-found: warn
