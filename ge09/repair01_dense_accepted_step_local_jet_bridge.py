@@ -331,7 +331,7 @@ def main():
         if p.exists(): p.unlink()
 
     class_root=Path(args.class_root).resolve()
-    prefix=ROOT/"results"/"ge09_cli_"
+    prefix=ROOT/"results"/"ge09_cli"
     for i in range(len(K_REQ)):
         p=Path(str(prefix)+f"perturbations_k{i}_s.dat")
         if p.exists(): p.unlink()
