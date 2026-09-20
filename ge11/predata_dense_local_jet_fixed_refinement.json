@@ -1,0 +1,121 @@
+{
+  "classification": "GE11_PREDATA_DENSE_LOCAL_JET_FIXED_REFINEMENT",
+  "created_before_GE11_result": true,
+  "purpose": "Test one fixed two-level accepted-endpoint refinement of the unchanged GE09 cubic-Hermite local-jet representation after GE10 confirmed an interpolation-density limit. No GE09 threshold or interpolation-family change.",
+  "dependencies": {
+    "ge09": "GE09_DENSE_ACCEPTED_STEP_LOCAL_JET_BRIDGE_FAIL",
+    "ge09_result_freeze_commit": "456152e751f191a7bd6c9d596e3ab90492ec5162",
+    "ge10": "GE10_GE09_SOURCE_INTERPOLATION_LIMIT_CONFIRMED",
+    "ge10_result_freeze_commit": "c5c0bac85c000579092463fa4a1110df500ecb82",
+    "pinned_CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "frozen_refinement": {
+    "parent_p3": {
+      "tol_perturb_integration": 5e-8,
+      "perturb_sampling_stepsize": 0.0025
+    },
+    "R1": {
+      "tol_perturb_integration": 2.5e-8,
+      "perturb_sampling_stepsize": 0.00125
+    },
+    "R2": {
+      "tol_perturb_integration": 1.25e-8,
+      "perturb_sampling_stepsize": 0.000625
+    },
+    "rule": "Both precision parameters are halved at each level. No R3 or adaptive sequence is licensed from the first GE11 outcome."
+  },
+  "frozen_representation": {
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "redshift_window": [
+      0.2,
+      1.5
+    ],
+    "common_ln_a_nodes": 64,
+    "derivative_aware_fields": [
+      "phi",
+      "delta_dark",
+      "theta_dark",
+      "alpha_aest",
+      "E_aest"
+    ],
+    "interpolation": "CubicHermiteSpline using fresh physical RHS/(aH)",
+    "algebraic_fields": [
+      "psi",
+      "Q",
+      "H_over_H0",
+      "rho_dark",
+      "p_dark",
+      "cad2_dark"
+    ],
+    "algebraic_interpolation": "PchipInterpolator",
+    "local_jet_entries": [
+      "N",
+      "L",
+      "R",
+      "b",
+      "u",
+      "Lt",
+      "Lx",
+      "Rt",
+      "Rx",
+      "bx",
+      "ut",
+      "ux",
+      "pt",
+      "px",
+      "Nx"
+    ],
+    "spatial_derivatives": "analytic Fourier multipliers"
+  },
+  "inherited_single_level_gates": {
+    "dense_trace_vs_CLASS_table_abs_or_rel_max": 1e-12,
+    "minimum_accepted_points_per_k_in_window": 16,
+    "common_grid_nodes": 64,
+    "source_grid_state_validation_abs_or_rel_max": 0.0001,
+    "primary_vs_decimated_global_relative_L2_max": 0.0005,
+    "primary_vs_decimated_pointwise_abs_or_rel_max": 0.002,
+    "pt_identity_abs_or_rel_max": 1e-12,
+    "all_entries_finite": true
+  },
+  "refinement_gates": {
+    "accepted_points_R1_not_less_than_p3_for_each_k": true,
+    "accepted_points_R2_not_less_than_R1_for_each_k": true,
+    "max_ln_a_gap_R1_not_greater_than_p3_for_each_k": true,
+    "max_ln_a_gap_R2_not_greater_than_R1_for_each_k": true,
+    "source_validation_R2_not_greater_than_R1": true,
+    "R1_vs_R2_complete_jet_global_relative_L2_max": 0.0005,
+    "R1_vs_R2_complete_jet_pointwise_abs_or_rel_max": 0.002
+  },
+  "frozen_p3_reference": {
+    "accepted_points_per_k": [
+      17,
+      17,
+      20,
+      20,
+      22,
+      30
+    ],
+    "max_ln_a_gap_per_k": [
+      0.043892916349146716,
+      0.04748747310334933,
+      0.04502616770712542,
+      0.04425855292928327,
+      0.037237892493284463,
+      0.03764573147119232
+    ],
+    "source_validation_max": 0.00010032254188771416
+  },
+  "terminal_classifications": {
+    "pass": "GE11_DENSE_LOCAL_JET_FIXED_REFINEMENT_PASS",
+    "fail": "GE11_DENSE_LOCAL_JET_FIXED_REFINEMENT_FAIL"
+  },
+  "claim_boundary": "PASS certifies the complete GE06 first-order local jet under this new fixed refined representation. Historical GE09 remains FAIL. GE08 Repair01 standard-matter incompleteness remains active, so GE11 alone does not license Z20 or finite eta.",
+  "anti_tuning": "Do not add a third precision level, alter either R1/R2 precision pair, change the 1e-4 source gate, switch interpolants, drop the historical worst row, or alter jet controls after inspecting GE11 output."
+}
