@@ -1,0 +1,56 @@
+{
+  "classification": "GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
+  "created_before_repair06_science_result": true,
+  "parent_repair06_predata_commit": "0093500d8be6e7979544222157ce0dd268a8292d",
+  "reason": "Executable prelock analysis exposed an exact structural singularity in the originally proposed canonical algebraic partition. This is a Noether/gauge identity of the same frozen first-order Euler-Lagrange operator, not a numerical-conditioning defect and not a science result.",
+  "exact_structural_identity": {
+    "algebraic_unknown_order": ["N", "delta_varrho", "Sdot", "udot", "phidot", "Tdot"],
+    "old_row_order": ["pS", "pu", "pphi", "pT", "lapse", "dust_density"],
+    "right_null_direction": ["1", "0", "a*H", "-i*k/a", "Q_action", "1"],
+    "left_noether_relation": "a*H*pS + (i*k/a)*pu + Q_action*pphi + pT + E_lapse = 0",
+    "consequence": "the old 6x6 canonical algebraic block is structurally rank deficient in exact arithmetic"
+  },
+  "regularized_partition": {
+    "algebraic_rows": ["pS", "pu", "pphi", "pT", "dust_density", "anisotropy"],
+    "dropped_from_elimination_not_from_equations": "lapse",
+    "lapse_treatment": "evaluate independently after reconstruction and include its row-scaled residual in the unchanged linear-system residual gate",
+    "shift_treatment": "independent constraint monitor under the unchanged 1e-6 gate",
+    "anisotropy_treatment": "enforced as the gauge-closing algebraic equation and also reported under the unchanged 1e-6 gate",
+    "stage_A_source_anisotropy": "zero",
+    "stage_B_source_anisotropy": "the preregistered H3 anisotropy constraint source"
+  },
+  "exact_augmented_determinant": "1536*K2*KB*a^13*k^2*(2*(Q_action-Q0)^2 + Z0^2)*exp((Q_action-Q0)^2/Z0^2)/Z0^2",
+  "determinant_nonzero_on_frozen_domain": "yes, because K2>0, KB>0, a>0, Z0>0 and all solved Fourier modes have k>0",
+  "initial_surface": {
+    "dynamic_q_and_cosmic_time_derivatives": "unchanged exact frozen match",
+    "N_and_delta_varrho": "continue to be solved from lapse plus dust-density at the initial surface before canonical momenta are defined",
+    "reason": "at the initial surface momenta are not yet prescribed, so the original 2x2 initial algebraic solve is nonsingular and preserves the exact dynamic match"
+  },
+  "source_vector_for_time_march": [
+    "lapse_main",
+    "isotropic_main",
+    "aether_main",
+    "scalar_main",
+    "dust_potential_main",
+    "dust_density_main",
+    "shift_constraint",
+    "anisotropy_constraint"
+  ],
+  "unchanged": [
+    "continuum Euler-Lagrange equations",
+    "all equation signs",
+    "stable GE06 Z_action coordinate",
+    "GE06/GE07 frozen source generators",
+    "b=0 and L=R=S gauge",
+    "initial dynamic values and derivatives",
+    "GE15/GE18 frozen parents",
+    "C values, beta values, modes and grids",
+    "Radau-IIA coefficients",
+    "Stage-A and Stage-B numerical thresholds",
+    "window-retarded Stage-B convention",
+    "claim boundary"
+  ],
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "historical_repair05_relabel": false
+}
