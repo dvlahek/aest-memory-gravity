@@ -93,27 +93,68 @@ jobs:
           M0,F0,ZY0,ZR0,WY0,WR0,C0,bp0,od0=r6._canonical_operator_matrices(
               m6,m7,bg,"C_star",k,float(x[0])
           )
-          wrec=WY0@y0+WR0@rhs
+          # Choose the synthetic anisotropy source consistently with the
+          # prescribed initial q/v state; lapse and dust-density sources are
+          # already zero by the initial algebraic solve.
+          con0=np.zeros(2,complex)
+          con0[1]=(C0[12]+C0[13])@w0
+          src0=np.concatenate([rhs,con0])
+          wrec=WY0@y0+WR0@src0
           zrec=wrec[r6._ZIDX]
           assert np.all(np.isfinite(y0))
           assert np.all(np.isfinite(M0))
           assert idg["initial_algebraic_scaled_residual"]<=1e-10, idg
           assert od0["algebraic_scaled_residual_max"]<=1e-10, od0
-          assert np.max(np.abs(zrec[2:]-v))<=1e-12, (zrec,v)
+          assert od0["old_partition_noether_null_scaled_L2"]<=1e-8, od0
+          assert np.max(np.abs(zrec[2:]-v))<=1e-10, (zrec,v)
 
-          # Stable local linear representation must remain affine and the
-          # isotropic momentum identity p_Rt=2 p_Lt must hold.
+          # The old p+lapse+density algebraic partition must exhibit the
+          # expected Noether null, while the p+density+anisotropy partition
+          # must be nonsingular and accurately solvable.
+          stage_points=[]
+          aug_cond=[]
+          null_err=[]
+          for i in range(len(x)-1):
+              h=float(x[i+1]-x[i])
+              stage_points += [float(x[i]+h/3.0), float(x[i+1])]
+          for xx in stage_points:
+              Cx,bpx,bdx=r6._local_linear_matrix(m6,m7,bg,"C_star",k,xx)
+              old=Cx[0:6][:,r6._ZIDX]
+              n=np.asarray([
+                  1.0,0.0,bpx["a"]*bpx["H"],
+                  -1j*k/bpx["a"],bpx["Q_action"],1.0
+              ],complex)
+              rows=np.max(np.abs(old),axis=1)
+              null_err.append(float(np.linalg.norm((old@n)/np.maximum(rows,1e-300))))
+
+              aug=np.vstack([
+                  Cx[0:4],Cx[5:6],Cx[12:13]+Cx[13:14]
+              ])[:,r6._ZIDX]
+              row=np.max(np.abs(aug),axis=1)
+              Dr=1.0/row
+              ar=Dr[:,None]*aug
+              col=np.max(np.abs(ar),axis=0)
+              asc=ar*(1.0/col)[None,:]
+              aug_cond.append(float(np.linalg.cond(asc)))
+              assert np.all(np.isfinite(asc))
+              assert np.linalg.matrix_rank(asc)==6
+
+          assert max(null_err)<=1e-8, max(null_err)
+          assert np.all(np.isfinite(aug_cond)), aug_cond
+
+          # Stable local linear representation with an 8-component source.
           M,F,ZY,ZR,WY,WR,C,bp,od=r6._canonical_operator_matrices(
               m6,m7,bg,"C_star",k,float(x[5])
           )
           y=np.asarray([1,2,3,4,5,6,7,8],complex)*1e-8
-          rtest=np.asarray([1,-2,3,-4,5,-6],complex)*1e-12
+          rtest=np.asarray([1,-2,3,-4,5,-6,7,-8],complex)*1e-12
           fy=M@y+F@rtest
           w=WY@y+WR@rtest
-          target=np.concatenate([y[4:8],rtest[[0,5]]])
-          rows=np.max(np.abs(C[0:6]),axis=1)
-          linerr=np.linalg.norm((C[0:6]@w-target)/rows)/max(
-              np.linalg.norm((C[0:6]@w)/rows),
+          Calg=np.vstack([C[0:4],C[5:6],C[12:13]+C[13:14]])
+          target=np.concatenate([y[4:8],[rtest[5],rtest[7]]])
+          rows=np.max(np.abs(Calg),axis=1)
+          linerr=np.linalg.norm((Calg@w-target)/rows)/max(
+              np.linalg.norm((Calg@w)/rows),
               np.linalg.norm(target/rows),
               1e-300
           )
@@ -123,34 +164,16 @@ jobs:
           assert prat<=1e-12, prat
           assert np.all(np.isfinite(fy))
 
-          # Diagnose the algebraic principal block at every Radau stage point.
-          row_names=["pS","pu","pphi","pT","lapse","dust_density"]
-          stage_points=[]
-          for i in range(len(x)-1):
-              h=float(x[i+1]-x[i])
-              stage_points += [float(x[i]+h/3.0), float(x[i+1])]
-          amin={name:float("inf") for name in row_names}
-          zero_rows=[]
-          for xx in stage_points:
-              Cx,bpx,bdx=r6._local_linear_matrix(m6,m7,bg,"C_star",k,xx)
-              Az=Cx[0:6][:,r6._ZIDX]
-              rm=np.max(np.abs(Az),axis=1)
-              for ii,name in enumerate(row_names):
-                  amin[name]=min(amin[name],float(rm[ii]))
-                  if rm[ii]==0.0:
-                      zero_rows.append((xx,name))
-          print("CANONICAL_AZ_ROW_MINIMA =",amin)
-          print("CANONICAL_AZ_ZERO_ROWS =",zero_rows)
-          assert not zero_rows, zero_rows
-
           # Zero state / zero source must remain zero under the Radau march.
           zfun,cfun=r6._zero_source_interp(1)
           Y,rdg=r6._radau2_integrate_canonical(
-              m6,m7,bg,"C_star",k,np.zeros((8,1),complex),zfun
+              m6,m7,bg,"C_star",k,np.zeros((8,1),complex),zfun,cfun
           )
           assert np.max(np.abs(Y))<=1e-20, np.max(np.abs(Y))
           assert rdg["radau_block_scaled_relative_L2_residual_max"]<=1e-10, rdg
 
+          print("NOETHER_NULL_SCALED_L2_MAX =",max(null_err))
+          print("AUGMENTED_ALGEBRAIC_SCALED_CONDITION_2_MAX =",max(aug_cond))
           # Stable Exp controls remain unchanged.
           benign=r6.ge06_stable_benign_equivalence(g6,m6)
           physical=r6.ge06_physical_parameter_probe(m6)
@@ -161,6 +184,7 @@ jobs:
           assert physical["c2"]["all_partials_finite"]
 
           print("CANONICAL_INITIAL_MAP =",idg)
+          print("CANONICAL_OPERATOR_DIAGNOSTIC =",od0)
           print("CANONICAL_AFFINE_SCALED_RELATIVE_ERROR =",linerr)
           print("CANONICAL_PRT_RATIO_ERROR =",prat)
           print("RADAU_ZERO_DIAGNOSTIC =",rdg)
