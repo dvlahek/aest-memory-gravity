@@ -18,7 +18,7 @@ echo "GE15_LOCK_PASS"
 
 python3 -m py_compile   ge15/apply_cancellation_free_s_state_patch.py   ge15/cancellation_free_s_state_precision_closure.py
 
-python3 -m pip install --user numpy scipy >/dev/null
+python3 -m pip install numpy scipy >/dev/null
 
 echo "=== Prepare pinned CLASS ==="
 if [ ! -d "$CLASS_DIR/.git" ]; then
