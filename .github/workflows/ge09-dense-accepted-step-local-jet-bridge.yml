@@ -2,13 +2,6 @@ name: GE09 dense accepted step local jet bridge
 
 on:
   workflow_dispatch:
-  push:
-    branches: [physics-first-gravitational-elasticity]
-    paths:
-      - 'ge09/**'
-      - 'docs/ge09_preexecution_precision_injection_correction.md'
-      - 'docs/ge09_dense_accepted_step_local_jet_bridge_implementation_lock_v2.md'
-      - '.github/workflows/ge09-dense-accepted-step-local-jet-bridge.yml'
 
 jobs:
   dense-local-jet:
