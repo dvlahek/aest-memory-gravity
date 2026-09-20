@@ -36,7 +36,7 @@ jobs:
           spec.loader.exec_module(m)
 
           g=m.load_frozen_generator(
-              Path("ge06/analytic_aest_directional_source_generator.py"),
+              (Path.cwd()/"ge06/analytic_aest_directional_source_generator.py").resolve(),
               "ge19r2_ge06"
           )
           stable=m.build_stable_ge06_generator(g)
