@@ -1,0 +1,139 @@
+name: GE13 AeST mode amplitude onset localization
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge13/**'
+      - 'docs/ge13_aest_mode_amplitude_onset_localization_implementation_lock.md'
+      - '.github/workflows/ge13-aest-mode-amplitude-onset-localization.yml'
+
+jobs:
+  amplitude-onset-localization:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge13/predata_aest_mode_amplitude_onset_localization.json)" = "43f656b077d517acf3fe01b37c303db5dec00de5"
+          test "$(git rev-parse HEAD:ge13/aest_mode_amplitude_onset_localization.py)" = "f1fdc8c71452f49ed06e1e329a6ab1d2b7d1d874"
+          test "$(git rev-parse HEAD:docs/ge13_aest_mode_amplitude_onset_localization_implementation_lock.md)" = "9a47aec7cb22d3abc2b63c64380c950b91d4874b"
+          git merge-base --is-ancestor 656457deeede91d08aced160e452d7577711de50 HEAD
+          git merge-base --is-ancestor 1f619e0b2a7a00764bd8d0ba0c9260fc327cf23f HEAD
+          git merge-base --is-ancestor eb61055b2496692cf094b30b0525f78904095d06 HEAD
+          echo GE13_LOCK_PASS
+
+      - name: Install dependencies
+        run: python3 -m pip install --user numpy scipy pandas
+
+      - name: Verify frozen parent artifact metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10600652596"             -o results/ge13_ge11_artifact_metadata.json
+          curl -fsSL             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer ${GH_TOKEN}"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10602610942"             -o results/ge13_ge12_artifact_metadata.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('results/ge13_ge11_artifact_metadata.json'))
+          b=json.load(open('results/ge13_ge12_artifact_metadata.json'))
+          assert a['id']==10600652596
+          assert a['workflow_run']['id']==35497478790
+          assert a['digest']=='sha256:b35a3a0c8bbd22483bd04c006b20ceb97d3c7f263e178382026cba2983628ecc'
+          assert a['expired'] is False
+          assert b['id']==10602610942
+          assert b['workflow_run']['id']==35500848748
+          assert b['digest']=='sha256:2b44a0c38d1a3aadcb05f1ed743560a68817e720dcb4d2cc41fe040d0b409fd9'
+          assert b['expired'] is False
+          print('GE13_PARENT_ARTIFACTS_PASS')
+          PY
+
+      - name: Download frozen GE11 Repair01 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10600652596
+          path: frozen_ge11
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35497478790
+
+      - name: Download frozen GE12 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10602610942
+          path: frozen_ge12
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35500848748
+
+      - name: Predata implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge13/aest_mode_amplitude_onset_localization.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge13/predata_aest_mode_amplitude_onset_localization.json'))
+          assert d['classification']=='GE13_PREDATA_AEST_MODE_AMPLITUDE_ONSET_LOCALIZATION'
+          assert d['uses_new_CLASS_run'] is False
+          assert d['uses_new_precision_level'] is False
+          assert d['full_history_onset']['common_ln_a_samples_per_k']==4096
+          assert d['full_history_onset']['departure_thresholds']==[0.001,0.01,0.05,0.10]
+          print('GE13_PREDATA_PASS')
+          PY
+
+      - name: Run GE13 localization
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge13/aest_mode_amplitude_onset_localization.py             --ge11-root frozen_ge11             --ge12-root frozen_ge12             --ge11-meta-json results/ge13_ge11_artifact_metadata.json             --ge12-meta-json results/ge13_ge12_artifact_metadata.json             --json-out results/ge13_aest_mode_amplitude_onset_localization.json             --npz-out results/ge13_aest_mode_amplitude_onset_localization.npz             | tee results/ge13_aest_mode_amplitude_onset_localization.log
+
+      - name: Summarize GE13
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge13_aest_mode_amplitude_onset_localization.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge13_aest_mode_amplitude_onset_localization.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('PER_K_ALPHA=')
+          for r in d['late_per_k_scale_shape']['alpha_aest']:
+              print(r)
+          print('PER_K_CHANNEL_SPREAD=',d['late_per_k_channel_scale_spread'])
+          print('ONSET=')
+          for r in d['full_history_alpha_onset']:
+              print('k_h=',r['k_h_Mpc'],'first=',r['first_common_alpha_abs_or_rel_mismatch'],
+                    'crossings=',r['departure_crossings'],
+                    'late_scale=',r['late_plateau_scale'])
+          PY
+          fi
+
+      - name: Upload GE13 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge13_aest_mode_amplitude_onset_localization
+          path: |
+            results/ge13_ge11_artifact_metadata.json
+            results/ge13_ge12_artifact_metadata.json
+            results/ge13_aest_mode_amplitude_onset_localization.json
+            results/ge13_aest_mode_amplitude_onset_localization.npz
+            results/ge13_aest_mode_amplitude_onset_localization.log
+            ge13/predata_aest_mode_amplitude_onset_localization.json
+            docs/ge13_aest_mode_amplitude_onset_localization_implementation_lock.md
+          if-no-files-found: warn
