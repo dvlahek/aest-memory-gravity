@@ -322,6 +322,8 @@ def main():
         pars["k_output_values"]=", ".join(f"{k:.17g}" for k in K_REQ)
         pars["P_k_max_h/Mpc"]=2.0
         pars["z_max_pk"]=5.0
+        pars["tol_perturb_integration"]=5e-8
+        pars["perturb_sampling_stepsize"]=0.0025
         cc=Class(); cc.set(pars); cc.compute()
         pt=cc.get_perturbations()["scalar"]
         cc.struct_cleanup(); cc.empty()
