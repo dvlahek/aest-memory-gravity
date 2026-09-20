@@ -940,42 +940,71 @@ _ZIDX=np.asarray([0,1,6,7,8,9],int)
 
 
 def _canonical_operator_matrices(mod6,mod7,bg,tag,k,xq):
-    """Return stable local canonical ODE/algebraic matrices.
+    """Return the Noether-regularized canonical ODE/algebraic matrices.
 
-    y=(S,u,phi,T,pS,pu,pphi,pT), rhs has the six main EL components.
+    y=(S,u,phi,T,pS,pu,pphi,pT).
+
+    The exact first-order operator has a Noether identity that makes the
+    old algebraic row set (pS,pu,pphi,pT,lapse,dust_density) singular.
+    Use anisotropy in place of lapse for local elimination.  Lapse remains
+    an independently evaluated residual after reconstruction.
     """
     Cmat,bp,base_diag=_local_linear_matrix(mod6,mod7,bg,tag,k,xq)
 
-    Az=Cmat[0:6][:,_ZIDX]
-    Aq=Cmat[0:6][:,_QIDX]
+    Calg=np.vstack([
+        Cmat[0:4],
+        Cmat[5:6],
+        Cmat[12:13]+Cmat[13:14],
+    ])
+    Az=Calg[:,_ZIDX]
+    Aq=Calg[:,_QIDX]
+
     Ry=np.zeros((6,8),complex)
     Ry[0:4,4:8]=np.eye(4)
     Ry[:,0:4]-=Aq
-    Rr=np.zeros((6,6),complex)
-    Rr[4,0]=1.0
-    Rr[5,5]=1.0
+
+    # Source order:
+    # lapse, isotropic, aether, scalar, dust-potential, dust-density,
+    # shift, anisotropy.
+    Rr=np.zeros((6,8),complex)
+    Rr[4,5]=1.0
+    Rr[5,7]=1.0
 
     ZY,d1=_dense_equilibrated_solve(Az,Ry)
     ZR,d2=_dense_equilibrated_solve(Az,Rr)
 
     WY=np.zeros((10,8),complex)
-    WR=np.zeros((10,6),complex)
+    WR=np.zeros((10,8),complex)
     WY[_QIDX,0:4]=np.eye(4)
     WY[_ZIDX,:]=ZY
     WR[_ZIDX,:]=ZR
 
     M=np.zeros((8,8),complex)
-    F=np.zeros((8,6),complex)
+    F=np.zeros((8,8),complex)
     M[0:4,:]=ZY[2:6,:]/bp["H"]
     F[0:4,:]=ZR[2:6,:]/bp["H"]
 
-    dyn_rhs=np.zeros((4,6),complex)
+    dyn_rhs=np.zeros((4,8),complex)
     dyn_rhs[0,1]=1.0
     dyn_rhs[1,2]=1.0
     dyn_rhs[2,3]=1.0
     dyn_rhs[3,4]=1.0
     M[4:8,:]=(Cmat[6:10]@WY)/bp["H"]
     F[4:8,:]=(Cmat[6:10]@WR-dyn_rhs)/bp["H"]
+
+    # Explicit Noether-null diagnostic for the old algebraic partition.
+    old_Az=Cmat[0:6][:,_ZIDX]
+    null=np.asarray([
+        1.0,
+        0.0,
+        bp["a"]*bp["H"],
+        -1j*float(k)/bp["a"],
+        bp["Q_action"],
+        1.0,
+    ],complex)
+    old_rows=np.max(np.abs(old_Az),axis=1)
+    null_scaled=(old_Az@null)/np.maximum(old_rows,TINY)
+    noether_null=float(np.linalg.norm(null_scaled))
 
     diag={
         **base_diag,
@@ -985,9 +1014,9 @@ def _canonical_operator_matrices(mod6,mod7,bg,tag,k,xq):
             d1["unscaled_matrix_product_relative_L2_residual_max"],
             d2["unscaled_matrix_product_relative_L2_residual_max"],
         )),
+        "old_partition_noether_null_scaled_L2":noether_null,
     }
     return M,F,ZY,ZR,WY,WR,Cmat,bp,diag
-
 
 def _initial_canonical_state(mod6,mod7,bg,tag,k,x0,q0,v0,rhs0):
     q0=np.asarray(q0,complex)
@@ -1040,7 +1069,7 @@ def _zero_source_interp(ncol=1):
     return rhs,con
 
 
-def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun):
+def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun,conrhsfun):
     x=np.asarray(bg["x"],float)
     Y0=np.asarray(y0,complex)
     if Y0.ndim==1:
@@ -1071,10 +1100,16 @@ def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun):
 
         R1=np.asarray(rhsfun(x1),complex)
         R2=np.asarray(rhsfun(x2),complex)
+        C1=np.asarray(conrhsfun(x1),complex)
+        C2=np.asarray(conrhsfun(x2),complex)
         if R1.ndim==1: R1=R1[:,None]
         if R2.ndim==1: R2=R2[:,None]
-        F1=Fmap1@R1
-        F2=Fmap2@R2
+        if C1.ndim==1: C1=C1[:,None]
+        if C2.ndim==1: C2=C2[:,None]
+        S1=np.vstack([R1,C1])
+        S2=np.vstack([R2,C2])
+        F1=Fmap1@S1
+        F2=Fmap2@S2
 
         K=np.block([
             [I-h*a11*M1, -h*a12*M2],
@@ -1108,6 +1143,7 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
     state=np.empty((ncol,6,nt),complex)
     dots=np.empty((ncol,4,nt),complex)
     alg_res=np.zeros(ncol,float)
+    lapse_res=np.zeros(ncol,float)
     shift=np.zeros(ncol,float)
     aniso=np.zeros(ncol,float)
     momentum_ratio=0.0
@@ -1124,24 +1160,43 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
         local_cond=max(local_cond,opdiag["algebraic_scaled_condition_2"])
         for j in range(ncol):
             y=Y[j,:,it]
-            w=WY@y+WR@rr[:,j]
+            src=np.concatenate([rr[:,j],rc[:,j]])
+            w=WY@y+WR@src
             z=w[_ZIDX]
             N,dr,Sdot,udot,phidot,Tdot=z
             S,u,phi,T=y[:4]
             state[j,:,it]=np.asarray([N,S,u,phi,T,dr],complex)
             dots[j,:,it]=np.asarray([Sdot,udot,phidot,Tdot],complex)
 
-            target=np.concatenate([y[4:8],rr[[0,5],j]])
-            lhs=Cmat[0:6]@w
-            # Use row-scaled backward error, because raw physical rows span
-            # ~1e25 and direct unscaled subtraction is cancellation dominated.
-            rows=np.max(np.abs(Cmat[0:6]),axis=1)
-            rs=(lhs-target)/rows
-            ls=lhs/rows
-            ts=target/rows
+            Calg=np.vstack([
+                Cmat[0:4],
+                Cmat[5:6],
+                Cmat[12:13]+Cmat[13:14],
+            ])
+            target=np.concatenate([y[4:8],[rr[5,j],rc[1,j]]])
+            lhs=Calg@w
+            rows=np.max(np.abs(Calg),axis=1)
+            rs=(lhs-target)/np.maximum(rows,TINY)
+            ls=lhs/np.maximum(rows,TINY)
+            ts=target/np.maximum(rows,TINY)
             alg_res[j]=max(
                 alg_res[j],
                 float(np.linalg.norm(rs)/max(np.linalg.norm(ls),np.linalg.norm(ts),TINY))
+            )
+
+            # The lapse row is not used for elimination because of the exact
+            # Noether identity; retain it as an independent row-scaled
+            # equation residual under the unchanged linear-system gate.
+            lapse_lhs=Cmat[4]@w
+            lapse_parts=max(
+                abs(Cmat[4]@w),
+                abs(rr[0,j]),
+                np.max(np.abs(Cmat[4]))*max(np.max(np.abs(w)),TINY),
+                TINY,
+            )
+            lapse_res[j]=max(
+                lapse_res[j],
+                float(abs(lapse_lhs-rr[0,j])/lapse_parts)
             )
 
             sga=Cmat[10]@w
@@ -1164,6 +1219,7 @@ def _reconstruct_canonical_solution(mod6,mod7,bg,tag,k,Y,rhsfun,conrhsfun):
 
     return state,dots,{
         "algebraic_scaled_relative_L2_residual_max":float(np.max(alg_res)),
+        "lapse_noether_row_relative_residual_max":float(np.max(lapse_res)),
         "local_algebraic_scaled_condition_2_max":float(local_cond),
         "shift_constraint_relative_L2_max":float(np.max(shift)),
         "anisotropy_constraint_relative_L2_max":float(np.max(aniso)),
@@ -1186,7 +1242,7 @@ def solve_reduced_h1_case_canonical(mod6,mod7,bg,tag,reference,reference_dot):
         y0,w0,idiag=_initial_canonical_state(
             mod6,mod7,bg,tag,k,float(bg["x"][0]),q0,v0,np.zeros(6,complex)
         )
-        Y,rdiag=_radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0[:,None],rhsfun)
+        Y,rdiag=_radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0[:,None],rhsfun,confun)
         st,dd,odiag=_reconstruct_canonical_solution(
             mod6,mod7,bg,tag,k,Y,rhsfun,confun
         )
@@ -1195,6 +1251,7 @@ def solve_reduced_h1_case_canonical(mod6,mod7,bg,tag,reference,reference_dot):
             idiag["initial_algebraic_scaled_residual"],
             rdiag["radau_block_scaled_relative_L2_residual_max"],
             odiag["algebraic_scaled_relative_L2_residual_max"],
+            odiag["lapse_noether_row_relative_residual_max"],
         ))
         shift.append(odiag["shift_constraint_relative_L2_max"])
         aniso.append(odiag["anisotropy_constraint_relative_L2_max"])
@@ -1232,7 +1289,7 @@ def solve_case_canonical(mod6,mod7,bg,tag,sources_by_beta):
             )
             y0[:,ib]=yi
             initdiag.append(di)
-        Y,rdiag=_radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun)
+        Y,rdiag=_radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun,confun)
         st,dd,odiag=_reconstruct_canonical_solution(
             mod6,mod7,bg,tag,k,Y,rhsfun,confun
         )
@@ -1782,6 +1839,7 @@ def main():
         "repair04_predata":"GE19_REPAIR04_PREDATA_LINEAR_OPERATOR_Z_COORDINATE_AND_PROVENANCE",
         "repair05_predata":"GE19_REPAIR05_PREDATA_EQUILIBRATED_LINEAR_SOLVE",
         "repair06_predata":"GE19_REPAIR06_PREDATA_CANONICAL_MOMENTUM_TIME_MARCH",
+        "repair06_predata_amendment01":"GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
             "failure_stage":"Stage_A_reduced_H1_reclosure",
             "provenance":provenance,
             "stage_A_reduced_H1":{
@@ -1973,6 +2031,7 @@ def main():
         "repair04_predata":"GE19_REPAIR04_PREDATA_LINEAR_OPERATOR_Z_COORDINATE_AND_PROVENANCE",
         "repair05_predata":"GE19_REPAIR05_PREDATA_EQUILIBRATED_LINEAR_SOLVE",
         "repair06_predata":"GE19_REPAIR06_PREDATA_CANONICAL_MOMENTUM_TIME_MARCH",
+        "repair06_predata_amendment01":"GE19_REPAIR06_PREDATA_AMENDMENT01_NOETHER_REGULARIZED_DAE_PARTITION",
         "scope":"m=1..40 projection of one window-retarded reduced-matter baseline H3 directional particular state. Formal epsilon->0 coefficient only.",
         "equation":"L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
         "provenance":provenance,
