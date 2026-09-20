@@ -1062,7 +1062,7 @@ def _radau2_integrate_canonical(mod6,mod7,bg,tag,k,y0,rhsfun):
     I=np.eye(8,dtype=complex)
     for i in range(len(x)-1):
         h=float(x[i+1]-x[i])
-        x1=float(x[i]+c1*h); x2=float(x[i]+c2*h)
+        x1=float(x[i]+c1*h); x2=float(x[i+1])  # c2=1 exactly: stay on interpolation domain
         M1,Fmap1,*rest1=_canonical_operator_matrices(mod6,mod7,bg,tag,k,x1)
         M2,Fmap2,*rest2=_canonical_operator_matrices(mod6,mod7,bg,tag,k,x2)
         d1=rest1[-1]; d2=rest2[-1]
