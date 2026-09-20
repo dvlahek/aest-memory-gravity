@@ -350,8 +350,12 @@ def source_real(mod6,mod7,bg,jets,npz,tag,beta,nx):
     }
 
 
-def linear_operator_batch(mod6,mod7,bg,tag,k,Y):
-    """Apply gauge-fixed L_total to columns Y, shape [6,nt,ncol]."""
+def linear_operator_batch(mod6,mod7,bg,tag,k,Y,return_parts=False):
+    """Apply gauge-fixed L_total to columns Y, shape [6,nt,ncol].
+
+    If return_parts=True, also return separately assembled Einstein+AeST and
+    dust main/constraint blocks for cancellation diagnostics.
+    """
     nt=Y.shape[1]
     Dx=fd4_matrix(nt,bg["x"][0],bg["x"][-1])
     Dt=bg["H"][:,None]*Dx
@@ -376,7 +380,14 @@ def linear_operator_batch(mod6,mod7,bg,tag,k,Y):
     p7={name:fn(*vals7) for name,fn in mod7.f_c1.items()}
     p7=broadcast_partials(p7,N.shape)
     l7=assemble_m_local(p7,Dt,k=k)
-    return main_and_constraints(l6,l7)
+    main,con=main_and_constraints(l6,l7)
+    if return_parts:
+        zma={kk:np.zeros_like(vv) for kk,vv in l7.items()}
+        zga={kk:np.zeros_like(vv) for kk,vv in l6.items()}
+        mga,cga=main_and_constraints(l6,zma)
+        mm,cm=main_and_constraints(zga,l7)
+        return main,con,mga,cga,mm,cm
+    return main,con
 
 
 def build_matrix(mod6,mod7,bg,tag,k):
