@@ -259,6 +259,10 @@ def build_first_order_real(bg,jets,npz,tag,nx):
     return ga,matter,chi
 
 
+def broadcast_partials(pd,shape):
+    return {k:np.broadcast_to(np.asarray(v),shape).copy() for k,v in pd.items()}
+
+
 def assemble_ga_local(pd,Dt,k=None,spatial_real=False,kfund=None):
     if spatial_real:
         dx=lambda q:spectral_dx(q,kfund)
@@ -313,12 +317,14 @@ def source_real(mod6,mod7,bg,jets,npz,tag,beta,nx):
            ga["ut"],ga["ux"],ga["pt"],ga["px"],ga["Nx"],
            KB,CV,K2,Q0,Z0)
     p6={name:fn(*vals6) for name,fn in mod6.f_c2.items()}
+    p6=broadcast_partials(p6,ga["N"].shape)
     q6=assemble_ga_local(p6,Dt,spatial_real=True,kfund=float(g9.K_REQ[0]/FOURIER_N[0]))
 
     rhob=(3.0*C_VALUES[tag]/bg["a"]**3)[:,None]
     vals7=(aa,rhob,matter["dN"],matter["dL"],matter["dR"],matter["db"],
            matter["drho_action"],matter["dTt"],matter["dTx"])
     p7={name:fn(*vals7) for name,fn in mod7.f_c2.items()}
+    p7=broadcast_partials(p7,matter["dN"].shape)
     q7=assemble_m_local(p7,Dt,spatial_real=True,kfund=float(g9.K_REQ[0]/FOURIER_N[0]))
 
     qmain,qcon=main_and_constraints(q6,q7)
@@ -362,11 +368,13 @@ def linear_operator_batch(mod6,mod7,bg,tag,k,Y):
            du,ik*u,dp,ik*phi,ik*N,
            KB,CV,K2,Q0,Z0)
     p6={name:fn(*vals6) for name,fn in mod6.f_c1.items()}
+    p6=broadcast_partials(p6,N.shape)
     l6=assemble_ga_local(p6,Dt,k=k)
 
     rhob=(3.0*C_VALUES[tag]/bg["a"]**3)[:,None]
     vals7=(aa,rhob,N,S,S,z,drho,dT,ik*T)
     p7={name:fn(*vals7) for name,fn in mod7.f_c1.items()}
+    p7=broadcast_partials(p7,N.shape)
     l7=assemble_m_local(p7,Dt,k=k)
     return main_and_constraints(l6,l7)
 
@@ -442,7 +450,8 @@ def solve_case(mod6,mod7,bg,tag,sources_by_beta):
                 sl=slice(ic*nt,(ic+1)*nt)
                 lhs=(Cmat@X[:,ib])[sl]
                 rhs=BC[sl,ib]
-                con_res[ib,jm,ic]=np.linalg.norm(cr[sl])/max(np.linalg.norm(lhs),np.linalg.norm(rhs),TINY)
+                con_scale=max(np.linalg.norm(B[:,ib]),np.linalg.norm(lhs),np.linalg.norm(rhs),TINY)
+                con_res[ib,jm,ic]=np.linalg.norm(cr[sl])/con_scale
     return states,solve_res,con_res
 
 
