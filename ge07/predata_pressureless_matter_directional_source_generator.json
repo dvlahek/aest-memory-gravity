@@ -1,0 +1,68 @@
+{
+  "classification": "GE07_PREDATA_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR",
+  "created_before_result": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Generate and independently validate the first and second perturbative directional coefficients L_m[V] and Q_m[V,V] of the already certified minimally coupled pressureless-matter action in the same scalar-longitudinal plane-symmetric 3+1 geometry used by GE06.",
+  "dependencies": {
+    "matter_variational_closure": "NL1C7B1_PRESSURELESS_MATTER_VARIATIONAL_CLOSURE_PASS",
+    "ge06": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "nl1b2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS"
+  },
+  "frozen_action": {
+    "covariant": "S_d=-1/2 int sqrt(-g) rho_phys (g^munu d_mu T d_nu T + 1)",
+    "density_rescaling": "varrho=8*pi*G*rho_phys",
+    "longitudinal_reduced": "L_d=N L R^2 varrho [((T_t-b T_x)/N)^2-(T_x/L)^2-1]",
+    "free_matter_coupling": false
+  },
+  "expansion_background": {
+    "N": 1,
+    "b": 0,
+    "L_equals_R": "a(t)",
+    "T_background": "T=t, so T_t=1 and T_x=0",
+    "varrho_background": "rho0/a(t)^3",
+    "a_of_t": "1+0.08 sin(t)+0.02 cos(2t)",
+    "rho0": 0.25
+  },
+  "target_blocks": {
+    "first_directional": "L_m[V] = first epsilon derivative at epsilon=0 of every dust Euler-Lagrange source",
+    "second_directional": "Q_m[V,V] = second epsilon derivative at epsilon=0 along the same direction",
+    "required_sources": [
+      "metric_lapse",
+      "metric_longitudinal_scale",
+      "metric_transverse_scale",
+      "metric_shift",
+      "dust_potential_T",
+      "dust_density_varrho"
+    ]
+  },
+  "deterministic_audit": {
+    "periodic_time_points": 48,
+    "periodic_space_points": 64,
+    "perturbation_direction": "fixed smooth multi-harmonic perturbations in N,L,R,b,T,varrho",
+    "finite_difference_steps": [
+      0.001,
+      0.0003
+    ]
+  },
+  "exact_gates": {
+    "background_normalization_constraint_zero": true,
+    "background_dust_current_conservation_zero": true,
+    "no_direct_aest_or_memory_coupling": true,
+    "no_field_principal_hessian_contribution": true
+  },
+  "numerical_gates": {
+    "all_required_source_blocks_generated": true,
+    "analytic_L_vs_primary_fd_global_relative_L2_max": 0.00001,
+    "analytic_Q_vs_primary_fd_global_relative_L2_max": 0.00001,
+    "primary_vs_control_fd_L_global_relative_L2_max": 0.00001,
+    "primary_vs_control_fd_Q_global_relative_L2_max": 0.00001,
+    "all_outputs_finite": true
+  },
+  "classification_rule": {
+    "pass": "all exact and numerical gates pass -> GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "fail": "otherwise -> GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_FAIL"
+  },
+  "claim_boundary": "PASS certifies the pressureless-matter L/Q directional source generator needed for the H3/H4 scalar hierarchy. It does not solve Z20/Z21, add radiation/baryon-pressure/neutrino nonlinearities, introduce finite eta, or make collapse/observational claims.",
+  "anti_tuning": "Do not change the dust action, background, audit direction, grid sizes, finite-difference steps, source list, or thresholds after inspecting GE07 output."
+}
