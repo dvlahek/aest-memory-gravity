@@ -1,0 +1,63 @@
+name: GE19 Repair02 prelock audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair02_*'
+      - '.github/workflows/ge19-repair02-prelock-audit.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile Repair02
+        run: python3 -m py_compile ge19/repair02_window_retarded_reduced_h3_z20_particular.py
+
+      - name: Execute stable symbolic builder and benign equivalence
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+
+          spec=importlib.util.spec_from_file_location(
+              "ge19r2",
+              Path("ge19/repair02_window_retarded_reduced_h3_z20_particular.py")
+          )
+          m=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(m)
+
+          g=m.load_frozen_generator(
+              Path("ge06/analytic_aest_directional_source_generator.py"),
+              "ge19r2_ge06"
+          )
+          stable=m.build_stable_ge06_generator(g)
+          ctl=m.ge06_stable_benign_equivalence(g,stable)
+
+          contract=stable.frozen_symbol_contract
+          assert contract["frozen_args_length"]==23
+          assert contract["stable_args_length"]==23
+          assert contract["all_frozen_args_symbols"]
+          assert contract["all_stable_args_symbols"]
+          assert contract["frozen_args_unique"]
+          assert contract["stable_args_unique"]
+
+          assert ctl["all_stable_outputs_finite"], ctl
+          assert ctl["coeff1_source_global_relative_L2"]<=1e-10, ctl
+          assert ctl["coeff2_source_global_relative_L2"]<=1e-10, ctl
+
+          p=json.loads(Path("ge19/repair02_predata_frozen_symbol_tuple_capture.json").read_text())
+          assert p["classification"]=="GE19_REPAIR02_PREDATA_FROZEN_SYMBOL_TUPLE_CAPTURE"
+
+          print("SYMBOL_CONTRACT=",contract)
+          print("BENIGN_EQUIVALENCE=",ctl)
+          print("GE19_REPAIR02_PRELOCK_AUDIT_PASS")
+          PY
