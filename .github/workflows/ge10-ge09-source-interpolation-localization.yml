@@ -7,6 +7,8 @@ on:
     paths:
       - 'ge10/**'
       - 'docs/ge10_ge09_source_interpolation_localization_implementation_lock.md'
+      - 'docs/ge10_repair01_predata_pythonpath_runner.md'
+      - 'docs/ge10_repair01_pythonpath_runner_implementation_lock.md'
       - '.github/workflows/ge10-ge09-source-interpolation-localization.yml'
 
 jobs:
@@ -29,12 +31,16 @@ jobs:
           test "$(git rev-parse HEAD:ge10/predata_ge09_source_interpolation_localization.json)" = "0f128f46c23a12af48fe695e56b356da518f80bb"
           test "$(git rev-parse HEAD:ge10/ge09_source_interpolation_localization.py)" = "6762e53b80c21dbb907abc6f01080dd38cfa634c"
           test "$(git rev-parse HEAD:docs/ge10_ge09_source_interpolation_localization_implementation_lock.md)" = "52c5253e39df485e1104aa0b1483463ae46f37a4"
+          test "$(git rev-parse HEAD:docs/ge10_repair01_predata_pythonpath_runner.md)" = "3a7b6bc526483ce34214f8d81a8ae1e6d04940cc"
+          test "$(git rev-parse HEAD:docs/ge10_repair01_pythonpath_runner_implementation_lock.md)" = "70ff3081eb8a6817e9a58a68cfed5d2faf7cd12c"
           test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
           test "$(git rev-parse HEAD:docs/ge09_dense_accepted_step_local_jet_bridge_result_freeze.md)" = "67eb2b1008a360560da486f592b57be23ffff54a"
           git merge-base --is-ancestor b362517f5892cebd08f6b8435d9390aba47c4eef HEAD
           git merge-base --is-ancestor a896f662c41c3500115c214fe79414e7b1b556d0 HEAD
           git merge-base --is-ancestor 4a76eac8d3bcd80753f59ad4290b6379be4dbfc0 HEAD
-          echo GE10_LOCK_PASS
+          git merge-base --is-ancestor eaaef4fbd924e7f11190d545e183552a5e5f1c54 HEAD
+          git merge-base --is-ancestor c491b2621c329b32e4ab8b07d7d9db363567efa9 HEAD
+          echo GE10_REPAIR01_LOCK_PASS
 
       - name: Install dependencies
         run: python3 -m pip install --user numpy scipy
