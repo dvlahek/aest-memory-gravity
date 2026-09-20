@@ -1,0 +1,62 @@
+{
+  "classification": "GE10_PREDATA_GE09_SOURCE_INTERPOLATION_LOCALIZATION",
+  "created_after_frozen_GE09_fail": true,
+  "uses_new_physics": false,
+  "uses_new_CLASS_run": false,
+  "purpose": "Localize the single failed GE09 source-grid validation channel using only the frozen GE09 artifact, quantify its position within accepted-step intervals, and characterize deterministic Hermite convergence under endpoint decimation without changing the GE09 threshold or representation.",
+  "frozen_parent": {
+    "classification": "GE09_DENSE_ACCEPTED_STEP_LOCAL_JET_BRIDGE_FAIL",
+    "result_freeze_commit": "456152e751f191a7bd6c9d596e3ab90492ec5162",
+    "workflow_run": 35494446296,
+    "artifact_id": 10600457104,
+    "artifact_digest": "sha256:494639b2074336e704e06cf18b8875bc88d71c62cebfdb687e8e4c3f5270da38",
+    "failed_gate": "source_grid_state_validation_abs_or_rel_le_1e4",
+    "frozen_limit": 0.0001,
+    "observed_max": 0.00010032254188771416,
+    "observed_field": "delta_dark"
+  },
+  "frozen_representation": {
+    "independent_variable": "ln(a)",
+    "primary": "CubicHermiteSpline on every successful accepted endpoint using fresh physical RHS/(aH) for delta_dark",
+    "endpoint_stride_ladder": [
+      4,
+      2,
+      1
+    ],
+    "stale_file_or_runtime_changes": false,
+    "alternative_interpolants": "PCHIP and linear may be reported descriptively at the historical worst row only; they are not replacement candidates or PASS gates"
+  },
+  "exact_reproduction_gates": {
+    "frozen_GE09_primary_delta_dark_max_abs_or_rel": 0.00010032254188771416,
+    "reproduction_abs_tolerance": 1e-15,
+    "selected_source_rows": 48,
+    "dense_rows": 30755
+  },
+  "diagnostic_gates": {
+    "same_global_worst_field_is_delta_dark": true,
+    "stride_errors_strictly_decrease_4_to_2_to_1": true,
+    "fitted_loglog_convergence_order_min": 2.5,
+    "primary_error_smaller_than_PCHIP_at_historical_worst_row": true,
+    "primary_error_smaller_than_linear_at_historical_worst_row": true,
+    "historical_worst_row_inside_one_accepted_interval": true,
+    "all_quantities_finite": true
+  },
+  "descriptive_outputs": [
+    "historical worst k,a,z,tau",
+    "left/right accepted endpoint states and fresh delta_dark_prime",
+    "fractional position of source row in local ln(a) interval",
+    "local ln(a) gap",
+    "absolute, relative and abs-or-rel Hermite error",
+    "error normalized by local endpoint swing",
+    "global delta_dark source-validation maximum at endpoint strides 4,2,1",
+    "fitted convergence order",
+    "PCHIP and linear errors at the historical worst row",
+    "top ten primary source-grid delta_dark mismatches"
+  ],
+  "terminal_classifications": {
+    "pass": "GE10_GE09_SOURCE_INTERPOLATION_LIMIT_CONFIRMED",
+    "fail": "GE10_GE09_SOURCE_INTERPOLATION_DIAGNOSTIC_FAIL"
+  },
+  "claim_boundary": "GE10 cannot relabel GE09, relax its 1e-4 gate, certify the GE06 local jet, license Z20, or introduce a new interpolation representation. It only determines if the frozen failure behaves like a convergent accepted-endpoint interpolation error.",
+  "anti_tuning": "Do not change the stride ladder, convergence-order floor, historical worst-row definition, frozen artifact, or diagnostic gates after inspecting GE10 output."
+}
