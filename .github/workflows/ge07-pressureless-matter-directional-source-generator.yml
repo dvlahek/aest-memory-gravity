@@ -7,6 +7,8 @@ on:
     paths:
       - 'ge07/**'
       - 'docs/ge07_pressureless_matter_directional_source_generator_implementation_lock.md'
+      - 'docs/ge07_repair01_predata_runner_log_directory.md'
+      - 'docs/ge07_repair01_runner_log_directory_implementation_lock.md'
       - '.github/workflows/ge07-pressureless-matter-directional-source-generator.yml'
 
 jobs:
@@ -26,9 +28,13 @@ jobs:
           test "$(git rev-parse HEAD:ge07/predata_pressureless_matter_directional_source_generator.json)" = "a6135f06181661c715f1c9b3473ce723eb004d69"
           test "$(git rev-parse HEAD:ge07/pressureless_matter_directional_source_generator.py)" = "cde8da77a80799cef00fc7c09c3633310fc9e3d4"
           test "$(git rev-parse HEAD:docs/ge07_pressureless_matter_directional_source_generator_implementation_lock.md)" = "f051e7a3c8c74aa96f203bd2d36bf6f6f37a7c2d"
+          test "$(git rev-parse HEAD:docs/ge07_repair01_predata_runner_log_directory.md)" = "26b57b27af8b63784259a4c69bdb5b151df99f46"
+          test "$(git rev-parse HEAD:docs/ge07_repair01_runner_log_directory_implementation_lock.md)" = "be52c4b55ddbb47f1ce625337a5b04a0b8ff5547"
           git merge-base --is-ancestor 03bb7254ee13f620d20b1183fcc0cbf117cbb4e4 HEAD
           git merge-base --is-ancestor 5a5d6c8bafbae27c0e8a4f6ecce6ed41c3efbb56 HEAD
           git merge-base --is-ancestor 80883e537a78753fba6b0f8efa7f906030bec5bb HEAD
+          git merge-base --is-ancestor 0e73c1fb2c0d6bc9365130e47f3443e7199ef5ba HEAD
+          git merge-base --is-ancestor c4f3de56ec6ecbdd4254fa2715dc1ad5e0c17eea HEAD
           echo GE07_LOCK_PASS
 
       - name: Install dependencies
