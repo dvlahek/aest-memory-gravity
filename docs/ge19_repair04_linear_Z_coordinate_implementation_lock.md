@@ -148,16 +148,30 @@ Frozen blob:
 
 `8107889c62a6abbbf5847337ac21685a4edd6847`.
 
-GitHub run `35527091157` was queued at lock time.
+GitHub run `35527091157` completed with conclusion `success`.
 
-The local science runner therefore contains an equivalent mandatory pre-science coordinate-wiring audit. Science execution is forbidden if that local audit fails.
-
-The local audit must establish:
+The executable audit established:
 
 1. every stable GE06 c1 callback receives `bg["Z_action"]` as argument 3;
 2. argument 3 is not `bg["Q_action"]`;
-3. the deterministic linear main and constraint probe is finite;
-4. Repair03 canonical Exp/physical-parameter controls remain valid.
+3. 15 stable GE06 c1 calls were observed;
+4. the supplied coordinate range was `Z=4.45--4.68`;
+5. the deterministic linear main/constraint probe was finite;
+6. Repair03 canonical Exp/physical-parameter controls remain valid.
+
+Observed audit controls:
+
+- c1 benign equivalence:
+  `1.0224728415507297e-15`;
+- c2 benign equivalence:
+  `1.3286965479102186e-15`;
+- physical c1/c2 probes: all finite;
+- linear-operator probe main norm:
+  `2.6938768481192226e9`;
+- linear-operator probe constraint norm:
+  `1.016631246779902e-11`.
+
+Science execution remains forbidden if the equivalent local runner audit fails.
 
 ## Unchanged science gates
 
