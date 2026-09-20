@@ -123,6 +123,26 @@ jobs:
           assert prat<=1e-12, prat
           assert np.all(np.isfinite(fy))
 
+          # Diagnose the algebraic principal block at every Radau stage point.
+          row_names=["pS","pu","pphi","pT","lapse","dust_density"]
+          stage_points=[]
+          for i in range(len(x)-1):
+              h=float(x[i+1]-x[i])
+              stage_points += [float(x[i]+h/3.0), float(x[i+1])]
+          amin={name:float("inf") for name in row_names}
+          zero_rows=[]
+          for xx in stage_points:
+              Cx,bpx,bdx=r6._local_linear_matrix(m6,m7,bg,"C_star",k,xx)
+              Az=Cx[0:6][:,r6._ZIDX]
+              rm=np.max(np.abs(Az),axis=1)
+              for ii,name in enumerate(row_names):
+                  amin[name]=min(amin[name],float(rm[ii]))
+                  if rm[ii]==0.0:
+                      zero_rows.append((xx,name))
+          print("CANONICAL_AZ_ROW_MINIMA =",amin)
+          print("CANONICAL_AZ_ZERO_ROWS =",zero_rows)
+          assert not zero_rows, zero_rows
+
           # Zero state / zero source must remain zero under the Radau march.
           zfun,cfun=r6._zero_source_interp(1)
           Y,rdg=r6._radau2_integrate_canonical(
