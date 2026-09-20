@@ -1,0 +1,87 @@
+name: GE07 pressureless matter directional source generator
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge07/**'
+      - 'docs/ge07_pressureless_matter_directional_source_generator_implementation_lock.md'
+      - '.github/workflows/ge07-pressureless-matter-directional-source-generator.yml'
+
+jobs:
+  matter-directional-generator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge07/predata_pressureless_matter_directional_source_generator.json)" = "a6135f06181661c715f1c9b3473ce723eb004d69"
+          test "$(git rev-parse HEAD:ge07/pressureless_matter_directional_source_generator.py)" = "cde8da77a80799cef00fc7c09c3633310fc9e3d4"
+          test "$(git rev-parse HEAD:docs/ge07_pressureless_matter_directional_source_generator_implementation_lock.md)" = "f051e7a3c8c74aa96f203bd2d36bf6f6f37a7c2d"
+          git merge-base --is-ancestor 03bb7254ee13f620d20b1183fcc0cbf117cbb4e4 HEAD
+          git merge-base --is-ancestor 5a5d6c8bafbae27c0e8a4f6ecce6ed41c3efbb56 HEAD
+          git merge-base --is-ancestor 80883e537a78753fba6b0f8efa7f906030bec5bb HEAD
+          echo GE07_LOCK_PASS
+
+      - name: Install dependencies
+        run: python3 -m pip install --user numpy sympy
+
+      - name: Predata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile ge07/pressureless_matter_directional_source_generator.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open('ge07/predata_pressureless_matter_directional_source_generator.json'))
+          assert d['classification']=='GE07_PREDATA_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR'
+          assert d['created_before_result'] is True
+          assert d['uses_observational_data'] is False
+          assert d['finite_physical_eta'] is False
+          assert d['deterministic_audit']['finite_difference_steps']==[0.001,0.0003]
+          print('GE07_PREDATA_PASS')
+          PY
+
+      - name: Run GE07 generator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge07/pressureless_matter_directional_source_generator.py             | tee results/ge07_pressureless_matter_directional_source_generator.log
+
+      - name: Summarize GE07
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge07_pressureless_matter_directional_source_generator.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge07_pressureless_matter_directional_source_generator.json'))
+          print('CLASSIFICATION=',d['classification'])
+          print('GATES=',d['gates'])
+          print('GLOBAL_CONTROLS=',d['finite_difference']['global_controls'])
+          for k,v in d['per_source'].items():
+              print(k,'L=',v['analytic_L_L2'],'Q=',v['analytic_Q_L2'],
+                    'eL=',v['analytic_vs_primary_fd_L_relative_L2'],
+                    'eQ=',v['analytic_vs_primary_fd_Q_relative_L2'])
+          PY
+          fi
+
+      - name: Upload GE07 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge07_pressureless_matter_directional_source_generator
+          path: |
+            results/ge07_pressureless_matter_directional_source_generator.json
+            results/ge07_pressureless_matter_directional_source_generator.log
+            ge07/predata_pressureless_matter_directional_source_generator.json
+            docs/ge07_pressureless_matter_directional_source_generator_implementation_lock.md
+          if-no-files-found: warn
