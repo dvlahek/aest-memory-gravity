@@ -1,0 +1,145 @@
+name: GE11 dense local jet fixed refinement
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge11/**'
+      - 'docs/ge11_dense_local_jet_fixed_refinement_implementation_lock.md'
+      - '.github/workflows/ge11-dense-local-jet-fixed-refinement.yml'
+
+jobs:
+  fixed-refinement:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge11/predata_dense_local_jet_fixed_refinement.json)" = "10516af16f0b39c1dcd94cf6ee8b6f84e9ff40a0"
+          test "$(git rev-parse HEAD:ge11/pre/R1.pre)" = "2f6446c7e4fb2cf59f6145bfdc85be2b96be8c1a"
+          test "$(git rev-parse HEAD:ge11/pre/R2.pre)" = "1f886429d480f2167df07235533c55be4a5f1330"
+          test "$(git rev-parse HEAD:ge11/dense_local_jet_fixed_refinement.py)" = "be3e57829e961079bd20467c8ca0f34a4b1d1316"
+          test "$(git rev-parse HEAD:docs/ge11_dense_local_jet_fixed_refinement_implementation_lock.md)" = "888003b95e4c340703d1c4454e1551d65a6a1123"
+          test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
+          test "$(git rev-parse HEAD:docs/ge10_ge09_source_interpolation_localization_result_freeze.md)" = "9a410cef15bc873f24972a3e92136d1aff76d753"
+          git merge-base --is-ancestor 9bb36f3e07b4f9c3f65567200f581c94bc4e7b1b HEAD
+          git merge-base --is-ancestor fd4c6596aafbac4af91f68292a8d3cee202e31c2 HEAD
+          git merge-base --is-ancestor 167054ece0f5772fa7f19d545795f3171613221e HEAD
+          git merge-base --is-ancestor d087289a9be3348e65f528211ab6c5fa9518c670 HEAD
+          git merge-base --is-ancestor c43048aa7f6de92852e11e2bb89862871e9e85aa HEAD
+          echo GE11_LOCK_PASS
+
+      - name: Checkout pinned CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_ge11
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply validated AeST chain and diagnostic traces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 v019/apply_patch_v019.py class_ge11
+          python3 v019i/apply_ic_patch.py class_ge11
+          python3 v019j/apply_memory_patch.py class_ge11
+          python3 v019w/apply_variational_forcing_patch.py class_ge11
+          python3 v019y/apply_output_precision_patch.py class_ge11
+          python3 v023/apply_source_grid_trace_patch.py class_ge11
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_ge11
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_ge11
+          python3 ge08/apply_full_state_trace_patch.py class_ge11
+          python3 ge09/apply_dense_accepted_step_trace_patch.py class_ge11
+
+      - name: Build CLASS executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C class_ge11 -j2 class
+
+      - name: Predata implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 -m py_compile ge11/dense_local_jet_fixed_refinement.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.load(open('ge11/predata_dense_local_jet_fixed_refinement.json'))
+          assert d['classification']=='GE11_PREDATA_DENSE_LOCAL_JET_FIXED_REFINEMENT'
+          assert d['inherited_single_level_gates']['source_grid_state_validation_abs_or_rel_max']==1e-4
+          assert d['refinement_gates']['R1_vs_R2_complete_jet_global_relative_L2_max']==5e-4
+          assert d['refinement_gates']['R1_vs_R2_complete_jet_pointwise_abs_or_rel_max']==2e-3
+          r1=Path('ge11/pre/R1.pre').read_text()
+          r2=Path('ge11/pre/R2.pre').read_text()
+          assert 'tol_perturb_integration = 2.5e-8' in r1
+          assert 'perturb_sampling_stepsize = 0.00125' in r1
+          assert 'tol_perturb_integration = 1.25e-8' in r2
+          assert 'perturb_sampling_stepsize = 0.000625' in r2
+          patch=json.load(open('results/ge09_dense_accepted_step_trace_patch.json'))
+          assert patch['classification']=='GE09_DENSE_ACCEPTED_STEP_TRACE_PATCH_PASS'
+          assert patch['physics_modified'] is False
+          print('GE11_PREDATA_IMPLEMENTATION_PASS')
+          PY
+
+      - name: Run GE11
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH="$PWD" python3 ge11/dense_local_jet_fixed_refinement.py             --class-root class_ge11             --json-out results/ge11_dense_local_jet_fixed_refinement.json             --npz-out results/ge11_dense_local_jet_fixed_refinement.npz             | tee results/ge11_dense_local_jet_fixed_refinement.log
+
+      - name: Summarize GE11
+        if: always()
+        shell: bash
+        run: |
+          if test -s results/ge11_dense_local_jet_fixed_refinement.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('results/ge11_dense_local_jet_fixed_refinement.json'))
+          print('CLASSIFICATION=',d['classification'])
+          for tag in ('R1','R2'):
+              r=d['levels'][tag]
+              print(tag,'TRACE=',r['accepted_points_per_k_in_window'],r['max_ln_a_gap_per_k_in_window'])
+              print(tag,'SOURCE=',r['source_grid_validation'])
+              print(tag,'JET=',r['jet_control'])
+              print(tag,'GATES=',r['gates'])
+          print('REFINEMENT=',d['refinement_control'])
+          print('REFINEMENT_GATES=',d['refinement_gates'])
+          print('PROJECT_BOUNDARY=',d['project_boundary'])
+          PY
+          fi
+
+      - name: Upload GE11 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge11_dense_local_jet_fixed_refinement
+          path: |
+            results/ge11_dense_local_jet_fixed_refinement.json
+            results/ge11_dense_local_jet_fixed_refinement.npz
+            results/ge11_dense_local_jet_fixed_refinement.log
+            results/ge11_R1_class.log
+            results/ge11_R2_class.log
+            results/ge11_R1_dense_accepted_step_trace.dat
+            results/ge11_R2_dense_accepted_step_trace.dat
+            results/ge11_R1_source_state_trace.dat
+            results/ge11_R2_source_state_trace.dat
+            results/ge11_R1_cli_perturbations_k*_s.dat
+            results/ge11_R2_cli_perturbations_k*_s.dat
+            ge11/predata_dense_local_jet_fixed_refinement.json
+            ge11/pre/R1.pre
+            ge11/pre/R2.pre
+            docs/ge11_dense_local_jet_fixed_refinement_implementation_lock.md
+          if-no-files-found: warn
