@@ -1,0 +1,76 @@
+{
+  "classification": "GE19_REPAIR02_PREDATA_FROZEN_SYMBOL_TUPLE_CAPTURE",
+  "created_before_repair02_result": true,
+  "parent": {
+    "classification": "GE19_REPAIR01_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL",
+    "freeze_commit": "a8ad8fc11143cba5dac1e1c3f5f9c30d63edb3c8",
+    "error": "SymPy lambdify SyntaxError: cannot assign to literal"
+  },
+  "root_cause": "Frozen GE06 captures a correct symbolic direction_args tuple before its module-level deterministic audit overwrites mutable globals such as adot with numerical arrays. Repair01 incorrectly rebuilt the lambdify signature from those later mutable module attributes.",
+  "permitted_change_only": [
+    "use tuple(mod6.direction_args) as the sole source of stable lambdify argument symbols",
+    "replace only the frozen Qb argument at index 2 by the new symbolic Zb coordinate",
+    "retrieve dpt,Q0,Z0 from frozen direction_args indices 15,21,22 when constructing the stable pt background expansion",
+    "add explicit symbolic-type and uniqueness checks before lambdify"
+  ],
+  "exact_symbol_contract": {
+    "frozen_direction_args_length": 23,
+    "indices": {
+      "aa": 0,
+      "adot": 1,
+      "Qb": 2,
+      "dN": 3,
+      "dL": 4,
+      "dR": 5,
+      "db": 6,
+      "du": 7,
+      "dLt": 8,
+      "dLx": 9,
+      "dRt": 10,
+      "dRx": 11,
+      "dbx": 12,
+      "dut": 13,
+      "dux": 14,
+      "dpt": 15,
+      "dpx": 16,
+      "dNx": 17,
+      "KB": 18,
+      "C": 19,
+      "K2": 20,
+      "Q0": 21,
+      "Z0": 22
+    },
+    "stable_args": "(frozen[0], frozen[1], Zb, *frozen[3:])",
+    "stable_pt_expansion": "Q0_symbol + Z0_symbol*Zb + eps*dpt_symbol"
+  },
+  "mandatory_pre_science_checks": {
+    "all_frozen_direction_args_are_SymPy_Symbol": true,
+    "frozen_direction_args_unique": true,
+    "all_stable_direction_args_are_SymPy_Symbol": true,
+    "stable_direction_args_unique": true,
+    "stable_direction_args_length_23": true,
+    "stable_benign_GE06_coeff1_source_global_relative_L2_max": 1e-10,
+    "stable_benign_GE06_coeff2_source_global_relative_L2_max": 1e-10,
+    "stable_benign_outputs_finite": true
+  },
+  "inherited_without_change": [
+    "Repair01 native conserved-I0 reconstruction",
+    "Repair01 positive Exp Z reconstruction",
+    "all native background reconstruction gates",
+    "all GE19 Stage-A gates",
+    "all GE19 Stage-B gates",
+    "all modes, phases, beta0 values and C values",
+    "64/32 time grids and 1024/2048 spatial controls",
+    "gauge and window-retarded boundary convention",
+    "matter model and claim boundary"
+  ],
+  "no_physics_change": true,
+  "no_threshold_relaxation": true,
+  "historical_parent_relabel": false,
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR02_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR02_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR02_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  },
+  "claim_boundary": "Repair02 changes only capture of the already frozen GE06 symbolic argument tuple. Any later PASS retains the original GE19 reduced-H1/window-retarded reduced-H3 particular claim boundary."
+}
