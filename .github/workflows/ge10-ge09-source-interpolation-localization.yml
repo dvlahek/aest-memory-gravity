@@ -77,7 +77,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m py_compile ge10/ge09_source_interpolation_localization.py
-          python3 ge10/ge09_source_interpolation_localization.py             --artifact-root frozen_ge09             --artifact-meta-json results/ge10_parent_artifact_metadata.json             --json-out results/ge10_ge09_source_interpolation_localization.json             | tee results/ge10_ge09_source_interpolation_localization.log
+          PYTHONPATH="$PWD" python3 ge10/ge09_source_interpolation_localization.py             --artifact-root frozen_ge09             --artifact-meta-json results/ge10_parent_artifact_metadata.json             --json-out results/ge10_ge09_source_interpolation_localization.json             | tee results/ge10_ge09_source_interpolation_localization.log
 
       - name: Summarize GE10
         if: always()
