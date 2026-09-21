@@ -40,14 +40,14 @@ The full canonical 2x8 initial constraint manifold exists in all `714/714` mater
 
 This means the frozen quadratic source is compatible; the previous finite-window zero boundaries were inadmissible.
 
-**Repair18 boundary:** **PASS / CERTIFIED** in `714/714` material cases. **Repair19 propagation:** frozen historical **FAIL** only on shift. **Repair20:** near-null normalization pathology confirmed. **Repair21:** `INTERPOLATED_H1_PARENT_DEFECT_CONFIRMED`; with a genuine on-shell Nt128 H1 parent the active shift falls to `8.067e-7 < 1e-6`, with matched third-order convergence (`3.236` Linf, `3.123` RMS/L2), state mismatch `1.521e-5`, linear residual `2.176e-13`, and anisotropy `6.391e-16`. **Current next gate:** Repair22 is **LOCKED / READY / NOT YET EXECUTED** as the explicit Z20 certification rerun with on-shell H1 parents and Nx1024/Nx2048 source control.
+**Repair18 boundary:** **PASS / CERTIFIED** in `714/714` material cases. **Repair19 propagation:** frozen historical **FAIL** only on shift. **Repair20/21 diagnostics:** near-null normalization and the interpolated-H1-parent defect are both resolved. **Repair22:** `GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS`; the on-shell Nt128 active shift is `8.067e-7 < 1e-6`, matched orders are `3.236` Linf and `3.123` RMS/L2, Nx1024/Nx2048 source mismatch is `1.397e-12`, and all 26 frozen gates pass. **Z20 is now certified** for the low-mode window-local reduced-H3 particular directional state.
 
-Until that is frozen:
+Current next gate:
 
-- run only the locked Repair22 Z20 certification;
-- do not relabel Repair19/20/21;
-- do not construct q20 until Repair22 is frozen PASS;
-- do not start H4/Z21 or make nonlinear real-data claims.
+- construct and certify `q20` from the eta-independent normalized bath equation `G[Z,q]=0`;
+- do not relabel historical Repair14/19 FAIL results;
+- do not start H4/Z21 until q20 is frozen;
+- do not make nonlinear real-data claims yet.
 
 Persistent GE19 chronology and frozen provenance:
 
@@ -186,8 +186,9 @@ Immediate physics target:
 - Repair19: frozen **FAIL** — projected-boundary H3 march passes every frozen control except shift; near-null normalization dominates the O(1) maximum;
 - Repair20: **COMPLETE / ACTIVE ISSUE REMAINS** — near-null O(1) monitor pathology confirmed, but active Nt128 shift remains `9.589e-6`;
 - Repair21: **PASS-DIAGNOSTIC** — interpolated-H1-parent defect confirmed; on-shell Nt128 active shift `8.067e-7` passes the original `1e-6` threshold with ~third-order matched convergence;
-- Repair22: **READY / NOT YET EXECUTED** — explicit on-shell-parent Z20 certification with Nx1024/Nx2048 source control, boundary re-audit and active/near-null shift certification;
-- only after Repair22 is frozen PASS: q20 construction, then H4/Z21 nonlinear memory correction;
+- Repair22: **PASS / Z20 CERTIFIED** — all 26 frozen gates pass; source spatial mismatch `1.397e-12`, active Nt128 shift `8.067e-7`, matched third-order convergence, boundary reproduction exact;
+- next: q20 construction from the second directional expansion of the normalized retarded bath equation;
+- only after q20 is frozen: H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
 GE02 first locked run:
@@ -252,13 +253,11 @@ Later weakly nonlinear state work therefore uses N1024 primary and N2048 control
 
 **GE05 — PASS.** The longitudinal 3+1 NL0B action now has explicit first- and second-directional source generators `M1` and `M2` for scalar, bath, aether and all metric blocks. Direct metric memory stress is exactly absent at first order and nonzero at second order, as required by the covariant action.
 
-The memory-off analytic quadratic source has now been generated and the first baseline second-order state/source `Z20` was attempted in Repair14.
+The memory-off analytic quadratic source is generated, and Repair22 now certifies the baseline second-order state `Z20` in the frozen low-mode window-local reduced-H3 scope.
 
-That Repair14 candidate is **not certified** because the second-order shift constraint fails despite excellent source, anisotropy and time-grid controls.
+The historical Repair14 candidate remains a FAIL. Repair21 identified its surviving active-shift pathology as an off-shell-parent interpolation effect, and Repair22 closes the corrected on-shell route with all certification gates passing.
 
-The active blocker is therefore no longer source generation, manifold existence, boundary selection or the active-shift diagnosis. Repair21 shows that the residual came from an off-shell separately interpolated H1 parent. Repair22 is now the explicit certification run for the window-local reduced-H3 Z20 baseline.
-
-Do not start a `Z21` solver until a separately frozen H3 run certifies `Z20`.
+The remaining prerequisite for H4/Z21 is now `q20`, the baseline second-order normalized bath response. Do not start a `Z21` solver until q20 is separately constructed and frozen.
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
