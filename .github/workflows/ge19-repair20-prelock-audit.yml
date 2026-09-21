@@ -1,0 +1,100 @@
+name: GE19 Repair20 shift time-resolution prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair20_*'
+      - '.github/workflows/ge19-repair20-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair20_shift_near_null_time_resolution_audit.py
+
+      - name: Audit Repair20 frozen diagnostic contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json, math, subprocess
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair20_predata_shift_near_null_time_resolution_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR20_PREDATA_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT"
+          assert pre["created_before_repair20_result"] is True
+          assert pre["parent_repair19_freeze_commit"]=="71e1e60e133b79828163fe077f5991e98d40d6bb"
+          assert pre["ladder"]["Nt"]==[32,64,128]
+          assert pre["ladder"]["expected_integrator_global_order"]==3
+          assert pre["shift_telemetry"]["original_shift_threshold_unchanged"]==1e-6
+          assert pre["diagnostic_controls"]["active_Nt128_shift_relative_max"]==1e-6
+          assert pre["diagnostic_controls"]["active_observed_order_64_to_128_min"]==2.5
+          assert "no shift threshold relaxation" in pre["explicit_nonchanges"]
+
+          def blob(path):
+              return subprocess.check_output(["git","rev-parse",f"HEAD:{path}"],text=True).strip()
+
+          assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
+          assert blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py")=="06c5ced952c2370cfa4aaadb6ef8f72d2d7221de"
+          assert blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py")=="c7b3a5c689bd78a65a8150c26e1fbfae108cb580"
+
+          spec=importlib.util.spec_from_file_location(
+              "r20",root/"ge19/repair20_shift_near_null_time_resolution_audit.py"
+          )
+          r20=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r20)
+
+          assert r20.NTS==(32,64,128)
+          assert r20.SHIFT_GATE==1e-6
+          assert r20.ORDER_MIN==2.5
+          assert r20.STATE_MAX==5e-3
+          assert r20.NEAR_NULL_ABS_RATIO_MAX==1000*np.finfo(float).eps
+          assert abs(r20.SQRT_EPS-np.sqrt(np.finfo(float).eps))==0.0
+
+          # Synthetic PCHIP identity at original nodes.
+          x=np.linspace(-1.0,0.0,8)
+          y=np.vstack([np.sin(x)+1j*np.cos(x), x*x+1j*x])
+          yi=r20.pchip_complex(x,y,x)
+          assert np.array_equal(yi,y)
+
+          # Third-order synthetic convergence must be recognized.
+          h32=1/31; h64=1/63; h128=1/127
+          e32=h32**3; e64=h64**3; e128=h128**3
+          p1=r20.observed_order(e32,e64,h32,h64)
+          p2=r20.observed_order(e64,e128,h64,h128)
+          assert abs(p1-3.0)<1e-12
+          assert abs(p2-3.0)<1e-12
+
+          src=(root/"ge19/repair20_shift_near_null_time_resolution_audit.py").read_text()
+          for token in [
+              "solve_reduced_h1_case_canonical(",
+              "solve_reduced_h1_case(",
+              "def lambda_c2_equation_source",
+              "def source_real_reduced_lambda",
+              "def y2_source_from_reduced",
+          ]:
+              assert token not in src, token
+          assert "SQRT_EPS*sref" in src
+          assert "active_max[128]<=SHIFT_GATE" in src.replace(" ","")
+          assert "p64128>=ORDER_MIN" in src.replace(" ","")
+          assert "source_bundle_reduced_lambda(" in src
+          assert "_radau2_integrate_canonical(" in src
+          assert "_constraint_backward_error(" in src
+
+          print("REPAIR07_BLOB =",blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py"))
+          print("REPAIR14_BLOB =",blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py"))
+          print("REPAIR18_BLOB =",blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py"))
+          print("SYNTHETIC_ORDER_32_64 =",p1)
+          print("SYNTHETIC_ORDER_64_128 =",p2)
+          print("GE19_REPAIR20_PRELOCK_AUDIT_PASS")
+          PY
