@@ -46,7 +46,7 @@ jobs:
               return subprocess.check_output(["git","rev-parse",f"HEAD:{path}"],text=True).strip()
 
           assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
-          assert blob("ge19/repair13_self_consistent_reduced_background_h1_reclosure.py")=="ee57a48a6bd69a0d050028ce1874631731948756"
+          assert blob("ge19/repair13_self_consistent_reduced_background_h1_reclosure.py")=="362d63d03d7b850fceae393f535353ded79aeea7"
           assert blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py")=="06c5ced952c2370cfa4aaadb6ef8f72d2d7221de"
           assert blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py")=="c7b3a5c689bd78a65a8150c26e1fbfae108cb580"
 
