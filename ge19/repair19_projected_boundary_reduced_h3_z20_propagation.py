@@ -207,7 +207,7 @@ def main():
     out_json.parent.mkdir(parents=True,exist_ok=True)
     out_npz.parent.mkdir(parents=True,exist_ok=True)
     tmp_json=out_json.with_name(out_json.name+".repair14_tmp")
-    tmp_npz=out_npz.with_name(out_npz.name+".repair14_tmp")
+    tmp_npz=out_npz.with_name(out_npz.stem+".repair14_tmp.npz")
 
     old_argv=list(sys.argv)
     inner_exit=0
