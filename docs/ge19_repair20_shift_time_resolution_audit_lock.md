@@ -47,17 +47,35 @@ Blob:
 
 ## Repair20 implementation
 
-Commit:
+Initial implementation commit:
 
 `fe4ba2f9b0bf176fc5dd9f92c3ee2dcbb9da352e`
+
+First local execution terminated before science evaluation with
+
+`GE19_REPAIR20_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT_IMPLEMENTATION_FAIL`
+
+because the implementation requested a nonexistent Repair13 NPZ key `ln_a_primary`.
+
+Repair13 actually freezes the primary x-grid under key `x64`.
+
+Implementation-only repair commit:
+
+`9bb8e4fd36be3fd26fb11b06a215b2806a269467`
 
 File:
 
 `ge19/repair20_shift_near_null_time_resolution_audit.py`
 
-Blob:
+Final science blob:
 
-`4ce0f58aa64bb08336a119465325a82fdcd4fc8f`
+`09c46fa2a585ba8d055ff396abc48f0bf7e40812`
+
+The only science-script change is
+
+`z13["ln_a_primary"] -> z13["x64"]`.
+
+No equation, source, boundary, grid, threshold, near-null rule or routing changed.
 
 ## Frozen diagnostic design
 
@@ -205,3 +223,34 @@ No observable/data inference.
 ## Claim boundary
 
 Repair20 may diagnose the origin of the Repair19 shift-only failure. It does not change the physical model or any historical science classification.
+
+
+## Post-lock implementation amendment before first science result
+
+The first local Repair20 attempt on 2026-09-21 stopped immediately before any ladder propagation because the script referenced a nonexistent frozen NPZ key `ln_a_primary`.
+
+This is classified as an implementation failure, not a science result.
+
+The repaired script reads the exact frozen Repair13 primary grid from `x64`, which is the key written by the Repair13 NPZ producer.
+
+Amended prelock workflow commit:
+
+`410e6c35544a7225a91ca659c4001904c483cc12`.
+
+Amended prelock workflow blob:
+
+`111d8ea596cf9c2f640fdb6a7cf4121c2925e78e`.
+
+The amended prelock explicitly requires `z13["x64"]` and forbids `ln_a_primary`.
+
+Amended dedicated prelock run:
+
+`35632117507` — SUCCESS.
+
+Job:
+
+`106440568725`.
+
+The synthetic third-order ladder and frozen Repair07/14/18 provenance checks remain unchanged and PASS.
+
+This amendment occurred before any Repair20 science result and does not alter the preregistration.
