@@ -1,0 +1,92 @@
+name: GE19 Repair12 standard momentum prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair12_*'
+      - '.github/workflows/ge19-repair12-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair12_remaining_standard_momentum_audit.py
+
+      - name: Audit prereg and frozen metric contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import ast, importlib.util, inspect, json
+          from pathlib import Path
+          import numpy as np
+          import sympy as sp
+
+          root=Path.cwd()
+
+          p=json.load(open("ge19/repair12_predata_remaining_standard_momentum_audit.json"))
+          a=json.load(open("ge19/repair12_predata_amendment01_metric_and_reproduction_lock.json"))
+          assert p["classification"]=="GE19_REPAIR12_PREDATA_REMAINING_STANDARD_MOMENTUM_AUDIT"
+          assert p["created_before_repair12_result"] is True
+          assert a["created_before_repair12_result"] is True
+          assert p["frozen_reference"]["science_shift_gate"]==1e-6
+          assert p["frozen_reference"]["diagnostic_CLASS_interpolation_floor_reference"]==1e-5
+          assert p["frozen_reference"]["minimum_dominant_improvement_factor"]==10.0
+          assert a["mandatory_reproduction_gate"]["relative_error_max"]==1e-10
+          for x in (
+              "no Repair11 trajectory recomputation",
+              "no threshold edit",
+              "no H3 source construction",
+              "no Z20 construction",
+          ):
+              assert x in p["explicit_nonchanges"]
+
+          spec=importlib.util.spec_from_file_location(
+              "r12",root/"ge19/repair12_remaining_standard_momentum_audit.py"
+          )
+          r12=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r12)
+
+          assert r12.REPAIR11_SHIFT_MAX==5.016294027155656e-5
+          assert r12.REPRO_REL_MAX==1e-10
+          assert r12.SCIENCE_SHIFT_GATE==1e-6
+          assert r12.CLASS_FLOOR==1e-5
+          assert r12.DOMINANT_IMPROVEMENT==10.0
+
+          # Pair metric is the same frozen Repair08 diagnostic convention.
+          assert abs(r12.pair_metric(1+0j,-1+0j)-0.0)==0.0
+          assert abs(r12.pair_metric(1+0j,1+0j)-2.0)==0.0
+
+          # Independent derivation from frozen GE07 action:
+          # E_b,m = -2 a^3 rhob dTx, with rhob=3 rho and
+          # dTx = i k (a theta/k^2) => -6 i a^4 rho theta/k.
+          a0,rho,k,theta=sp.symbols("a rho k theta", nonzero=True)
+          dTx=sp.I*k*(a0*theta/k**2)
+          expr=sp.simplify(-2*a0**3*(3*rho)*dTx)
+          target=-6*sp.I*a0**4*rho*theta/k
+          assert sp.simplify(expr-target)==0
+
+          # Structural audit: Repair12 may load frozen trajectories but may not
+          # call the Repair11/Repair07 time-marching solve.
+          src=(root/"ge19/repair12_remaining_standard_momentum_audit.py").read_text()
+          forbidden=[
+              "solve_reduced_h1_case_canonical(",
+              "_radau2_integrate_canonical(",
+              "build_matrix(",
+          ]
+          for token in forbidden:
+              assert token not in src, token
+
+          print("FULL_STANDARD_SHIFT_DERIVATION =",expr)
+          print("REPAIR12_PAIR_METRIC_EXACT_CANCEL =",r12.pair_metric(1+0j,-1+0j))
+          print("REPAIR12_PAIR_METRIC_SAME_SIGN =",r12.pair_metric(1+0j,1+0j))
+          print("GE19_REPAIR12_PRELOCK_AUDIT_PASS")
+          PY
