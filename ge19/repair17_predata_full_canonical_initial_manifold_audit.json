@@ -1,0 +1,55 @@
+{
+  "classification": "GE19_REPAIR17_PREDATA_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT",
+  "created_before_repair17_result": true,
+  "parent_repair16_freeze_commit": "d5a619495f0f8fb2da53528b46476a15c1a32922",
+  "parent_repair16_freeze_blob": "f5f793e41d81e450daa849786b7da7db4a2def5e",
+  "purpose": "Distinguish a genuine quadratic source/Noether incompatibility from an inadmissible finite-window zero boundary by testing if the same frozen Repair14 source intersects the full canonical initial constraint manifold at z=1.5.",
+  "diagnostic_only": true,
+  "frozen_parent": {
+    "repair16_classification": "GE19_REPAIR16_CANONICAL_ZERO_INITIAL_STATE_AUDIT_COMPLETE",
+    "repair16_route": "QUADRATIC_SOURCE_NOETHER_INCOMPATIBILITY_REMAINS",
+    "repair16_JSON_sha256": "768d5a2de7cd62059e7149a4765ab5a9663eef708fc29989c05192f607c5bf68"
+  },
+  "canonical_state": {
+    "y": ["S20","u20","phi20","T20","pS20","pu20","pphi20","pT20"],
+    "algebraic_reconstruction": "w(y)=WY*y+WR*source",
+    "independent_initial_constraints": ["lapse","shift"]
+  },
+  "tests": [
+    "reconstruct the exact same Repair13 backgrounds and Repair14 quadratic source used by Repair16",
+    "form the affine row-scaled 2x8 lapse+shift constraint map in canonical y at z=1.5",
+    "report coefficient rank, augmented rank, singular values and minimum-norm full-y solution",
+    "repeat on q-only columns y[0:4] with canonical momenta fixed to zero",
+    "repeat on p-only columns y[4:8] with canonical coordinates fixed to zero",
+    "reconstruct w for each candidate and verify eliminated p/density/anisotropy equations plus independent lapse and shift",
+    "do not integrate in time and do not recompute H1 or Z20"
+  ],
+  "diagnostic_thresholds": {
+    "full_y_constraint_relative_residual_max": 1e-8,
+    "reconstructed_independent_constraint_backward_error_max": 1e-6,
+    "eliminated_algebraic_relative_residual_max": 1e-8,
+    "all_outputs_finite": true
+  },
+  "routing": {
+    "FINITE_WINDOW_ZERO_BOUNDARY_INADMISSIBLE_SOURCE_COMPATIBLE": "full 2x8 canonical initial system is compatible for every material case",
+    "QUADRATIC_SOURCE_INITIAL_NOETHER_INCOMPATIBILITY_CONFIRMED": "full 2x8 system has augmented-rank incompatibility or residual above threshold for any material case",
+    "IMPLEMENTATION_FAIL": "frozen provenance/source/operator reproduction fails"
+  },
+  "interpretation": {
+    "if_full_compatible": "Repair16 only showed that y0=0 is outside the forced constraint manifold. A later preregistered propagation audit must start from a constraint-compatible state before judging source identity preservation.",
+    "if_full_incompatible": "No canonical initial state can satisfy the independent constraints for the frozen source, licensing a direct sector-by-sector quadratic Noether/source audit."
+  },
+  "explicit_nonchanges": [
+    "no H1 recomputation",
+    "no Repair14 Z20 trajectory recomputation",
+    "no Radau integration",
+    "no GE06 or GE07 edit",
+    "no Lambda c1 or c2 edit",
+    "no source sign or component-order edit",
+    "no source taper or window edit",
+    "no threshold relaxation",
+    "no q20 construction",
+    "no H4 or Z21 construction"
+  ],
+  "historical_results_unchanged": true
+}
