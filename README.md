@@ -40,12 +40,12 @@ The full canonical 2x8 initial constraint manifold exists in all `714/714` mater
 
 This means the frozen quadratic source is compatible; the previous finite-window zero boundaries were inadmissible.
 
-**Repair18 boundary:** **PASS / CERTIFIED** in `714/714` material cases. **Repair19 propagation:** frozen **FAIL** under the original Stage-B gates. The projected boundary reproduces exactly, source/linear/anisotropy/time-grid controls pass, and the only failed gate is shift. The O(1) shift maxima occur on near-null rows with absolute residuals around `1e-18`; active rows are instead around `7e-6` at Nt64. **Current next gate:** Repair20 is **LOCKED / READY / NOT YET EXECUTED**, using an Nt=32/64/128 ladder to separate near-null monitor behavior from active-row time truncation without changing the original `1e-6` threshold.
+**Repair18 boundary:** **PASS / CERTIFIED** in `714/714` material cases. **Repair19 propagation:** frozen **FAIL** only on shift. **Repair20 diagnostic:** near-null normalization is confirmed, but the active shift remains above the original `1e-6` gate at Nt128 (`9.589e-6`), so ordinary H3 time truncation is not established as the explanation. **Current next gate:** Repair21 is **LOCKED / READY / NOT YET EXECUTED**. It re-solves the certified H1 system on-shell at Nt64 and Nt128, rebuilds the unchanged H3 source, and evaluates matched-grid shift convergence for fixed C,beta,m.
 
 Until that is frozen:
 
-- run only the locked Repair20 shift time-resolution diagnostic;
-- do not relabel Repair19;
+- run only the locked Repair21 on-shell-H1 matched-shift diagnostic;
+- do not relabel Repair19 or Repair20;
 - do not construct q20 or start H4/Z21;
 - do not make nonlinear real-data claims.
 
@@ -184,7 +184,8 @@ Immediate physics target:
 - Repair17: **PASS-FOR-EXISTENCE** — full canonical initial constraint manifold exists in 714/714 material cases;
 - Repair18: **PASS** — unique reproducible zero-coordinate projected-momentum finite-window boundary certified in 714/714 material cases;
 - Repair19: frozen **FAIL** — projected-boundary H3 march passes every frozen control except shift; near-null normalization dominates the O(1) maximum;
-- Repair20: **READY / NOT YET EXECUTED** — Nt=32/64/128 active-vs-near-null shift diagnostic with unchanged physics and original shift threshold;
+- Repair20: **COMPLETE / ACTIVE ISSUE REMAINS** — near-null O(1) monitor pathology confirmed, but active Nt128 shift remains `9.589e-6`;
+- Repair21: **READY / NOT YET EXECUTED** — on-shell H1 Nt64/Nt128 parent plus matched-grid shift diagnostic;
 - only after a separately certified Z20: q20 and H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
@@ -254,7 +255,7 @@ The memory-off analytic quadratic source has now been generated and the first ba
 
 That Repair14 candidate is **not certified** because the second-order shift constraint fails despite excellent source, anisotropy and time-grid controls.
 
-The active blocker is therefore no longer source generation, manifold existence or boundary selection. Repair19 isolates a shift-only propagation/certification problem; Repair20 tests if it is near-null monitor pathology plus finite time-step truncation.
+The active blocker is therefore no longer source generation, manifold existence or boundary selection. Repair20 confirms the near-null part of the shift problem but leaves an active residual. Repair21 now tests the specific possibility that Repair20's separately interpolated H1 state/derivative parent is off-shell between Nt64 nodes.
 
 Do not start a `Z21` solver until a separately frozen H3 run certifies `Z20`.
 
