@@ -12,46 +12,44 @@ Historical classifications are immutable. A FAIL is never relabelled after a lat
 
 ## Current checkpoint
 
-The latest **executed** science/diagnostic result is Repair16:
+The latest executed and frozen diagnostic is Repair17:
 
-`GE19_REPAIR16_CANONICAL_ZERO_INITIAL_STATE_AUDIT_COMPLETE`
+`GE19_REPAIR17_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT_COMPLETE`
 
 with route
 
-`QUADRATIC_SOURCE_NOETHER_INCOMPATIBILITY_REMAINS`.
+`FINITE_WINDOW_ZERO_BOUNDARY_INADMISSIBLE_SOURCE_COMPATIBLE`.
 
-Repair16 result-freeze commit:
+Repair17 result-freeze commit:
 
-`d5a619495f0f8fb2da53528b46476a15c1a32922`
+`1ce72e3c3a732be59c1e390c8ef67859348b76c6`.
 
-Repair16 JSON SHA-256:
+Repair17 JSON SHA-256:
 
-`768d5a2de7cd62059e7149a4765ab5a9663eef708fc29989c05192f607c5bf68`.
+`f81ad8ef52eb3a7ff4d4286670a62c830f17872459f43812b059447f85e14184`.
 
-The locked Repair17 science-runner HEAD is:
+The full canonical 2x8 initial constraint manifold exists in all 714 material cases:
 
-`152da4a51e89c318aa97632815ea714b8f61ef3c`.
+- full-y constraint residual max: `8.892022036425179e-13`;
+- lapse backward error max: `2.6457320679749983e-16`;
+- shift backward error max: `1.8699495216551784e-10`;
+- eliminated algebraic residual max: `2.388467729664837e-16`;
+- rank 2 / augmented rank 2 in every material case;
+- 714/714 PASS;
+- all outputs finite.
 
-Later documentation-only commits may advance the branch HEAD without changing the locked Repair17 science blobs. The local runner verifies the frozen blobs and ancestry before execution.
+Thus the frozen Repair14 quadratic source is source-compatible at the initial surface. Repairs 15 and 16 failed because the imposed finite-window zero boundaries were inadmissible, not because the full canonical constraint manifold was absent.
 
-Repair17 is **LOCKED AND READY, NOT YET LOCALLY EXECUTED**.
+The remaining blocker is **boundary selection**, not manifold existence.
 
-Dedicated Repair17 prelock:
+The Repair17 Euclidean minimum-norm full-y state is only an existence witness because the 2x8 system has six canonical null directions and the solution norm is coordinate-scale sensitive. It must not be injected directly into a new H3 propagation as a physical boundary without a separately preregistered rule.
 
-- workflow run `35609640571`: SUCCESS;
-- terminal marker `GE19_REPAIR17_PRELOCK_AUDIT_PASS`.
-
-Runner-head static audit:
-
-- workflow run `35609805995`: SUCCESS.
-
-The next command is therefore the local Repair17 canonical initial-manifold audit. No Repair18, no new H3 trajectory, no q20 and no H4/Z21 are licensed before the Repair17 result is frozen.
-
+No new H3 propagation, q20 or H4/Z21 is licensed until a constraint-compatible boundary-selection rule is frozen and independently certified.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> first H3/Z20 attempt failed shift constraint -> zero-velocity and canonical-zero initial boundaries both excluded -> full canonical initial constraint-manifold existence test is next`.
+`H1/background certified -> first H3/Z20 attempt failed shift constraint -> naive zero boundaries excluded -> full canonical constraint manifold exists in 714/714 material cases -> boundary-selection certification is next`.
 
 ---
 
@@ -262,70 +260,59 @@ this still does not prove that the frozen quadratic source is intrinsically inco
 
 ---
 
-## Repair17 — current locked next gate
+## Repair17 — full canonical initial-manifold audit
 
-Preregistration commit:
+Classification:
 
-`7d5664743b2bda32fcd1a444ece37cdc14a3d96d`.
+`GE19_REPAIR17_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT_COMPLETE`.
 
-Implementation commit:
-
-`753015f7a377ca8bfe541cace99fb239b49a7654`.
-
-Prelock workflow commit:
-
-`159f68307990ab6a1b131a9b74c350c831f5ecdb`.
-
-Implementation-lock commit:
-
-`17487d847ddfaf6ac64b0c648156f1b69295b3ec`.
-
-Locked local-runner HEAD:
-
-`152da4a51e89c318aa97632815ea714b8f61ef3c`.
-
-Repair17 asks a stronger and cleaner question.
-
-At z=1.5, after the frozen algebraic reconstruction
-
-`w(y)=WY y + WR source`,
-
-does **any** canonical state
-
-`y=(S,u,phi,T,pS,pu,pphi,pT)`
-
-exist that satisfies the independent lapse and shift constraints?
-
-Tests:
-
-1. full canonical y: 2x8;
-2. q-only: 2x4 with p=0;
-3. p-only: 2x4 with q=0.
-
-No time integration is performed.
-
-Frozen possible routes:
-
-### Route A
+Route:
 
 `FINITE_WINDOW_ZERO_BOUNDARY_INADMISSIBLE_SOURCE_COMPATIBLE`.
 
-Meaning:
+Result-freeze commit:
 
-the full canonical initial constraint manifold exists. Repair15/16 then diagnose inadmissible zero-boundary choices, not a broken quadratic source.
+`1ce72e3c3a732be59c1e390c8ef67859348b76c6`.
 
-A later separately preregistered propagation repair may initialize on a constraint-compatible y0 and retest H3/Z20.
+Frozen output hashes:
 
-### Route B
+- JSON/FULL log:
+  `f81ad8ef52eb3a7ff4d4286670a62c830f17872459f43812b059447f85e14184`;
+- outer runner:
+  `8cb82e530f104895bd2d22cd6ae1bb86c36d64dd80eb9418b3c6a6bbe7a5c1e0`.
 
-`QUADRATIC_SOURCE_INITIAL_NOETHER_INCOMPATIBILITY_CONFIRMED`.
+Repair17 tests the exact same frozen Repair14 source on the full canonical initial manifold
 
-Meaning:
+`y=(S,u,phi,T,pS,pu,pphi,pT)`.
 
-even the full 2x8 canonical state cannot satisfy lapse+shift for the frozen source.
+Full-y result:
 
-Only then is a direct sector-by-sector GE06+GE07+Lambda quadratic Noether/source audit licensed.
+- material cases: `714/714` pass;
+- constraint residual max: `8.892022036425179e-13`;
+- lapse backward error max: `2.6457320679749983e-16`;
+- shift backward error max: `1.8699495216551784e-10`;
+- eliminated algebraic residual max: `2.388467729664837e-16`;
+- rank 2 and augmented rank 2 throughout;
+- all finite.
 
+Restricted q-only states fail the eliminated algebraic gate in all material cases.
+
+Restricted p-only states are much closer:
+
+- algebraic residual max `1.6529397640806795e-16`;
+- constraint residual max `1.9160597062254987e-10`;
+- shift backward error max `1.0092587566692186e-5`;
+- `396/714` satisfy all current gates.
+
+Scientific conclusion:
+
+the quadratic source is not shown to violate the initial Noether/constraint compatibility. The finite-window zero boundaries used in Repairs 14-16 were inadmissible.
+
+Boundary-selection caveat:
+
+the full 2x8 system has six null directions. Repair17's Euclidean minimum-norm representative is an existence witness, not yet a physical initial prescription. Its norm reaches `1908119.6665826605` in the strongest material case.
+
+The next gate must therefore freeze and certify a coordinate/physics-motivated constraint-compatible boundary before any H3 propagation is rerun.
 ---
 
 ## What is certified now
@@ -354,7 +341,7 @@ The project is **not yet ready for a nonlinear real-data claim**.
 
 The shortest valid route is:
 
-`Repair17 -> constraint-certified Z20 propagation -> observable bridge -> real-data confrontation`.
+`constraint-compatible boundary certification -> constraint-certified Z20 propagation -> observable bridge -> real-data confrontation`.
 
 For the full nonlinear-memory state claim:
 
@@ -368,12 +355,10 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Run the locked local Repair17 audit using runner/blob lock rooted at
+Preregister and certify a unique constraint-compatible finite-window boundary rule before rerunning H3/Z20.
 
-`152da4a51e89c318aa97632815ea714b8f61ef3c`.
+The preferred first audit is a zero-coordinate (`q=0`) canonical-momentum projection with a frozen physically scaled norm / solve rule, because Repair17 shows the p-only subspace is algebraically exact and close to the frozen shift gate.
 
-A later documentation-only branch HEAD is allowed because the runner rechecks the frozen science blobs and lock ancestry.
+Until that boundary rule is frozen, the canonical project status is:
 
-Until that result is frozen, the canonical project status is:
-
-**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15 and Repair16 diagnostic incompatibility results frozen; Repair17 READY / NOT YET EXECUTED.**
+**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 full canonical manifold PASS-for-existence; boundary-selection certification is next.**
