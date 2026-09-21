@@ -144,7 +144,7 @@ def main():
 
     z13=np.load(files["r13n"])
     z19=np.load(files["r19n"])
-    x_parent=np.asarray(z13["ln_a_primary"],float)
+    x_parent=np.asarray(z13["x64"],float)
 
     # Frozen Repair18 reference p0, using primary rows only.
     p18={}
