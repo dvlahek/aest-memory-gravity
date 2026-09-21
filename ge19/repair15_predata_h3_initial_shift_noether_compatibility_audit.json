@@ -1,0 +1,53 @@
+{
+  "classification": "GE19_REPAIR15_PREDATA_H3_INITIAL_SHIFT_NOETHER_COMPATIBILITY_AUDIT",
+  "created_before_repair15_result": true,
+  "parent_repair14_freeze_commit": "7ba8b312f7dd8ca7035958be2abdf03df98a5bae",
+  "purpose": "Determine if the Repair14 H3 shift failure is already present on the initial z=1.5 surface because the nonzero quadratic source is incompatible with the frozen window-retarded dynamic initial conditions, or if a constraint-compatible algebraic initial state exists and the defect is generated only during propagation.",
+  "frozen_repair14_observations": {
+    "classification": "GE19_REPAIR14_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "source_spatial_relative_L2_max": 1.1166216258507802e-12,
+    "primary_linear_residual_max": 1.3665579847915249e-8,
+    "primary_shift_backward_error_max": 1.6504055271415055,
+    "primary_anisotropy_backward_error_max": 5.176430012533252e-16,
+    "time_grid_state_relative_L2_max": 5.470805059400488e-4
+  },
+  "diagnostic_only": true,
+  "initial_surface": {
+    "z": 1.5,
+    "dynamic_values": "S20=u20=phi20=T20=0",
+    "dynamic_cosmic_time_derivatives": "S20dot=u20dot=phi20dot=T20dot=0",
+    "algebraic_unknowns": ["N20", "delta_varrho20"],
+    "equations_tested": ["lapse", "dust_density", "shift", "anisotropy"]
+  },
+  "tests": [
+    "reproduce the current Repair14 lapse+dust-density initial solve and measure initial shift/aniso residuals",
+    "solve dust-density+shift for N20,delta_varrho20 and independently monitor lapse/aniso",
+    "solve lapse+shift for N20,delta_varrho20 and independently monitor dust-density/aniso",
+    "form the row-scaled 3x2 system [lapse,dust-density,shift] and compute its least-squares residual",
+    "compute the left-null compatibility residual of the row-scaled 3x2 coefficient matrix against the row-scaled quadratic source target",
+    "report rank and singular values of the coefficient matrix and augmented matrix",
+    "repeat for every C, beta0 and m=1..40 on both Nt=64 and Nt=32 frozen Repair13 backgrounds"
+  ],
+  "routing": {
+    "INITIAL_SOURCE_INCOMPATIBILITY": "row-scaled 3x2 least-squares or left-null compatibility residual exceeds 1e-6 on any material-source case and pairwise equation choices cannot close the third equation",
+    "CURRENT_INITIAL_PARTITION_ONLY": "a compatible N20,delta_varrho20 state exists at <=1e-6 but the current lapse+density initialization misses shift",
+    "INITIAL_SURFACE_CLOSE_PROPAGATION_DEFECT_REMAINS": "current lapse+density initialization itself closes shift <=1e-6 at the initial surface; Repair14 shift failure therefore first develops after initialization"
+  },
+  "diagnostic_thresholds": {
+    "compatibility_relative_residual_max": 1e-6,
+    "material_source_floor_relative_to_global_initial_target_max": 1e-12
+  },
+  "explicit_nonchanges": [
+    "no Repair14 Z20 trajectory recomputation",
+    "no H1 recomputation",
+    "no GE06 or GE07 edit",
+    "no Lambda c1 or c2 edit",
+    "no source sign edit",
+    "no window-retarded dynamic initial value or derivative edit",
+    "no DAE partition edit",
+    "no threshold relaxation",
+    "no q20 construction",
+    "no H4 or Z21 construction"
+  ],
+  "historical_results_unchanged": true
+}
