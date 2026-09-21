@@ -1,0 +1,79 @@
+name: GE19 Repair16 canonical zero prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair16_*'
+      - '.github/workflows/ge19-repair16-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair16_canonical_zero_initial_state_audit.py
+
+      - name: Audit canonical-zero diagnostic contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair16_predata_canonical_zero_initial_state_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR16_PREDATA_CANONICAL_ZERO_INITIAL_STATE_AUDIT"
+          assert pre["created_before_repair16_result"] is True
+          assert pre["parent_repair15_freeze_commit"]=="e2d642eb528fab10aa4d3ba0a2afc94b2dcacbaf"
+          assert pre["diagnostic_thresholds"]["algebraic_relative_residual_max"]==1e-8
+          assert pre["diagnostic_thresholds"]["independent_lapse_backward_error_max"]==1e-6
+          assert pre["diagnostic_thresholds"]["independent_shift_backward_error_max"]==1e-6
+          assert "no Repair14 Z20 trajectory recomputation" in pre["explicit_nonchanges"]
+          assert "no H4 or Z21 construction" in pre["explicit_nonchanges"]
+
+          spec=importlib.util.spec_from_file_location(
+              "r16",root/"ge19/repair16_canonical_zero_initial_state_audit.py"
+          )
+          r16=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r16)
+
+          assert r16.REPAIR15_JSON_SHA=="a8c86b6056a3d6ab2f6f443850bef34881452b4a11b32bb6a66e2ac7920f1e50"
+          assert r16.ALG_MAX==1e-8
+          assert r16.LAPSE_MAX==1e-6
+          assert r16.SHIFT_MAX==1e-6
+
+          # Backward-error synthetic controls.
+          row=np.array([2+0j,3+0j])
+          w=np.array([1+0j,-1+0j])
+          target=row@w
+          good=r16.row_backward_error(row,w,target)
+          bad=r16.row_backward_error(row,w,target+1)
+          assert good["metric"]==0.0
+          assert bad["metric"]>1e-3
+
+          src=(root/"ge19/repair16_canonical_zero_initial_state_audit.py").read_text()
+          forbidden=[
+              "solve_case_canonical(",
+              "_radau2_integrate_canonical(",
+              "solve_reduced_h1_case_canonical(",
+          ]
+          for token in forbidden:
+              assert token not in src, token
+          assert "_canonical_operator_matrices(" in src
+          assert "y0=np.zeros(8,complex)" in src.replace(" ","")
+          assert "w=WY@y0+WR@source" in src.replace(" ","")
+          assert "source_bundle_reduced_lambda(" in src
+
+          print("GOOD_BACKWARD_ERROR =",good["metric"])
+          print("BAD_BACKWARD_ERROR =",bad["metric"])
+          print("GE19_REPAIR16_PRELOCK_AUDIT_PASS")
+          PY
