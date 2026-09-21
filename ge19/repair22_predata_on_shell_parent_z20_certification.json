@@ -1,0 +1,108 @@
+{
+  "classification": "GE19_REPAIR22_PREDATA_ON_SHELL_PARENT_Z20_CERTIFICATION",
+  "created_before_repair22_result": true,
+  "parent_repair21_freeze_commit": "a6fea1e32aebef65e43151030fe90fc6263d6ce0",
+  "purpose": "Certify the reduced H3/Z20 window-local particular state using independently solved on-shell H1 parents at Nt128 primary and Nt64 control, the unchanged Repair14 quadratic source, the unchanged Repair18 projected boundary, and a preregistered shift certification that separates active rows from structurally near-null rows without relaxing the original active 1e-6 threshold.",
+  "certification_run": true,
+  "frozen_parents": {
+    "Repair13_JSON_sha256": "ae3cc790ecffbd5498b5852273c72ae578d4615de29bbb616673c05cdb3e74b7",
+    "Repair13_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "Repair18_JSON_sha256": "d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc",
+    "Repair21_JSON_sha256": "e27d12f18a992a1c8c3217e67c0efd39dcf7c9d7aadcfbbb3220f7508bca1bb2",
+    "Repair21_NPZ_sha256": "c6fcde7d39480ec7f03de2acf0f33f648a997404c9cca8f83990ed7b50667f3b"
+  },
+  "primary_control": {
+    "Nt_primary": 128,
+    "Nt_control": 64,
+    "Nx_primary": 1024,
+    "Nx_source_control": 2048,
+    "C": ["C_min","C_star","C_max"],
+    "beta0": [1.0,0.5,0.1],
+    "m_solve": "1..40",
+    "m0": "source/backreaction report only; no homogeneous solve"
+  },
+  "on_shell_H1": {
+    "construction": "independently solve frozen Repair13 reduced H1 equations on Nt128 and Nt64 using frozen GE15/GE18 initial bridge and Repair11 Lambda c1",
+    "no_interpolated_parent": true,
+    "Nt64_frozen_Repair13_reproduction_required": true,
+    "H1_gates": {
+      "Nt64_Z10_relative_L2_max": 1e-12,
+      "Nt64_Z10dot_relative_L2_max": 1e-12,
+      "linear_system_relative_L2_residual_max": 1e-8,
+      "shift_constraint_backward_error_max": 1e-6,
+      "anisotropy_constraint_backward_error_max": 1e-6,
+      "initial_dynamic_match_abs_or_rel_max": 1e-10,
+      "Nt128_vs_Nt64_state_relative_L2_max": 5e-3,
+      "all_outputs_finite": true
+    }
+  },
+  "H3": {
+    "equation": "L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
+    "source": "unchanged Repair14 GE06+GE07+Lambda_c2+Y2",
+    "boundary": "unchanged Repair18 q0=0 projected-p0 boundary independently reconstructed on both time grids",
+    "integrator": "unchanged Repair07 two-stage Radau IIA canonical march",
+    "source_spatial_gate": 5e-4,
+    "linear_system_gate": 1e-8,
+    "anisotropy_gate": 1e-6,
+    "state_time_gate": 5e-3,
+    "all_outputs_finite": true
+  },
+  "shift_certification": {
+    "original_metric_unchanged": true,
+    "original_all_row_metric_reported_not_gated": true,
+    "reason": "Repair20/21 established that O(1) maxima occur when both residual and natural scale are machine-level near zero",
+    "S_ref": "maximum natural shift scale over the complete Nt128 primary set",
+    "near_null_threshold": "sqrt(machine_epsilon_float64)*S_ref",
+    "active_rule": "scale > sqrt(machine_epsilon_float64)*S_ref",
+    "near_null_rule": "scale <= sqrt(machine_epsilon_float64)*S_ref",
+    "active_shift_backward_error_max": 1e-6,
+    "near_null_absolute_residual_over_Sref_max": "1000*machine_epsilon_float64",
+    "matched_grid": "Nt128",
+    "control_mapping": "PCHIP Nt64 shift metric to Nt128 independently for each fixed C,beta,m",
+    "matched_active_Linf_order_min": 2.5,
+    "matched_active_L2_order_min": 2.5
+  },
+  "boundary_gates": {
+    "Repair18_projected_p0_relative_L2_max": 1e-12,
+    "initial_scaled_constraint_relative_residual_max": 1e-8,
+    "initial_lapse_backward_error_max": 1e-6,
+    "initial_shift_backward_error_max": 1e-6,
+    "initial_eliminated_algebraic_relative_residual_max": 1e-8,
+    "rank_required": 2
+  },
+  "required_reports": [
+    "all frozen parent hashes",
+    "on-shell H1 controls at Nt128/Nt64",
+    "Nt128 Nx1024/Nx2048 source low-mode relative L2 convergence",
+    "source decomposition by GA, dust, Lambda and Y2",
+    "Repair18 boundary reproduction",
+    "original all-row shift maxima at Nt128/Nt64",
+    "active and near-null shift sample counts",
+    "active shift Linf and RMS/L2 on matched Nt128 grid",
+    "near-null absolute residual / S_ref",
+    "matched active convergence orders",
+    "linear-system, anisotropy and state time-grid controls",
+    "NPZ with certified candidate Z20 primary/control, on-shell H1 parents, sources and shift telemetry"
+  ],
+  "routing": {
+    "PASS": "all H1, source-spatial, boundary, active-shift, near-null, matched-order, state-time, linear, anisotropy, completeness and finite-output gates pass",
+    "FAIL": "one or more frozen certification gates fail after successful implementation",
+    "IMPLEMENTATION_FAIL": "frozen provenance, on-shell H1 reconstruction, source reconstruction, boundary reconstruction or execution fails"
+  },
+  "next_step_if_PASS": "Freeze Z20 as the certified reduced window-local particular second-order baseline. Then construct q20 in a separately preregistered step before H4/Z21.",
+  "explicit_nonchanges": [
+    "no Repair19/20/21 relabeling",
+    "no GE06 or GE07 edit",
+    "no Lambda c1/c2 edit",
+    "no Y2 edit",
+    "no source sign/component-order/normalization edit",
+    "no Repair18 boundary edit",
+    "no active shift threshold relaxation",
+    "no finite eta",
+    "no q20 construction",
+    "no H4 or Z21",
+    "no lensing or observational inference"
+  ],
+  "claim_boundary": "A PASS certifies only the low-mode constraint-certified window-local reduced-H3 Z20 particular directional state on the Repair13 self-consistent background. It does not certify a primordial/homogeneous second-order mode, full species, finite eta, physical-amplitude nonlinear evolution or observables.",
+  "historical_results_unchanged": true
+}
