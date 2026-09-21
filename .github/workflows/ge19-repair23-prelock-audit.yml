@@ -1,0 +1,77 @@
+name: GE19 Repair23 q20 normalized-bath prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair23_*'
+      - '.github/workflows/ge19-repair23-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair23_q20_normalized_bath_bridge_audit.py
+
+      - name: Audit frozen bridge contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json, subprocess
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair23_predata_q20_normalized_bath_bridge_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR23_PREDATA_Q20_NORMALIZED_BATH_BRIDGE_AUDIT"
+          assert pre["created_before_repair23_result"] is True
+          assert pre["parent_repair22_freeze_commit"]=="9174f2e622f42851474ed124b429bf07b2db3ac7"
+          assert pre["frozen_parent"]["Repair22_Z20_certified"] is True
+          assert pre["frozen_theory"]["tauH0"]==10.0
+          assert pre["locked_audits"]["GE05_c1_bath_residual_matches_standard_linear_z_equation_relative_L2_max"]==1e-10
+          assert pre["locked_audits"]["GE05_c2_bath_residual_matches_centered_second_directional_finite_difference_relative_L2_max"]==1e-5
+          assert pre["locked_audits"]["weight_scaling_cancels_from_z_equation_relative_L2_max"]==1e-12
+          assert pre["locked_audits"]["NL1C4_step_linear_one_interval_matches_independent_high_accuracy_solve_relative_max"]==1e-8
+
+          def blob(path):
+              return subprocess.check_output(["git","rev-parse",f"HEAD:{path}"],text=True).strip()
+
+          assert blob("docs/ge19_repair22_z20_certification_result_freeze.md")=="fb4ef607d17b5545985edf557aa67d02bc4dff0f"
+          assert blob("ge05/memory_directional_source_generator.py")=="40837d77f89028da30c28899e2d0530a4401844e"
+          assert blob("nl1c4/expanding_memory_source_trajectory.py")=="7a9ffab9fa903ca61e88627052e2aa589b4bf459"
+
+          spec=importlib.util.spec_from_file_location(
+              "r23",root/"ge19/repair23_q20_normalized_bath_bridge_audit.py"
+          )
+          r23=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r23)
+
+          assert r23.C1_MAX==1e-10
+          assert r23.C2_FD_MAX==1e-5
+          assert r23.WEIGHT_MAX==1e-12
+          assert r23.STEP_MAX==1e-8
+
+          sym=r23.symbolic_identities()
+          assert sym["q_to_z_exact"] is True
+          assert sym["dimensionless_exact"] is True
+
+          src=(root/"ge19/repair23_q20_normalized_bath_bridge_audit.py").read_text()
+          assert "z=omega*q/sqrt(w)" in src
+          assert "G1[Z20,z20]+G2[(Z10,z10),(Z10,z10)]=0" in src
+          assert "future_z20_boundary" in src
+          assert "q20_constructed" in src
+          assert '"Z21_licensed":False' in src.replace(" ","")
+
+          print("REPAIR22_FREEZE_BLOB =",blob("docs/ge19_repair22_z20_certification_result_freeze.md"))
+          print("GE05_BLOB =",blob("ge05/memory_directional_source_generator.py"))
+          print("NL1C4_BLOB =",blob("nl1c4/expanding_memory_source_trajectory.py"))
+          print("GE19_REPAIR23_PRELOCK_AUDIT_PASS")
+          PY
