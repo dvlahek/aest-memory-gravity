@@ -1,0 +1,85 @@
+{
+  "classification": "GE19_REPAIR09_PREDATA_DUAL_CONSTRAINT_PARTITION_AUDIT",
+  "created_before_repair09_result": true,
+  "parent_repair08_freeze_commit": "f08f3d076e58240766afa21df5df6b927146d67c",
+  "purpose": "Distinguish a canonical DAE partition-choice defect from a genuine reduced-background/reduced-matter constraint incompatibility. Repair08 proved that the initial surface closes, the physical matter sign is correct, the full-standard CLASS momentum closes the GE15 shift equation, and the violation appears only under reduced evolution.",
+  "diagnostic_only": true,
+  "frozen_repair08_result": {
+    "initial_prescribed_shift_backward_error_max": 3.9269986174371925e-08,
+    "mixed_reference_reduced_dust_shift_backward_error_max": 0.0005752028513468997,
+    "canonical_anisotropy_enforced_shift_backward_error_max": 0.07116549016013037,
+    "full_standard_CLASS_pair_metric_max": 6.142613426914724e-06,
+    "first_canonical_shift_crossing_redshift": 1.471043244117181
+  },
+  "alternative_partition": {
+    "canonical_state": ["S", "u", "phi", "T", "pS", "pu", "pphi", "pT"],
+    "algebraic_unknowns": ["N", "delta_varrho", "Sdot", "udot", "phidot", "Tdot"],
+    "algebraic_rows": [
+      "pS",
+      "pu",
+      "pphi",
+      "pT",
+      "dust_density",
+      "shift"
+    ],
+    "independent_monitors": [
+      "lapse_Noether_row",
+      "anisotropy"
+    ],
+    "evolution_rows": [
+      "isotropic",
+      "aether",
+      "scalar",
+      "dust_potential"
+    ],
+    "source_order_unchanged": [
+      "lapse",
+      "isotropic",
+      "aether",
+      "scalar",
+      "dust_potential",
+      "dust_density",
+      "shift",
+      "anisotropy"
+    ]
+  },
+  "permitted_operations": [
+    "reuse the frozen Repair07 stable GE06 and GE07 local linear maps byte-for-byte",
+    "reuse the frozen Repair07 initial state, Radau-IIA coefficients, grids, modes, C values and initial dynamic match",
+    "replace only the sixth canonical algebraic row from anisotropy to shift in a separate diagnostic implementation",
+    "monitor anisotropy with the same componentwise backward-error metric used by Repair07",
+    "report local algebraic condition numbers, Radau residuals, lapse residuals, shift residuals, anisotropy residuals and Nt64/Nt32 convergence",
+    "compare the alternate trajectory to the historical Repair07 trajectory diagnostically"
+  ],
+  "explicit_nonchanges": [
+    "no GE06 equation change",
+    "no GE07 equation change",
+    "no matter sign change",
+    "no AeST sign change",
+    "no background change",
+    "no reduced-dust bridge change",
+    "no threshold change",
+    "no Radau coefficient change",
+    "no H3 source construction",
+    "no Z20 construction"
+  ],
+  "frozen_reference_thresholds": {
+    "linear_system_relative_L2_residual_max": 1e-08,
+    "shift_constraint_backward_error_max": 1e-06,
+    "anisotropy_constraint_backward_error_max": 1e-06,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10
+  },
+  "routing_logic": {
+    "DAE_PARTITION_DEFECT_LOCALIZED": "alternate shift-enforced partition has both shift and anisotropy <=1e-6, linear residual <=1e-8, Nt64/Nt32 state convergence <=5e-3, initial match <=1e-10 and finite outputs",
+    "REDUCED_BACKGROUND_CONSTRAINT_INCOMPATIBILITY_CONFIRMED": "alternate shift row is solved accurately but the independent anisotropy monitor exceeds 1e-6 while numerical controls remain otherwise healthy",
+    "ALTERNATE_PARTITION_NUMERICAL_FAIL": "alternate algebraic block is singular/ill-conditioned to the point of failed solve, nonfinite output, linear residual failure or time-grid failure",
+    "DUAL_PARTITION_RESULT_AMBIGUOUS": "none of the predeclared routing conditions applies cleanly"
+  },
+  "historical_results_unchanged": [
+    "GE19 Repair06 FAIL",
+    "GE19 Repair07 FAIL",
+    "GE19 Repair08 diagnostic classification"
+  ],
+  "claim_boundary": "Diagnostic reduced-H1 audit only. No H3/Z20, finite eta, finite physical-amplitude nonlinear evolution, collapse, lensing or observational claim is licensed."
+}
