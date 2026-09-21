@@ -1,0 +1,86 @@
+name: GE19 Repair15 initial compatibility prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair15_*'
+      - '.github/workflows/ge19-repair15-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair15_h3_initial_shift_noether_compatibility_audit.py
+
+      - name: Audit diagnostic contract and left-null test
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair15_predata_h3_initial_shift_noether_compatibility_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR15_PREDATA_H3_INITIAL_SHIFT_NOETHER_COMPATIBILITY_AUDIT"
+          assert pre["created_before_repair15_result"] is True
+          assert pre["parent_repair14_freeze_commit"]=="7ba8b312f7dd8ca7035958be2abdf03df98a5bae"
+          assert pre["diagnostic_thresholds"]["compatibility_relative_residual_max"]==1e-6
+          assert "no Repair14 Z20 trajectory recomputation" in pre["explicit_nonchanges"]
+          assert "no H4 or Z21 construction" in pre["explicit_nonchanges"]
+
+          spec=importlib.util.spec_from_file_location(
+              "r15",root/"ge19/repair15_h3_initial_shift_noether_compatibility_audit.py"
+          )
+          r15=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r15)
+
+          assert r15.REPAIR14_JSON_SHA=="741da95a0aaffa31e27f2b05d42b8a7f011574013de8639812e453d7b130fe57"
+          assert r15.COMPAT_MAX==1e-6
+          assert r15.MATERIAL_FLOOR==1e-12
+
+          # Compatible 3x2 system: b lies in col(A).
+          A=np.array([[1.,0.],[0.,1.],[1.,1.]],complex)
+          x=np.array([2.,-3.],complex)
+          b=A@x
+          c=r15.compatibility(A,b)
+          assert c["coefficient_rank"]==2
+          assert c["augmented_rank"]==2
+          assert c["least_squares_relative_residual"]<1e-12
+          assert c["left_null_compatibility_residual"]<1e-12
+
+          # Incompatible system: perturb only the redundant third equation.
+          bi=b.copy(); bi[2]+=1.0
+          d=r15.compatibility(A,bi)
+          assert d["coefficient_rank"]==2
+          assert d["augmented_rank"]==3
+          assert d["least_squares_relative_residual"]>1e-3
+          assert d["left_null_compatibility_residual"]>1e-3
+
+          src=(root/"ge19/repair15_h3_initial_shift_noether_compatibility_audit.py").read_text()
+          forbidden=[
+              "solve_case_canonical(",
+              "_radau2_integrate_canonical(",
+              "solve_reduced_h1_case_canonical(",
+          ]
+          for token in forbidden:
+              assert token not in src, token
+          assert "source_bundle_reduced_lambda(" in src
+          assert "_initial_canonical_state(" in src
+          assert "compatibility(A,b)" in src
+
+          print("COMPATIBLE_LS =",c["least_squares_relative_residual"])
+          print("COMPATIBLE_LEFT_NULL =",c["left_null_compatibility_residual"])
+          print("INCOMPATIBLE_LS =",d["least_squares_relative_residual"])
+          print("INCOMPATIBLE_LEFT_NULL =",d["left_null_compatibility_residual"])
+          print("GE19_REPAIR15_PRELOCK_AUDIT_PASS")
+          PY
