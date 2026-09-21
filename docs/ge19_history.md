@@ -45,6 +45,28 @@ The remaining blocker is **boundary selection**, not manifold existence.
 The Repair17 Euclidean minimum-norm full-y state is only an existence witness because the 2x8 system has six canonical null directions and the solution norm is coordinate-scale sensitive. It must not be injected directly into a new H3 propagation as a physical boundary without a separately preregistered rule.
 
 No new H3 propagation, q20 or H4/Z21 is licensed until a constraint-compatible boundary-selection rule is frozen and independently certified.
+
+Repair18 now implements exactly that boundary audit and is **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
+
+Repair18 boundary:
+
+- `q0=(S20,u20,phi20,T20)=0` exactly;
+- solve only `p0=(pS20,pu20,pphi20,pT20)` from lapse+shift;
+- frozen doubly equilibrated GELSD minimum-norm solve;
+- exactly four iterative-refinement sweeps;
+- unchanged constraint/algebraic gates.
+
+Repair18 dedicated prelock run:
+
+`35612842980` — SUCCESS.
+
+Repair18 runner-head static audit:
+
+`35613018505` — SUCCESS.
+
+Locked Repair18 runner commit:
+
+`3eeac48e9dbfd82fbcf29b405580eeb34167c008`.
 ---
 
 ## Scientific status in one line
@@ -361,4 +383,4 @@ The preferred first audit is a zero-coordinate (`q=0`) canonical-momentum projec
 
 Until that boundary rule is frozen, the canonical project status is:
 
-**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 full canonical manifold PASS-for-existence; boundary-selection certification is next.**
+**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 full canonical manifold PASS-for-existence; Repair18 projected-momentum boundary READY / NOT YET EXECUTED.**
