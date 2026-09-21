@@ -1,0 +1,89 @@
+name: GE19 Repair17 canonical manifold prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair17_*'
+      - '.github/workflows/ge19-repair17-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair17_full_canonical_initial_manifold_audit.py
+
+      - name: Audit Repair17 diagnostic contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair17_predata_full_canonical_initial_manifold_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR17_PREDATA_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT"
+          assert pre["created_before_repair17_result"] is True
+          assert pre["parent_repair16_freeze_commit"]=="d5a619495f0f8fb2da53528b46476a15c1a32922"
+          assert pre["parent_repair16_freeze_blob"]=="f5f793e41d81e450daa849786b7da7db4a2def5e"
+          assert pre["diagnostic_thresholds"]["full_y_constraint_relative_residual_max"]==1e-8
+          assert pre["diagnostic_thresholds"]["reconstructed_independent_constraint_backward_error_max"]==1e-6
+          assert pre["diagnostic_thresholds"]["eliminated_algebraic_relative_residual_max"]==1e-8
+          assert "no Radau integration" in pre["explicit_nonchanges"]
+          assert "no Repair14 Z20 trajectory recomputation" in pre["explicit_nonchanges"]
+
+          spec=importlib.util.spec_from_file_location(
+              "r17",root/"ge19/repair17_full_canonical_initial_manifold_audit.py"
+          )
+          r17=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r17)
+
+          assert r17.REPAIR16_JSON_SHA=="768d5a2de7cd62059e7149a4765ab5a9663eef708fc29989c05192f607c5bf68"
+          assert r17.FULL_RES_MAX==1e-8
+          assert r17.CONSTRAINT_MAX==1e-6
+          assert r17.ALG_MAX==1e-8
+
+          # Compatible 2x8 synthetic system.
+          A=np.zeros((2,8),complex)
+          A[0,0]=2; A[0,4]=1
+          A[1,1]=-3; A[1,5]=2
+          b=np.array([5,-7],complex)
+          x,d=r17.solve_subset(A,b,range(8))
+          assert d["coefficient_rank"]==2
+          assert d["augmented_rank"]==2
+          assert d["relative_residual"]<1e-12
+
+          # Incompatible zero-row synthetic system.
+          B=np.zeros((2,8),complex)
+          B[0,0]=1
+          bb=np.array([1,1],complex)
+          xx,dd=r17.solve_subset(B,bb,range(8))
+          assert dd["augmented_rank"]>dd["coefficient_rank"]
+          assert dd["relative_residual"]>1e-3
+
+          src=(root/"ge19/repair17_full_canonical_initial_manifold_audit.py").read_text()
+          for token in [
+              "solve_case_canonical(",
+              "_radau2_integrate_canonical(",
+              "solve_reduced_h1_case_canonical(",
+          ]:
+              assert token not in src, token
+          assert "_canonical_operator_matrices(" in src
+          assert "source_bundle_reduced_lambda(" in src
+          assert "range(8)" in src
+          assert "range(4)" in src
+          assert "range(4,8)" in src
+
+          print("COMPATIBLE_FULL_RES =",d["relative_residual"])
+          print("INCOMPATIBLE_FULL_RES =",dd["relative_residual"])
+          print("GE19_REPAIR17_PRELOCK_AUDIT_PASS")
+          PY
