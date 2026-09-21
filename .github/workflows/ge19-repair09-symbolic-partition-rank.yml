@@ -1,0 +1,66 @@
+name: GE19 Repair09 symbolic partition rank
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair09_symbolic_constraint_partition_rank.py'
+      - 'ge19/repair09_predata_amendment01_shift_partition_exact_singularity_stop.json'
+      - '.github/workflows/ge19-repair09-symbolic-partition-rank.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair09_symbolic_constraint_partition_rank.py
+
+      - name: Audit amendment
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open("ge19/repair09_predata_amendment01_shift_partition_exact_singularity_stop.json"))
+          assert d["classification"]=="GE19_REPAIR09_PREDATA_AMENDMENT01_SHIFT_PARTITION_EXACT_SINGULARITY_STOP"
+          assert d["created_before_repair09_science_result"] is True
+          assert d["stop_rule"]["run_alternative_partition_science"] is False
+          assert d["stop_rule"]["repair09_terminal_route"]=="SHIFT_PARTITION_STRUCTURALLY_SINGULAR"
+          print("GE19_REPAIR09_AMENDMENT_AUDIT_PASS")
+          PY
+
+      - name: Run exact symbolic rank audit
+        shell: bash
+        run: |
+          mkdir -p results
+          python3 ge19/repair09_symbolic_constraint_partition_rank.py             --json-out results/ge19_repair09_symbolic_constraint_partition_rank.json |             tee results/ge19_repair09_symbolic_constraint_partition_rank.log
+
+      - name: Verify symbolic result
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_repair09_symbolic_constraint_partition_rank.json"))
+          assert d["classification"]=="GE19_REPAIR09_SHIFT_PARTITION_STRUCTURALLY_SINGULAR"
+          assert d["shift_partition"]["rank"]==5
+          assert d["shift_partition"]["determinant"]=="0"
+          assert d["shift_partition"]["structurally_singular"] is True
+          assert d["anisotropy_partition"]["rank"]==6
+          assert d["anisotropy_partition"]["identity_exact"] is True
+          print("GE19_REPAIR09_SYMBOLIC_PARTITION_RANK_PASS")
+          PY
+
+      - name: Upload audit bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ge19_repair09_symbolic_partition_rank
+          path: |
+            results/ge19_repair09_symbolic_constraint_partition_rank.json
+            results/ge19_repair09_symbolic_constraint_partition_rank.log
