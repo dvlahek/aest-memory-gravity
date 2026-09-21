@@ -52,7 +52,15 @@ The second-order bath equation is frozen as
 
 `G1[Z20,z20] + G2[(Z10,z10),(Z10,z10)] = 0`.
 
-The next licensed step is the actual q20 construction on the certified Repair22 Z20 state.
+Repair24 is now **LOCKED / READY / NOT YET EXECUTED**.
+
+Final implementation prelock: `35653683119` — SUCCESS.
+
+Implementation lock commit: `ca7b494616fffc0179486a731183af1e1d1728f2`.
+
+Locked local runner commit: `de6b6d414311e772cd5574cb8d7c6aa11ea59a12`.
+
+The frozen v0.77 trace does not contain a native sample exactly at `a=0.4`; Repair24 therefore uses the exact prefix of the frozen NL1C4 interval model across the certified bracket `0.3799548579266745 < 0.4 < 0.41924557250685585`. The GE19 initial surface is not moved.
 
 Frozen q20 boundary convention:
 
@@ -65,7 +73,7 @@ No H4/Z21 solve is licensed until q20 is constructed and frozen.
 
 ## Scientific status in one line
 
-`H1/background certified -> Repair22 certifies Z20 -> Repair23 bath normalization/equation bridge PASS -> q20 construction is next`.
+`H1/background certified -> Repair22 certifies Z20 -> Repair23 bath bridge PASS -> Repair24 q20 construction LOCKED / READY`.
 
 ---
 
@@ -655,8 +663,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Preregister and implement Repair24 q20 construction on the frozen Repair22 Z20 state using the Repair23 normalized-bath dictionary and boundary convention.
+Run the locked local Repair24 q20 construction.
 
 Canonical project status:
 
-**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 q20 construction NEXT; H4/Z21 NOT YET LICENSED.**
+**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 LOCKED / READY / NOT YET EXECUTED; H4/Z21 NOT YET LICENSED.**
