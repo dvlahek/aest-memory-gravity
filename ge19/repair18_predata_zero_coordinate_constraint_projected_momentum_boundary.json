@@ -1,0 +1,68 @@
+{
+  "classification": "GE19_REPAIR18_PREDATA_ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY",
+  "created_before_repair18_result": true,
+  "parent_repair17_freeze_commit": "1ce72e3c3a732be59c1e390c8ef67859348b76c6",
+  "purpose": "Certify a unique reproducible finite-window H3 boundary that preserves zero second-order field coordinates q20=0 at z=1.5 while determining the canonical momenta from the independent lapse and shift constraints.",
+  "diagnostic_only": true,
+  "frozen_parent": {
+    "repair17_classification": "GE19_REPAIR17_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT_COMPLETE",
+    "repair17_route": "FINITE_WINDOW_ZERO_BOUNDARY_INADMISSIBLE_SOURCE_COMPATIBLE",
+    "repair17_JSON_sha256": "f81ad8ef52eb3a7ff4d4286670a62c830f17872459f43812b059447f85e14184",
+    "repair17_material_full_y_pass_count": 714,
+    "repair17_material_case_count": 714
+  },
+  "boundary_definition": {
+    "window_start_z": 1.5,
+    "coordinates": "q0=(S20,u20,phi20,T20)=0 exactly",
+    "momenta": "p0=(pS20,pu20,pphi20,pT20) chosen by a frozen equilibrated minimum-norm solve of the independent lapse+shift affine constraints after algebraic reconstruction",
+    "interpretation": "constraint-projected zero-coordinate window-local particular boundary; not a primordial second-order initial condition and not a claim that omitted homogeneous history vanishes physically"
+  },
+  "frozen_solver_rule": {
+    "system": "2x4 complex affine constraint system in canonical momenta with q=0",
+    "row_scaling": "divide each row by max(max(abs(A_row)),abs(b_row),tiny)",
+    "column_scaling": "after row scaling divide each momentum column by its max absolute row-scaled coefficient",
+    "base_solve": "minimum Euclidean norm in the doubly equilibrated momentum coordinates using scipy.linalg.lstsq with LAPACK driver gelsd",
+    "iterative_refinement": "exactly 4 correction sweeps in the same frozen scaled coordinates; each sweep solves the current original-equation residual with the same equilibrated pseudoinverse rule",
+    "no_case_dependent_column_choice": true,
+    "no_post_result_solver_switch": true
+  },
+  "tests": [
+    "reproduce the exact frozen Repair13 background and Repair14 quadratic source used by Repair17",
+    "set q0=0 for every C,beta0,m=1..40 on Nt=64 and Nt=32",
+    "construct the same frozen algebraic reconstruction w= WY y + WR source",
+    "solve only for p0 using the frozen doubly equilibrated minimum-norm rule",
+    "perform exactly four frozen iterative-refinement sweeps",
+    "verify eliminated p/density/anisotropy equations",
+    "verify independent lapse and shift backward errors",
+    "report p0 norm, scaled solution norm, singular values, effective rank and primary/control reproducibility",
+    "compare descriptively against the Repair17 p-only witness without changing any gate"
+  ],
+  "diagnostic_thresholds": {
+    "constraint_scaled_relative_residual_max": 1e-8,
+    "independent_lapse_backward_error_max": 1e-6,
+    "independent_shift_backward_error_max": 1e-6,
+    "eliminated_algebraic_relative_residual_max": 1e-8,
+    "rank_required": 2,
+    "all_outputs_finite": true
+  },
+  "routing": {
+    "ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_CERTIFIED": "all frozen gates pass in every material case",
+    "ZERO_COORDINATE_BOUNDARY_NUMERICALLY_UNRESOLVED": "the p-only manifold exists but the frozen solver rule fails one or more numerical gates",
+    "IMPLEMENTATION_FAIL": "frozen provenance/source/operator reproduction fails"
+  },
+  "next_step_if_certified": "Freeze the Repair18 boundary rule, then separately preregister a new H3/Z20 propagation using q0=0 and the certified constraint-projected p0 boundary with all original Stage-B propagation gates unchanged.",
+  "explicit_nonchanges": [
+    "no H1 recomputation",
+    "no H3 or Z20 time propagation in Repair18",
+    "no Radau integration",
+    "no GE06 or GE07 edit",
+    "no Lambda c1 or c2 edit",
+    "no source sign, component-order or normalization edit",
+    "no C or beta edit",
+    "no Stage-B threshold relaxation",
+    "no q20 construction",
+    "no H4 or Z21 construction",
+    "no primordial or physical homogeneous-mode claim"
+  ],
+  "historical_results_unchanged": true
+}
