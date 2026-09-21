@@ -1,0 +1,99 @@
+name: GE19 Repair21 on-shell H1 matched-shift prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair21_*'
+      - '.github/workflows/ge19-repair21-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair21_on_shell_h1_parent_matched_shift_audit.py
+
+      - name: Audit Repair21 frozen on-shell-parent contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json, math, subprocess
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair21_predata_on_shell_h1_parent_matched_shift_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR21_PREDATA_ON_SHELL_H1_PARENT_MATCHED_SHIFT_AUDIT"
+          assert pre["created_before_repair21_result"] is True
+          assert pre["parent_repair20_freeze_commit"]=="317b4219f6630b0c1f0f15081e8db62e6470a47c"
+          assert pre["resolutions"]["Nt"]==[64,128]
+          assert pre["H1_gates"]["linear_system_relative_L2_residual_max"]==1e-8
+          assert pre["H1_gates"]["shift_constraint_backward_error_max"]==1e-6
+          assert pre["diagnostic_gates"]["active_Nt128_shift_Linf_max"]==1e-6
+          assert pre["diagnostic_gates"]["matched_active_Linf_order_min"]==2.5
+          assert pre["diagnostic_gates"]["matched_active_L2_order_min"]==2.5
+          assert "no threshold relaxation" in pre["explicit_nonchanges"]
+
+          def blob(path):
+              return subprocess.check_output(["git","rev-parse",f"HEAD:{path}"],text=True).strip()
+
+          assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
+          assert blob("ge19/repair13_self_consistent_reduced_background_h1_reclosure.py")=="ee57a48a6bd69a0d050028ce1874631731948756"
+          assert blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py")=="06c5ced952c2370cfa4aaadb6ef8f72d2d7221de"
+          assert blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py")=="c7b3a5c689bd78a65a8150c26e1fbfae108cb580"
+
+          spec=importlib.util.spec_from_file_location(
+              "r21",root/"ge19/repair21_on_shell_h1_parent_matched_shift_audit.py"
+          )
+          r21=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r21)
+
+          assert r21.NTS==(64,128)
+          assert r21.SHIFT_MAX==1e-6
+          assert r21.ORDER_MIN==2.5
+          assert r21.H1_REPRO_MAX==1e-12
+          assert r21.NEAR_NULL_RATIO_MAX==1000*np.finfo(float).eps
+
+          # Synthetic matched-grid third-order metrics.
+          h64=1/63; h128=1/127
+          e64i=h64**3; e128i=h128**3
+          p=r21.observed_order(e64i,e128i,h64,h128)
+          assert abs(p-3.0)<1e-12
+
+          src=(root/"ge19/repair21_on_shell_h1_parent_matched_shift_audit.py").read_text()
+          assert "solve_reduced_h1_case_canonical(" in src
+          assert "reference_reduced_mode_state(" in src
+          assert "source_bundle_reduced_lambda(" in src
+          assert "_radau2_integrate_canonical(" in src
+          assert "_constraint_backward_error(" in src
+          assert 'route="INTERPOLATED_H1_PARENT_DEFECT_CONFIRMED"' in src
+          assert 'route="ACTIVE_SHIFT_ISSUE_PERSISTS_ON_ON_SHELL_PARENT"' in src
+
+          # The main H1 parents must come from the on-shell solver.
+          assert 'h1[(nt,tag)]=st' in src.replace(" ","")
+          assert 'h1dot[(nt,tag)]=dt' in src.replace(" ","")
+          # PCHIP of frozen H1 is retained only as the explicitly named counterfactual.
+          assert "interp_h1" in src and "interp_sources" in src
+
+          for token in [
+              "def lambda_c2_equation_source",
+              "def source_real_reduced_lambda",
+              "def y2_source_from_reduced",
+          ]:
+              assert token not in src, token
+
+          print("REPAIR07_BLOB =",blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py"))
+          print("REPAIR13_BLOB =",blob("ge19/repair13_self_consistent_reduced_background_h1_reclosure.py"))
+          print("REPAIR14_BLOB =",blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py"))
+          print("REPAIR18_BLOB =",blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py"))
+          print("SYNTHETIC_MATCHED_ORDER =",p)
+          print("GE19_REPAIR21_PRELOCK_AUDIT_PASS")
+          PY
