@@ -1,0 +1,81 @@
+name: GE19 Repair08 shift localization prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair08_*'
+      - '.github/workflows/ge19-repair08-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile diagnostic
+        run: python3 -m py_compile ge19/repair08_shift_constraint_localization_audit.py
+
+      - name: Audit frozen GE07 shift normalization
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          import sympy as sp
+
+          root=Path.cwd()
+
+          spec=importlib.util.spec_from_file_location(
+              "r7",root/"ge19/repair07_window_retarded_reduced_h3_z20_particular.py"
+          )
+          r7=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r7)
+
+          m7=r7.load_frozen_generator(
+              (root/"ge07/pressureless_matter_directional_source_generator.py").resolve(),
+              "r8_ge07"
+          )
+
+          byname={s.name:s for s in m7.direction_args}
+          expr=sp.expand(m7.coeff1["b_f"])
+          expected=-2*byname["aa"]**3*byname["rhob"]*byname["dTx"]
+          assert sp.simplify(expr-expected)==0, (expr,expected)
+
+          rho,mom,k=sp.symbols("rho mom k", positive=True, real=True)
+          # rhob_action=3 rho and T=a theta/k^2; with mom=rho*theta
+          dTx=sp.I*k*(byname["aa"]*mom/(rho*k**2))
+          full=sp.simplify(
+              expected.subs({
+                  byname["rhob"]:3*rho,
+                  byname["dTx"]:dTx,
+              })
+          )
+          expected_full=-6*sp.I*byname["aa"]**4*mom/k
+          assert sp.simplify(full-expected_full)==0, (full,expected_full)
+
+          print("GE07_LINEAR_SHIFT =",expr)
+          print("FULL_STANDARD_EQUIVALENT_SHIFT =",full)
+          print("GE19_REPAIR08_PRELOCK_AUDIT_PASS")
+          PY
+
+      - name: Audit prereg immutability intent
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open("ge19/repair08_predata_shift_constraint_localization_audit.json"))
+          assert d["classification"]=="GE19_REPAIR08_PREDATA_SHIFT_CONSTRAINT_LOCALIZATION_AUDIT"
+          assert d["created_before_repair08_result"] is True
+          assert d["diagnostic_only"] is True
+          assert d["fixed_diagnostic_scales"]["science_shift_gate_reference"]==1e-6
+          assert "no sign change" in d["explicit_nonchanges"]
+          assert "no threshold change" in d["explicit_nonchanges"]
+          assert "no Z20 construction" in d["explicit_nonchanges"]
+          print("GE19_REPAIR08_PREREG_AUDIT_PASS")
+          PY
