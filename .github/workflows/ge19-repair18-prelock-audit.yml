@@ -1,0 +1,98 @@
+name: GE19 Repair18 projected momentum prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair18_*'
+      - '.github/workflows/ge19-repair18-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py
+
+      - name: Audit Repair18 frozen projected-momentum rule
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json
+          from pathlib import Path
+          import numpy as np
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair18_predata_zero_coordinate_constraint_projected_momentum_boundary.json"))
+          assert pre["classification"]=="GE19_REPAIR18_PREDATA_ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY"
+          assert pre["created_before_repair18_result"] is True
+          assert pre["parent_repair17_freeze_commit"]=="1ce72e3c3a732be59c1e390c8ef67859348b76c6"
+          assert pre["frozen_parent"]["repair17_JSON_sha256"]=="f81ad8ef52eb3a7ff4d4286670a62c830f17872459f43812b059447f85e14184"
+          assert pre["frozen_solver_rule"]["base_solve"].endswith("LAPACK driver gelsd")
+          assert pre["frozen_solver_rule"]["iterative_refinement"].startswith("exactly 4 correction sweeps")
+          assert pre["diagnostic_thresholds"]["constraint_scaled_relative_residual_max"]==1e-8
+          assert pre["diagnostic_thresholds"]["independent_shift_backward_error_max"]==1e-6
+
+          spec=importlib.util.spec_from_file_location(
+              "r18",root/"ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py"
+          )
+          r18=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r18)
+
+          assert r18.REPAIR17_JSON_SHA=="f81ad8ef52eb3a7ff4d4286670a62c830f17872459f43812b059447f85e14184"
+          assert r18.REFINEMENT_SWEEPS==4
+          assert r18.CONSTRAINT_RES_MAX==1e-8
+          assert r18.CONSTRAINT_BE_MAX==1e-6
+          assert r18.ALG_MAX==1e-8
+
+          # Strongly anisotropic but exactly compatible rank-2 2x4 system.
+          A=np.array([
+              [1e12, 2e6, 0.0, 1e-4],
+              [3e-9, 0.0, 5e-3, 2e2],
+          ],complex)
+          ptrue=np.array([2e-6,-3e-2,4e1,-5e-4],complex)
+          b=A@ptrue
+          p,d=r18.projected_momentum_solve(A,b)
+          rs=np.asarray(d["row_scales"])
+          rel=np.linalg.norm((A@p-b)/rs)/max(
+              np.linalg.norm((A@p)/rs),np.linalg.norm(b/rs),1e-300
+          )
+          assert d["rank"]==2
+          assert d["augmented_rank"]==2
+          assert len(d["refinement"])==4
+          assert rel<1e-12
+          assert np.all(np.isfinite(p))
+
+          # Rank-deficient counterexample must be visible to the audit.
+          B=np.array([[1,2,3,4],[2,4,6,8]],complex)
+          bb=np.array([1,3],complex)
+          q,dd=r18.projected_momentum_solve(B,bb)
+          assert dd["rank"]==1
+          assert dd["augmented_rank"]==2
+          assert dd["scaled_relative_residual_final"]>1e-3
+
+          src=(root/"ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py").read_text()
+          for token in [
+              "solve_case_canonical(",
+              "_radau2_integrate_canonical(",
+              "solve_reduced_h1_case_canonical(",
+          ]:
+              assert token not in src, token
+          assert 'lapack_driver="gelsd"' in src
+          assert "for sweep in range(REFINEMENT_SWEEPS)" in src
+          assert "A=A_full[:,4:8]" in src.replace(" ","")
+          assert "y[4:8]=" in src.replace(" ","")
+
+          print("COMPATIBLE_SCALED_RES =",d["scaled_relative_residual_final"])
+          print("COMPATIBLE_RANK =",d["rank"])
+          print("INCOMPATIBLE_SCALED_RES =",dd["scaled_relative_residual_final"])
+          print("INCOMPATIBLE_RANKS =",dd["rank"],dd["augmented_rank"])
+          print("GE19_REPAIR18_PRELOCK_AUDIT_PASS")
+          PY
