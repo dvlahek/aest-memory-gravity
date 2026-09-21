@@ -12,9 +12,11 @@ Historical classifications are immutable. A FAIL is never relabelled after a lat
 
 ## Current checkpoint
 
-The latest executed and frozen certification result is Repair22:
+Repair22 is frozen as the first certified reduced second-order physical state:
 
-`GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS`.
+`GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS`
+
+with
 
 `Z20_certified = true`.
 
@@ -22,56 +24,48 @@ Repair22 result-freeze commit:
 
 `9174f2e622f42851474ed124b429bf07b2db3ac7`.
 
-Repair22 JSON SHA-256:
+Repair23 is also now frozen PASS:
 
-`7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374`.
+`GE19_REPAIR23_Q20_NORMALIZED_BATH_BRIDGE_AUDIT_PASS`.
 
-Repair22 NPZ SHA-256:
+Repair23 result-freeze commit:
 
-`3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16`.
+`79597296185209e50ef133f680d7b3d3481bac86`.
 
-All 26 frozen certification gates PASS.
+Repair23 closes the normalization/equation bridge needed before q20:
 
-Key controls:
+- exact q->z FLRW identity: PASS;
+- exact cosmic->dimensionless bath identity: PASS;
+- GE05 c1 normalized-z residual relative L2: `4.776595495173347e-16`;
+- GE05 c2 analytic vs finite difference: `9.244401818347801e-09`;
+- weight-scaling residuals: `0.0`;
+- NL1C4 exact interval propagator vs DOP853:
+  q `6.796235773486602e-15`,
+  v `1.6810014932296363e-14`;
+- all 10 frozen Repair23 gates PASS.
 
-- Nt64 frozen H1 reproduction: exact;
-- H1 Nt64/Nt128 state relative L2: `1.5405620815417885e-5`;
-- Nx1024/Nx2048 H3 source relative L2 max: `1.396726236718744e-12`;
-- Repair18 projected p0 reproduction: `0.0`;
-- initial scaled constraint residual: `2.482534153108436e-16`;
-- active Nt128 shift Linf: `8.067171929789269e-7 < 1e-6`;
-- matched shift orders: Linf `3.2357755356022007`, RMS/L2 `3.1225511606202474`;
-- near-null absolute residual / S_ref: `9.599035682049098e-15`;
-- H3 Nt64/Nt128 state relative L2: `1.520874923438771e-5`;
-- H3 linear residual: `2.1762890113126683e-13`;
-- H3 anisotropy: `6.391121604651976e-16`;
-- all candidate arrays finite.
+The exact normalized bath dictionary is now frozen:
 
-Certified object:
+`z_j = omega_j q_j / sqrt(w_j)`.
 
-the low-mode, constraint-certified, window-local reduced-H3 particular directional state Z20 on the Repair13 self-consistent background with genuine on-shell H1 parents and the frozen Repair18 finite-window boundary.
+The second-order bath equation is frozen as
 
-Not certified:
+`G1[Z20,z20] + G2[(Z10,z10),(Z10,z10)] = 0`.
 
-- homogeneous/primordial second-order content;
-- full-species Z20;
-- physical-amplitude nonlinear state;
-- finite eta;
-- Z21;
-- observables.
+The next licensed step is the actual q20 construction on the certified Repair22 Z20 state.
 
-Repair22 licenses the next separately preregistered step:
+Frozen q20 boundary convention:
 
-`q20`
+- z10 at z=1.5 inherits the full-history positive-Drude retarded state and then evolves on the reduced on-shell H1 parent;
+- z20(z=1.5)=0;
+- dz20/dxi(z=1.5)=0.
 
-from the second directional expansion of the eta-independent normalized bath equation `G[Z,q]=0`.
-
-No H4/Z21 solve is licensed until q20 itself is constructed and frozen.
+No H4/Z21 solve is licensed until q20 is constructed and frozen.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> projected boundary certified -> on-shell-parent defect resolved -> Repair22 certifies Z20 -> q20 construction is next`.
+`H1/background certified -> Repair22 certifies Z20 -> Repair23 bath normalization/equation bridge PASS -> q20 construction is next`.
 
 ---
 
@@ -581,6 +575,45 @@ Next licensed object:
 `q20`, the baseline second-order normalized bath response fixed by the second directional expansion of `G[Z,q]=0`.
 ---
 
+## Repair23 — q20 normalized-bath bridge
+
+Classification:
+
+`GE19_REPAIR23_Q20_NORMALIZED_BATH_BRIDGE_AUDIT_PASS`.
+
+Result-freeze commit:
+
+`79597296185209e50ef133f680d7b3d3481bac86`.
+
+Successful execution: workflow `35645649788`, job `106485343261`, artifact ID `10659908576`.
+
+Frozen JSON/FULL SHA-256:
+
+`20ce1c8d7faca45fe61b68bd0c451a616c00b0bd3e22504e83467877b8a3e6c6`.
+
+All ten frozen gates PASS.
+
+Exact normalized variable:
+
+`z_j=omega_j q_j/sqrt(w_j)`.
+
+Exact FLRW bath equation:
+
+`zddot_j+3H zdot_j+omega_j^2(z_j-X)=0`.
+
+Dimensionless form:
+
+`z_j,xi,xi+3h z_j,xi+r_j^2(z_j-X)=0`.
+
+Second directional equation:
+
+`G1[Z20,z20]+G2[(Z10,z10),(Z10,z10)]=0`.
+
+Repair23 freezes the q20 dictionary and window-local boundary convention but does not construct q20.
+
+The first execution wrapper run `35645459393` failed only because `tee` opened the log before `results/` existed. Wrapper-only fix `02b205d82ef9c89cfcbccd1a5ec2e5429a0cc2f8` changed no science code or gate.
+---
+
 ## What is certified now
 
 Certified:
@@ -608,7 +641,7 @@ The project is **not yet ready for a nonlinear real-data claim**.
 
 The shortest valid route is:
 
-`q20 construction -> H4/Z21 -> observable bridge -> real-data confrontation`.
+`Repair24 q20 construction -> H4/Z21 -> observable bridge -> real-data confrontation`.
 
 For the full nonlinear-memory state claim:
 
@@ -622,8 +655,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Preregister and construct q20 from the eta-independent normalized bath equation on the frozen Repair22 Z20 state.
+Preregister and implement Repair24 q20 construction on the frozen Repair22 Z20 state using the Repair23 normalized-bath dictionary and boundary convention.
 
-Until q20 is frozen, the canonical project status is:
+Canonical project status:
 
-**Repair13 H1 PASS; Repair18 boundary PASS; Repair19 historical FAIL; Repair20/21 diagnostics frozen; Repair22 Z20 CERTIFIED; q20 NEXT; H4/Z21 NOT YET LICENSED.**
+**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 q20 construction NEXT; H4/Z21 NOT YET LICENSED.**
