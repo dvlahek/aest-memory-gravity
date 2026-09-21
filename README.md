@@ -8,6 +8,46 @@
 
 Research code and validation harness for an AeST-based history-dependent gravitational memory model.
 
+## Active GE19 checkpoint — 2026-09-21
+
+The active weakly nonlinear gravitational-elasticity track is GE19.
+
+**Certified parent:** Repair13
+
+`GE19_REPAIR13_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE_PASS`.
+
+The reduced Einstein+AeST+dust+Lambda H1 system is closed on its own on-shell background
+
+`H_red^2=(Q K_Q-K)/3+C/a^3+rho_lambda`.
+
+**First H3/Z20 attempt:** Repair14
+
+`GE19_REPAIR14_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR_FAIL`.
+
+The source is spatially converged and the candidate state is time-grid converged, but the second-order shift constraint remains O(1), so Z20 is not certified.
+
+**Diagnostics:** Repairs 15 and 16 are frozen diagnostic results. They exclude both the zero-dynamic-velocity and canonical-zero finite-window initial boundaries as sufficient fixes.
+
+**Current next gate:** Repair17 is **LOCKED AND READY, NOT YET LOCALLY EXECUTED**.
+
+Repair17 tests if the same frozen quadratic source intersects the full canonical initial constraint manifold. No time integration is performed.
+
+Locked runner HEAD:
+
+`152da4a51e89c318aa97632815ea714b8f61ef3c`.
+
+Until Repair17 is executed and frozen:
+
+- do not rerun H3 with a new boundary;
+- do not construct q20;
+- do not start H4/Z21;
+- do not make nonlinear real-data claims.
+
+Persistent GE19 chronology and frozen provenance:
+
+`docs/ge19_history.md`.
+
+
 ## Current status
 
 **v0.18 — CLASS source integration and zero-regression: PASS.**
@@ -132,11 +172,12 @@ The earlier shear-strain completion draft is retained only as an exploratory alt
 
 Immediate physics target:
 
-- GE01: linear native-state tau crossover across the Maxwell transition;
-- GE02: **PASS** — finite-amplitude nonlinear action-source tau crossover;
-- next: weakly nonlinear `O(epsilon^2 eta)` Y-memory cross-source `DY2[chi10;chi11]`;
-- only after that: nonlinear-background physical-state eta tangent;
-- finite physical eta and collapse remain later stages.
+- Repair13: **PASS** — self-consistent reduced background and H1/Z10 closure;
+- Repair14: frozen **FAIL** — first H3/Z20 particular state is not shift-constraint certified;
+- Repair15/16: frozen diagnostics excluding the two naive finite-window zero-boundary conventions;
+- Repair17: **READY / NOT YET EXECUTED** — full canonical initial constraint-manifold existence audit;
+- only after a constraint-certified Z20: q20 and H4/Z21 nonlinear memory correction;
+- finite physical eta, lensing/data confrontation and collapse remain later stages.
 
 GE02 first locked run:
 
@@ -200,13 +241,13 @@ Later weakly nonlinear state work therefore uses N1024 primary and N2048 control
 
 **GE05 — PASS.** The longitudinal 3+1 NL0B action now has explicit first- and second-directional source generators `M1` and `M2` for scalar, bath, aether and all metric blocks. Direct metric memory stress is exactly absent at first order and nonzero at second order, as required by the covariant action.
 
-The remaining source-completeness item before a full weakly nonlinear state tangent is the memory-off analytic Hessian block
+The memory-off analytic quadratic source has now been generated and the first baseline second-order state/source `Z20` was attempted in Repair14.
 
-`Q(Z10,Z11)`
+That Repair14 candidate is **not certified** because the second-order shift constraint fails despite excellent source, anisotropy and time-grid controls.
 
-and the associated baseline second-order state/source `Z20`.
+The active blocker is therefore no longer source generation itself. It is the initial/Noether compatibility of the H3 constrained system, currently isolated by Repair17.
 
-Do not start a `Z21` solver until that block is generated from the frozen AeST/Einstein/matter theory.
+Do not start a `Z21` solver until a separately frozen H3 run certifies `Z20`.
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
