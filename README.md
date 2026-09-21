@@ -40,14 +40,14 @@ The full canonical 2x8 initial constraint manifold exists in all `714/714` mater
 
 This means the frozen quadratic source is compatible; the previous finite-window zero boundaries were inadmissible.
 
-**Repair18 boundary:** **PASS / CERTIFIED** in `714/714` material cases. **Repair19 propagation:** frozen **FAIL** only on shift. **Repair20 diagnostic:** near-null normalization is confirmed, but the active shift remains above the original `1e-6` gate at Nt128 (`9.589e-6`), so ordinary H3 time truncation is not established as the explanation. **Current next gate:** Repair21 is **LOCKED / READY / NOT YET EXECUTED**. It re-solves the certified H1 system on-shell at Nt64 and Nt128, rebuilds the unchanged H3 source, and evaluates matched-grid shift convergence for fixed C,beta,m.
+**Repair18 boundary:** **PASS / CERTIFIED** in `714/714` material cases. **Repair19 propagation:** frozen historical **FAIL** only on shift. **Repair20:** near-null normalization pathology confirmed. **Repair21:** `INTERPOLATED_H1_PARENT_DEFECT_CONFIRMED`; with a genuine on-shell Nt128 H1 parent the active shift falls to `8.067e-7 < 1e-6`, with matched third-order convergence (`3.236` Linf, `3.123` RMS/L2), state mismatch `1.521e-5`, linear residual `2.176e-13`, and anisotropy `6.391e-16`. **Current next gate:** Repair22 is **LOCKED / READY / NOT YET EXECUTED** as the explicit Z20 certification rerun with on-shell H1 parents and Nx1024/Nx2048 source control.
 
 Until that is frozen:
 
-- run only the locked Repair21 on-shell-H1 matched-shift diagnostic;
-- do not relabel Repair19 or Repair20;
-- do not construct q20 or start H4/Z21;
-- do not make nonlinear real-data claims.
+- run only the locked Repair22 Z20 certification;
+- do not relabel Repair19/20/21;
+- do not construct q20 until Repair22 is frozen PASS;
+- do not start H4/Z21 or make nonlinear real-data claims.
 
 Persistent GE19 chronology and frozen provenance:
 
@@ -185,8 +185,9 @@ Immediate physics target:
 - Repair18: **PASS** — unique reproducible zero-coordinate projected-momentum finite-window boundary certified in 714/714 material cases;
 - Repair19: frozen **FAIL** — projected-boundary H3 march passes every frozen control except shift; near-null normalization dominates the O(1) maximum;
 - Repair20: **COMPLETE / ACTIVE ISSUE REMAINS** — near-null O(1) monitor pathology confirmed, but active Nt128 shift remains `9.589e-6`;
-- Repair21: **READY / NOT YET EXECUTED** — on-shell H1 Nt64/Nt128 parent plus matched-grid shift diagnostic;
-- only after a separately certified Z20: q20 and H4/Z21 nonlinear memory correction;
+- Repair21: **PASS-DIAGNOSTIC** — interpolated-H1-parent defect confirmed; on-shell Nt128 active shift `8.067e-7` passes the original `1e-6` threshold with ~third-order matched convergence;
+- Repair22: **READY / NOT YET EXECUTED** — explicit on-shell-parent Z20 certification with Nx1024/Nx2048 source control, boundary re-audit and active/near-null shift certification;
+- only after Repair22 is frozen PASS: q20 construction, then H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
 GE02 first locked run:
@@ -255,7 +256,7 @@ The memory-off analytic quadratic source has now been generated and the first ba
 
 That Repair14 candidate is **not certified** because the second-order shift constraint fails despite excellent source, anisotropy and time-grid controls.
 
-The active blocker is therefore no longer source generation, manifold existence or boundary selection. Repair20 confirms the near-null part of the shift problem but leaves an active residual. Repair21 now tests the specific possibility that Repair20's separately interpolated H1 state/derivative parent is off-shell between Nt64 nodes.
+The active blocker is therefore no longer source generation, manifold existence, boundary selection or the active-shift diagnosis. Repair21 shows that the residual came from an off-shell separately interpolated H1 parent. Repair22 is now the explicit certification run for the window-local reduced-H3 Z20 baseline.
 
 Do not start a `Z21` solver until a separately frozen H3 run certifies `Z20`.
 
