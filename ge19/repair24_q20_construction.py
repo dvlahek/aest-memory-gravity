@@ -66,6 +66,7 @@ def aor(a,b)->float:
 
 
 def load_quiet(path:Path,name:str):
+    path=Path(path).resolve()
     old=os.getcwd()
     with tempfile.TemporaryDirectory() as td:
         os.chdir(td)
