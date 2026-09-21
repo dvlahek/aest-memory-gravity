@@ -1,0 +1,88 @@
+{
+  "classification": "GE19_REPAIR20_PREDATA_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT",
+  "created_before_repair20_result": true,
+  "parent_repair19_freeze_commit": "71e1e60e133b79828163fe077f5991e98d40d6bb",
+  "purpose": "Determine if the Repair19 shift-only FAIL is the combination of a near-null relative-monitor pathology and finite-time-step truncation on active rows, using a frozen Nt=32/64/128 ladder with no physics, source-sign, boundary or Stage-B threshold change.",
+  "diagnostic_only": true,
+  "frozen_parent": {
+    "repair19_classification": "GE19_REPAIR19_PROJECTED_BOUNDARY_REDUCED_H3_Z20_PROPAGATION_FAIL",
+    "repair19_JSON_sha256": "32837e04a9ea6c83642a0d465f0312cc17a02ddad168760764f3c7b999a0a14d",
+    "repair19_NPZ_sha256": "d638c86e48dd5c912629068f56c3780d0a611ed26ff5c161cd792a14328f7215",
+    "repair18_JSON_sha256": "d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc"
+  },
+  "ladder": {
+    "Nt": [32, 64, 128],
+    "Nx": 1024,
+    "C": ["C_min", "C_star", "C_max"],
+    "beta0": [1.0, 0.5, 0.1],
+    "m": "1..40",
+    "integrator": "same frozen Repair07 two-stage Radau IIA canonical march",
+    "expected_integrator_global_order": 3
+  },
+  "common_parent_interpolation": {
+    "reason": "isolate H3 time-step behavior without rerunning H1",
+    "source_parent": "frozen Repair13 Nt64 Z10 and Z10dot arrays",
+    "target_grids": "build_ge15_reference on the same z=1.5 to z=0.2 interval for Nt=32,64,128",
+    "interpolation": "PCHIP separately on real and imaginary parts of each frozen Repair13 Nt64 Z10 and Z10dot component",
+    "Nt64_identity_required": true,
+    "H1_recomputed": false,
+    "source_construction": "same frozen Repair14 GE06+GE07+Lambda_c2+Y2 construction evaluated on the interpolated frozen Z10 parent",
+    "boundary": "same frozen Repair18 q0=0 projected-p0 rule independently reconstructed on each ladder grid"
+  },
+  "shift_telemetry": {
+    "record_per_time_sample": [
+      "relative backward-error metric",
+      "absolute residual",
+      "natural scale=max(|lhs|,|source|,sum|row_i w_i|,tiny)",
+      "lhs magnitude",
+      "source magnitude",
+      "contribution scale"
+    ],
+    "near_null_rule": "on Nt128 define S_ref=max natural shift scale over all C,beta,m,time samples; classify a sample as near-null if scale <= sqrt(machine_epsilon_float64)*S_ref",
+    "active_rule": "scale > sqrt(machine_epsilon_float64)*S_ref",
+    "original_metric_unchanged": true,
+    "original_shift_threshold_unchanged": 1e-6
+  },
+  "diagnostic_controls": {
+    "near_null_absolute_residual_over_Sref_max": "1000*machine_epsilon_float64",
+    "active_Nt128_shift_relative_max": 1e-6,
+    "active_observed_order_64_to_128_min": 2.5,
+    "active_observed_order_32_to_64_report_only": true,
+    "Nt64_to_Nt128_state_relative_L2_max": 0.005,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "anisotropy_backward_error_max": 1e-6,
+    "boundary_reproduction_same_as_Repair18": true,
+    "all_outputs_finite": true
+  },
+  "required_reports": [
+    "original all-row shift max at Nt32, Nt64, Nt128 without changing its definition",
+    "near-null sample count and active sample count",
+    "near-null max absolute residual and ratio to S_ref",
+    "active-row shift max at each Nt",
+    "active-row absolute residual max and natural scale range",
+    "observed convergence orders from actual grid spacings",
+    "state convergence Nt32/Nt64 and Nt64/Nt128",
+    "worst-case locations for all-row and active-row metrics",
+    "boundary reproduction, linear-system and anisotropy controls"
+  ],
+  "routing": {
+    "NEAR_NULL_MONITOR_PLUS_TIME_TRUNCATION_CONFIRMED": "near-null absolute residual criterion passes, active Nt128 shift <=1e-6, observed active 64-to-128 order >=2.5, state/linear/anisotropy/boundary controls pass",
+    "ACTIVE_SHIFT_PROPAGATION_ISSUE_REMAINS": "active Nt128 shift remains above 1e-6 or convergence-order/control requirements fail",
+    "IMPLEMENTATION_FAIL": "frozen parent hashes, interpolation identity, source reconstruction, boundary reconstruction or execution fails"
+  },
+  "interpretation_boundary": "Repair20 is diagnostic only. Even a positive route does not retroactively pass Repair19 or certify Z20. A later separately preregistered monitor/certification repair would be required.",
+  "explicit_nonchanges": [
+    "no Repair19 relabeling",
+    "no H1 recomputation",
+    "no GE06 or GE07 edit",
+    "no Lambda c1/c2 edit",
+    "no Y2 edit",
+    "no source sign/component-order/normalization edit",
+    "no Repair18 boundary-rule edit",
+    "no shift threshold relaxation",
+    "no q20",
+    "no H4 or Z21",
+    "no observational inference"
+  ],
+  "historical_results_unchanged": true
+}
