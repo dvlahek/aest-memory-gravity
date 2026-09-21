@@ -44,7 +44,7 @@ This means the frozen quadratic source is compatible; the previous finite-window
 
 Current next gate:
 
-- Repair24: construct and certify `q20` on the frozen Repair22 `Z20` state;
+- Repair24: **LOCKED / READY / NOT YET EXECUTED** — construct and certify `q20` on the frozen Repair22 `Z20` state;
 - retain the positive Drude measure, `tau H0=10`, full-history retarded z10 boundary, and zero window-local z20 homogeneous boundary;
 - do not start H4/Z21 until q20 is frozen;
 - do not make nonlinear real-data claims yet.
@@ -188,7 +188,7 @@ Immediate physics target:
 - Repair21: **PASS-DIAGNOSTIC** — interpolated-H1-parent defect confirmed; on-shell Nt128 active shift `8.067e-7` passes the original `1e-6` threshold with ~third-order matched convergence;
 - Repair22: **PASS / Z20 CERTIFIED** — all 26 frozen gates pass; source spatial mismatch `1.397e-12`, active Nt128 shift `8.067e-7`, matched third-order convergence, boundary reproduction exact;
 - Repair23: **PASS / q20 BRIDGE CERTIFIED** — exact `q<->z` normalization, second-directional bath equation, Drude interval propagator and q20 window boundary are frozen;
-- Repair24: **NEXT** — actual q20 construction and convergence certification;
+- Repair24: **LOCKED / READY / NOT YET EXECUTED** — actual q20 construction and convergence certification; final prelock `35653683119` SUCCESS, locked runner `de6b6d414311e772cd5574cb8d7c6aa11ea59a12`;
 - only after q20 is frozen: H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
