@@ -1,0 +1,53 @@
+{
+  "classification": "GE19_REPAIR16_PREDATA_CANONICAL_ZERO_INITIAL_STATE_AUDIT",
+  "created_before_repair16_result": true,
+  "parent_repair15_freeze_commit": "e2d642eb528fab10aa4d3ba0a2afc94b2dcacbaf",
+  "purpose": "Test if the frozen Repair14 H3 quadratic source is compatible with the natural canonical zero boundary y0=(q0,p0)=0, allowing the DAE algebraic map to determine N20, delta_varrho20 and the dynamic cosmic-time derivatives.",
+  "diagnostic_only": true,
+  "frozen_parent": {
+    "repair13_stage_A_pass": true,
+    "repair14_classification": "GE19_REPAIR14_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "repair15_route": "INITIAL_SOURCE_INCOMPATIBILITY"
+  },
+  "canonical_zero_definition": {
+    "y0": "S20=u20=phi20=T20=pS20=pu20=pphi20=pT20=0",
+    "source_vector": "same frozen Repair14 [rhs_main(6), rhs_constraint(2)] at z=1.5",
+    "algebraic_map": "w0 = WR(source) from the frozen Noether-regularized canonical operator",
+    "determined_variables": ["N20","delta_varrho20","S20dot","u20dot","phi20dot","T20dot"],
+    "rows_closed_by_elimination": ["pS","pu","pphi","pT","dust_density","anisotropy"],
+    "independent_monitors": ["lapse","shift"]
+  },
+  "tests": [
+    "reconstruct the same Repair13 reduced backgrounds and frozen Repair14 source without rerunning H1 or Z20",
+    "set canonical y0=0 for every C,beta0,m=1..40 on Nt=64 and Nt=32",
+    "apply the frozen canonical WR source map to obtain the complete local w0 state",
+    "measure p/density/anisotropy algebraic residuals",
+    "measure independent lapse backward error",
+    "measure independent shift backward error",
+    "compare canonical-zero qdot values against the old velocity-zero convention",
+    "report rank/condition of the frozen local algebraic map and all finite controls"
+  ],
+  "diagnostic_thresholds": {
+    "algebraic_relative_residual_max": 1e-8,
+    "independent_lapse_backward_error_max": 1e-6,
+    "independent_shift_backward_error_max": 1e-6,
+    "all_outputs_finite": true
+  },
+  "routing": {
+    "CANONICAL_ZERO_INITIAL_STATE_CLOSES_CONSTRAINTS": "all diagnostic thresholds pass on every material-source case",
+    "QUADRATIC_SOURCE_NOETHER_INCOMPATIBILITY_REMAINS": "canonical zero state still violates lapse or shift above threshold on any material-source case",
+    "IMPLEMENTATION_FAIL": "frozen parent/source reproduction or algebraic map construction fails"
+  },
+  "explicit_nonchanges": [
+    "no Repair14 Z20 trajectory recomputation",
+    "no H1 recomputation",
+    "no GE06 or GE07 edit",
+    "no Lambda c1 or c2 edit",
+    "no source sign edit",
+    "no source taper or window edit",
+    "no Stage-B threshold relaxation",
+    "no q20 construction",
+    "no H4 or Z21 construction"
+  ],
+  "historical_results_unchanged": true
+}
