@@ -41,7 +41,9 @@ M_MAX=40
 CHUNK=16
 
 A_INITIAL=0.4
-A_INITIAL_MAX=1e-12
+A_TARGET_MAX=1e-15
+TRACE_LO_A=0.3799548579266745
+TRACE_HI_A=0.41924557250685585
 X_INITIAL_MAX=1e-10
 SPATIAL_MAX=1e-10
 QUAD_MAX=1e-2
@@ -246,39 +248,65 @@ def full_history_boundary(c4,r7,trace_path,order):
     rows=c4.read_trace(trace_path)
     histories,kmiss,tmiss=c4.select_and_align(rows)
     aa=np.asarray([q["a"] for q in histories[0]],float)
-    i0=int(np.argmin(np.abs(aa-A_INITIAL)))
-    amiss=float(abs(aa[i0]-A_INITIAL))
-    if amiss>A_INITIAL_MAX:
-        raise RuntimeError(f"full-history trace lacks exact a=0.4 surface: mismatch={amiss}")
+    lo=max([j for j,a in enumerate(aa) if a<=A_INITIAL],default=None)
+    hi=min([j for j,a in enumerate(aa) if a>=A_INITIAL],default=None)
+    if lo is None or hi is None or lo==hi:
+        raise RuntimeError("frozen v0.77 trace does not bracket a=0.4")
+    if abs(float(aa[lo])-TRACE_LO_A)>1e-15 or abs(float(aa[hi])-TRACE_HI_A)>1e-15:
+        raise RuntimeError(f"unexpected frozen a=0.4 bracket: {aa[lo]}, {aa[hi]}")
+
+    Nlo=math.log(float(aa[lo])); Nhi=math.log(float(aa[hi])); Nt=math.log(A_INITIAL)
+    frac=(Nt-Nlo)/(Nhi-Nlo)
+    if not (0.0<frac<1.0):
+        raise RuntimeError("invalid partial-step fraction")
 
     amps,_,_=r7.amplitudes()
     z0=np.empty((order,len(r7.FOURIER_N)),complex)
     v0=np.empty_like(z0)
+    trace_x0=np.empty(len(r7.FOURIER_N),complex)
     rr_ref=ww_ref=None
+    target_a_reconstructed=math.exp(Nlo+frac*(Nhi-Nlo))
+    target_mismatch=float(abs(target_a_reconstructed-A_INITIAL))
+    if target_mismatch>A_TARGET_MAX:
+        raise RuntimeError(f"partial-step target mismatch {target_mismatch}")
+
     for im,hist in enumerate(histories):
-        rr,ww,qs,vs=c4.integrate_mode(hist[:i0+1],order)
+        rr,ww,qs,vs=c4.integrate_mode(hist[:lo+1],order)
         if rr_ref is None:
             rr_ref=np.asarray(rr,float); ww_ref=np.asarray(ww,float)
         elif aor(rr_ref,rr)>1e-14 or aor(ww_ref,ww)>1e-14:
             raise RuntimeError("quadrature nodes changed between input modes")
-        k=float(r7.g9.K_REQ[im])
-        fac=0.5*float(amps[im])*np.exp(1j*float(r7.PHASES[im]))*(1j*k)
-        z0[:,im]=fac*np.asarray(qs[-1],float)
-        v0[:,im]=fac*np.asarray(vs[-1],float)
 
-    trace_x0=np.empty(len(r7.FOURIER_N),complex)
-    for im,hist in enumerate(histories):
+        xlo=float(hist[lo]["chi"]/hist[lo]["a"])
+        xhi=float(hist[hi]["chi"]/hist[hi]["a"])
+        xt=xlo+frac*(xhi-xlo)
+        hlo=float(hist[lo]["H_over_H0"])*TAUH0
+        hhi=float(hist[hi]["H_over_H0"])*TAUH0
+        hm=math.sqrt(hlo*hhi)
+        dxi=(Nt-Nlo)/hm
+        qt,vt=c4.step_linear(
+            np.asarray(qs[-1],float),
+            np.asarray(vs[-1],float),
+            np.asarray(rr,float),
+            hm,xlo,xt,dxi
+        )
+
         k=float(r7.g9.K_REQ[im])
-        chi=float(hist[i0]["chi"])
-        fac=0.5*float(amps[im])*np.exp(1j*float(r7.PHASES[im]))
-        trace_x0[im]=1j*k*fac*chi/A_INITIAL
+        fac0=0.5*float(amps[im])*np.exp(1j*float(r7.PHASES[im]))
+        gradfac=fac0*(1j*k)
+        z0[:,im]=gradfac*np.asarray(qt,float)
+        v0[:,im]=gradfac*np.asarray(vt,float)
+        trace_x0[im]=gradfac*xt
 
     return {
         "r":rr_ref,"w":ww_ref,"z0":z0,"v0":v0,
         "trace_X0":trace_x0,
-        "a_mismatch":amiss,"k_relative_miss":float(kmiss),
+        "a_target_mismatch":target_mismatch,
+        "k_relative_miss":float(kmiss),
         "common_time_mismatch":float(tmiss),
-        "trace_index":i0,
+        "trace_lo_index":int(lo),"trace_hi_index":int(hi),
+        "trace_lo_a":float(aa[lo]),"trace_hi_a":float(aa[hi]),
+        "partial_step_fraction_ln_a":float(frac),
     }
 
 
@@ -607,7 +635,7 @@ def main():
         qdiag["initial_X10_match_abs_or_rel_max"],
         tdiag["initial_X10_match_abs_or_rel_max"],
     )
-    a_mismatch=max(b2048["a_mismatch"],b1024["a_mismatch"])
+    a_mismatch=max(b2048["a_target_mismatch"],b1024["a_target_mismatch"])
     all_finite=bool(
         pdiag["all_outputs_finite"] and qdiag["all_outputs_finite"]
         and tdiag["all_outputs_finite"]
@@ -626,7 +654,7 @@ def main():
     gates={
         "Repair22_Z20_certified":True,
         "Repair23_bridge_PASS":True,
-        "full_history_initial_surface_a_abs_mismatch_le_1e12":bool(a_mismatch<=A_INITIAL_MAX),
+        "full_history_trace_bracket_exact_match":bool(\n            b2048["trace_lo_a"]==TRACE_LO_A and b2048["trace_hi_a"]==TRACE_HI_A\n            and b1024["trace_lo_a"]==TRACE_LO_A and b1024["trace_hi_a"]==TRACE_HI_A\n        ),\n        "full_history_partial_step_target_a_abs_mismatch_le_1e15":bool(a_mismatch<=A_TARGET_MAX),
         "H1_X10_initial_match_abs_or_rel_le_1e10":bool(initial_mismatch<=X_INITIAL_MAX),
         "G2_Nx256_vs_Nx512_low_mode_relative_L2_le_1e10":bool(
             pdiag["G2_spatial_relative_L2"]<=SPATIAL_MAX
@@ -671,7 +699,7 @@ def main():
         "vectorized_interval_propagator_self_test":step_err,
         "background_reproduction":bgctl,
         "full_history_boundary":{
-            "a_mismatch_max":a_mismatch,
+            "partial_step_target_a_mismatch_max":a_mismatch,\n            "trace_lo_a":TRACE_LO_A,\n            "trace_hi_a":TRACE_HI_A,\n            "primary_partial_step_fraction_ln_a":b2048["partial_step_fraction_ln_a"],\n            "control_partial_step_fraction_ln_a":b1024["partial_step_fraction_ln_a"],
             "primary_order":NQ_PRIMARY,
             "control_order":NQ_CONTROL,
             "primary_k_relative_miss":b2048["k_relative_miss"],
