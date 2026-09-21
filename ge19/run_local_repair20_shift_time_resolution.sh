@@ -9,11 +9,14 @@ echo "=== GE19 Repair20 lock audit ==="
 
 test "$(git rev-parse HEAD:docs/ge19_repair19_projected_boundary_h3_z20_result_freeze.md)" = "642006d7f5dac17edb6ff39822fc2e09b74fd5e3"
 test "$(git rev-parse HEAD:ge19/repair20_predata_shift_near_null_time_resolution_audit.json)" = "ef26c42b8f7ec72bae23c7c173c5b8e0c3232599"
-test "$(git rev-parse HEAD:ge19/repair20_shift_near_null_time_resolution_audit.py)" = "4ce0f58aa64bb08336a119465325a82fdcd4fc8f"
-test "$(git rev-parse HEAD:.github/workflows/ge19-repair20-prelock-audit.yml)" = "4c146f4b5e1d25767b9c6f65f5908fa2938ca00a"
-test "$(git rev-parse HEAD:docs/ge19_repair20_shift_time_resolution_audit_lock.md)" = "3fc1829b7bfc9723b37a619d2a7b16d3d5bf8ea4"
+test "$(git rev-parse HEAD:ge19/repair20_shift_near_null_time_resolution_audit.py)" = "09c46fa2a585ba8d055ff396abc48f0bf7e40812"
+test "$(git rev-parse HEAD:.github/workflows/ge19-repair20-prelock-audit.yml)" = "111d8ea596cf9c2f640fdb6a7cf4121c2925e78e"
+test "$(git rev-parse HEAD:docs/ge19_repair20_shift_time_resolution_audit_lock.md)" = "0cc64df365cc3c11ae23b85f760f2ea5492ffd99"
 
-for sha in   71e1e60e133b79828163fe077f5991e98d40d6bb   7af03dcf16023dee12df1d93a36abf1a97881ec8   fe4ba2f9b0bf176fc5dd9f92c3ee2dcbb9da352e   01906c451c789b07e0050b16b0f2dda81582aee0   f2837e5154f8a9ca999c6bbeed4c9d62603185d8
+for sha in   71e1e60e133b79828163fe077f5991e98d40d6bb   7af03dcf16023dee12df1d93a36abf1a97881ec8   fe4ba2f9b0bf176fc5dd9f92c3ee2dcbb9da352e   01906c451c789b07e0050b16b0f2dda81582aee0   f2837e5154f8a9ca999c6bbeed4c9d62603185d8 \
+  9bb8e4fd36be3fd26fb11b06a215b2806a269467 \
+  410e6c35544a7225a91ca659c4001904c483cc12 \
+  76256a4c1b59a680d46531bd783b4f273c37e6c5
 do
   git merge-base --is-ancestor "$sha" HEAD
 done
