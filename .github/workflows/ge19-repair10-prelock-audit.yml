@@ -1,0 +1,112 @@
+name: GE19 Repair10 vacuum on-shell prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair10_*'
+      - '.github/workflows/ge19-repair10-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair10_reduced_background_vacuum_onshell_audit.py
+
+      - name: Audit preregistration
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open("ge19/repair10_predata_reduced_background_vacuum_onshell_audit.json"))
+          assert d["classification"]=="GE19_REPAIR10_PREDATA_REDUCED_BACKGROUND_VACUUM_ONSHELL_AUDIT"
+          assert d["created_before_repair10_result"] is True
+          assert d["diagnostic_only"] is True
+          q=d["predeclared_numerical_controls"]
+          assert q["full_known_density_closure_global_relative_L2_max"]==5e-5
+          assert q["full_known_pressure_closure_global_relative_L2_max"]==5e-3
+          assert q["lambda_dominance_improvement_factor_reference"]==10.0
+          assert "no Lambda term is added to the GE19 linear operator in Repair10" in d["explicit_nonchanges"]
+          assert "no H1 reclosure is executed" in d["explicit_nonchanges"]
+          assert "no H3 source or Z20 is constructed" in d["explicit_nonchanges"]
+          print("GE19_REPAIR10_PREREG_AUDIT_PASS")
+          PY
+
+      - name: Exact homogeneous action audit
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import sympy as sp
+
+          N,L,R,b,u,phi=sp.symbols("N L R b u phi", real=True)
+          Lt,Lx,Rt,Rx,bx,ut,ux,pt,px,Nx=sp.symbols(
+              "Lt Lx Rt Rx bx ut ux pt px Nx", real=True
+          )
+          KB,C=sp.symbols("KB C", real=True)
+          Q=sp.symbols("Q", real=True)
+          K,KQ=sp.symbols("K KQ", real=True)
+          a,adot,addot,rhol=sp.symbols("a adot addot rhol", positive=True, real=True)
+
+          # At a homogeneous point the AeST analytic lagrangian depends on
+          # K(Q); use a local linear jet K + KQ*(Qinv-Q).
+          ch,sh=sp.cosh(u),sp.sinh(u)
+          kL=(Lt-b*Lx-L*bx)/(N*L)
+          kR=(Rt-b*Rx)/(N*R)
+          sigma=(pt-b*px)/N
+          Qinv=ch*sigma+sh*px/L
+          Xinv=sh*sigma+ch*px/L
+          E=ch*((ut-b*ux)/N+Nx/(N*L))+sh*(kL+ux/L)
+          Kfun=K+KQ*(Qinv-Q)
+
+          grav=N*L*R**2*(-4*kL*kR-2*kR**2)+2*N*Rx**2/L+4*Nx*R*Rx/L
+          aest=N*L*R**2*(KB*E**2+2*C*E*Xinv-C*Xinv**2+2*Kfun)
+          lag=sp.expand(grav+aest)
+
+          bg={
+              N:1,L:a,R:a,b:0,u:0,
+              Lt:adot,Lx:0,Rt:adot,Rx:0,bx:0,
+              ut:0,ux:0,pt:Q,px:0,Nx:0,
+          }
+
+          Nf=sp.factor(sp.diff(lag,N).subs(bg))
+          Lf=sp.factor(sp.diff(lag,L).subs(bg))
+          Ltpart=sp.factor(sp.diff(lag,Lt).subs(bg))
+
+          expected_N=2*a**3*(3*(adot/a)**2-(Q*KQ-K))
+          assert sp.simplify(Nf-expected_N)==0, (Nf,expected_N)
+
+          # d/dt(-4 a adot) = -4(adot^2+a addot)
+          EL=sp.expand(Lf+4*(adot**2+a*addot))
+          expected_EL=2*a**2*K+2*adot**2+4*a*addot
+          assert sp.simplify(EL-expected_EL)==0, (EL,expected_EL)
+          assert sp.simplify(Ltpart+4*a*adot)==0
+
+          Llam=-6*rhol*N*L*R**2
+          lamN=sp.diff(Llam,N).subs(bg)
+          lamL=sp.diff(Llam,L).subs(bg)
+          lamR=sp.diff(Llam,R).subs(bg)
+          lamb=sp.diff(Llam,b).subs(bg)
+          assert sp.simplify(lamN+6*rhol*a**3)==0
+          assert sp.simplify(lamL+6*rhol*a**2)==0
+          assert sp.simplify(lamR+12*rhol*a**2)==0
+          assert lamb==0
+
+          print("GE06_HOMOGENEOUS_LAPSE =",Nf)
+          print("GE06_HOMOGENEOUS_SCALE =",EL)
+          print("LAMBDA_N =",lamN)
+          print("LAMBDA_L =",lamL)
+          print("LAMBDA_R =",lamR)
+          print("LAMBDA_SHIFT =",lamb)
+          print("GE19_REPAIR10_ACTION_AUDIT_PASS")
+          PY
+
+      - name: Import audit without executing science
+        run: python3 -c "import importlib.util; s=importlib.util.spec_from_file_location('r10','ge19/repair10_reduced_background_vacuum_onshell_audit.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); print('GE19_REPAIR10_IMPORT_PASS')"
