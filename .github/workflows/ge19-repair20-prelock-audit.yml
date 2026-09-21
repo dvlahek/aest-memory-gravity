@@ -90,6 +90,8 @@ jobs:
           assert "source_bundle_reduced_lambda(" in src
           assert "_radau2_integrate_canonical(" in src
           assert "_constraint_backward_error(" in src
+          assert 'z13["x64"]' in src
+          assert "ln_a_primary" not in src
 
           print("REPAIR07_BLOB =",blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py"))
           print("REPAIR14_BLOB =",blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py"))
