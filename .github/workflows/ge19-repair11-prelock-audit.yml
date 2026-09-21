@@ -1,0 +1,102 @@
+name: GE19 Repair11 Lambda H1 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair11_*'
+      - '.github/workflows/ge19-repair11-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair11_lambda_inclusive_reduced_h1_reclosure.py
+
+      - name: Audit prereg and exact Lambda c1 matrix
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+          import numpy as np
+          import sympy as sp
+
+          root=Path.cwd()
+          d=json.load(open("ge19/repair11_predata_lambda_inclusive_reduced_h1_reclosure.json"))
+          assert d["classification"]=="GE19_REPAIR11_PREDATA_LAMBDA_INCLUSIVE_REDUCED_H1_RECLOSURE"
+          assert d["created_before_repair11_result"] is True
+          assert "no threshold change" in d["explicit_nonchanges"]
+          assert "no H3 source construction" in d["explicit_nonchanges"]
+          assert "no Z20 construction" in d["explicit_nonchanges"]
+
+          spec=importlib.util.spec_from_file_location(
+              "r11",root/"ge19/repair11_lambda_inclusive_reduced_h1_reclosure.py"
+          )
+          r11=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r11)
+
+          # Symbolic directional expansion of L_lambda=-6 rho N L R^2.
+          eps=sp.symbols("eps", real=True)
+          a,rho=sp.symbols("a rho", positive=True, real=True)
+          dN,dL,dR=sp.symbols("dN dL dR", real=True)
+          N=1+eps*dN
+          L=a+eps*dL
+          R=a+eps*dR
+          lag=-6*rho*N*L*R**2
+
+          EN=sp.diff(lag,N)
+          # Because N above is already the expanded expression, construct
+          # exact Euler partials from independent variables instead.
+          Ns,Ls,Rs=sp.symbols("Ns Ls Rs", real=True)
+          exact=-6*rho*Ns*Ls*Rs**2
+          EN_exact=sp.diff(exact,Ns)
+          EL_exact=sp.diff(exact,Ls)
+          ER_exact=sp.diff(exact,Rs)
+          sub={Ns:1+eps*dN,Ls:a+eps*dL,Rs:a+eps*dR}
+          EN1=sp.diff(EN_exact.subs(sub),eps).subs(eps,0)
+          EL1=sp.diff(EL_exact.subs(sub),eps).subs(eps,0)
+          ER1=sp.diff(ER_exact.subs(sub),eps).subs(eps,0)
+
+          gauge={dL:sp.Symbol("S"),dR:sp.Symbol("S")}
+          S=gauge[dL]
+          ENg=sp.expand(EN1.subs(gauge))
+          ISOg=sp.expand((EL1+ER1).subs(gauge))
+          ANIg=sp.expand((EL1-sp.Rational(1,2)*ER1).subs(gauge))
+
+          assert sp.simplify(ENg + 18*rho*a**2*S)==0
+          assert sp.simplify(ISOg + 18*rho*a**2*dN + 36*rho*a*S)==0
+          assert sp.simplify(ANIg)==0
+
+          aa=0.6
+          rr=3.451969239349119e-8
+          C=r11.lambda_c1_matrix(aa,rr)
+          assert C.shape==(16,10)
+          assert np.isclose(C[4,2],-18*rr*aa**2,rtol=0,atol=1e-30)
+          assert np.isclose(C[6,0],-18*rr*aa**2,rtol=0,atol=1e-30)
+          assert np.isclose(C[6,2],-36*rr*aa,rtol=0,atol=1e-30)
+
+          mask=np.ones_like(C,dtype=bool)
+          mask[4,2]=False; mask[6,0]=False; mask[6,2]=False
+          assert np.max(np.abs(C[mask]))==0.0
+          assert np.max(np.abs(C[10:12]))==0.0
+          assert np.max(np.abs(C[12:14]))==0.0
+
+          print("LAMBDA_EN_C1 =",ENg)
+          print("LAMBDA_ISO_C1 =",ISOg)
+          print("LAMBDA_ANISO_C1 =",ANIg)
+          print("LAMBDA_MATRIX_NONZERO =",{
+              "EN_S":C[4,2].real,
+              "ISO_N":C[6,0].real,
+              "ISO_S":C[6,2].real,
+          })
+          print("GE19_REPAIR11_PRELOCK_AUDIT_PASS")
+          PY
