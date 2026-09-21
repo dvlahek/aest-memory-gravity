@@ -1,0 +1,60 @@
+{
+  "classification": "GE19_REPAIR13_PREDATA_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE",
+  "created_before_repair13_result": true,
+  "parent_repair12_freeze_commit": "8d27fe6cba7ce3e00f8b6714a22dc9d47de24c6a",
+  "purpose": "Replace only the full-species CLASS H(a) background used by the reduced AeST+dust+Lambda H1 operator with the exact homogeneous on-shell H(a) of the same reduced action, then repeat Stage A.",
+  "frozen_repair12_route": "BACKGROUND_OR_REDUCED_DYNAMICS_REMAIN",
+  "reduced_background_definition": {
+    "same_a_grid": true,
+    "same_AeST_scalar_charge": "K_Q(a) a^3 = I0 from frozen GE15 native accepted background",
+    "same_AeST_branch": "Q(a), Z(a), K_Q(a), K_QQ(a), K(a) from the frozen stable Exp branch",
+    "same_dust": "rho_d(a)=C/a^3 for C_min,C_star,C_max",
+    "same_lambda": "rho_lambda from the frozen GE15 CLASS background table",
+    "friedmann": "H_red(a)^2 = (Q K_Q - K)/3 + C/a^3 + rho_lambda",
+    "pressure_identity": "with d(K_Q)/d ln a=-3 K_Q, the reduced scale equation gives p_required=-rho_lambda exactly"
+  },
+  "stage_A_only": true,
+  "permitted_changes_only": [
+    "construct a separate H_red(a) background for each C envelope from the exact reduced Friedmann equation",
+    "use H_red in the frozen Repair11 Lambda-inclusive first-order canonical operator",
+    "retain the same x=ln(a) Nt=64/Nt=32 grids",
+    "repeat the mandatory Stage-A reduced-H1 reclosure"
+  ],
+  "explicit_nonchanges": [
+    "no GE06 generator edit",
+    "no GE07 generator edit",
+    "no Lambda action edit",
+    "no stable Exp branch edit",
+    "no C value edit",
+    "no GE15/GE18 initial dynamic value or cosmic-time derivative edit",
+    "no canonical variable edit",
+    "no Noether/aniso algebraic partition edit",
+    "no Radau-IIA edit",
+    "no constraint metric edit",
+    "no threshold edit",
+    "no H3 source construction",
+    "no Z20 construction"
+  ],
+  "background_self_audits": {
+    "friedmann_relative_L2_max": 1e-12,
+    "pressure_identity_relative_L2_max": 1e-10,
+    "all_background_values_finite": true,
+    "H_positive": true
+  },
+  "stage_A_gates_unchanged": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 1e-6,
+    "anisotropy_constraint_backward_error_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR13_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE_PASS",
+    "fail": "GE19_REPAIR13_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE_FAIL",
+    "implementation_fail": "GE19_REPAIR13_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE_IMPLEMENTATION_FAIL"
+  },
+  "next_step_if_pass": "Freeze Stage-A PASS, then separately preregister the Lambda second-directional source and H3/Z20 particular solve on the same self-consistent reduced background.",
+  "no_threshold_relaxation": true,
+  "historical_results_unchanged": true
+}
