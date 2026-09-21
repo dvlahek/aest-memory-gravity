@@ -11,6 +11,9 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -73,4 +76,41 @@ jobs:
           print("NORMALIZED_C2_SQRTW_ABSENT =",diag["sqrtw_symbol_absent_after_normalization"])
           print("STEP_ND_SELF_TEST =",err)
           print("GE19_REPAIR24_PRELOCK_AUDIT_PASS")
+          PY
+
+      - name: Download exact frozen v0.77 artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10090367181
+          path: frozen_v077_repair24
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 34315590099
+
+      - name: Freeze base-trace provenance and initial surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          TRACE="$(find frozen_v077_repair24 -type f -name v076_v077_base_trace.dat -print -quit)"
+          test -n "${TRACE}"
+          echo "REPAIR24_V077_TRACE=${TRACE}"
+          sha256sum "${TRACE}"
+          wc -c "${TRACE}"
+          python3 - "${TRACE}" <<'PY'
+          import importlib.util,sys
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location("c4","nl1c4/expanding_memory_source_trajectory.py")
+          c4=importlib.util.module_from_spec(spec); spec.loader.exec_module(c4)
+          rows=c4.read_trace(Path(sys.argv[1]))
+          histories,kmiss,tmiss=c4.select_and_align(rows)
+          aa=[q["a"] for q in histories[0]]
+          i=min(range(len(aa)),key=lambda j:abs(aa[j]-0.4))
+          amiss=abs(aa[i]-0.4)
+          assert amiss<=1e-12,(aa[i],amiss)
+          print("TRACE_A0_INDEX =",i)
+          print("TRACE_A0 =",repr(aa[i]))
+          print("TRACE_A0_ABS_MISMATCH =",amiss)
+          print("TRACE_K_REL_MISS =",kmiss)
+          print("TRACE_COMMON_TIME_MISMATCH =",tmiss)
+          print("GE19_REPAIR24_TRACE_PROVENANCE_PASS")
           PY
