@@ -40,12 +40,12 @@ The full canonical 2x8 initial constraint manifold exists in all `714/714` mater
 
 This means the frozen quadratic source is compatible; the previous finite-window zero boundaries were inadmissible.
 
-**Current next gate:** Repair18 is **LOCKED / READY / NOT YET EXECUTED**. It keeps `q0=0` and determines only the canonical momenta from lapse+shift with a frozen doubly equilibrated GELSD projection and four refinement sweeps.
+**Repair18 boundary:** **PASS / CERTIFIED**. The zero-coordinate projected-momentum boundary passes all frozen gates in `714/714` material cases, with max shift backward error `3.223e-16` and exact rank 2 throughout. **Current next gate:** Repair19 is **LOCKED / READY / NOT YET EXECUTED** and reruns the frozen Repair14 H3/Z20 propagation using only this certified boundary replacement.
 
 Until that is frozen:
 
-- do not inject the unconstrained Euclidean full-y minimum-norm witness directly into H3;
-- do not construct q20;
+- run only the locked Repair19 H3/Z20 propagation;
+- do not construct q20 until Repair19 is frozen PASS;
 - do not start H4/Z21;
 - do not make nonlinear real-data claims.
 
@@ -181,7 +181,9 @@ Immediate physics target:
 - Repair13: **PASS** — self-consistent reduced background and H1/Z10 closure;
 - Repair14: frozen **FAIL** — first H3/Z20 particular state is not shift-constraint certified;
 - Repair15/16: frozen diagnostics excluding the two naive finite-window zero-boundary conventions;
-- Repair17: **PASS-FOR-EXISTENCE** — full canonical initial constraint manifold exists in 714/714 material cases; zero-boundary failure is not a source incompatibility;
+- Repair17: **PASS-FOR-EXISTENCE** — full canonical initial constraint manifold exists in 714/714 material cases;
+- Repair18: **PASS** — unique reproducible zero-coordinate projected-momentum finite-window boundary certified in 714/714 material cases;
+- Repair19: **READY / NOT YET EXECUTED** — rerun H3/Z20 with unchanged source and Stage-B gates using only the Repair18 boundary;
 - only after a constraint-certified Z20: q20 and H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
@@ -251,7 +253,7 @@ The memory-off analytic quadratic source has now been generated and the first ba
 
 That Repair14 candidate is **not certified** because the second-order shift constraint fails despite excellent source, anisotropy and time-grid controls.
 
-The active blocker is therefore no longer source generation or manifold existence. It is selection and certification of a physically defined constraint-compatible finite-window boundary before the H3 propagation is rerun.
+The active blocker is therefore no longer source generation, manifold existence or boundary selection. Repair18 certifies the finite-window boundary; the next blocker is the Repair19 propagated H3/Z20 Stage-B certification.
 
 Do not start a `Z21` solver until a separately frozen H3 run certifies `Z20`.
 
