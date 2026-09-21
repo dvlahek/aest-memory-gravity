@@ -1,0 +1,79 @@
+{
+  "classification": "GE19_REPAIR19_PREDATA_PROJECTED_BOUNDARY_REDUCED_H3_Z20_PROPAGATION",
+  "created_before_repair19_result": true,
+  "parent_repair18_freeze_commit": "3892ee81c8030ee7c5131d1aaf1f333cbdbe6509",
+  "purpose": "Rerun the frozen reduced H3/Z20 propagation with the exact Repair18 zero-coordinate constraint-projected canonical momentum boundary, while leaving the Repair13 parent, Repair14 source construction and all original Stage-B propagation gates unchanged.",
+  "frozen_parent": {
+    "repair18_classification": "GE19_REPAIR18_ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_AUDIT_COMPLETE",
+    "repair18_route": "ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_CERTIFIED",
+    "repair18_JSON_sha256": "d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc",
+    "repair18_material_pass_count": 714,
+    "repair18_material_case_count": 714
+  },
+  "equation": "L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
+  "boundary": {
+    "z_start": 1.5,
+    "q0": "S20=u20=phi20=T20=0 exactly",
+    "p0": "exact Repair18 doubly equilibrated minimum-norm 2x4 lapse+shift projection with GELSD and exactly four iterative-refinement sweeps",
+    "interpretation": "window-local particular-solution boundary; no primordial homogeneous-mode claim"
+  },
+  "frozen_inputs_and_scope": {
+    "Repair13_background_and_Z10": "unchanged",
+    "Repair14_GE06_GE07_Lambda_c2_Y2_source": "unchanged",
+    "C": ["C_min","C_star","C_max"],
+    "beta0": [1.0,0.5,0.1],
+    "m_solve": "1..40",
+    "m0": "source/backreaction report only; no homogeneous solve",
+    "Nx_primary": 1024,
+    "Nx_source_control": 2048,
+    "Nt_primary": 64,
+    "Nt_control": 32
+  },
+  "boundary_reproduction_gates": {
+    "Repair18_projected_p0_relative_L2_max": 1e-12,
+    "primary_vs_control_projected_p0_relative_L2_max": 1e-12,
+    "initial_scaled_constraint_relative_residual_max": 1e-8,
+    "initial_lapse_backward_error_max": 1e-6,
+    "initial_shift_backward_error_max": 1e-6,
+    "initial_eliminated_algebraic_relative_residual_max": 1e-8,
+    "rank_required": 2
+  },
+  "unchanged_stage_B_gates": {
+    "source_Nx1024_vs_Nx2048_m1_40_global_relative_L2_max": 5e-4,
+    "primary_linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 1e-6,
+    "anisotropy_constraint_backward_error_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 5e-3,
+    "all_three_beta0_and_C_cases_complete": true,
+    "all_outputs_finite": true
+  },
+  "required_reports": [
+    "Repair18 parent hash/provenance and boundary reproduction",
+    "initial projected p0 and qdot0 norms as descriptive scale diagnostics",
+    "source spatial convergence and source decomposition unchanged from Repair14 construction",
+    "primary and control canonical march diagnostics",
+    "lapse, shift and anisotropy backward errors throughout propagation",
+    "Nt64/Nt32 state convergence",
+    "C envelope and beta0 dependence",
+    "NPZ with Z20 primary/control and projected p0 boundary arrays"
+  ],
+  "routing": {
+    "PASS": "all boundary-reproduction and unchanged Stage-B gates pass",
+    "FAIL": "one or more frozen science gates fail after successful implementation",
+    "IMPLEMENTATION_FAIL": "parent hash, source reconstruction, boundary reconstruction or code execution fails"
+  },
+  "next_step_if_PASS": "Freeze Z20. Then separately construct q20 and preregister H4/Z21. No H4/Z21 is included in Repair19.",
+  "explicit_nonchanges": [
+    "no H1 recomputation",
+    "no GE06 or GE07 edit",
+    "no Lambda c1 or c2 edit",
+    "no Y2 edit",
+    "no source sign/component-order/normalization edit",
+    "no C, beta, mode, grid or threshold edit",
+    "no finite eta",
+    "no q20 construction",
+    "no H4 or Z21 construction",
+    "no lensing or observational inference"
+  ],
+  "historical_results_unchanged": true
+}
