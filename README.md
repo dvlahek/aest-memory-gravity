@@ -28,17 +28,23 @@ The source is spatially converged and the candidate state is time-grid converged
 
 **Diagnostics:** Repairs 15 and 16 are frozen diagnostic results. They exclude both the zero-dynamic-velocity and canonical-zero finite-window initial boundaries as sufficient fixes.
 
-**Current next gate:** Repair17 is **LOCKED AND READY, NOT YET LOCALLY EXECUTED**.
+**Repair17 diagnostic:** **PASS-FOR-EXISTENCE**.
 
-Repair17 tests if the same frozen quadratic source intersects the full canonical initial constraint manifold. No time integration is performed.
+`GE19_REPAIR17_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT_COMPLETE`
 
-Locked runner HEAD:
+Route:
 
-`152da4a51e89c318aa97632815ea714b8f61ef3c`.
+`FINITE_WINDOW_ZERO_BOUNDARY_INADMISSIBLE_SOURCE_COMPATIBLE`.
 
-Until Repair17 is executed and frozen:
+The full canonical 2x8 initial constraint manifold exists in all `714/714` material cases. The maximum full-y constraint residual is `8.892e-13`, lapse backward error `2.646e-16`, shift backward error `1.870e-10`, and eliminated algebraic residual `2.388e-16`.
 
-- do not rerun H3 with a new boundary;
+This means the frozen quadratic source is compatible; the previous finite-window zero boundaries were inadmissible.
+
+**Current next gate:** certify a physically and numerically defined constraint-compatible boundary-selection rule before any new H3/Z20 propagation.
+
+Until that is frozen:
+
+- do not inject the unconstrained Euclidean full-y minimum-norm witness directly into H3;
 - do not construct q20;
 - do not start H4/Z21;
 - do not make nonlinear real-data claims.
@@ -175,7 +181,7 @@ Immediate physics target:
 - Repair13: **PASS** — self-consistent reduced background and H1/Z10 closure;
 - Repair14: frozen **FAIL** — first H3/Z20 particular state is not shift-constraint certified;
 - Repair15/16: frozen diagnostics excluding the two naive finite-window zero-boundary conventions;
-- Repair17: **READY / NOT YET EXECUTED** — full canonical initial constraint-manifold existence audit;
+- Repair17: **PASS-FOR-EXISTENCE** — full canonical initial constraint manifold exists in 714/714 material cases; zero-boundary failure is not a source incompatibility;
 - only after a constraint-certified Z20: q20 and H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
@@ -245,7 +251,7 @@ The memory-off analytic quadratic source has now been generated and the first ba
 
 That Repair14 candidate is **not certified** because the second-order shift constraint fails despite excellent source, anisotropy and time-grid controls.
 
-The active blocker is therefore no longer source generation itself. It is the initial/Noether compatibility of the H3 constrained system, currently isolated by Repair17.
+The active blocker is therefore no longer source generation or manifold existence. It is selection and certification of a physically defined constraint-compatible finite-window boundary before the H3 propagation is rerun.
 
 Do not start a `Z21` solver until a separately frozen H3 run certifies `Z20`.
 
