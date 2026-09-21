@@ -28,9 +28,11 @@ Repair16 JSON SHA-256:
 
 `768d5a2de7cd62059e7149a4765ab5a9663eef708fc29989c05192f607c5bf68`.
 
-The current repository HEAD is prepared for Repair17:
+The locked Repair17 science-runner HEAD is:
 
 `152da4a51e89c318aa97632815ea714b8f61ef3c`.
+
+Later documentation-only commits may advance the branch HEAD without changing the locked Repair17 science blobs. The local runner verifies the frozen blobs and ancestry before execution.
 
 Repair17 is **LOCKED AND READY, NOT YET LOCALLY EXECUTED**.
 
@@ -366,9 +368,11 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Run the locked local Repair17 audit from HEAD
+Run the locked local Repair17 audit using runner/blob lock rooted at
 
 `152da4a51e89c318aa97632815ea714b8f61ef3c`.
+
+A later documentation-only branch HEAD is allowed because the runner rechecks the frozen science blobs and lock ancestry.
 
 Until that result is frozen, the canonical project status is:
 
