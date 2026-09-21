@@ -31,6 +31,7 @@ jobs:
       - name: Execute Repair23
         shell: bash
         run: |
+          mkdir -p results
           set -o pipefail
           python3 ge19/repair23_q20_normalized_bath_bridge_audit.py             2>&1 | tee results/ge19_repair23_q20_normalized_bath_bridge_audit_FULL.log
           echo "=== RESULT HASHES ==="
