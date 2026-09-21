@@ -705,7 +705,11 @@ def main():
         "vectorized_interval_propagator_self_test":step_err,
         "background_reproduction":bgctl,
         "full_history_boundary":{
-            "partial_step_target_a_mismatch_max":a_mismatch,\n            "trace_lo_a":TRACE_LO_A,\n            "trace_hi_a":TRACE_HI_A,\n            "primary_partial_step_fraction_ln_a":b2048["partial_step_fraction_ln_a"],\n            "control_partial_step_fraction_ln_a":b1024["partial_step_fraction_ln_a"],
+            "partial_step_target_a_mismatch_max":a_mismatch,
+            "trace_lo_a":TRACE_LO_A,
+            "trace_hi_a":TRACE_HI_A,
+            "primary_partial_step_fraction_ln_a":b2048["partial_step_fraction_ln_a"],
+            "control_partial_step_fraction_ln_a":b1024["partial_step_fraction_ln_a"],
             "primary_order":NQ_PRIMARY,
             "control_order":NQ_CONTROL,
             "primary_k_relative_miss":b2048["k_relative_miss"],
