@@ -69,32 +69,55 @@ A PASS establishes a controlled weakly nonlinear physical source entering the ex
 
 ## N2 — second-order physical-state eta tangent
 
-**Current prerequisite status (GE19, 2026-09-21): BLOCKED ON BASELINE Z20 CONSTRAINT CERTIFICATION.**
+**Current prerequisite status (GE19, 2026-09-21): Z20 CERTIFIED; q20 NEXT.**
 
-The prerequisite memory-off hierarchy is now much more advanced than the original programme text:
+The baseline memory-off hierarchy is now closed through the reduced second-order physical state:
 
-- Repair13 certifies the self-consistent reduced background and H1/Z10 parent;
-- Repair14 constructs the first reduced H3/Z20 particular candidate but fails the second-order shift constraint;
-- Repair15 excludes the zero-dynamic-velocity initial convention;
-- Repair16 excludes canonical y0=0 as an admissible forced initial state;
-- Repair17 certifies existence of the full canonical initial constraint manifold in 714/714 material cases;
-- Repair18 certifies a unique reproducible zero-coordinate projected-momentum finite-window boundary in 714/714 material cases;
-- Repair19 reruns H3/Z20 with that boundary and is frozen FAIL only on the propagated shift gate; all other Stage-B controls pass;
-- Repair20 is locked and ready to test the shift-only failure with an unchanged-physics Nt=32/64/128 near-null/time-resolution ladder.
+- Repair13 certifies the self-consistent reduced background and on-shell H1/Z10 parent;
+- Repair18 certifies the finite-window projected second-order boundary;
+- Repairs 19--21 isolate and remove the near-null/off-shell-parent numerical pathology without changing the H3 physics;
+- Repair22 certifies the low-mode window-local reduced-H3 particular Z20 state.
 
-Therefore the immediate N2 blocker is **not** source generation, initial-manifold existence or boundary selection. Repair18 closes the boundary problem. Repair19 then isolates the remaining failure to the propagated shift gate. Repair20 now tests if that failure is caused by near-null relative normalization plus finite time-step truncation before any certification rule is changed.
+Repair22 classification:
 
-No `q20` or `Z21` solve is licensed until a separately frozen H3 run satisfies the unchanged second-order constraint gates.
+`GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS`.
+
+Key certification controls:
+
+- Nx1024/Nx2048 source relative L2 max `1.396726236718744e-12`;
+- active Nt128 shift Linf `8.067171929789269e-7 < 1e-6`;
+- matched shift orders `3.2358` Linf and `3.1226` RMS/L2;
+- H3 Nt64/Nt128 state relative L2 `1.520874923438771e-5`;
+- linear residual `2.1762890113126683e-13`;
+- anisotropy `6.391121604651976e-16`;
+- Repair18 projected-boundary reproduction exact;
+- all 26 frozen gates PASS.
+
+The certified object is the particular low-mode window-local reduced-H3 directional state only. No homogeneous/primordial second-order mode, full-species Z20 or physical-amplitude nonlinear state is implied.
+
+The remaining H4 prerequisite is the baseline second-order normalized bath field `q20`.
+
+The normalized bath obeys the eta-independent retarded equation
+
+`G[Z,q]=0`.
+
+Its second directional coefficient is fixed by the same frozen NL0B action:
+
+`G_q q20 + G_Z Z20 + G_2[(Z10,q10),(Z10,q10)] = 0`.
+
+The first-order pair `(Z10,q10)` and the certified `Z20` therefore determine q20 with no new physical parameter.
+
+No `Z21` solve is licensed until q20 is separately preregistered, constructed and frozen.
 
 Persistent GE19 chronology:
 
 `docs/ge19_history.md`.
 
-Target:
+Target after q20:
 
 `Z21 = partial_eta Z^(2)|_eta=0`.
 
-Frozen equation:
+Frozen H4 equation:
 
 `L Z21 =
  -2 Q(Z10,Z11)
@@ -102,17 +125,19 @@ Frozen equation:
  -M1[Z20,q20]
  -M2[(Z10,q10),(Z10,q10)]`.
 
-This is the first stage at which the nonlinear physical state itself, rather than only a source block, is solved.
+This is the first stage at which the nonlinear physical memory tangent itself is solved.
 
 No finite eta is introduced.
 
-Implementation requirements:
+Implementation requirements for H4:
 
 - all source blocks generated from the frozen action;
+- q20 generated from the same normalized NL0B bath equation;
 - independent scalar constraint residual;
 - v0.77 first-order tangent recovered when nonlinear sources are disabled;
 - NL1A Y operator and N1 DY2 controls re-executed;
-- fixed native-state representation, avoiding the historical off-native interpolation ambiguity.
+- fixed native/on-shell state representation, avoiding the historical off-native interpolation ambiguity.
+
 
 ## N3 — nonlinear-background eta tangent
 
