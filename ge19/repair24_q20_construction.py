@@ -654,7 +654,13 @@ def main():
     gates={
         "Repair22_Z20_certified":True,
         "Repair23_bridge_PASS":True,
-        "full_history_trace_bracket_exact_match":bool(\n            b2048["trace_lo_a"]==TRACE_LO_A and b2048["trace_hi_a"]==TRACE_HI_A\n            and b1024["trace_lo_a"]==TRACE_LO_A and b1024["trace_hi_a"]==TRACE_HI_A\n        ),\n        "full_history_partial_step_target_a_abs_mismatch_le_1e15":bool(a_mismatch<=A_TARGET_MAX),
+        "full_history_trace_bracket_exact_match":bool(
+            b2048["trace_lo_a"]==TRACE_LO_A and b2048["trace_hi_a"]==TRACE_HI_A
+            and b1024["trace_lo_a"]==TRACE_LO_A and b1024["trace_hi_a"]==TRACE_HI_A
+        ),
+        "full_history_partial_step_target_a_abs_mismatch_le_1e15":bool(
+            a_mismatch<=A_TARGET_MAX
+        ),
         "H1_X10_initial_match_abs_or_rel_le_1e10":bool(initial_mismatch<=X_INITIAL_MAX),
         "G2_Nx256_vs_Nx512_low_mode_relative_L2_le_1e10":bool(
             pdiag["G2_spatial_relative_L2"]<=SPATIAL_MAX
