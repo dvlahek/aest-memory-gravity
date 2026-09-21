@@ -52,7 +52,11 @@ jobs:
           assert pre["frozen_state_scope"]["spatial_control"]==256
           assert pre["frozen_state_scope"]["quadrature_primary"]==2048
           assert pre["frozen_state_scope"]["quadrature_control"]==1024
-          assert pre["first_order_bath_boundary"]["frozen_bracket"]["lo_a"]==0.3799548579266745\n          assert pre["first_order_bath_boundary"]["frozen_bracket"]["hi_a"]==0.41924557250685585\n          assert pre["gates"]["full_history_trace_bracket_exact_match"] is True\n          assert pre["gates"]["full_history_partial_step_target_a_abs_mismatch_max"]==1e-15\n          assert pre["gates"]["G2_Nx256_vs_Nx512_low_mode_relative_L2_max"]==1e-10
+          assert pre["first_order_bath_boundary"]["frozen_bracket"]["lo_a"]==0.3799548579266745
+          assert pre["first_order_bath_boundary"]["frozen_bracket"]["hi_a"]==0.41924557250685585
+          assert pre["gates"]["full_history_trace_bracket_exact_match"] is True
+          assert pre["gates"]["full_history_partial_step_target_a_abs_mismatch_max"]==1e-15
+          assert pre["gates"]["G2_Nx256_vs_Nx512_low_mode_relative_L2_max"]==1e-10
           assert pre["gates"]["q20_quadrature_N1024_vs_N2048_weighted_z20_relative_L2_max"]==0.01
           assert pre["gates"]["q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max"]==0.005
 
