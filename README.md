@@ -40,7 +40,7 @@ The full canonical 2x8 initial constraint manifold exists in all `714/714` mater
 
 This means the frozen quadratic source is compatible; the previous finite-window zero boundaries were inadmissible.
 
-**Current next gate:** certify a physically and numerically defined constraint-compatible boundary-selection rule before any new H3/Z20 propagation.
+**Current next gate:** Repair18 is **LOCKED / READY / NOT YET EXECUTED**. It keeps `q0=0` and determines only the canonical momenta from lapse+shift with a frozen doubly equilibrated GELSD projection and four refinement sweeps.
 
 Until that is frozen:
 
