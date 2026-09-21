@@ -1,0 +1,96 @@
+{
+  "classification": "GE19_REPAIR14_PREDATA_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR",
+  "created_before_repair14_result": true,
+  "parent_repair13_freeze_commit": "5461f89f77f91e931f14abb6a2e5014597e0cb6f",
+  "purpose": "Construct the first certified window-retarded reduced H3/Z20 particular solution on the Repair13 self-consistent AeST+dust+Lambda background.",
+  "frozen_parent": {
+    "repair13_classification": "GE19_REPAIR13_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE_PASS",
+    "repair13_json_sha256": "ae3cc790ecffbd5498b5852273c72ae578d4615de29bbb616673c05cdb3e74b7",
+    "repair13_npz_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "repair13_shift_backward_error_max": 4.54500027983174e-7,
+    "repair13_stage_A_pass": true
+  },
+  "equation": "L_total Z20 = -Q_total(Z10,Z10) - 2 Y2[Z10]",
+  "linear_operator": {
+    "background": "Repair13 self-consistent reduced AeST+dust+Lambda H_red(a)",
+    "first_directional_lambda": "exact Repair11 coefficients from L_lambda=-6 rho_lambda N L R^2",
+    "Z10": "frozen Repair13 NPZ",
+    "canonical_partition": "unchanged Repair06/07 Noether-regularized partition"
+  },
+  "lambda_second_directional_source": {
+    "action": "L_lambda=-6 rho_lambda N L R^2",
+    "gauge_direction": "N=1+eps N1, L=a+eps S1, R=a+eps S1",
+    "exact_second_directional_euler_coefficients": {
+      "lapse": "delta2 E_N^lambda = -36 rho_lambda a S1^2",
+      "longitudinal_scale": "delta2 E_L^lambda = -12 rho_lambda S1^2 - 24 rho_lambda a N1 S1",
+      "transverse_scale": "delta2 E_R^lambda = -24 rho_lambda S1^2 - 48 rho_lambda a N1 S1",
+      "isotropic": "delta2(E_L+E_R)^lambda = -36 rho_lambda S1^2 - 72 rho_lambda a N1 S1",
+      "anisotropy": "delta2(E_L-E_R/2)^lambda = 0",
+      "shift": "0"
+    },
+    "source_sign": "Q_lambda is the second directional equation coefficient and enters H3 RHS as -Q_lambda"
+  },
+  "frozen_direction": {
+    "k_h_per_Mpc": [0.03, 0.05, 0.08, 0.10, 0.15, 0.20],
+    "integer_modes": [3, 5, 8, 10, 15, 20],
+    "phases_rad": [0.13, 0.71, 1.29, 2.03, 2.77, 3.41],
+    "beta0": [1.0, 0.5, 0.1],
+    "C": ["C_min", "C_star", "C_max"],
+    "H3_solved_modes": "m=1..40",
+    "m0": "report source only; no homogeneous/backreaction solve"
+  },
+  "grids": {
+    "time_primary": 64,
+    "time_control": 32,
+    "space_primary": 1024,
+    "space_control": 2048
+  },
+  "window_retarded_convention": {
+    "z_start": 1.5,
+    "z_end": 0.2,
+    "dynamic_Z20_fields": ["S20", "u20", "phi20", "T20"],
+    "initial_values": 0.0,
+    "initial_cosmic_time_derivatives": 0.0,
+    "meaning": "window-local particular solution only; omitted homogeneous/primordial Z20 remains uncertified"
+  },
+  "stage_B_gates_unchanged": {
+    "source_Nx1024_vs_Nx2048_m1_40_relative_L2_max": 0.0005,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 1e-6,
+    "anisotropy_constraint_backward_error_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "all_three_beta0_and_C_cases_complete": true,
+    "all_outputs_finite": true
+  },
+  "mandatory_pre_result_audits": [
+    "symbolically derive the Lambda second-directional Euler coefficients directly from L_lambda",
+    "prove Lambda second-directional shift and anisotropy contributions are exactly zero",
+    "verify Repair13 JSON and NPZ hashes exactly",
+    "verify the Repair13 frozen Z10 arrays are consumed without recomputing H1",
+    "verify the first-directional Lambda operator is exactly the locked Repair11 implementation",
+    "compile and static-audit the Repair14 script"
+  ],
+  "explicit_nonchanges": [
+    "no H1 recomputation or refit",
+    "no GE06 edit",
+    "no GE07 edit",
+    "no Lambda action edit",
+    "no reduced background edit",
+    "no C value edit",
+    "no beta value edit",
+    "no Radau-IIA edit",
+    "no canonical partition edit",
+    "no constraint metric edit",
+    "no threshold edit",
+    "no finite eta",
+    "no finite physical-amplitude interpretation"
+  ],
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR14_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR_PASS",
+    "fail": "GE19_REPAIR14_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "implementation_fail": "GE19_REPAIR14_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR_IMPLEMENTATION_FAIL"
+  },
+  "next_step_if_pass": "Freeze Z20, then preregister q20 construction and the H4/Z21 eta-epsilon^2 memory correction.",
+  "no_threshold_relaxation": true,
+  "historical_results_unchanged": true
+}
