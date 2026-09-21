@@ -53,9 +53,7 @@ jobs:
           R=a+eps*dR
           lag=-6*rho*N*L*R**2
 
-          EN=sp.diff(lag,N)
-          # Because N above is already the expanded expression, construct
-          # exact Euler partials from independent variables instead.
+          # Construct exact Euler partials from independent variables.
           Ns,Ls,Rs=sp.symbols("Ns Ls Rs", real=True)
           exact=-6*rho*Ns*Ls*Rs**2
           EN_exact=sp.diff(exact,Ns)
