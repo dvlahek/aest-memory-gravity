@@ -12,63 +12,61 @@ Historical classifications are immutable. A FAIL is never relabelled after a lat
 
 ## Current checkpoint
 
-The latest executed and frozen diagnostic is Repair18:
+The latest executed and frozen science result is Repair19:
 
-`GE19_REPAIR18_ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_AUDIT_COMPLETE`
+`GE19_REPAIR19_PROJECTED_BOUNDARY_REDUCED_H3_Z20_PROPAGATION_FAIL`.
 
-with route
+Repair19 result-freeze commit:
 
-`ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_CERTIFIED`.
+`71e1e60e133b79828163fe077f5991e98d40d6bb`.
 
-Repair18 result-freeze commit:
+Repair19 JSON SHA-256:
 
-`3892ee81c8030ee7c5131d1aaf1f333cbdbe6509`.
+`32837e04a9ea6c83642a0d465f0312cc17a02ddad168760764f3c7b999a0a14d`.
 
-Repair18 JSON SHA-256:
+Repair19 reproduces the certified Repair18 boundary exactly and passes every frozen control except the propagated shift gate:
 
-`d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc`.
+- Repair18 p0 reproduction: `0.0`;
+- initial shift: `3.2234628832120975e-16`;
+- source spatial convergence: `1.1166216258507802e-12`;
+- primary linear residual: `1.2568088493786592e-13`;
+- anisotropy: `5.176430012533252e-16`;
+- Nt64/Nt32 state difference: `3.77673237391757e-4`;
+- primary all-row shift max: `1.8946212213942455`;
+- control all-row shift max: `1.9278909582169974`.
 
-The zero-coordinate projected-momentum boundary passes all frozen gates in all 714 material cases:
+The O(1) shift maxima occur on near-null rows with absolute residuals around `1e-18`. On active rows the Repair19 Nt64 shift residual is approximately `7e-6`, suggesting a time-resolution effect.
 
-- scaled constraint residual max: `2.482534153108436e-16`;
-- lapse backward error max: `2.639993079262776e-16`;
-- shift backward error max: `3.2234628832120975e-16`;
-- eliminated algebraic residual max: `2.457039030496151e-16`;
-- rank 2 / augmented rank 2 throughout;
-- 714/714 PASS;
-- all material outputs finite.
+Repair20 is now **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
 
-Primary/control boundary reproducibility is also closed:
+Repair20 is a diagnostic Nt=32/64/128 ladder with:
 
-- projected p0 relative L2 difference max: `0.0`;
-- determined qdot0 relative L2 difference max: `6.468697709110601e-15`.
+- one common frozen Repair13 Nt64 Z10/Z10dot parent;
+- unchanged Repair14 source physics;
+- unchanged Repair18 boundary;
+- unchanged Repair07 shift metric and original `1e-6` threshold;
+- explicit per-time absolute residual and natural shift scale;
+- near-null rule `scale <= sqrt(eps_float64) S_ref`;
+- expected two-stage Radau IIA global order 3.
 
-Repair18 therefore converts the Repair17 manifold-existence result into one unique reproducible finite-window boundary prescription:
+Repair20 final dedicated prelock:
 
-`q0=0`, with canonical `p0` determined by the frozen doubly equilibrated GELSD lapse+shift projection.
+`35627410376` — SUCCESS.
 
-Repair19 is now **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
+Repair20 runner-head static audit:
 
-Repair19 reruns the exact Repair14 H3/Z20 propagation with only this initial-boundary replacement. Repair07 canonical propagation, Repair14 source construction, Repair13 parent, all grids/modes/C/beta values and all Stage-B gates are unchanged.
+`35627591960` — SUCCESS.
 
-Repair19 dedicated prelock:
+Locked Repair20 runner commit:
 
-`35617194247` — SUCCESS.
+`ff985a5743e7e016f76edce8814feee1ea401125`.
 
-Repair19 runner-head static audit:
-
-`35617378275` — SUCCESS.
-
-Locked Repair19 runner commit:
-
-`2972b32a019145a3b4ec0ce178466564caa7005e`.
-
-No q20 or H4/Z21 is licensed until the Repair19 propagation result is frozen PASS.
+No Z20 certification, q20 or H4/Z21 is licensed until the Repair20 diagnostic is executed and frozen.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> first H3/Z20 attempt failed shift constraint -> naive zero boundaries excluded -> full canonical manifold exists -> Repair18 projected boundary certified in 714/714 cases -> Repair19 H3/Z20 propagation is next`.
+`H1/background certified -> projected boundary certified -> Repair19 H3/Z20 stable but shift-only FAIL -> Repair20 32/64/128 near-null/time-resolution diagnostic is next`.
 
 ---
 
@@ -381,6 +379,94 @@ Scientific conclusion:
 the finite-window initial boundary is now uniquely and reproducibly certified. The next licensed step is H3/Z20 propagation with this exact boundary and unchanged Stage-B gates.
 ---
 
+## Repair19 — projected-boundary H3/Z20 propagation
+
+Classification:
+
+`GE19_REPAIR19_PROJECTED_BOUNDARY_REDUCED_H3_Z20_PROPAGATION_FAIL`.
+
+Result-freeze commit:
+
+`71e1e60e133b79828163fe077f5991e98d40d6bb`.
+
+Frozen output hashes:
+
+- JSON/FULL log:
+  `32837e04a9ea6c83642a0d465f0312cc17a02ddad168760764f3c7b999a0a14d`;
+- NPZ:
+  `d638c86e48dd5c912629068f56c3780d0a611ed26ff5c161cd792a14328f7215`;
+- outer runner:
+  `6bdff0aaee50f242b51df735acb2a6bc1277bfb5aa8231dbc60c94704fb19d35`.
+
+Repair19 changes only the initial canonical boundary relative to Repair14:
+
+- q0=0;
+- p0 from the certified Repair18 projection.
+
+The Repair18 boundary reproduces exactly.
+
+PASS controls:
+
+- source convergence `1.1166216258507802e-12`;
+- primary linear residual `1.2568088493786592e-13`;
+- anisotropy `5.176430012533252e-16`;
+- Nt64/Nt32 state convergence `3.77673237391757e-4`;
+- all outputs finite.
+
+FAIL control:
+
+- primary all-row shift `1.8946212213942455`;
+- control all-row shift `1.9278909582169974`.
+
+The largest relative shift failures are near-null rows: residual and row scale are both approximately `1e-18`.
+
+On active rows the primary shift residual is approximately `7e-6`, above the frozen `1e-6` gate but far below the near-null O(1) metric.
+
+Repair19 remains historical FAIL. It does not certify Z20.
+
+## Repair20 — shift near-null + time-resolution audit
+
+Status:
+
+**LOCKED / READY / NOT YET EXECUTED**.
+
+Preregistration commit:
+
+`7af03dcf16023dee12df1d93a36abf1a97881ec8`.
+
+Implementation commit:
+
+`fe4ba2f9b0bf176fc5dd9f92c3ee2dcbb9da352e`.
+
+Implementation lock commit:
+
+`f2837e5154f8a9ca999c6bbeed4c9d62603185d8`.
+
+Locked runner commit:
+
+`ff985a5743e7e016f76edce8814feee1ea401125`.
+
+Repair20 uses Nt={32,64,128} with one common frozen H1 parent and unchanged H3 physics.
+
+It records the original relative shift metric together with absolute residual and natural row scale.
+
+Near-null samples are defined before execution by
+
+`scale <= sqrt(eps_float64) S_ref`
+
+where S_ref is the maximum Nt128 shift natural scale.
+
+Positive diagnostic routing additionally requires:
+
+- near-null absolute residual / S_ref <= `1000 eps`;
+- active Nt128 shift <= original `1e-6` threshold;
+- observed 64->128 order >= `2.5`;
+- Nt64->Nt128 state difference <= `5e-3`;
+- unchanged linear/aniso/boundary controls PASS.
+
+Even a positive Repair20 result does not retroactively pass Repair19.
+---
+
 ## What is certified now
 
 Certified:
@@ -407,7 +493,7 @@ The project is **not yet ready for a nonlinear real-data claim**.
 
 The shortest valid route is:
 
-`Repair19 constraint-certified Z20 propagation -> observable bridge -> real-data confrontation`.
+`Repair20 shift diagnostic -> separately preregistered Z20 certification repair -> observable bridge -> real-data confrontation`.
 
 For the full nonlinear-memory state claim:
 
@@ -421,8 +507,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Run the locked local Repair19 H3/Z20 propagation.
+Run the locked local Repair20 shift time-resolution audit.
 
 Until that result is frozen, the canonical project status is:
 
-**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 manifold PASS-for-existence; Repair18 projected finite-window boundary PASS; Repair19 H3/Z20 propagation READY / NOT YET EXECUTED.**
+**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 manifold PASS-for-existence; Repair18 boundary PASS; Repair19 H3/Z20 historical shift-only FAIL; Repair20 READY / NOT YET EXECUTED.**
