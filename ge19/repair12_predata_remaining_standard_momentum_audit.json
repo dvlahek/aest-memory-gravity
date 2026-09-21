@@ -1,0 +1,51 @@
+{
+  "classification": "GE19_REPAIR12_PREDATA_REMAINING_STANDARD_MOMENTUM_AUDIT",
+  "created_before_repair12_result": true,
+  "parent_repair11_freeze_commit": "2943869fc88146176e62147bf7b4175d9216df41",
+  "purpose": "Test if the sole remaining Repair11 shift defect is explained by the first-order standard-sector momentum omitted by the pressureless-dust reduction.",
+  "frozen_repair11_observation": {
+    "classification": "GE19_REPAIR11_LAMBDA_INCLUSIVE_REDUCED_H1_RECLOSURE_FAIL",
+    "shift_backward_error_max": 5.016294027155656e-5,
+    "repair07_shift_backward_error_max": 7.116549016013037e-2,
+    "lambda_improvement_factor": 1418.6865796717002,
+    "all_other_stage_A_gates_pass": true
+  },
+  "diagnostic_only": true,
+  "audit_definition": {
+    "current_shift": "r_dust = E_b^(GE06) + E_b^(reduced_dust)",
+    "full_standard_counterfactual": "r_full = E_b^(GE06) + E_b^(full_standard_CLASS)",
+    "omitted_momentum_correction": "Delta E_b = E_b^(full_standard_CLASS) - E_b^(reduced_dust)",
+    "identity": "r_full = r_dust + Delta E_b",
+    "full_standard_shift_normalization": "E_b^(full_standard_CLASS) = -6 i a^4 [(rho+p)theta]_std / k"
+  },
+  "fixed_routes": {
+    "OMITTED_STANDARD_MOMENTUM_EXPLAINS_REMAINING_SHIFT": "full-standard counterfactual max <= 1e-6",
+    "OMITTED_STANDARD_MOMENTUM_DOMINANT_WITH_CLASS_INTERPOLATION_FLOOR": "full-standard counterfactual improves the Repair11 shift by >=10x and max <= 1e-5",
+    "BACKGROUND_OR_REDUCED_DYNAMICS_REMAIN": "neither criterion above is met"
+  },
+  "frozen_reference": {
+    "science_shift_gate": 1e-6,
+    "diagnostic_CLASS_interpolation_floor_reference": 1e-5,
+    "minimum_dominant_improvement_factor": 10.0,
+    "repair08_full_standard_pair_metric_max": 6.142613426914724e-6
+  },
+  "permitted_operations": [
+    "load the frozen Repair11 NPZ trajectory",
+    "rebuild the same Lambda-inclusive local operator without changing it",
+    "load the same frozen raw CLASS perturbation tables used by Repair08",
+    "replace only the reduced-dust shift contribution by the full-standard CLASS momentum contribution as a diagnostic counterfactual",
+    "report residual phase, magnitude and improvement by C, mode and time grid"
+  ],
+  "explicit_nonchanges": [
+    "no Repair11 trajectory recomputation",
+    "no GE06 or GE07 edit",
+    "no Lambda edit",
+    "no C-value edit",
+    "no sign edit",
+    "no DAE partition edit",
+    "no threshold edit",
+    "no H3 source construction",
+    "no Z20 construction"
+  ],
+  "historical_results_unchanged": true
+}
