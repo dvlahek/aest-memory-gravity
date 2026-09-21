@@ -13,7 +13,7 @@
   },
   "purpose": "Construct and certify the baseline second-order normalized bath response q20 required by the frozen H4/Z21 hierarchy, using the certified Repair22 Z20 state and the frozen Repair23 q<->z normalization.",
   "frozen_theory": {
-    "tauH0": 10.0,
+    "tauH0": 10,
     "normalized_bath": "z_j = omega_j q_j / sqrt(w_j)",
     "second_order_equation": "G1[Z20,z20] + G2[(Z10,z10),(Z10,z10)] = 0",
     "equivalent_forced_form": "z20_ddot + 3 H z20_dot + omega_j^2 (z20-X20) = -G2_norm",
@@ -22,10 +22,28 @@
     "no_new_physics_parameter": true
   },
   "frozen_state_scope": {
-    "C_tags": ["C_min", "C_star", "C_max"],
-    "beta0": [1.0, 0.5, 0.1],
-    "m_solve": [1,40],
-    "H1_input_modes": [3,5,8,10,15,20],
+    "C_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta0": [
+      1,
+      0.5,
+      0.1
+    ],
+    "m_solve": [
+      1,
+      40
+    ],
+    "H1_input_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
     "time_primary": 128,
     "time_control": 64,
     "spatial_primary": 512,
@@ -39,16 +57,29 @@
     "artifact_id": 10090367181,
     "artifact_name": "results_bundle_v077_native_state_tangent_affinity",
     "artifact_digest": "sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378",
-    "trace_name": "v076_v077_base_trace.dat"
+    "trace_name": "v076_v077_base_trace.dat",
+    "trace_sha256": "98c8468e8ccdf902cad8d6e65f3852e863c6fd19df62ece61353ab725ac5a43e",
+    "trace_bytes": 2657188
   },
   "first_order_bath_boundary": {
-    "rule": "Integrate the frozen full-history v0.77 base chi/a trace with the positive Drude bath up to the exact GE19 initial surface a=0.4, convert to the physical longitudinal z10 coefficient using i*k times the frozen amplitude/phase coefficient, then evolve within the GE19 window using the reduced on-shell Repair22 H1 X10 parent.",
+    "rule": "Integrate the frozen full-history v0.77 base trace through the lower native node that brackets a=0.4, then take one exact partial frozen-NL1C4 interval step to a=0.4 using the same constant hm=sqrt(h_lo h_hi) and the same source-linear-in-xi convention as the parent interval. The target source is the ln(a)-linear interpolation of chi/a across the frozen bracketing interval. Convert the resulting node state to the physical longitudinal z10 coefficient using i*k times the frozen amplitude/phase coefficient, then evolve within the GE19 window using the reduced on-shell Repair22 H1 X10 parent.",
     "initial_a": 0.4,
+    "frozen_bracket": {
+      "lo_index": 10,
+      "lo_a": 0.3799548579266745,
+      "hi_index": 11,
+      "hi_a": 0.41924557250685585,
+      "ln_a_width": 0.09840438940521079,
+      "k_relative_miss": 0,
+      "common_time_mismatch": 0
+    },
+    "partial_step_interpolation": "linear in ln(a), equivalently linear in xi under the parent frozen interval's constant hm",
+    "partial_step_h": "use the parent interval hm=sqrt((H_lo tau)(H_hi tau)); do not invent an interpolated H or move the GE19 initial surface",
     "initial_match_H1_X10_vs_trace_relative_or_absolute_max": 1e-10
   },
   "second_order_bath_boundary": {
-    "z20_at_a0": 0.0,
-    "dz20_dxi_at_a0": 0.0,
+    "z20_at_a0": 0,
+    "dz20_dxi_at_a0": 0,
     "interpretation": "window-local particular second-order bath state only; no primordial/homogeneous second-order bath mode is claimed"
   },
   "action_source_generation": {
@@ -61,19 +92,24 @@
   "certified_physical_projection": {
     "primary_object": "weighted_z20 = sum_j w_j z20_j",
     "reason": "The frozen H4 physical block M1[Z20,q20] depends on q20 through the linear completed-square bath projection sum_j w_j z20_j; full node states are deterministic recomputable auxiliaries and need not be persisted.",
-    "also_report": ["weighted_z10", "B20_linear = X20-weighted_z20", "G2_norm weighted summaries"]
+    "also_report": [
+      "weighted_z10",
+      "B20_linear = X20-weighted_z20",
+      "G2_norm weighted summaries"
+    ]
   },
   "gates": {
     "Repair22_Z20_certified": true,
     "Repair23_bridge_PASS": true,
-    "full_history_initial_surface_a_abs_mismatch_max": 1e-12,
     "H1_X10_initial_match_abs_or_rel_max": 1e-10,
     "G2_Nx256_vs_Nx512_low_mode_relative_L2_max": 1e-10,
     "q20_quadrature_N1024_vs_N2048_weighted_z20_relative_L2_max": 0.01,
     "q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max": 0.005,
     "z10_Nt64_vs_Nt128_weighted_z10_relative_L2_max": 0.005,
     "all_weighted_q20_outputs_finite": true,
-    "all_cases_complete": true
+    "all_cases_complete": true,
+    "full_history_trace_bracket_exact_match": true,
+    "full_history_partial_step_target_a_abs_mismatch_max": 1e-15
   },
   "routing": {
     "PASS": "All frozen q20 construction and convergence gates pass.",
@@ -87,5 +123,10 @@
     "no physical-amplitude nonlinear trajectory",
     "no primordial second-order bath mode",
     "no lensing or observational inference"
-  ]
+  ],
+  "preregistration_amendment": {
+    "before_any_science_result": true,
+    "reason": "The frozen v0.77 artifact contains no native node at a=0.4. Prelock provenance established an exact bracket [0.3799548579266745,0.41924557250685585]. The boundary rule is therefore amended before any q20 science execution to use the exact prefix of the already-frozen NL1C4 interval model, stopping at a=0.4. No physics parameter, equation, grid, threshold, Z20 input, Drude measure or q20 homogeneous boundary changes.",
+    "provenance_run": 35652450043
+  }
 }
