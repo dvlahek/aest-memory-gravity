@@ -49,7 +49,23 @@ Repair20 is a diagnostic Nt=32/64/128 ladder with:
 - near-null rule `scale <= sqrt(eps_float64) S_ref`;
 - expected two-stage Radau IIA global order 3.
 
-Repair20 final dedicated prelock:
+Repair20 first local execution stopped before any science ladder evaluation with
+
+`GE19_REPAIR20_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT_IMPLEMENTATION_FAIL`
+
+because the implementation requested nonexistent Repair13 NPZ key `ln_a_primary`. Repair13 freezes the primary grid as `x64`.
+
+This was repaired before any Repair20 science result:
+
+- implementation fix commit: `9bb8e4fd36be3fd26fb11b06a215b2806a269467`;
+- amended prelock commit: `410e6c35544a7225a91ca659c4001904c483cc12`;
+- amended prelock run: `35632117507` — SUCCESS;
+- refreshed runner commit: `bd7645f8a0fbdc5a5495a7e37ee20bed199dce3f`;
+- refreshed runner-head static audit: `35632243009` — SUCCESS.
+
+No physics, source, boundary, near-null rule, grid ladder or threshold changed.
+
+Repair20 final dedicated prelock before the wiring amendment:
 
 `35627410376` — SUCCESS.
 
