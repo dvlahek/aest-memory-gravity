@@ -12,60 +12,66 @@ Historical classifications are immutable. A FAIL is never relabelled after a lat
 
 ## Current checkpoint
 
-The latest executed and frozen diagnostic result is Repair21:
+The latest executed and frozen certification result is Repair22:
 
-`GE19_REPAIR21_ON_SHELL_H1_PARENT_MATCHED_SHIFT_AUDIT_COMPLETE`
+`GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS`.
 
-with route
+`Z20_certified = true`.
 
-`INTERPOLATED_H1_PARENT_DEFECT_CONFIRMED`.
+Repair22 result-freeze commit:
 
-Repair21 result-freeze commit:
+`9174f2e622f42851474ed124b429bf07b2db3ac7`.
 
-`a6fea1e32aebef65e43151030fe90fc6263d6ce0`.
+Repair22 JSON SHA-256:
 
-Repair21 JSON SHA-256:
+`7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374`.
 
-`e27d12f18a992a1c8c3217e67c0efd39dcf7c9d7aadcfbbb3220f7508bca1bb2`.
+Repair22 NPZ SHA-256:
 
-Repair21 closes the active-shift diagnostic:
+`3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16`.
 
-- Nt64 frozen H1 reproduction is exact;
-- H1 Nt64/Nt128 state relative L2 = `1.5405620815417885e-5`;
-- Repair20 interpolated Nt128 H3 RHS differs from the genuine on-shell RHS by `2.486632550432435e-4`;
-- matched Nt64 active shift Linf = `7.79643019280292e-6`;
-- genuine on-shell Nt128 active shift Linf = `8.067171929789269e-7`, PASS vs `1e-6`;
-- matched Linf order = `3.2357755356022007`;
-- matched RMS/L2 order = `3.1225511606202474`;
-- Nt64/Nt128 H3 state relative L2 = `1.520874923438771e-5`;
-- linear residual = `2.1762890113126683e-13`;
-- anisotropy = `6.391121604651976e-16`;
-- Repair18 boundary reproduction = `0.0`.
+All 26 frozen certification gates PASS.
 
-Therefore the Repair20 active-shift defect is traced to the separately interpolated off-shell H1 parent, not to the frozen H3 physics.
+Key controls:
 
-Repair22 is now **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
+- Nt64 frozen H1 reproduction: exact;
+- H1 Nt64/Nt128 state relative L2: `1.5405620815417885e-5`;
+- Nx1024/Nx2048 H3 source relative L2 max: `1.396726236718744e-12`;
+- Repair18 projected p0 reproduction: `0.0`;
+- initial scaled constraint residual: `2.482534153108436e-16`;
+- active Nt128 shift Linf: `8.067171929789269e-7 < 1e-6`;
+- matched shift orders: Linf `3.2357755356022007`, RMS/L2 `3.1225511606202474`;
+- near-null absolute residual / S_ref: `9.599035682049098e-15`;
+- H3 Nt64/Nt128 state relative L2: `1.520874923438771e-5`;
+- H3 linear residual: `2.1762890113126683e-13`;
+- H3 anisotropy: `6.391121604651976e-16`;
+- all candidate arrays finite.
 
-Repair22 is the explicit Z20 certification rerun. It recomputes the on-shell Repair21 core, adds Nt128 Nx1024/Nx2048 source convergence, re-audits the Repair18 boundary, and uses the preregistered active/near-null shift certification without relaxing the original active `1e-6` threshold.
+Certified object:
 
-Repair22 dedicated prelock:
+the low-mode, constraint-certified, window-local reduced-H3 particular directional state Z20 on the Repair13 self-consistent background with genuine on-shell H1 parents and the frozen Repair18 finite-window boundary.
 
-`35636884016` — SUCCESS.
+Not certified:
 
-Repair22 runner-head static audit:
+- homogeneous/primordial second-order content;
+- full-species Z20;
+- physical-amplitude nonlinear state;
+- finite eta;
+- Z21;
+- observables.
 
-`35637105131` — SUCCESS.
+Repair22 licenses the next separately preregistered step:
 
-Locked Repair22 runner commit:
+`q20`
 
-`b17cd7f2838cf72c7c2bcc12eb1e7c5323b83a87`.
+from the second directional expansion of the eta-independent normalized bath equation `G[Z,q]=0`.
 
-No q20 or H4/Z21 is licensed until Repair22 is executed and frozen PASS.
+No H4/Z21 solve is licensed until q20 itself is constructed and frozen.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> projected boundary certified -> Repair21 confirms interpolated-H1-parent defect -> Repair22 explicit Z20 certification is next`.
+`H1/background certified -> projected boundary certified -> on-shell-parent defect resolved -> Repair22 certifies Z20 -> q20 construction is next`.
 
 ---
 
@@ -513,37 +519,66 @@ Repair21 is diagnostic and does not itself certify Z20.
 
 ## Repair22 — on-shell-parent Z20 certification
 
-Status:
+Classification:
 
-**LOCKED / READY / NOT YET EXECUTED**.
+`GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS`.
 
-Preregistration commit:
+Result-freeze commit:
 
-`515a6ac728d056330d33f4e266a53f5693fc6548`.
+`9174f2e622f42851474ed124b429bf07b2db3ac7`.
 
-Implementation commit:
+Frozen output hashes:
 
-`f7aef2aa9ca8a34bd2ffe0e53a7a230f461a1926`.
+- JSON/FULL:
+  `7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374`;
+- NPZ:
+  `3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16`;
+- outer runner:
+  `52f01d0991e72737b464e025bd996f260db9bc47e55dbe82165d42fc0636dbaf`.
 
-Implementation lock commit:
+Repair22 recomputes the on-shell Repair21 core before certification and adds the frozen Nx1024/Nx2048 source control and full Repair18 boundary re-audit.
 
-`e0aabdaa9367c8f8bcc828da4c450a8108993c44`.
+All 26 frozen gates PASS.
 
-Locked runner commit:
+Source spatial convergence:
 
-`b17cd7f2838cf72c7c2bcc12eb1e7c5323b83a87`.
+`1.396726236718744e-12`.
 
-Repair22 recomputes the Repair21 on-shell H1/H3 core and adds:
+Boundary:
 
-- Nt128 Nx1024/Nx2048 source convergence;
-- full Repair18 boundary re-audit;
-- active/near-null shift certification;
-- completeness and finite-output gates;
-- explicit Z20 certification flag.
+- p0 reproduction `0.0`;
+- scaled constraint residual `2.482534153108436e-16`;
+- lapse `2.639992134386278e-16`;
+- shift `3.321187887383499e-16`;
+- algebraic residual `2.457039030496151e-16`;
+- rank 2 / augmented rank 2.
 
-A PASS may set `Z20_certified=true` only for the low-mode window-local reduced-H3 particular directional state.
+Active shift certification:
 
-It does not certify primordial/homogeneous second-order content, full species, finite eta or observables.
+- Nt128 Linf `8.067171929789269e-7`;
+- original active threshold `1e-6`;
+- matched Linf order `3.2357755356022007`;
+- matched RMS/L2 order `3.1225511606202474`;
+- near-null absolute residual / S_ref `9.599035682049098e-15`.
+
+Other H3 controls:
+
+- Nt64/Nt128 state relative L2 `1.520874923438771e-5`;
+- linear residual `2.1762890113126683e-13`;
+- anisotropy `6.391121604651976e-16`;
+- all outputs finite.
+
+Scientific conclusion:
+
+`Z20_certified = true`
+
+for the low-mode constraint-certified window-local reduced-H3 particular directional state only.
+
+Repair14 and Repair19 remain historical FAIL results; Repair20/21 remain diagnostic results and are not relabelled.
+
+Next licensed object:
+
+`q20`, the baseline second-order normalized bath response fixed by the second directional expansion of `G[Z,q]=0`.
 ---
 
 ## What is certified now
@@ -555,11 +590,12 @@ Certified:
 - GE06 analytic Einstein+AeST directional generator;
 - GE07 pressureless-matter directional generator;
 - Repair13 self-consistent reduced background;
-- Repair13 reduced H1 / Z10 Stage-A closure.
+- Repair13 reduced H1 / Z10 Stage-A closure;
+- Repair22 low-mode window-local reduced-H3 particular Z20.
 
 Not certified:
 
-- Z20;
+- homogeneous/primordial or full-species Z20;
 - q20;
 - H4/Z21;
 - finite-eta nonlinear trajectory;
@@ -572,11 +608,11 @@ The project is **not yet ready for a nonlinear real-data claim**.
 
 The shortest valid route is:
 
-`Repair22 Z20 certification -> q20 construction -> H4/Z21 -> observable bridge -> real-data confrontation`.
+`q20 construction -> H4/Z21 -> observable bridge -> real-data confrontation`.
 
 For the full nonlinear-memory state claim:
 
-`constraint-certified Z20 -> q20 -> H4/Z21 -> observable bridge -> data`.
+`certified reduced Z20 -> q20 -> H4/Z21 -> observable bridge -> data`.
 
 Lensing remains a natural first observable after state certification because the model acts directly through gravitational potentials. CMB/SPT high-l and structure probes remain later comparison channels.
 
@@ -586,8 +622,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Run the locked local Repair22 Z20 certification.
+Preregister and construct q20 from the eta-independent normalized bath equation on the frozen Repair22 Z20 state.
 
-Until that result is frozen, the canonical project status is:
+Until q20 is frozen, the canonical project status is:
 
-**Repair13 H1 PASS; Repair18 boundary PASS; Repair19 historical shift-only FAIL; Repair20 near-null/off-shell-parent diagnostic; Repair21 interpolated-H1-parent defect confirmed; Repair22 READY / NOT YET EXECUTED.**
+**Repair13 H1 PASS; Repair18 boundary PASS; Repair19 historical FAIL; Repair20/21 diagnostics frozen; Repair22 Z20 CERTIFIED; q20 NEXT; H4/Z21 NOT YET LICENSED.**
