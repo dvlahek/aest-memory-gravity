@@ -1,0 +1,34 @@
+{
+  "classification": "GE19_REPAIR09_PREDATA_AMENDMENT01_SHIFT_PARTITION_EXACT_SINGULARITY_STOP",
+  "created_before_repair09_science_result": true,
+  "parent_repair09_predata_commit": "d4d280748ff5f6140833ed876c484f7a6497d550",
+  "parent_repair09_implementation_commit": "d5312a74be737646739a0220c0414c44551f3577",
+  "trigger": "The executable prelock probe of the shift-enforced algebraic block returned a scaled 2-norm condition number 1.5521269268870098e16. This is pre-result implementation evidence, not a science result.",
+  "exact_symbolic_diagnosis": {
+    "unknowns": ["N", "delta_varrho", "Sdot", "udot", "phidot", "Tdot"],
+    "common_rows": ["pS", "pu", "pphi", "pT", "dust_density"],
+    "candidate_sixth_row": "shift",
+    "generic_rank": 5,
+    "generic_determinant": "0",
+    "anisotropy_partition_comparator_determinant": "384*KB*KQQ*a^13*k^2",
+    "Exp_branch_comparator": "1536*K2*KB*a^13*k^2*(1+2*Z^2)*exp(Z^2)",
+    "relation_to_repair06": "The Exp comparator is algebraically identical to the nonzero determinant already frozen in Repair06 Amendment01 after substituting Z=(Q-Q0)/Z0."
+  },
+  "interpretation": "The shift equation is a genuine canonical constraint and cannot replace the anisotropy gauge-closing row to determine the six local algebraic unknowns. The alternative partition is structurally singular in exact arithmetic. Its large numerical condition number is the floating-point image of that exact rank deficiency.",
+  "stop_rule": {
+    "run_alternative_partition_science": false,
+    "reason": "A local evolution using the shift-enforced 6x6 block would numerically regularize an exactly singular continuum partition and would not constitute a valid science test.",
+    "repair09_terminal_route": "SHIFT_PARTITION_STRUCTURALLY_SINGULAR",
+    "next_target": "reduced-background and omitted-vacuum-sector on-shell consistency"
+  },
+  "unchanged": [
+    "Repair07 historical FAIL",
+    "Repair08 localization result",
+    "GE06 continuum equations",
+    "GE07 continuum equations",
+    "all science thresholds",
+    "all signs",
+    "all frozen parent data"
+  ],
+  "claim_boundary": "Structural DAE diagnosis only. No H3/Z20 or alternative physical evolution is licensed."
+}
