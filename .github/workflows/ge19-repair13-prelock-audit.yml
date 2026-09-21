@@ -1,0 +1,99 @@
+name: GE19 Repair13 reduced background prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair13_*'
+      - '.github/workflows/ge19-repair13-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair13_self_consistent_reduced_background_h1_reclosure.py
+
+      - name: Audit exact reduced background identities and frozen solver
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, inspect, json
+          from pathlib import Path
+          import numpy as np
+          import sympy as sp
+
+          root=Path.cwd()
+          p=json.load(open("ge19/repair13_predata_self_consistent_reduced_background_h1_reclosure.json"))
+          assert p["classification"]=="GE19_REPAIR13_PREDATA_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE"
+          assert p["created_before_repair13_result"] is True
+          assert "no threshold edit" in p["explicit_nonchanges"]
+          assert "no H3 source construction" in p["explicit_nonchanges"]
+          assert "no Z20 construction" in p["explicit_nonchanges"]
+
+          def load(path,name):
+              spec=importlib.util.spec_from_file_location(name,path)
+              m=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(m)
+              return m
+
+          r7=load(root/"ge19/repair07_window_retarded_reduced_h3_z20_particular.py","r7")
+          r11=load(root/"ge19/repair11_lambda_inclusive_reduced_h1_reclosure.py","r11")
+          r13=load(root/"ge19/repair13_self_consistent_reduced_background_h1_reclosure.py","r13")
+
+          assert r13.LINEAR_MAX==1e-8
+          assert r13.CONSTRAINT_MAX==1e-6
+          assert r13.TIME_MAX==5e-3
+          assert r13.INIT_MAX==1e-10
+          assert r13.BG_FRIEDMANN_MAX==1e-12
+          assert r13.BG_PRESSURE_MAX==1e-10
+
+          # Exact homogeneous action identities.
+          Q,KQ,K,C,a,rL=sp.symbols("Q KQ K C a rL", positive=True, real=True)
+          H2=(Q*KQ-K)/3 + C/a**3 + rL
+          fried=sp.expand(3*H2-(Q*KQ-K)-3*(C/a**3+rL))
+          assert sp.simplify(fried)==0
+
+          # From d KQ/d ln a=-3KQ:
+          # d[(QKQ-K)/3]/d ln a=-QKQ.
+          dH2dx=-Q*KQ-3*C/a**3
+          preq=sp.simplify(-(K/3+H2+dH2dx/3))
+          assert sp.simplify(preq+rL)==0
+
+          # Synthetic implementation audit.
+          n=9
+          aa=np.linspace(0.4,0.8,n)
+          zz=np.linspace(4.45,4.60,n)
+          kq=4*r7.K2*r7.Z0*zz*np.exp(zz**2)
+          q=r7.Q0+r7.Z0*zz
+          kqq=4*r7.K2*np.exp(zz**2)*(1+2*zz**2)
+          base={
+              "x":np.log(aa),"a":aa,"H":np.linspace(1e-4,2e-4,n),
+              "Q_action":q,"KQ_action":kq,"KQQ_action":kqq,"Z_action":zz,
+          }
+          rho=np.full(n,3.451969239349119e-8)
+          bg,diag=r13.reduced_background(r7,base,"C_star",rho)
+          assert diag["friedmann_relative_L2"]<=1e-14, diag
+          assert diag["pressure_identity_relative_L2"]<=1e-12, diag
+          assert diag["all_background_values_finite"], diag
+          assert diag["H_positive"], diag
+
+          # Repair13 may reuse but not redefine the canonical/Radau solver.
+          src=(root/"ge19/repair13_self_consistent_reduced_background_h1_reclosure.py").read_text()
+          assert "def _radau2_integrate_canonical" not in src
+          assert "def _canonical_operator_matrices" not in src
+          assert "solve_reduced_h1_case_canonical(" in src
+          assert "install_lambda_operator(" in src
+
+          print("REDUCED_FRIEDMANN_IDENTITY =",fried)
+          print("REDUCED_PRESSURE_IDENTITY =",preq)
+          print("SYNTHETIC_REDUCED_BACKGROUND =",diag)
+          print("GE19_REPAIR13_PRELOCK_AUDIT_PASS")
+          PY
