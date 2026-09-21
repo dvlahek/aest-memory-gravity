@@ -36,8 +36,8 @@ jobs:
 
           assert blob("docs/ge19_repair22_z20_certification_result_freeze.md")=="fb4ef607d17b5545985edf557aa67d02bc4dff0f"
           assert blob("docs/ge19_repair23_q20_normalized_bath_bridge_result_freeze.md")=="5081fdf87e7e7f76849cf94e01f74c8df5dcca80"
-          assert blob("ge19/repair24_predata_q20_construction.json")=="293815231e1afc1f1de75dabf9bd0b4475982f91"
-          assert blob("ge19/repair24_q20_construction.py")=="2426992c6dc54bae6ea7d97bdc2a8ecd4fda9752"
+          assert blob("ge19/repair24_predata_q20_construction.json")=="df2a197a87c426b2b45aca8ab95bbdbbbbc19fbf"
+          assert blob("ge19/repair24_q20_construction.py")=="817d08f59dbd8dd1379f4fcbdd90991cb86e0256"
           assert blob("ge05/memory_directional_source_generator.py")=="40837d77f89028da30c28899e2d0530a4401844e"
           assert blob("nl1c4/expanding_memory_source_trajectory.py")=="7a9ffab9fa903ca61e88627052e2aa589b4bf459"
           assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
@@ -52,7 +52,7 @@ jobs:
           assert pre["frozen_state_scope"]["spatial_control"]==256
           assert pre["frozen_state_scope"]["quadrature_primary"]==2048
           assert pre["frozen_state_scope"]["quadrature_control"]==1024
-          assert pre["gates"]["G2_Nx256_vs_Nx512_low_mode_relative_L2_max"]==1e-10
+          assert pre["first_order_bath_boundary"]["frozen_bracket"]["lo_a"]==0.3799548579266745\n          assert pre["first_order_bath_boundary"]["frozen_bracket"]["hi_a"]==0.41924557250685585\n          assert pre["gates"]["full_history_trace_bracket_exact_match"] is True\n          assert pre["gates"]["full_history_partial_step_target_a_abs_mismatch_max"]==1e-15\n          assert pre["gates"]["G2_Nx256_vs_Nx512_low_mode_relative_L2_max"]==1e-10
           assert pre["gates"]["q20_quadrature_N1024_vs_N2048_weighted_z20_relative_L2_max"]==0.01
           assert pre["gates"]["q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max"]==0.005
 
