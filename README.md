@@ -106,7 +106,7 @@ A fallback reduction that keeps the **original fixed-frequency positive oscillat
 
 Because fixed oscillator frequencies preserve the original covariant time-dependent form, this is now the preferred numerical direction.
 
-## Next gate
+## Legacy v0.19 finite-eta CLASS gate
 
 Do **not** insert the H-dependent v0.19l rational table into CLASS.
 
