@@ -1,0 +1,19 @@
+{
+  "classification": "GE19_REPAIR12_PREDATA_AMENDMENT01_METRIC_AND_REPRODUCTION_LOCK",
+  "created_before_repair12_result": true,
+  "parent_repair12_predata_commit": "2f6e2b7da3d8e14b29a9f7998d30a6926aecf00e",
+  "metric_contract": {
+    "current_repair11_science_metric": "reuse Repair07/11 componentwise backward-error shift metric exactly",
+    "full_standard_counterfactual_pair_metric": "abs(Eb_GE06 + Eb_fullCLASS) / max(abs(Eb_GE06), abs(Eb_fullCLASS), TINY)",
+    "reason": "This is the exact Repair08 full-standard pair metric and avoids changing the previously frozen diagnostic convention.",
+    "omitted_correction_identity": "(Eb_GE06 + Eb_fullCLASS) = (Eb_GE06 + Eb_dust) + (Eb_fullCLASS - Eb_dust)"
+  },
+  "mandatory_reproduction_gate": {
+    "target_repair11_shift_max": 5.016294027155656e-5,
+    "relative_error_max": 1e-10,
+    "if_failed": "REPAIR12_IMPLEMENTATION_REPRODUCTION_FAIL"
+  },
+  "routing_improvement_factor": "frozen Repair11 science shift max divided by full-standard counterfactual pair-metric max",
+  "no_threshold_change": true,
+  "diagnostic_only": true
+}
