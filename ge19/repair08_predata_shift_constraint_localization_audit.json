@@ -1,0 +1,61 @@
+{
+  "classification": "GE19_REPAIR08_PREDATA_SHIFT_CONSTRAINT_LOCALIZATION_AUDIT",
+  "created_before_repair08_result": true,
+  "parent_repair07_freeze_commit": "8295046a26979b4045a39b8010f892d100d7a7c5",
+  "purpose": "Localize the sole surviving Repair07 Stage-A defect before changing any equation, sign, solver, threshold or reduced model.",
+  "frozen_repair07_observation": {
+    "classification": "GE19_REPAIR07_WINDOW_RETARDED_REDUCED_H3_Z20_PARTICULAR_FAIL",
+    "failure_stage": "Stage_A_reduced_H1_reclosure",
+    "shift_backward_error_max": 0.07116549016013037,
+    "anisotropy_backward_error_max": 2.0507171418980342e-16,
+    "radau_scaled_residual_max": 4.198335271454888e-16,
+    "time_grid_state_relative_L2_max": 0.000131712788922018
+  },
+  "questions_in_order": [
+    "Does the frozen GE15+GE18 reduced initial surface satisfy the GE06+GE07 shift constraint before time marching?",
+    "Does the frozen GE15 gravitational+AeST shift contribution cancel the exact full-standard CLASS momentum contribution on the same 64-node window?",
+    "How much of the shift defect is introduced by replacing the full standard sector with the GE18 pressureless surrogate?",
+    "If the initial surface closes, at what redshift does the canonical Repair07 trajectory first exceed the unchanged 1e-6 shift gate?",
+    "Do hypothetical matter-sign or AeST-scalar-sign flips improve the initial shift residual enough to identify a convention error?"
+  ],
+  "diagnostic_only": true,
+  "permitted_operations": [
+    "read the frozen GE15 dense trace and raw CLASS perturbation/background outputs already used by GE18",
+    "read the frozen GE18 Repair01 NPZ",
+    "reuse Repair07 frozen GE06/GE07 stable generator and canonical functions without modification",
+    "evaluate shift contributions on frozen reference and Repair07 canonical trajectories",
+    "evaluate hypothetical sign flips only as non-science counterfactual diagnostics",
+    "report initial, maximum and final shift residuals and their redshift locations"
+  ],
+  "explicit_nonchanges": [
+    "no GE06 or GE07 source-generator edit",
+    "no GE15 or GE18 map edit",
+    "no sign change",
+    "no canonical DAE partition change",
+    "no Radau change",
+    "no background change",
+    "no C-value change",
+    "no threshold change",
+    "no Stage-A or Stage-B science execution",
+    "no Z20 construction"
+  ],
+  "fixed_diagnostic_scales": {
+    "science_shift_gate_reference": 1e-6,
+    "full_CLASS_pair_cancellation_good": 1e-4,
+    "sign_flip_strong_improvement_factor": 100.0
+  },
+  "routing_logic": {
+    "initial_surface_defect": "current reduced initial shift backward error > 1e-6",
+    "propagation_defect": "current reduced initial shift backward error <= 1e-6 and Repair07 canonical trajectory later exceeds 1e-6",
+    "matter_sign_suspect": "initial_surface_defect and hypothetical T/matter-sign flip improves initial pair residual by >=100x",
+    "aest_scalar_sign_suspect": "initial_surface_defect and hypothetical AeST scalar-phi sign flip improves initial pair residual by >=100x",
+    "reduced_dust_systematic_suspect": "full-standard CLASS momentum cancels frozen GE15 gravitational+AeST shift to <=1e-4 while the reduced-dust reference does not",
+    "background_or_constraint_propagation_suspect": "initial surface closes, full-standard convention closes, but the internally evolved reduced trajectory later violates shift"
+  },
+  "historical_results_unchanged": [
+    "GE19 Repair03 FAIL",
+    "GE19 Repair04/05 historical outcomes",
+    "GE19 Repair06 FAIL",
+    "GE19 Repair07 FAIL"
+  ]
+}
