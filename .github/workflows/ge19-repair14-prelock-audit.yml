@@ -85,8 +85,10 @@ jobs:
           real={"N20":NN,"S20":SS}
           q=r14.lambda_c2_equation_source(bg,rr,real)
           assert q.shape==(6,nt,nx)
-          assert np.allclose(q[0],-36*rr[:,None]*aa[:,None]*SS**2,rtol=0,atol=1e-30)
-          assert np.allclose(q[1],-72*rr[:,None]*aa[:,None]*NN*SS-36*rr[:,None]*SS**2,rtol=0,atol=1e-30)
+          q0_expected=-36.0*rr[:,None]*aa[:,None]*SS*SS
+          q1_expected=-72.0*rr[:,None]*aa[:,None]*NN*SS-36.0*rr[:,None]*SS*SS
+          assert np.array_equal(q[0],q0_expected)
+          assert np.array_equal(q[1],q1_expected)
           assert np.max(np.abs(q[2:]))==0.0
 
           # Structural audit: frozen Repair13 H1 must only be loaded, never recomputed.
