@@ -12,66 +12,63 @@ Historical classifications are immutable. A FAIL is never relabelled after a lat
 
 ## Current checkpoint
 
-The latest executed and frozen diagnostic is Repair17:
+The latest executed and frozen diagnostic is Repair18:
 
-`GE19_REPAIR17_FULL_CANONICAL_INITIAL_MANIFOLD_AUDIT_COMPLETE`
+`GE19_REPAIR18_ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_AUDIT_COMPLETE`
 
 with route
 
-`FINITE_WINDOW_ZERO_BOUNDARY_INADMISSIBLE_SOURCE_COMPATIBLE`.
+`ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_CERTIFIED`.
 
-Repair17 result-freeze commit:
+Repair18 result-freeze commit:
 
-`1ce72e3c3a732be59c1e390c8ef67859348b76c6`.
+`3892ee81c8030ee7c5131d1aaf1f333cbdbe6509`.
 
-Repair17 JSON SHA-256:
+Repair18 JSON SHA-256:
 
-`f81ad8ef52eb3a7ff4d4286670a62c830f17872459f43812b059447f85e14184`.
+`d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc`.
 
-The full canonical 2x8 initial constraint manifold exists in all 714 material cases:
+The zero-coordinate projected-momentum boundary passes all frozen gates in all 714 material cases:
 
-- full-y constraint residual max: `8.892022036425179e-13`;
-- lapse backward error max: `2.6457320679749983e-16`;
-- shift backward error max: `1.8699495216551784e-10`;
-- eliminated algebraic residual max: `2.388467729664837e-16`;
-- rank 2 / augmented rank 2 in every material case;
+- scaled constraint residual max: `2.482534153108436e-16`;
+- lapse backward error max: `2.639993079262776e-16`;
+- shift backward error max: `3.2234628832120975e-16`;
+- eliminated algebraic residual max: `2.457039030496151e-16`;
+- rank 2 / augmented rank 2 throughout;
 - 714/714 PASS;
-- all outputs finite.
+- all material outputs finite.
 
-Thus the frozen Repair14 quadratic source is source-compatible at the initial surface. Repairs 15 and 16 failed because the imposed finite-window zero boundaries were inadmissible, not because the full canonical constraint manifold was absent.
+Primary/control boundary reproducibility is also closed:
 
-The remaining blocker is **boundary selection**, not manifold existence.
+- projected p0 relative L2 difference max: `0.0`;
+- determined qdot0 relative L2 difference max: `6.468697709110601e-15`.
 
-The Repair17 Euclidean minimum-norm full-y state is only an existence witness because the 2x8 system has six canonical null directions and the solution norm is coordinate-scale sensitive. It must not be injected directly into a new H3 propagation as a physical boundary without a separately preregistered rule.
+Repair18 therefore converts the Repair17 manifold-existence result into one unique reproducible finite-window boundary prescription:
 
-No new H3 propagation, q20 or H4/Z21 is licensed until a constraint-compatible boundary-selection rule is frozen and independently certified.
+`q0=0`, with canonical `p0` determined by the frozen doubly equilibrated GELSD lapse+shift projection.
 
-Repair18 now implements exactly that boundary audit and is **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
+Repair19 is now **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
 
-Repair18 boundary:
+Repair19 reruns the exact Repair14 H3/Z20 propagation with only this initial-boundary replacement. Repair07 canonical propagation, Repair14 source construction, Repair13 parent, all grids/modes/C/beta values and all Stage-B gates are unchanged.
 
-- `q0=(S20,u20,phi20,T20)=0` exactly;
-- solve only `p0=(pS20,pu20,pphi20,pT20)` from lapse+shift;
-- frozen doubly equilibrated GELSD minimum-norm solve;
-- exactly four iterative-refinement sweeps;
-- unchanged constraint/algebraic gates.
+Repair19 dedicated prelock:
 
-Repair18 dedicated prelock run:
+`35617194247` — SUCCESS.
 
-`35612842980` — SUCCESS.
+Repair19 runner-head static audit:
 
-Repair18 runner-head static audit:
+`35617378275` — SUCCESS.
 
-`35613018505` — SUCCESS.
+Locked Repair19 runner commit:
 
-Locked Repair18 runner commit:
+`2972b32a019145a3b4ec0ce178466564caa7005e`.
 
-`3eeac48e9dbfd82fbcf29b405580eeb34167c008`.
+No q20 or H4/Z21 is licensed until the Repair19 propagation result is frozen PASS.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> first H3/Z20 attempt failed shift constraint -> naive zero boundaries excluded -> full canonical constraint manifold exists in 714/714 material cases -> boundary-selection certification is next`.
+`H1/background certified -> first H3/Z20 attempt failed shift constraint -> naive zero boundaries excluded -> full canonical manifold exists -> Repair18 projected boundary certified in 714/714 cases -> Repair19 H3/Z20 propagation is next`.
 
 ---
 
@@ -337,6 +334,53 @@ the full 2x8 system has six null directions. Repair17's Euclidean minimum-norm r
 The next gate must therefore freeze and certify a coordinate/physics-motivated constraint-compatible boundary before any H3 propagation is rerun.
 ---
 
+## Repair18 — zero-coordinate projected-momentum boundary
+
+Classification:
+
+`GE19_REPAIR18_ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_AUDIT_COMPLETE`.
+
+Route:
+
+`ZERO_COORDINATE_CONSTRAINT_PROJECTED_MOMENTUM_BOUNDARY_CERTIFIED`.
+
+Result-freeze commit:
+
+`3892ee81c8030ee7c5131d1aaf1f333cbdbe6509`.
+
+Frozen output hashes:
+
+- JSON/FULL log:
+  `d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc`;
+- outer runner:
+  `f50fe69000c31ddbb57228ae5dc15c2fc6c641e4adb08e30fda6ad3e0677f2c5`.
+
+Boundary:
+
+- `q0=(S20,u20,phi20,T20)=0` exactly;
+- `p0=(pS20,pu20,pphi20,pT20)` from the frozen 2x4 lapse+shift projection;
+- doubly equilibrated GELSD minimum norm;
+- exactly four iterative-refinement sweeps.
+
+Global result:
+
+- `714/714` material cases PASS;
+- scaled constraint residual max `2.482534153108436e-16`;
+- lapse max `2.639993079262776e-16`;
+- shift max `3.2234628832120975e-16`;
+- algebraic residual max `2.457039030496151e-16`;
+- anisotropy max `6.394777335818628e-16`;
+- rank 2 throughout.
+
+Primary/control projected p0 is identical to machine representation, with qdot0 relative L2 mismatch <= `6.468697709110601e-15`.
+
+Raw p0 and qdot0 norms are coordinate-scale sensitive and are monitored descriptively only. The scaled solution norm remains <= `0.577350276667655`.
+
+Scientific conclusion:
+
+the finite-window initial boundary is now uniquely and reproducibly certified. The next licensed step is H3/Z20 propagation with this exact boundary and unchanged Stage-B gates.
+---
+
 ## What is certified now
 
 Certified:
@@ -363,7 +407,7 @@ The project is **not yet ready for a nonlinear real-data claim**.
 
 The shortest valid route is:
 
-`constraint-compatible boundary certification -> constraint-certified Z20 propagation -> observable bridge -> real-data confrontation`.
+`Repair19 constraint-certified Z20 propagation -> observable bridge -> real-data confrontation`.
 
 For the full nonlinear-memory state claim:
 
@@ -377,10 +421,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Preregister and certify a unique constraint-compatible finite-window boundary rule before rerunning H3/Z20.
+Run the locked local Repair19 H3/Z20 propagation.
 
-The preferred first audit is a zero-coordinate (`q=0`) canonical-momentum projection with a frozen physically scaled norm / solve rule, because Repair17 shows the p-only subspace is algebraically exact and close to the frozen shift gate.
+Until that result is frozen, the canonical project status is:
 
-Until that boundary rule is frozen, the canonical project status is:
-
-**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 full canonical manifold PASS-for-existence; Repair18 projected-momentum boundary READY / NOT YET EXECUTED.**
+**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 manifold PASS-for-existence; Repair18 projected finite-window boundary PASS; Repair19 H3/Z20 propagation READY / NOT YET EXECUTED.**
