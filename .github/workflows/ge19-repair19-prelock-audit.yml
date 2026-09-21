@@ -1,0 +1,89 @@
+name: GE19 Repair19 projected-boundary H3 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair19_*'
+      - '.github/workflows/ge19-repair19-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair19_projected_boundary_reduced_h3_z20_propagation.py
+
+      - name: Audit frozen source/integrator provenance and boundary-only patch
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util, json, subprocess
+          from pathlib import Path
+
+          root=Path.cwd()
+          pre=json.load(open("ge19/repair19_predata_projected_boundary_reduced_h3_z20_propagation.json"))
+          assert pre["classification"]=="GE19_REPAIR19_PREDATA_PROJECTED_BOUNDARY_REDUCED_H3_Z20_PROPAGATION"
+          assert pre["created_before_repair19_result"] is True
+          assert pre["parent_repair18_freeze_commit"]=="3892ee81c8030ee7c5131d1aaf1f333cbdbe6509"
+          assert pre["frozen_parent"]["repair18_JSON_sha256"]=="d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc"
+          assert pre["unchanged_stage_B_gates"]["primary_linear_system_relative_L2_residual_max"]==1e-8
+          assert pre["unchanged_stage_B_gates"]["shift_constraint_backward_error_max"]==1e-6
+          assert pre["unchanged_stage_B_gates"]["anisotropy_constraint_backward_error_max"]==1e-6
+          assert pre["unchanged_stage_B_gates"]["primary64_vs_control32_state_global_relative_L2_max"]==5e-3
+
+          def blob(path):
+              return subprocess.check_output(
+                  ["git","rev-parse",f"HEAD:{path}"],text=True
+              ).strip()
+
+          assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
+          assert blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py")=="06c5ced952c2370cfa4aaadb6ef8f72d2d7221de"
+          assert blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py")=="c7b3a5c689bd78a65a8150c26e1fbfae108cb580"
+
+          spec=importlib.util.spec_from_file_location(
+              "r19",root/"ge19/repair19_projected_boundary_reduced_h3_z20_propagation.py"
+          )
+          r19=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r19)
+          assert r19.REPAIR18_JSON_SHA=="d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc"
+          assert r19.P_REPRO_MAX==1e-12
+          assert r19.PC_P_REPRO_MAX==1e-12
+          assert r19.INIT_CONSTRAINT_RES_MAX==1e-8
+          assert r19.INIT_LAPSE_MAX==1e-6
+          assert r19.INIT_SHIFT_MAX==1e-6
+          assert r19.INIT_ALG_MAX==1e-8
+
+          src=(root/"ge19/repair19_projected_boundary_reduced_h3_z20_propagation.py").read_text()
+          assert "projected_momentum_solve(A,b)" in src
+          assert "r7.solve_case_canonical=solve_case_projected_boundary" in src.replace(" ","")
+          assert "r14.main()" in src
+          assert "repair14_self_consistent_reduced_h3_z20_particular.py" in src
+          assert "repair18_zero_coordinate_constraint_projected_momentum_boundary.py" in src
+          assert 'A=Afull[:,4:8]' in src.replace(" ","")
+          assert 'y0[4:8,ib]=p' in src.replace(" ","")
+          assert 'np.zeros((8,nb),complex)' in src.replace(" ","")
+
+          # No new source physics is defined in Repair19.
+          forbidden_definitions=[
+              "def lambda_c2_equation_source",
+              "def source_real_reduced_lambda",
+              "def y2_source_from_reduced",
+              "def assemble_ga_local",
+              "def assemble_m_local",
+          ]
+          for token in forbidden_definitions:
+              assert token not in src, token
+
+          print("REPAIR07_BLOB =",blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py"))
+          print("REPAIR14_BLOB =",blob("ge19/repair14_self_consistent_reduced_h3_z20_particular.py"))
+          print("REPAIR18_BLOB =",blob("ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py"))
+          print("GE19_REPAIR19_PRELOCK_AUDIT_PASS")
+          PY
