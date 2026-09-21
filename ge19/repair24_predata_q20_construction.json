@@ -1,0 +1,91 @@
+{
+  "classification": "GE19_REPAIR24_PREDATA_Q20_CONSTRUCTION",
+  "created_before_result": true,
+  "parent_chain": {
+    "Repair22_classification": "GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS",
+    "Repair22_result_freeze_commit": "9174f2e622f42851474ed124b429bf07b2db3ac7",
+    "Repair22_result_freeze_blob": "fb4ef607d17b5545985edf557aa67d02bc4dff0f",
+    "Repair22_JSON_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+    "Repair22_NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+    "Repair23_classification": "GE19_REPAIR23_Q20_NORMALIZED_BATH_BRIDGE_AUDIT_PASS",
+    "Repair23_result_freeze_commit": "79597296185209e50ef133f680d7b3d3481bac86",
+    "Repair23_result_freeze_blob": "5081fdf87e7e7f76849cf94e01f74c8df5dcca80"
+  },
+  "purpose": "Construct and certify the baseline second-order normalized bath response q20 required by the frozen H4/Z21 hierarchy, using the certified Repair22 Z20 state and the frozen Repair23 q<->z normalization.",
+  "frozen_theory": {
+    "tauH0": 10.0,
+    "normalized_bath": "z_j = omega_j q_j / sqrt(w_j)",
+    "second_order_equation": "G1[Z20,z20] + G2[(Z10,z10),(Z10,z10)] = 0",
+    "equivalent_forced_form": "z20_ddot + 3 H z20_dot + omega_j^2 (z20-X20) = -G2_norm",
+    "effective_drive": "Xeff20_j = X20 - G2_norm_j/omega_j^2",
+    "q20_dictionary": "q20_j=sqrt(w_j) z20_j/omega_j",
+    "no_new_physics_parameter": true
+  },
+  "frozen_state_scope": {
+    "C_tags": ["C_min", "C_star", "C_max"],
+    "beta0": [1.0, 0.5, 0.1],
+    "m_solve": [1,40],
+    "H1_input_modes": [3,5,8,10,15,20],
+    "time_primary": 128,
+    "time_control": 64,
+    "spatial_primary": 512,
+    "spatial_control": 256,
+    "quadrature_primary": 2048,
+    "quadrature_control": 1024,
+    "window": "0.2 <= z <= 1.5"
+  },
+  "frozen_v077_artifact": {
+    "run_id": 34315590099,
+    "artifact_id": 10090367181,
+    "artifact_name": "results_bundle_v077_native_state_tangent_affinity",
+    "artifact_digest": "sha256:24b97e5738eb07be4f12d433ff5f9fe22249e199e186d5617aca5dc81f748378",
+    "trace_name": "v076_v077_base_trace.dat"
+  },
+  "first_order_bath_boundary": {
+    "rule": "Integrate the frozen full-history v0.77 base chi/a trace with the positive Drude bath up to the exact GE19 initial surface a=0.4, convert to the physical longitudinal z10 coefficient using i*k times the frozen amplitude/phase coefficient, then evolve within the GE19 window using the reduced on-shell Repair22 H1 X10 parent.",
+    "initial_a": 0.4,
+    "initial_match_H1_X10_vs_trace_relative_or_absolute_max": 1e-10
+  },
+  "second_order_bath_boundary": {
+    "z20_at_a0": 0.0,
+    "dz20_dxi_at_a0": 0.0,
+    "interpretation": "window-local particular second-order bath state only; no primordial/homogeneous second-order bath mode is claimed"
+  },
+  "action_source_generation": {
+    "generator": "GE05 c2 bath Euler-Lagrange residual from the frozen NL0B longitudinal 3+1 action",
+    "assembly": "bath_q = partial_q - d_t partial_qt - d_x partial_qx",
+    "normalization": "G2_norm=(-2 omega/sqrt(w))*bath_q_c2",
+    "first_order_direction": "Repair22 on-shell Z10 plus its retarded z10 node state",
+    "beta_dependence": "G2 is beta-independent because the H1 parent is beta-independent; beta enters q20 only through certified Z20/X20"
+  },
+  "certified_physical_projection": {
+    "primary_object": "weighted_z20 = sum_j w_j z20_j",
+    "reason": "The frozen H4 physical block M1[Z20,q20] depends on q20 through the linear completed-square bath projection sum_j w_j z20_j; full node states are deterministic recomputable auxiliaries and need not be persisted.",
+    "also_report": ["weighted_z10", "B20_linear = X20-weighted_z20", "G2_norm weighted summaries"]
+  },
+  "gates": {
+    "Repair22_Z20_certified": true,
+    "Repair23_bridge_PASS": true,
+    "full_history_initial_surface_a_abs_mismatch_max": 1e-12,
+    "H1_X10_initial_match_abs_or_rel_max": 1e-10,
+    "G2_Nx256_vs_Nx512_low_mode_relative_L2_max": 1e-10,
+    "q20_quadrature_N1024_vs_N2048_weighted_z20_relative_L2_max": 0.01,
+    "q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max": 0.005,
+    "z10_Nt64_vs_Nt128_weighted_z10_relative_L2_max": 0.005,
+    "all_weighted_q20_outputs_finite": true,
+    "all_cases_complete": true
+  },
+  "routing": {
+    "PASS": "All frozen q20 construction and convergence gates pass.",
+    "FAIL": "Science construction completes but one or more frozen gates fail.",
+    "IMPLEMENTATION_FAIL": "Frozen provenance, trace resolution, exact initial-surface match, execution, or output integrity fails."
+  },
+  "if_PASS": "Freeze Repair24 q20 and license a separately preregistered H4/Z21 construction using Repair22 Z20, Repair24 q20, GE04 DY2, GE05 M1/M2 and the certified first-order eta tangent.",
+  "explicit_nonclaims": [
+    "no Z21 result",
+    "no finite eta",
+    "no physical-amplitude nonlinear trajectory",
+    "no primordial second-order bath mode",
+    "no lensing or observational inference"
+  ]
+}
