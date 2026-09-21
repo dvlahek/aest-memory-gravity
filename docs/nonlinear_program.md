@@ -1,5 +1,8 @@
 # Nonlinear program after linear-chain closure
 
+> Historical high-level programme note. The active reduced weakly nonlinear implementation track is GE19. For the current certified parent, frozen FAILs, diagnostic repairs and exact next gate, use `docs/ge19_history.md`. As of 2026-09-21 the live checkpoint is Repair17 **READY / NOT YET EXECUTED**.
+
+
 The linear numerical chain is closed by the preserved v0.77 and v0.78 PASS results. This document defines the stronger next path without re-opening CLASS interpolation debugging.
 
 ## Scientific target
