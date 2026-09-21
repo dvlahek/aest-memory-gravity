@@ -230,9 +230,15 @@ def step_nd_self_test(c4):
     h=1.8; dx=0.031
     qn,vn=step_linear_nd(q,v,r,h,x0,x1,dx)
     errs=[]
-    for j in range(q.shape[1]):
-        a,b=c4.step_linear(q[:,j],v[:,j],r,h,x0[:,j],x1[:,j],dx)
-        errs.extend([aor(qn[:,j],a),aor(vn[:,j],b)])
+    for i in range(q.shape[0]):
+        for j in range(q.shape[1]):
+            a,b=c4.step_linear(
+                np.asarray([q[i,j]],complex),
+                np.asarray([v[i,j]],complex),
+                np.asarray([r[i]],float),
+                h,x0[i,j],x1[i,j],dx
+            )
+            errs.extend([aor([qn[i,j]],a),aor([vn[i,j]],b)])
     return float(max(errs))
 
 
