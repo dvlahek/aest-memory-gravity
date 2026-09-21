@@ -1,0 +1,70 @@
+{
+  "classification": "GE19_REPAIR11_PREDATA_LAMBDA_INCLUSIVE_REDUCED_H1_RECLOSURE",
+  "created_before_repair11_result": true,
+  "parent_repair10_freeze_commit": "b66e780b9d3b5f119ef4deafa0cd2e82d5333580",
+  "trigger": {
+    "repair10_classification": "GE19_REPAIR10_REDUCED_BACKGROUND_VACUUM_ONSHELL_AUDIT_COMPLETE",
+    "repair10_next_route": "OMITTED_LAMBDA_DOMINANT_OFFSHELL_MECHANISM",
+    "full_known_density_closure_relative_L2": 6.573879942279e-7,
+    "full_known_pressure_closure_relative_L2": 0.00014104702011835305,
+    "lambda_density_improvement_min": 1317.932121862554,
+    "lambda_pressure_improvement_min": 1516.4984632922062
+  },
+  "purpose": "Add the frozen CLASS cosmological-constant action to the reduced first-order operator and repeat the mandatory Stage-A reduced-H1 reclosure before any H3/Z20 construction.",
+  "frozen_lambda_action": {
+    "lagrangian": "-6 rho_lambda N L R^2",
+    "background_source": "rho_lambda interpolated from the same frozen GE15 CLASS background table",
+    "equation_contributions_background": {
+      "lapse": "-6 rho_lambda a^3",
+      "longitudinal_scale": "-6 rho_lambda a^2",
+      "transverse_scale": "-12 rho_lambda a^2",
+      "shift": "0"
+    },
+    "gauge_fixed_first_directional_coefficients": {
+      "lapse_row": "delta E_N^lambda = -18 rho_lambda a^2 S",
+      "isotropic_row": "delta(E_L+E_R)^lambda = -18 rho_lambda a^2 N - 36 rho_lambda a S",
+      "anisotropy_row": "delta(E_L-0.5 E_R)^lambda = 0",
+      "shift_row": "0",
+      "aether_row": "0",
+      "scalar_row": "0",
+      "dust_potential_row": "0",
+      "dust_density_row": "0"
+    }
+  },
+  "permitted_change_only": [
+    "augment the frozen Repair07 local first-order canonical C matrix by the exact first directional coefficients of L_lambda",
+    "interpolate rho_lambda from results/ge15_R1_cli_background.dat on the same x=ln(a) domain",
+    "repeat Stage A on Nt=64 and Nt=32",
+    "report lambda coefficient and rho_lambda diagnostics"
+  ],
+  "explicit_nonchanges": [
+    "no GE06 generator edit",
+    "no GE07 generator edit",
+    "no pressureless-dust C change",
+    "no GE15 or GE18 initial-state change",
+    "no stable-Z change",
+    "no canonical state-variable change",
+    "no Noether-regularized anisotropy algebraic partition change",
+    "no Radau-IIA coefficient change",
+    "no shift or anisotropy metric change",
+    "no threshold change",
+    "no H3 source construction",
+    "no Z20 construction"
+  ],
+  "stage_A_gates_unchanged": {
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 1e-6,
+    "anisotropy_constraint_backward_error_max": 1e-6,
+    "primary64_vs_control32_state_global_relative_L2_max": 0.005,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "all_outputs_finite": true
+  },
+  "terminal_classifications": {
+    "pass": "GE19_REPAIR11_LAMBDA_INCLUSIVE_REDUCED_H1_RECLOSURE_PASS",
+    "fail": "GE19_REPAIR11_LAMBDA_INCLUSIVE_REDUCED_H1_RECLOSURE_FAIL",
+    "implementation_fail": "GE19_REPAIR11_LAMBDA_INCLUSIVE_REDUCED_H1_RECLOSURE_IMPLEMENTATION_FAIL"
+  },
+  "next_step_if_pass": "Only after a frozen Repair11 Stage-A PASS may a separate preregistered repair add the second directional Lambda metric source and re-attempt H3/Z20.",
+  "no_threshold_relaxation": true,
+  "historical_repair06_07_relabel": false
+}
