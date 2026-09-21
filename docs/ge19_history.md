@@ -12,77 +12,58 @@ Historical classifications are immutable. A FAIL is never relabelled after a lat
 
 ## Current checkpoint
 
-The latest executed and frozen science result is Repair19:
+The latest executed and frozen diagnostic result is Repair20:
 
-`GE19_REPAIR19_PROJECTED_BOUNDARY_REDUCED_H3_Z20_PROPAGATION_FAIL`.
+`GE19_REPAIR20_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT_COMPLETE`
 
-Repair19 result-freeze commit:
+with route
 
-`71e1e60e133b79828163fe077f5991e98d40d6bb`.
+`ACTIVE_SHIFT_PROPAGATION_ISSUE_REMAINS`.
 
-Repair19 JSON SHA-256:
+Repair20 result-freeze commit:
 
-`32837e04a9ea6c83642a0d465f0312cc17a02ddad168760764f3c7b999a0a14d`.
+`317b4219f6630b0c1f0f15081e8db62e6470a47c`.
 
-Repair19 reproduces the certified Repair18 boundary exactly and passes every frozen control except the propagated shift gate:
+Repair20 JSON SHA-256:
 
-- Repair18 p0 reproduction: `0.0`;
-- initial shift: `3.2234628832120975e-16`;
-- source spatial convergence: `1.1166216258507802e-12`;
-- primary linear residual: `1.2568088493786592e-13`;
-- anisotropy: `5.176430012533252e-16`;
-- Nt64/Nt32 state difference: `3.77673237391757e-4`;
-- primary all-row shift max: `1.8946212213942455`;
-- control all-row shift max: `1.9278909582169974`.
+`5f1dc8e48963c6403f142958c8ce34ab1457953b47868d1a65317655cd0644eb`.
 
-The O(1) shift maxima occur on near-null rows with absolute residuals around `1e-18`. On active rows the Repair19 Nt64 shift residual is approximately `7e-6`, suggesting a time-resolution effect.
+Repair20 establishes:
 
-Repair20 is now **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
+- the historical O(1) shift maxima are near-null normalization artifacts;
+- Nt128 near-null absolute residual / S_ref = `7.780179533808193e-14`, PASS;
+- active Nt64 shift max = `7.796797901197683e-6`;
+- active Nt128 shift max = `9.588510852544816e-6`, FAIL vs `1e-6`;
+- Nt64->Nt128 state relative L2 = `1.5208749281064644e-5`, PASS;
+- linear residual max = `1.769584113409754e-13`, PASS;
+- anisotropy max = `6.433831574584877e-16`, PASS.
 
-Repair20 is a diagnostic Nt=32/64/128 ladder with:
+The simple hypothesis that the Repair19 shift-only FAIL is only near-null normalization plus ordinary H3 time truncation is therefore not confirmed.
 
-- one common frozen Repair13 Nt64 Z10/Z10dot parent;
-- unchanged Repair14 source physics;
-- unchanged Repair18 boundary;
-- unchanged Repair07 shift metric and original `1e-6` threshold;
-- explicit per-time absolute residual and natural shift scale;
-- near-null rule `scale <= sqrt(eps_float64) S_ref`;
-- expected two-stage Radau IIA global order 3.
+Repair20 also reveals a diagnostic-design limitation: its global active maximum changes physical sample across grids (m=8 -> m=6 -> m=17), so the scalar reported 64->128 order is not a matched-point convergence order.
 
-Repair20 first local execution stopped before any science ladder evaluation with
+Repair21 is now **LOCKED / READY / NOT YET LOCALLY EXECUTED**.
 
-`GE19_REPAIR20_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT_IMPLEMENTATION_FAIL`
+Repair21 independently re-solves the already certified reduced H1 system on Nt64 and Nt128, rebuilds the unchanged Repair14 H3 source on those on-shell parents, applies the unchanged Repair18 boundary, and evaluates shift convergence on one common Nt128 physical grid for fixed C,beta,m.
 
-because the implementation requested nonexistent Repair13 NPZ key `ln_a_primary`. Repair13 freezes the primary grid as `x64`.
+Repair21 final dedicated prelock:
 
-This was repaired before any Repair20 science result:
+`35634051163` — SUCCESS.
 
-- implementation fix commit: `9bb8e4fd36be3fd26fb11b06a215b2806a269467`;
-- amended prelock commit: `410e6c35544a7225a91ca659c4001904c483cc12`;
-- amended prelock run: `35632117507` — SUCCESS;
-- refreshed runner commit: `bd7645f8a0fbdc5a5495a7e37ee20bed199dce3f`;
-- refreshed runner-head static audit: `35632243009` — SUCCESS.
+Repair21 runner-head static audit:
 
-No physics, source, boundary, near-null rule, grid ladder or threshold changed.
+`35634235285` — SUCCESS.
 
-Repair20 final dedicated prelock before the wiring amendment:
+Locked Repair21 runner commit:
 
-`35627410376` — SUCCESS.
+`67f7786ee80acf67c90355d5597955e6863a608b`.
 
-Repair20 runner-head static audit:
-
-`35627591960` — SUCCESS.
-
-Locked Repair20 runner commit:
-
-`ff985a5743e7e016f76edce8814feee1ea401125`.
-
-No Z20 certification, q20 or H4/Z21 is licensed until the Repair20 diagnostic is executed and frozen.
+No Z20 certification, q20 or H4/Z21 is licensed until Repair21 is executed and frozen.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> projected boundary certified -> Repair19 H3/Z20 stable but shift-only FAIL -> Repair20 32/64/128 near-null/time-resolution diagnostic is next`.
+`H1/background certified -> projected boundary certified -> Repair19 shift-only FAIL -> Repair20 confirms near-null pathology but active shift remains -> Repair21 on-shell-H1 matched-grid audit is next`.
 
 ---
 
@@ -442,45 +423,79 @@ Repair19 remains historical FAIL. It does not certify Z20.
 
 ## Repair20 — shift near-null + time-resolution audit
 
+Classification:
+
+`GE19_REPAIR20_SHIFT_NEAR_NULL_TIME_RESOLUTION_AUDIT_COMPLETE`.
+
+Route:
+
+`ACTIVE_SHIFT_PROPAGATION_ISSUE_REMAINS`.
+
+Result-freeze commit:
+
+`317b4219f6630b0c1f0f15081e8db62e6470a47c`.
+
+Frozen output hashes:
+
+- JSON/FULL: `5f1dc8e48963c6403f142958c8ce34ab1457953b47868d1a65317655cd0644eb`;
+- NPZ: `99937112b889bc556ada756bc7b4e834991a6019596fdbc353a40294ad3968a6`;
+- runner: `e251e3c226201eca22e3a839b16e0f49a5187eea8e75d57a5e7df48878d0521e`.
+
+Near-null diagnosis:
+
+- Nt128 S_ref `0.0030030102311219666`;
+- near-null threshold `4.474833952072213e-11`;
+- near-null abs residual / S_ref `7.780179533808193e-14`, PASS.
+
+Active shift:
+
+- Nt32 `8.140088658740307e-5`;
+- Nt64 `7.796797901197683e-6`;
+- Nt128 `9.588510852544816e-6`.
+
+The Nt128 active gate remains above the original `1e-6` threshold.
+
+State, linear and anisotropy controls all pass strongly.
+
+The preregistered global-max observed order is not a matched-sample order because the worst active sample moves from m=8 to m=6 to m=17 across the three grids.
+
+Therefore Repair20 confirms near-null monitor pathology but leaves an active shift propagation/certification issue unresolved.
+
+## Repair21 — on-shell H1 parent + matched-shift audit
+
 Status:
 
 **LOCKED / READY / NOT YET EXECUTED**.
 
 Preregistration commit:
 
-`7af03dcf16023dee12df1d93a36abf1a97881ec8`.
+`434dc92f0f59e34d84ca730ea041edecb004271c`.
 
 Implementation commit:
 
-`fe4ba2f9b0bf176fc5dd9f92c3ee2dcbb9da352e`.
+`9d75bd9a457a2d54089286e3fc6ff5a3c84a3aa0`.
 
 Implementation lock commit:
 
-`f2837e5154f8a9ca999c6bbeed4c9d62603185d8`.
+`1d3b1f25f12c856fbe43d92759fc4e34c970b0cc`.
 
 Locked runner commit:
 
-`ff985a5743e7e016f76edce8814feee1ea401125`.
+`67f7786ee80acf67c90355d5597955e6863a608b`.
 
-Repair20 uses Nt={32,64,128} with one common frozen H1 parent and unchanged H3 physics.
+Repair21 removes the Repair20 common-parent interpolation as the main science path.
 
-It records the original relative shift metric together with absolute residual and natural row scale.
+It solves genuine on-shell H1 parents independently on Nt64 and Nt128 with the frozen Repair13 equations and initial data, then rebuilds the unchanged Repair14 source and runs the unchanged Repair18-boundary H3 propagation.
 
-Near-null samples are defined before execution by
+Shift convergence is evaluated on the same Nt128 physical grid for each fixed C,beta,m.
 
-`scale <= sqrt(eps_float64) S_ref`
+Possible routes:
 
-where S_ref is the maximum Nt128 shift natural scale.
+- `INTERPOLATED_H1_PARENT_DEFECT_CONFIRMED`;
+- `ACTIVE_SHIFT_ISSUE_PERSISTS_ON_ON_SHELL_PARENT`;
+- `IMPLEMENTATION_FAIL`.
 
-Positive diagnostic routing additionally requires:
-
-- near-null absolute residual / S_ref <= `1000 eps`;
-- active Nt128 shift <= original `1e-6` threshold;
-- observed 64->128 order >= `2.5`;
-- Nt64->Nt128 state difference <= `5e-3`;
-- unchanged linear/aniso/boundary controls PASS.
-
-Even a positive Repair20 result does not retroactively pass Repair19.
+Even a positive Repair21 route does not yet certify Z20.
 ---
 
 ## What is certified now
@@ -509,7 +524,7 @@ The project is **not yet ready for a nonlinear real-data claim**.
 
 The shortest valid route is:
 
-`Repair20 shift diagnostic -> separately preregistered Z20 certification repair -> observable bridge -> real-data confrontation`.
+`Repair21 on-shell-H1 matched-shift diagnostic -> separately preregistered Z20 certification repair -> observable bridge -> real-data confrontation`.
 
 For the full nonlinear-memory state claim:
 
@@ -523,8 +538,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Run the locked local Repair20 shift time-resolution audit.
+Run the locked local Repair21 on-shell-H1 matched-shift audit.
 
 Until that result is frozen, the canonical project status is:
 
-**Repair13 H1 PASS; Repair14 H3/Z20 FAIL; Repair15/16 zero-boundary diagnostics frozen; Repair17 manifold PASS-for-existence; Repair18 boundary PASS; Repair19 H3/Z20 historical shift-only FAIL; Repair20 READY / NOT YET EXECUTED.**
+**Repair13 H1 PASS; Repair18 boundary PASS; Repair19 H3/Z20 historical shift-only FAIL; Repair20 near-null pathology confirmed but active shift unresolved; Repair21 READY / NOT YET EXECUTED.**
