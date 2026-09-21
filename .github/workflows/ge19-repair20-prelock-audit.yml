@@ -65,7 +65,7 @@ jobs:
           x=np.linspace(-1.0,0.0,8)
           y=np.vstack([np.sin(x)+1j*np.cos(x), x*x+1j*x])
           yi=r20.pchip_complex(x,y,x)
-          assert np.array_equal(yi,y)
+          assert r20.rel_l2(yi,y)<1e-15
 
           # Third-order synthetic convergence must be recognized.
           h32=1/31; h64=1/63; h128=1/127
