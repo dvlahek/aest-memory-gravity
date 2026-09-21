@@ -1,0 +1,117 @@
+name: GE19 Repair14 H3 Z20 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair14_*'
+      - '.github/workflows/ge19-repair14-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair14_self_consistent_reduced_h3_z20_particular.py
+
+      - name: Audit Lambda c2, frozen parent and H3 contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+          import numpy as np
+          import sympy as sp
+
+          root=Path.cwd()
+
+          pre=json.load(open("ge19/repair14_predata_self_consistent_reduced_h3_z20_particular.json"))
+          assert pre["classification"]=="GE19_REPAIR14_PREDATA_SELF_CONSISTENT_REDUCED_H3_Z20_PARTICULAR"
+          assert pre["created_before_repair14_result"] is True
+          assert pre["parent_repair13_freeze_commit"]=="5461f89f77f91e931f14abb6a2e5014597e0cb6f"
+          assert pre["frozen_parent"]["repair13_stage_A_pass"] is True
+
+          g=pre["stage_B_gates_unchanged"]
+          assert g["source_Nx1024_vs_Nx2048_m1_40_relative_L2_max"]==5e-4
+          assert g["linear_system_relative_L2_residual_max"]==1e-8
+          assert g["shift_constraint_backward_error_max"]==1e-6
+          assert g["anisotropy_constraint_backward_error_max"]==1e-6
+          assert g["primary64_vs_control32_state_global_relative_L2_max"]==5e-3
+
+          spec=importlib.util.spec_from_file_location(
+              "r14",root/"ge19/repair14_self_consistent_reduced_h3_z20_particular.py"
+          )
+          r14=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r14)
+
+          # Independent exact symbolic c2 derivation from the frozen action.
+          eps=sp.symbols("eps", real=True)
+          rho,a,N1,S1=sp.symbols("rho a N1 S1", real=True)
+          N,L,R=sp.symbols("N L R", real=True)
+          lag=-6*rho*N*L*R**2
+
+          EN=sp.diff(lag,N)
+          EL=sp.diff(lag,L)
+          ER=sp.diff(lag,R)
+          sub={N:1+eps*N1,L:a+eps*S1,R:a+eps*S1}
+
+          EN2=sp.expand(sp.diff(EN.subs(sub),eps,2).subs(eps,0))
+          EL2=sp.expand(sp.diff(EL.subs(sub),eps,2).subs(eps,0))
+          ER2=sp.expand(sp.diff(ER.subs(sub),eps,2).subs(eps,0))
+          ISO2=sp.expand(EL2+ER2)
+          ANI2=sp.expand(EL2-sp.Rational(1,2)*ER2)
+
+          assert sp.simplify(EN2 + 36*rho*a*S1**2)==0
+          assert sp.simplify(EL2 + 12*rho*S1**2 + 24*rho*a*N1*S1)==0
+          assert sp.simplify(ER2 + 24*rho*S1**2 + 48*rho*a*N1*S1)==0
+          assert sp.simplify(ISO2 + 36*rho*S1**2 + 72*rho*a*N1*S1)==0
+          assert sp.simplify(ANI2)==0
+
+          # Numerical implementation probe.
+          nt,nx=5,7
+          aa=np.linspace(0.4,0.8,nt)
+          rr=np.linspace(3e-8,4e-8,nt)
+          NN=np.arange(nt*nx,dtype=float).reshape(nt,nx)*1e-3
+          SS=np.flip(NN,axis=1)*0.7
+          bg={"a":aa}
+          real={"N20":NN,"S20":SS}
+          q=r14.lambda_c2_equation_source(bg,rr,real)
+          assert q.shape==(6,nt,nx)
+          assert np.allclose(q[0],-36*rr[:,None]*aa[:,None]*SS**2,rtol=0,atol=1e-30)
+          assert np.allclose(q[1],-72*rr[:,None]*aa[:,None]*NN*SS-36*rr[:,None]*SS**2,rtol=0,atol=1e-30)
+          assert np.max(np.abs(q[2:]))==0.0
+
+          # Structural audit: frozen Repair13 H1 must only be loaded, never recomputed.
+          src=(root/"ge19/repair14_self_consistent_reduced_h3_z20_particular.py").read_text()
+          forbidden=[
+              "solve_reduced_h1_case_canonical(",
+              "solve_reduced_h1_case(",
+          ]
+          for token in forbidden:
+              assert token not in src, token
+          assert 'Z10_reduced_primary' in src
+          assert 'Z10_reduced_control' in src
+          assert 'solve_case_canonical(' in src
+          assert 'NX_PRIMARY' in src
+          assert 'NX_SPATIAL_CONTROL' in src
+          assert 'Q_lambda' in src
+
+          # Source-sign audit: implementation subtracts the equation c2.
+          assert 'copy()-qlambda' in src.replace(" ","")
+
+          print("LAMBDA_EN_C2 =",EN2)
+          print("LAMBDA_EL_C2 =",EL2)
+          print("LAMBDA_ER_C2 =",ER2)
+          print("LAMBDA_ISO_C2 =",ISO2)
+          print("LAMBDA_ANISO_C2 =",ANI2)
+          print("LAMBDA_SHIFT_C2 = 0")
+          print("GE19_REPAIR14_PRELOCK_AUDIT_PASS")
+          PY
