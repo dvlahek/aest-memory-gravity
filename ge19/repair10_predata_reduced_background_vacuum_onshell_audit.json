@@ -1,0 +1,74 @@
+{
+  "classification": "GE19_REPAIR10_PREDATA_REDUCED_BACKGROUND_VACUUM_ONSHELL_AUDIT",
+  "created_before_repair10_result": true,
+  "parent_repair08_freeze_commit": "f08f3d076e58240766afa21df5df6b927146d67c",
+  "parent_repair09_freeze_commit": "c0d0fe65e63eeaabcbe0ddd2a49e336089fe2097",
+  "purpose": "Test the concrete off-shell mechanism exposed by Repair08/09: the frozen GE15 CLASS background contains a cosmological-constant sector, while the GE19 reduced H1 operator currently contains only GE06 Einstein+AeST plus GE07 pressureless dust. Quantify the homogeneous lapse and isotropic-spatial residuals before changing the linear operator.",
+  "diagnostic_only": true,
+  "frozen_observation": {
+    "repair08_initial_shift_backward_error_max": 3.9269986174371925e-08,
+    "repair08_canonical_shift_backward_error_max": 0.07116549016013037,
+    "repair08_full_standard_CLASS_pair_metric_max": 6.142613426914724e-06,
+    "repair09_shift_partition_rank": 5,
+    "repair09_shift_partition_determinant": "0",
+    "repair09_anisotropy_partition_rank": 6
+  },
+  "frozen_background_sector_definition": {
+    "AeST": "patched CLASS rho_cdm slot, reconstructed with the stable KQ -> Z Exp branch",
+    "standard_nonvacuum": "rho_b + rho_g + rho_ur + rho_ncdm[0]",
+    "standard_nonvacuum_pressure": "rho_g/3 + rho_ur/3 + p_ncdm[0]",
+    "vacuum": "rho_lambda with p_lambda=-rho_lambda",
+    "current_reduced_matter": "rho_d=C/a^3, p_d=0 for C_min,C_star,C_max"
+  },
+  "homogeneous_equation_audit": {
+    "GE06_lapse_identity": "E_N/(2 a^3) = 3 H^2 - (Q KQ - K)",
+    "required_nonAeST_CLASS_density": "rho_req = [3 H^2 - (Q KQ-K)]/3",
+    "GE06_isotropic_scale_identity": "E_L = 2 a^2 K + 2 adot^2 + 4 a addot",
+    "required_nonAeST_CLASS_pressure": "p_req = -E_L/(6 a^2)",
+    "vacuum_action_in_GE06_normalization": "L_lambda = -6 rho_lambda N L R^2",
+    "vacuum_background_contributions": {
+      "lapse": "-6 rho_lambda a^3",
+      "longitudinal_scale": "-6 rho_lambda a^2",
+      "transverse_scale": "-12 rho_lambda a^2",
+      "shift": "0"
+    }
+  },
+  "comparators": [
+    "current reduced: rho=C/a^3, p=0",
+    "reduced plus frozen CLASS Lambda: rho=C/a^3+rho_lambda, p=-rho_lambda",
+    "full known non-AeST background: rho=rho_std+rho_lambda, p=p_std-rho_lambda"
+  ],
+  "fixed_grids": {
+    "window": "0.2 <= z <= 1.5",
+    "primary_nodes": 64,
+    "C_values": {
+      "C_min": 2.566238549760586e-09,
+      "C_star": 2.568543329983919e-09,
+      "C_max": 2.5714842087496506e-09
+    }
+  },
+  "predeclared_numerical_controls": {
+    "stable_AeST_native_reconstruction": "reuse all Repair07 stable-background gates unchanged",
+    "full_known_density_closure_global_relative_L2_max": 0.00005,
+    "full_known_pressure_closure_global_relative_L2_max": 0.005,
+    "lambda_dominance_improvement_factor_reference": 10.0,
+    "all_outputs_finite": true
+  },
+  "routing_logic": {
+    "OMITTED_LAMBDA_DOMINANT_OFFSHELL_MECHANISM": "full known density and pressure comparators close within the predeclared controls and adding Lambda improves both current reduced density and pressure residual norms by >=10x",
+    "LAMBDA_REAL_BUT_NONVACUUM_REDUCTION_ALSO_MATERIAL": "full known comparators close, Lambda improves at least one residual by >=10x, but the other retains a material nonvacuum remainder",
+    "BACKGROUND_NORMALIZATION_OR_INTERPOLATION_UNRESOLVED": "full known density or pressure comparator does not close within the predeclared controls",
+    "VACUUM_OMISSION_NOT_DOMINANT": "full known comparators close but adding Lambda improves neither residual by >=10x"
+  },
+  "explicit_nonchanges": [
+    "no Lambda term is added to the GE19 linear operator in Repair10",
+    "no GE06 or GE07 equation is edited",
+    "no C value is changed",
+    "no reduced dust trajectory is changed",
+    "no sign or threshold is changed",
+    "no H1 reclosure is executed",
+    "no H3 source or Z20 is constructed"
+  ],
+  "next_step_policy": "Only after this audit may a separately preregistered repair add the frozen Lambda action and its first/second directional metric coefficients to the reduced operator and repeat Stage A.",
+  "claim_boundary": "Background/action normalization audit only; no finite eta, nonlinear-amplitude, collapse, lensing or observational claim."
+}
