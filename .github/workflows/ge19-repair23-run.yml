@@ -1,0 +1,49 @@
+name: GE19 Repair23 q20 normalized-bath execution
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - '.github/workflows/ge19-repair23-run.yml'
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Locked provenance audit
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD:docs/ge19_repair22_z20_certification_result_freeze.md)" = "fb4ef607d17b5545985edf557aa67d02bc4dff0f"
+          test "$(git rev-parse HEAD:ge19/repair23_predata_q20_normalized_bath_bridge_audit.json)" = "199fccde48fecfa143ef142015cc047ae39429be"
+          test "$(git rev-parse HEAD:ge19/repair23_q20_normalized_bath_bridge_audit.py)" = "6d85770ab03bf2ce2d9646c3396bc60047848a15"
+          test "$(git rev-parse HEAD:docs/ge19_repair23_q20_normalized_bath_bridge_implementation_lock.md)" = "d4d7683960edab10a9b57611ae3d0119f8685757"
+          test "$(git rev-parse HEAD:ge05/memory_directional_source_generator.py)" = "40837d77f89028da30c28899e2d0530a4401844e"
+          test "$(git rev-parse HEAD:nl1c4/expanding_memory_source_trajectory.py)" = "7a9ffab9fa903ca61e88627052e2aa589b4bf459"
+          echo "GE19_REPAIR23_LOCKED_PROVENANCE_PASS"
+
+      - name: Execute Repair23
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 ge19/repair23_q20_normalized_bath_bridge_audit.py             2>&1 | tee results/ge19_repair23_q20_normalized_bath_bridge_audit_FULL.log
+          echo "=== RESULT HASHES ==="
+          sha256sum results/ge19_repair23_q20_normalized_bath_bridge_audit.json
+          wc -c results/ge19_repair23_q20_normalized_bath_bridge_audit.json
+          sha256sum results/ge19_repair23_q20_normalized_bath_bridge_audit_FULL.log
+          wc -c results/ge19_repair23_q20_normalized_bath_bridge_audit_FULL.log
+          echo "GE19_REPAIR23_EXECUTION_COMPLETE"
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: ge19-repair23-q20-normalized-bath
+          path: |
+            results/ge19_repair23_q20_normalized_bath_bridge_audit.json
+            results/ge19_repair23_q20_normalized_bath_bridge_audit_FULL.log
