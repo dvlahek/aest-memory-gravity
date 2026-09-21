@@ -1,0 +1,99 @@
+{
+  "classification": "GE19_REPAIR21_PREDATA_ON_SHELL_H1_PARENT_MATCHED_SHIFT_AUDIT",
+  "created_before_repair21_result": true,
+  "parent_repair20_freeze_commit": "317b4219f6630b0c1f0f15081e8db62e6470a47c",
+  "purpose": "Test if the unresolved Repair20 active shift residual is caused by using separately PCHIP-interpolated frozen H1 state and derivative arrays off the original Nt64 nodes. Recompute the already-certified reduced H1 equations on Nt64 and Nt128, then rerun the unchanged H3 source, Repair18 boundary and Repair07 canonical propagation and evaluate shift convergence on one common matched physical grid.",
+  "diagnostic_only": true,
+  "frozen_parents": {
+    "Repair13_JSON_sha256": "ae3cc790ecffbd5498b5852273c72ae578d4615de29bbb616673c05cdb3e74b7",
+    "Repair13_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "Repair18_JSON_sha256": "d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc",
+    "Repair19_JSON_sha256": "32837e04a9ea6c83642a0d465f0312cc17a02ddad168760764f3c7b999a0a14d",
+    "Repair20_JSON_sha256": "5f1dc8e48963c6403f142958c8ce34ab1457953b47868d1a65317655cd0644eb",
+    "Repair20_NPZ_sha256": "99937112b889bc556ada756bc7b4e834991a6019596fdbc353a40294ad3968a6"
+  },
+  "resolutions": {
+    "Nt": [64, 128],
+    "Nx": 1024,
+    "C": ["C_min", "C_star", "C_max"],
+    "beta0": [1.0, 0.5, 0.1],
+    "m": "1..40"
+  },
+  "on_shell_H1_parent": {
+    "background": "same Repair13 self-consistent reduced AeST+dust+Lambda background independently evaluated on Nt64 and Nt128",
+    "reference_initial_data": "same frozen GE15/GE18 first-order bridge used by Repair13 on each target grid",
+    "solver": "same frozen Repair07 solve_reduced_h1_case_canonical used by Repair13",
+    "Lambda_c1": "same frozen Repair11 first-directional Lambda operator",
+    "Nt64_reproduction": "new Nt64 on-shell H1 must reproduce frozen Repair13 Nt64 Z10 and Z10dot",
+    "Nt128": "genuine on-shell solve; no PCHIP replacement for the H1 state or derivative"
+  },
+  "interpolated_parent_counterfactual": {
+    "construct": "also reconstruct the Repair20 Nt128 PCHIP(Z10_Nt64) and PCHIP(Z10dot_Nt64) parent without propagating it as the main Repair21 result",
+    "report": [
+      "on-shell-vs-interpolated Z10 relative L2",
+      "on-shell-vs-interpolated Z10dot relative L2",
+      "on-shell-vs-interpolated H3 RHS relative L2"
+    ],
+    "purpose": "quantify the off-shell common-parent approximation used only by Repair20"
+  },
+  "H1_gates": {
+    "Nt64_frozen_Z10_reproduction_relative_L2_max": 1e-12,
+    "Nt64_frozen_Z10dot_reproduction_relative_L2_max": 1e-12,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 1e-6,
+    "anisotropy_constraint_backward_error_max": 1e-6,
+    "initial_dynamic_match_abs_or_rel_max": 1e-10,
+    "Nt64_vs_Nt128_state_relative_L2_max": 5e-3,
+    "all_outputs_finite": true
+  },
+  "H3_nonchanges": {
+    "source": "same frozen Repair14 GE06+GE07+Lambda_c2+Y2 construction",
+    "boundary": "same frozen Repair18 q0=0 projected-p0 rule reconstructed separately on Nt64 and Nt128",
+    "integrator": "same frozen Repair07 two-stage Radau IIA canonical march",
+    "shift_metric": "same original Repair07 backward-error metric",
+    "shift_threshold": 1e-6,
+    "linear_system_threshold": 1e-8,
+    "anisotropy_threshold": 1e-6
+  },
+  "matched_shift_diagnostic": {
+    "common_grid": "Nt128 ln(a) grid",
+    "coarse_mapping": "PCHIP-interpolate Nt64 shift metric, absolute residual and natural scale to the Nt128 grid independently for each fixed C,beta,m",
+    "active_mask": "defined only from Nt128 on-shell natural scale: scale128 > sqrt(machine_epsilon_float64)*S_ref_Nt128",
+    "near_null_mask": "complement of active mask",
+    "matched_active_Linf": "maximum shift metric over the same Nt128 active mask for Nt64-interpolated and Nt128 fields",
+    "matched_active_L2": "root-mean-square shift metric over the same Nt128 active mask for Nt64-interpolated and Nt128 fields",
+    "observed_order": "log(error64/error128)/log(h64/h128), separately for matched Linf and L2",
+    "near_null_absolute_residual_over_Sref": "Nt128 maximum near-null absolute residual divided by S_ref_Nt128"
+  },
+  "diagnostic_gates": {
+    "near_null_absolute_residual_over_Sref_max": "1000*machine_epsilon_float64",
+    "active_Nt128_shift_Linf_max": 1e-6,
+    "matched_active_Linf_order_min": 2.5,
+    "matched_active_L2_order_min": 2.5,
+    "H3_state_Nt64_vs_Nt128_relative_L2_max": 5e-3,
+    "H3_linear_system_relative_L2_residual_max": 1e-8,
+    "H3_anisotropy_backward_error_max": 1e-6,
+    "boundary_reproduction_Repair18_relative_L2_max": 1e-12,
+    "all_outputs_finite": true
+  },
+  "routing": {
+    "INTERPOLATED_H1_PARENT_DEFECT_CONFIRMED": "on-shell H1 gates pass; on-shell H3 Nt128 active shift <=1e-6; matched Linf and L2 orders >=2.5; state/linear/anisotropy/boundary/near-null gates pass",
+    "ACTIVE_SHIFT_ISSUE_PERSISTS_ON_ON_SHELL_PARENT": "on-shell H1 gates pass but one or more on-shell H3 active-shift/convergence gates fail",
+    "IMPLEMENTATION_FAIL": "frozen provenance, H1 reproduction, source reconstruction, boundary reconstruction or execution fails"
+  },
+  "interpretation_boundary": "Repair21 is diagnostic only. Positive routing does not relabel Repair19 or certify Z20; a later separately preregistered certification run would still be required.",
+  "explicit_nonchanges": [
+    "no Repair19 or Repair20 relabeling",
+    "no GE06 or GE07 edit",
+    "no Lambda c1/c2 edit",
+    "no Y2 edit",
+    "no source sign/component-order/normalization edit",
+    "no Repair18 boundary edit",
+    "no shift metric edit",
+    "no threshold relaxation",
+    "no q20",
+    "no H4 or Z21",
+    "no observational inference"
+  ],
+  "historical_results_unchanged": true
+}
