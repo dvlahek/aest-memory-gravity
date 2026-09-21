@@ -77,9 +77,11 @@ The prerequisite memory-off hierarchy is now much more advanced than the origina
 - Repair14 constructs the first reduced H3/Z20 particular candidate but fails the second-order shift constraint;
 - Repair15 excludes the zero-dynamic-velocity initial convention;
 - Repair16 excludes canonical y0=0 as an admissible forced initial state;
-- Repair17 certifies existence of the full canonical initial constraint manifold in 714/714 material cases.
+- Repair17 certifies existence of the full canonical initial constraint manifold in 714/714 material cases;
+- Repair18 certifies a unique reproducible zero-coordinate projected-momentum finite-window boundary in 714/714 material cases;
+- Repair19 is locked and ready to rerun H3/Z20 with that boundary and the original Stage-B gates.
 
-Therefore the immediate N2 blocker is **not** generation of the memory source blocks and no longer initial-manifold existence. It is selection and certification of a physically defined constraint-compatible finite-window boundary, followed by a new H3 propagation that must certify the baseline memory-off second-order state `Z20`.
+Therefore the immediate N2 blocker is **not** source generation, initial-manifold existence or boundary selection. Repair18 closes the boundary problem. The remaining prerequisite is Repair19 H3 propagation itself: the baseline memory-off second-order state `Z20` must satisfy the unchanged propagation, shift, anisotropy and time-grid gates.
 
 No `q20` or `Z21` solve is licensed until a separately frozen H3 run satisfies the unchanged second-order constraint gates.
 
