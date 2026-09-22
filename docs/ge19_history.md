@@ -727,3 +727,96 @@ Report per-mode ratios/phases and candidate normalization residuals before any q
 Canonical project status:
 
 **Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 q20 science FAIL localized to the initial X10 bridge; q20 NOT CERTIFIED; H4/Z21 NOT LICENSED.**
+
+
+---
+
+## Repair25 — first-order bath boundary dictionary audit
+
+Classification:
+
+`GE19_REPAIR25_FIRST_ORDER_BATH_BOUNDARY_DICTIONARY_AUDIT_COMPLETE`.
+
+Route:
+
+`LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED`.
+
+Result-freeze commit:
+
+`c6eb792ff43ffada69f1fb5cc59cf57c52c1f602`.
+
+Frozen JSON/FULL SHA-256:
+
+`ccf30e5d706f91c023e31526a9ae66154ecadbfa15e3f90a5239824ad74c7a05`.
+
+Locked runner SHA-256:
+
+`64100b1960050ecb194579357db3d383866a068788523dd3f159558a7087280b`.
+
+The execution passed all provenance checks and exited with `SCIENCE_EXIT=0`.
+
+Exact a=0.4 closure:
+
+- GE15 algebraic X versus grad(chi)/a relative L2:
+  `6.961752470055609e-17`;
+- Repair22/GE19 X10 versus GE15 relative L2:
+  `7.819918013124737e-17`;
+- Q_action versus GE15:
+  `1.1102230246251565e-16`;
+- v0.77 Q_trace versus GE15:
+  `1.1065592085855149e-16`.
+
+Thus GE15 and Repair22/GE19 agree to machine precision, including the Q dictionary.
+
+The legacy v0.77 chi/a boundary is not compatible in amplitude:
+
+- direct relative L2 at a=0.4:
+  `0.9999998670367867`;
+- direct overlap-window relative L2:
+  `0.9999998669793289`.
+
+The six v0.77/GE15 amplitude ratios at a=0.4 span approximately
+
+`6.43e4` to `1.85e7`
+
+and are mode dependent.
+
+Their phase differences are zero to floating-point accuracy.
+
+Across the common a=0.4..0.8333333 overlap, each mode separately has almost identical temporal shape:
+
+- per-mode post-fit relative L2:
+  approximately `3.01e-4`;
+- per-mode temporal cosine:
+  approximately `0.999999954`.
+
+However a single global real or complex scale does not close the mismatch:
+
+- global real post-fit relative L2:
+  `0.5484311025444283`;
+- global complex post-fit relative L2:
+  `0.46599450356276223`.
+
+No tested simple convention factor closes it. The best report-only tested candidate, `1/k`, still leaves relative L2
+
+`0.25783615676918054`
+
+after an additional complex scalar.
+
+Scientific conclusion:
+
+Repair24's unique X10 bridge failure was not caused by the GE15/Repair22 first-order physics dictionary. It was caused by using the historical v0.77 boundary trace in a different mode-amplitude normalization convention.
+
+Repair25 adopts no fitted normalization.
+
+No q20 rerun occurred.
+
+q20 remains not certified and H4/Z21 remains unlicensed.
+
+Next required object:
+
+derive and certify the exact legacy v0.77 mode-amplitude normalization map from the frozen generating construction into the GE15/GE19 convention before any q20 rerun.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 q20 science FAIL; Repair25 localizes the blocker to the legacy v0.77 mode-amplitude normalization; q20 NOT CERTIFIED; H4/Z21 NOT LICENSED.**
