@@ -1,0 +1,68 @@
+name: GE19 Repair29B R3 tangent precision prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair29b_predata_r3_full_state_tangent_precision_closure.json'
+      - 'ge19/pre/R3_repair29b.pre'
+      - 'ge19/repair29b_r3_full_state_tangent_precision_closure.py'
+      - '.github/workflows/ge19-repair29b-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install static dependencies
+        run: python3 -m pip install numpy scipy
+
+      - name: Audit Repair29B frozen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair29b_predata_r3_full_state_tangent_precision_closure.json)" = "22e38e3462288ae3e9eacc6ddc0c703ad4081b57"
+          test "$(git rev-parse HEAD:ge19/pre/R3_repair29b.pre)" = "5b6f992e426124f40eea14ee0f4730d111ce9ee7"
+          test "$(git rev-parse HEAD:ge19/repair29b_r3_full_state_tangent_precision_closure.py)" = "ac0085148ad3032758c36b9593461285a9fdc152"
+          test "$(git rev-parse HEAD:ge19/repair28_cancellation_free_full_state_eta_tangent.py)" = "b5cb15b46e49c38e1388b6b754d4fa349aa36d5b"
+          python3 -m py_compile ge19/repair29b_r3_full_state_tangent_precision_closure.py
+
+          python3 - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+
+          p=json.load(open("ge19/repair29b_predata_r3_full_state_tangent_precision_closure.json"))
+          assert p["classification"]=="GE19_REPAIR29B_PREDATA_R3_FULL_STATE_TANGENT_PRECISION_CLOSURE"
+          assert p["created_before_Repair29A_localization_result"] is True
+          assert p["created_before_Repair29B_result"] is True
+          assert p["uses_observational_data"] is False
+          assert p["precision_ladder"]["R3"]["tol_perturbations_integration"]==6.25e-9
+          assert p["precision_ladder"]["R3"]["perturbations_sampling_stepsize"]==0.0003125
+          assert p["frozen_normalization"]["no_R3_consensus_refit"] is True
+          assert p["gates"]["R3_vs_R2_same_lambda_tangent_relative_L2_max"]==0.005
+          assert p["gates"]["tracked_R3_even_residual_max"]==0.005
+          assert p["gates"]["tracked_R3_even_not_greater_than_R2"] is True
+          assert p["stop_boundary"]["no_reduced_Z11_solve"] is True
+          assert p["stop_boundary"]["no_H4_Z21_solve"] is True
+
+          txt=Path("ge19/pre/R3_repair29b.pre").read_text()
+          assert "tol_perturbations_integration = 6.25e-9" in txt
+          assert "perturbations_sampling_stepsize = 0.0003125" in txt
+
+          spec=importlib.util.spec_from_file_location(
+              "r29b",Path("ge19/repair29b_r3_full_state_tangent_precision_closure.py")
+          )
+          m=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(m)
+          assert m.TANGENT_PRECISION_MAX==5e-3
+          assert m.EVEN_MAX==5e-3
+          assert m.REPAIR28_NPZ_SHA=="101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705"
+          src=Path("ge19/repair29b_r3_full_state_tangent_precision_closure.py").read_text()
+          assert "Repair28_relabelled" in src
+          assert "reduced_Z11_solve_performed" in src
+          assert "H4_Z21_solve_performed" in src
+          print("GE19_REPAIR29B_PRELOCK_PASS")
+          PY
