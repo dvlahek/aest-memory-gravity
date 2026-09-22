@@ -1,0 +1,123 @@
+{
+  "classification": "GE19_REPAIR32C_PREDATA_ARTIFACT_ONLY_REDUCED_Z11_CERTIFICATION",
+  "created_after_Repair32B_reconstruction_PASS": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "purpose": "Certify the frozen Repair32B reduced Z11 state without any H2 reintegration, using Repair31-motivated global normalization for state precision and constraints plus artifact-only reduced-operator re-evaluation.",
+  "frozen_parent": {
+    "Repair32B": {
+      "classification": "GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION_PASS",
+      "JSON_sha256": "226dd2a2a0e86ddccc39a62d833960bdf9d5a9af038ad3bf225bbbf69d0b95cf",
+      "JSON_bytes": 68434,
+      "NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+      "NPZ_bytes": 1082578,
+      "exact_dictionary_factor": 2,
+      "fitted_normalization_used": false,
+      "corrected_H2_reconstruction_validated": true,
+      "Z11_certified": false,
+      "H4_Z21_licensed": false,
+      "result_freeze_commit": "919a0fc095bebdc8747394a39c6ca1c6ae894489"
+    },
+    "Repair32A": {
+      "classification": "GE19_REPAIR32A_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_PASS",
+      "JSON_sha256": "adef8fad50233c7fa5df3d57e7f21df80ed99228402831b2861ad06256519725"
+    },
+    "Repair31": {
+      "classification": "GE19_REPAIR31_REPAIR30_H2_DICTIONARY_AND_MONITOR_AUDIT_COMPLETE",
+      "role": "defines artifact-only global state/operator/constraint diagnostics; no H2 integration"
+    }
+  },
+  "no_new_science_state": {
+    "H2_reintegration": false,
+    "source_reconstruction": false,
+    "boundary_refit": false,
+    "fitted_normalization": false,
+    "threshold_fit": false,
+    "finite_eta": false,
+    "H4_Z21_solve": false
+  },
+  "certification_diagnostics": {
+    "state_precision": "Repair31 full-six-field global and dynamic S,u,varphi,T Nt128/Nt64 relative L2",
+    "chi_parent": "Repair31 artifact-only reduced chi11 versus frozen Repair29B R2 parent",
+    "operator_main": "re-evaluate unchanged reduced GE06+GE07 operator on frozen Repair32B NPZ using the corrected RHS stored in that NPZ",
+    "source_free_rows": "normalize global absolute residuals of lapse, isotropic-spatial, dust-potential and dust-density rows by one global main-operator scale",
+    "constraints": "Repair31 global shift/anisotropy L2 divided by global main-operator scale"
+  },
+  "frozen_thresholds_and_origin": {
+    "full_six_field_global_Nt128_vs_Nt64_relative_L2_max": {
+      "value": 0.005,
+      "origin": "Repair30 preregistered state precision threshold, with Repair31 global normalization"
+    },
+    "dynamic_global_Nt128_vs_Nt64_relative_L2_max": {
+      "value": 0.005,
+      "origin": "same inherited state precision scale"
+    },
+    "chi11_vs_R2_parent_relative_L2_max": {
+      "value": 0.005,
+      "origin": "Repair30 preregistered chi parent threshold"
+    },
+    "chi11_initial_boundary_abs_or_rel_max": {
+      "value": 1e-8,
+      "origin": "Repair30 preregistered inherited dynamic-boundary scale"
+    },
+    "driven_aether_scalar_operator_global_relative_L2_max": {
+      "value": 0.0001,
+      "origin": "pre-Repair32B Repair31 artifact-only operator re-evaluation floor was O(1e-5) on the solved Repair30 state"
+    },
+    "source_free_main_rows_absolute_over_global_operator_scale_max": {
+      "value": 0.0001,
+      "origin": "same artifact-only operator re-evaluation scale; avoids zero-RHS relative-residual pathology"
+    },
+    "shift_global_relative_to_operator_scale_max": {
+      "value": 0.000001,
+      "origin": "Repair30 constraint threshold retained with Repair31 global operator-scale normalization"
+    },
+    "anisotropy_global_relative_to_operator_scale_max": {
+      "value": 0.000001,
+      "origin": "Repair30 constraint threshold retained with Repair31 global operator-scale normalization"
+    },
+    "chi11_C_envelope_relative_L2_max": {
+      "value": 0.005,
+      "origin": "Repair30 preregistered C-envelope threshold"
+    }
+  },
+  "pass_requirements": [
+    "Repair32B JSON/NPZ hashes exact and Repair32B classification PASS",
+    "Repair32B exact dictionary factor equals 2 and fitted_normalization_used is false",
+    "all Repair32B reconstruction validation gates are true",
+    "full-six-field global Nt128/Nt64 <= 0.005",
+    "dynamic global Nt128/Nt64 <= 0.005",
+    "chi11 versus R2 parent <= 0.005",
+    "chi11 inherited initial boundary <= 1e-8",
+    "aether and scalar global operator residuals <= 1e-4",
+    "each source-free main-row absolute residual / global main-operator scale <= 1e-4",
+    "global shift / operator scale <= 1e-6",
+    "global anisotropy / operator scale <= 1e-6",
+    "chi11 C-envelope <= 0.005",
+    "all artifacts and diagnostics finite"
+  ],
+  "classification_policy": {
+    "pass": "GE19_REPAIR32C_ARTIFACT_ONLY_REDUCED_Z11_CERTIFICATION_PASS",
+    "fail": "GE19_REPAIR32C_ARTIFACT_ONLY_REDUCED_Z11_CERTIFICATION_FAIL",
+    "implementation_fail": "GE19_REPAIR32C_IMPLEMENTATION_FAIL"
+  },
+  "pass_license": {
+    "reduced_Z11_certified": true,
+    "H4_Z21_licensed": true,
+    "next": "Separately preregister H4/Z21 construction using Repair22 Z10/Z20, Repair27 q10/q20, certified Repair32C Z11, GE04 DY2, GE05 M1/M2 with the exact GE05->GE06 raw-residual dictionary, and the frozen reduced operator."
+  },
+  "fail_route": "Freeze Repair32C FAIL and localize the failed artifact-only gate. Do not reintegrate H2 or change thresholds in the same test.",
+  "stop_boundary": {
+    "Repair30_relabelled": false,
+    "Repair31_relabelled": false,
+    "Repair32A_relabelled": false,
+    "Repair32B_relabelled": false,
+    "no_H2_reintegration": true,
+    "no_source_change": true,
+    "no_fitted_normalization": true,
+    "no_threshold_relaxation_after_result": true,
+    "no_H4_Z21_solve_in_Repair32C": true,
+    "no_finite_eta": true,
+    "no_observational_claim": true
+  }
+}
