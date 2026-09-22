@@ -52,7 +52,26 @@ The second-order bath equation is frozen as
 
 `G1[Z20,z20] + G2[(Z10,z10),(Z10,z10)] = 0`.
 
-Repair24 is now **LOCKED / READY / NOT YET EXECUTED**.
+Repair24 has now produced its first valid science result and is frozen as
+
+`GE19_REPAIR24_Q20_CONSTRUCTION_FAIL`.
+
+Repair24 result-freeze commit: `82f1f56912f92e628797997d82ffd64de2a4a926`.
+
+Frozen science JSON SHA-256: `71f463524b47f72d2c5082667fe99141d2286ebc2938c4eed6b89a1583339f2a`.
+
+Frozen science NPZ SHA-256: `6591adf8659cb96eda55eae32613424c0464cd42a9d20e0872371fb9254814f4`.
+
+All Repair24 numerical convergence gates pass except the initial first-order bath-drive bridge:
+
+- G2 Nx256/Nx512 relative L2: `2.2947298319652412e-15` PASS;
+- q20 Nq1024/Nq2048 relative L2: `8.251855068695476e-05` PASS;
+- q20 Nt64/Nt128 relative L2: `3.245459862000118e-05` PASS;
+- z10 Nt64/Nt128 relative L2: `0.003453755379112942` PASS;
+- all outputs finite and all cases complete;
+- H1 X10 initial match: `0.9999999471925649` FAIL versus `1e-10`.
+
+Therefore Repair24 localizes the remaining q20 blocker to the v0.77 -> GE19 first-order bath-boundary bridge. q20 is not certified and H4/Z21 remains blocked.
 
 Initial locked prelock: `35653683119` — SUCCESS.
 
@@ -76,12 +95,12 @@ Frozen q20 boundary convention:
 - z20(z=1.5)=0;
 - dz20/dxi(z=1.5)=0.
 
-No H4/Z21 solve is licensed until q20 is constructed and frozen.
+No H4/Z21 solve is licensed until the first-order bath-boundary mismatch is localized and a later q20 construction is frozen PASS.
 ---
 
 ## Scientific status in one line
 
-`H1/background certified -> Repair22 certifies Z20 -> Repair23 bath bridge PASS -> Repair24 q20 construction LOCKED / READY`.
+`H1/background certified -> Repair22 certifies Z20 -> Repair23 bath bridge PASS -> Repair24 q20 FAIL only on initial X10 bridge -> Repair25 boundary-dictionary audit next`.
 
 ---
 
@@ -671,8 +690,8 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ## Immediate action
 
-Run the locked local Repair24 q20 construction.
+Run a separately preregistered Repair25 first-order bath-boundary dictionary audit. Do not rerun q20 yet.
 
 Canonical project status:
 
-**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 implementation-failure history frozen and post-fix runner LOCKED / READY; no valid q20 science result yet; H4/Z21 NOT YET LICENSED.**
+**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 science FAIL only on v0.77->GE19 initial X10 matching; Repair25 NEXT; H4/Z21 NOT YET LICENSED.**
