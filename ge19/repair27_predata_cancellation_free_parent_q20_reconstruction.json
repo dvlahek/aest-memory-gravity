@@ -1,0 +1,113 @@
+{
+  "classification": "GE19_REPAIR27_PREDATA_CANCELLATION_FREE_PARENT_Q20_RECONSTRUCTION",
+  "created_before_repair27_result": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "purpose": "Repeat the frozen Repair24 q20 construction with exactly one scientific-parent change: replace the historical cancellation-prone v0.77 first-order bath history by the frozen Repair26 R1 cancellation-free full-history trace. All q20 equations, Repair22 Z20 inputs, grids, quadratures and science gates remain unchanged.",
+  "parent_chain": {
+    "Repair22_classification": "GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS",
+    "Repair23_classification": "GE19_REPAIR23_Q20_NORMALIZED_BATH_BRIDGE_AUDIT_PASS",
+    "Repair24_classification": "GE19_REPAIR24_Q20_CONSTRUCTION_FAIL",
+    "Repair24_unique_failed_gate": "H1_X10_initial_match_abs_or_rel_le_1e10",
+    "Repair25_route": "LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED",
+    "Repair26_classification": "GE19_REPAIR26_CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_PASS",
+    "Repair26_route": "CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_CERTIFIED",
+    "Repair26_result_freeze_commit": "6564ae09e808bc29889cc11c7f5ab34590452d19"
+  },
+  "frozen_repair26_parent": {
+    "workflow_run_id": 35721220889,
+    "workflow_job_id": 106724330805,
+    "artifact_id": 10690709843,
+    "artifact_name": "results_bundle_ge19_repair26_cancellation_free_full_history_bath_boundary",
+    "artifact_digest": "sha256:33faae31aae0ebe3cc52ac2083193ec8ba3dfe284fb07f06ef2568cad8e3938f",
+    "result_json_sha256": "80ba0b5927217be000991c82b4afb5f39b5e0ff369bc9b630a88ec11dabdedb6",
+    "R1_full_history_trace_name": "ge19_repair26_R1_full_history_trace.dat",
+    "R1_full_history_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "R1_full_history_trace_bytes": 26643162,
+    "R1_a0_bracket": {
+      "lo_a": 0.39953919419256334,
+      "hi_a": 0.4000388311146992,
+      "partial_step_fraction_ln_a": 0.9223261091390366,
+      "target_a_abs_mismatch": 0
+    },
+    "R1_trace_X0_vs_GE15_dense_abs_or_rel_max": 3.9819456608594117e-11,
+    "R1_R2_full_z10_relative_L2": 0.0000035309623104625126,
+    "R1_R2_full_v10_relative_L2": 0.0023720775441813187
+  },
+  "inherited_repair24_core": {
+    "core_file": "ge19/repair24_q20_construction.py",
+    "core_blob": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "theory_unchanged": true,
+    "normalized_bath": "z_j = omega_j q_j / sqrt(w_j)",
+    "second_order_equation": "G1[Z20,z20] + G2[(Z10,z10),(Z10,z10)] = 0",
+    "second_order_boundary": "z20(a0)=0 and dz20/dxi(a0)=0",
+    "C_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta0": [
+      1,
+      0.5,
+      0.1
+    ],
+    "m_solve": [
+      1,
+      40
+    ],
+    "H1_input_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "time_primary": 128,
+    "time_control": 64,
+    "spatial_primary": 512,
+    "spatial_control": 256,
+    "quadrature_primary": 2048,
+    "quadrature_control": 1024,
+    "a_initial": 0.4
+  },
+  "only_allowed_change": {
+    "from": "historical v0.77 alpha-coordinate full-history chi trace",
+    "to": "frozen Repair26 R1 cancellation-free full-history chi=Q*s trace",
+    "fitted_rescaling": false,
+    "Repair25_per_mode_scales_used": false,
+    "physical_parameter_changed": false,
+    "q20_equation_changed": false,
+    "Repair22_Z20_changed": false
+  },
+  "frozen_gates_inherited_unchanged": {
+    "Repair22_Z20_certified": true,
+    "Repair23_bridge_PASS": true,
+    "H1_X10_initial_match_abs_or_rel_max": 1e-10,
+    "G2_Nx256_vs_Nx512_low_mode_relative_L2_max": 1e-10,
+    "q20_quadrature_N1024_vs_N2048_weighted_z20_relative_L2_max": 0.01,
+    "q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max": 0.005,
+    "z10_Nt64_vs_Nt128_weighted_z10_relative_L2_max": 0.005,
+    "all_weighted_q20_outputs_finite": true,
+    "all_cases_complete": true,
+    "full_history_trace_bracket_exact_match": true,
+    "full_history_partial_step_target_a_abs_mismatch_max": 1e-15,
+    "normalized_c2_sqrtw_symbol_absent": true,
+    "vectorized_interval_propagator_match_max": 1e-12
+  },
+  "routing": {
+    "PASS": "CANCELLATION_FREE_PARENT_Q20_CERTIFIED",
+    "FAIL": "Q20_CONSTRUCTION_OR_CONVERGENCE_FAIL_AFTER_BOUNDARY_REPAIR",
+    "IMPLEMENTATION_FAIL": "GE19_REPAIR27_IMPLEMENTATION_FAIL"
+  },
+  "if_PASS": "Freeze Repair27 q20 as the certified window-local particular normalized-bath second-order response and license a separately preregistered H4/Z21 construction. Do not solve H4/Z21 inside Repair27.",
+  "if_FAIL": "Freeze the first valid FAIL. Do not alter thresholds or rerun q20 before localizing the failed inherited gate.",
+  "historical_results_immutable": true,
+  "explicit_nonclaims": [
+    "Repair24 is not relabelled",
+    "no primordial/homogeneous second-order bath mode",
+    "no H4/Z21 result",
+    "no finite eta",
+    "no lensing or observational inference"
+  ]
+}
