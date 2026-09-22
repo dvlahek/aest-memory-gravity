@@ -1,0 +1,61 @@
+name: GE19 Repair32C artifact-only Z11 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair32c_predata_artifact_only_reduced_z11_certification.json'
+      - 'ge19/repair32c_artifact_only_reduced_z11_certification.py'
+      - '.github/workflows/ge19-repair32c-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair32C frozen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair32c_predata_artifact_only_reduced_z11_certification.json)" = "08160cf56534468aa95f5bad08a7d476d8d6e276"
+          test "$(git rev-parse HEAD:ge19/repair32c_artifact_only_reduced_z11_certification.py)" = "a8bc2b57051a733e3409db476dc427aed59619a3"
+          test "$(git rev-parse HEAD:docs/ge19_repair32b_factor2_corrected_h2_reconstruction_result_freeze.md)" = "9a5bda89c15ca276d102ca58236ce0a7275c7601"
+
+          python3 -m py_compile ge19/repair32c_artifact_only_reduced_z11_certification.py
+
+          python3 - <<'PY'
+          import json,inspect
+          import ge19.repair32c_artifact_only_reduced_z11_certification as r32c
+
+          p=json.load(open("ge19/repair32c_predata_artifact_only_reduced_z11_certification.json"))
+          assert p["classification"]=="GE19_REPAIR32C_PREDATA_ARTIFACT_ONLY_REDUCED_Z11_CERTIFICATION"
+          assert p["no_new_science_state"]["H2_reintegration"] is False
+          assert p["no_new_science_state"]["source_reconstruction"] is False
+          assert p["no_new_science_state"]["fitted_normalization"] is False
+          assert p["no_new_science_state"]["threshold_fit"] is False
+          assert p["no_new_science_state"]["H4_Z21_solve"] is False
+
+          assert r32c.R32B_JSON_SHA=="226dd2a2a0e86ddccc39a62d833960bdf9d5a9af038ad3bf225bbbf69d0b95cf"
+          assert r32c.R32B_NPZ_SHA=="5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327"
+          assert r32c.STATE_MAX==5e-3
+          assert r32c.CHI_MAX==5e-3
+          assert r32c.OPERATOR_MAX==1e-4
+          assert r32c.CONSTRAINT_MAX==1e-6
+
+          src=open("ge19/repair32c_artifact_only_reduced_z11_certification.py").read()
+          assert 'Repair32B_H2_reintegrated":False' in src
+          assert '"Z11_certified":passed' in src
+          assert '"H4_Z21_licensed":passed' in src
+          assert 'r31.operator_audit' in src
+          assert 'r31.state_precision' in src
+          assert 'r31.chi_audit' in src
+          assert 'source_free_global' in src
+          print("GE19_REPAIR32C_PRELOCK_PASS")
+          PY
