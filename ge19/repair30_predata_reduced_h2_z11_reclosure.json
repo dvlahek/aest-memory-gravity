@@ -1,0 +1,140 @@
+{
+  "classification": "GE19_REPAIR30_PREDATA_REDUCED_H2_Z11_RECLOSURE",
+  "created_before_repair30_result": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "target": "Construct and certify the reduced first-order eta tangent Z11 on the same self-consistent reduced AeST+dust+Lambda coordinate system used by Repair22 Z10/Z20 and Repair27 q20.",
+  "hierarchy": {
+    "equation": "L_total Z11 = -M1[Z10,q10]",
+    "source_parent": "Repair22 certified reduced Z10 plus Repair27 certified normalized-bath q10 weighted projection",
+    "boundary_parent": "Repair29B-certified R2 complete full-state eta tangent, mapped onto the reduced variables at a=0.4",
+    "finite_eta": false
+  },
+  "frozen_parents": {
+    "Repair13": {
+      "classification": "GE19_REPAIR13_SELF_CONSISTENT_REDUCED_BACKGROUND_H1_RECLOSURE_PASS",
+      "JSON_sha256": "ae3cc790ecffbd5498b5852273c72ae578d4615de29bbb616673c05cdb3e74b7",
+      "NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3"
+    },
+    "Repair22": {
+      "classification": "GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS",
+      "JSON_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+      "NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16"
+    },
+    "Repair27": {
+      "classification": "GE19_REPAIR27_CANCELLATION_FREE_PARENT_Q20_RECONSTRUCTION_PASS",
+      "JSON_sha256": "99a2183e7088c7492f624cae2d294612380714c1d81aa7ff49cc4fcd1c62c74b",
+      "NPZ_sha256": "2b1566d402e4c9e8daee8e5c7084b3da7735442b4fb604d51489b708662fd9c0"
+    },
+    "Repair28_R2_reference": {
+      "NPZ_sha256": "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705",
+      "role": "R2 primary tangent arrays only; Repair28 itself remains historical FAIL"
+    },
+    "Repair29B": {
+      "classification": "GE19_REPAIR29B_R2_PRIMARY_R3_CONTROL_FULL_STATE_ETA_TANGENT_PASS",
+      "workflow_run_id": 35744723602,
+      "artifact_id": 10701244502,
+      "JSON_sha256": "081a80fe892f9cddf5ad38a69e43b82c24887e67a8b26162a2d4a229d04f8890",
+      "certified_representation": "R2 primary complete eta-tangent representation with targeted R3 numerical control"
+    },
+    "GE15_dense": {
+      "SHA256": "7f57ab676f2a31cf0abf93ff0f8b0f1f2f80bb9a58d7cf1e47e10a158c57c69f"
+    },
+    "theory": {
+      "NL1B2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS",
+      "GE05": "GE05_MEMORY_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+      "GE06": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+      "GE07": "GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS"
+    }
+  },
+  "frozen_scope": {
+    "a_min": 0.4,
+    "a_max": 0.8333333333333334,
+    "primary_time_nodes": 128,
+    "control_time_nodes": 64,
+    "input_Fourier_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "k_h_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "C_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "physical_beta_dependence_in_H2": false
+  },
+  "reduced_dictionary": {
+    "N11": "psi_eta",
+    "S11": "-a phi_eta",
+    "u11": "-(k/a) alpha_eta with the frozen sine parity",
+    "varphi11": "Q a theta_dark_eta / k^2",
+    "T11": "a theta_dust_eta / k^2",
+    "delta_varrho11": "3 rho_dust delta_dust_eta",
+    "dust_tangent": "exact pressureless tangent system on each frozen reduced C background, initialized by the absolute standard-sector density/momentum eta tangent at a=0.4"
+  },
+  "standard_sector_boundary": {
+    "delta_rho_std_11": "total_delta_rho_eta - rho_dark delta_dark_eta",
+    "momentum_std_11": "total_rho_plus_p_theta_eta - (rho_dark+p_dark) theta_dark_eta",
+    "background_eta_derivative": "zero"
+  },
+  "memory_source": {
+    "B10": "X10 - weighted_z10",
+    "X10": "Q u10 + i k varphi10/a",
+    "weighted_z10_source": "Repair27 primary/time-control NPZ arrays",
+    "normalized_M1_exact_reduction": {
+      "M1_aether_residual": "-Q a^3 B10 / 2",
+      "M1_scalar_residual": "+a^2 partial_x(B10) / 2",
+      "direct_metric_M1": "exactly zero",
+      "dust_M1": "zero"
+    },
+    "H2_rhs": {
+      "aether": "+Q a^3 B10 / 2",
+      "scalar": "-a^2 partial_x(B10) / 2"
+    },
+    "symbolic_GE05_identity_required": true
+  },
+  "boundary_convention": {
+    "window_local": false,
+    "description": "The H2 finite-window solve inherits the already accumulated full-history eta tangent at a=0.4 from the Repair29B-certified R2 representation. Dynamic reduced coordinates and their ln(a)-trajectory derivatives are mapped before the solve; algebraic N11 and delta_varrho11 are reclosed by the reduced constraints.",
+    "no_posthoc_rescaling": true
+  },
+  "gates": {
+    "parent_hashes_exact": true,
+    "GE05_normalized_M1_symbolic_identity_exact": true,
+    "Repair27_B10_primary_vs_time_control_relative_L2_max": 0.005,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 0.000001,
+    "anisotropy_constraint_backward_error_max": 0.000001,
+    "primary128_vs_control64_Z11_state_relative_L2_max": 0.005,
+    "initial_dynamic_boundary_abs_or_rel_max": 1e-8,
+    "reduced_chi11_vs_R2_parent_relative_L2_max": 0.005,
+    "reduced_chi11_C_envelope_relative_L2_max": 0.005,
+    "all_outputs_finite": true
+  },
+  "pass_classification": "GE19_REPAIR30_REDUCED_H2_Z11_RECLOSURE_PASS",
+  "fail_classification": "GE19_REPAIR30_REDUCED_H2_Z11_RECLOSURE_FAIL",
+  "pass_license": {
+    "reduced_Z11_certified": true,
+    "H4_Z21_licensed": true,
+    "next": "Separately preregister H4/Z21 construction using Repair22 Z10/Z20, Repair27 q10/q20, Repair30 Z11, GE04 DY2, GE05 M1/M2 and the frozen reduced operator."
+  },
+  "stop_boundary": {
+    "no_H4_Z21_solve_in_Repair30": true,
+    "no_finite_eta": true,
+    "no_observational_claim": true,
+    "no_Repair28_relabel": true,
+    "no_gate_relaxation_after_result": true
+  }
+}
