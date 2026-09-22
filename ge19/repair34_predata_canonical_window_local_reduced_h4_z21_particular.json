@@ -1,0 +1,91 @@
+{
+  "classification": "GE19_REPAIR34_PREDATA_CANONICAL_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR",
+  "created_after_Repair33_FAIL_localization": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Re-execute the same frozen H4 physics after correcting two implementation-level mismatches identified in Repair33: use the certified H3 canonical projected boundary/Radau propagator, and evaluate the exact quadratic Q cross with deterministic norm balancing to remove subtractive floating-point cancellation.",
+  "frozen_parent_result": {
+    "Repair33": {
+      "historical_classification": "GE19_REPAIR33_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR_FAIL",
+      "JSON_sha256": "62da23947b59ae0ee20b858ee2dcbf394e6dcb91b85b0faae07fa5bf91366f07",
+      "NPZ_sha256": "80fbd027b8392bed25beb6ebd7111507be36c24d5f21a1ba218c9e3594bec407",
+      "relabelled": false,
+      "localization": "implementation-confounded: wrong sparse BVP propagation/boundary path plus subtractive Q-polarization audit"
+    },
+    "Repair33_localization_freeze_commit": "34c7747f12e06b49aa660c4251409d593702f339"
+  },
+  "unchanged_physics": {
+    "H4_equation": "L_GE06 Z21 = -2 Q_total(Z10,Z11) - 2 DY2[Z10;Z11] - 2 M1_GE05[Z20,q20] - 2 M2_GE05[(Z10,q10),(Z10,q10)]",
+    "GE05_to_GE06_raw_residual_scale": 2,
+    "fitted_normalization": false,
+    "parents": [
+      "Repair22 Z10/Z20",
+      "Repair27 q10/q20",
+      "Repair32B/32C Z11",
+      "GE04 DY2",
+      "GE05 M1/M2",
+      "GE06/GE07 L/Q"
+    ],
+    "source_formulas_unchanged": true,
+    "grids_unchanged": true
+  },
+  "implementation_corrections": {
+    "Q_cross": {
+      "algebra": "same exact quadratic polarization identity",
+      "balancing_rule": "For each frozen (Nt,C) pair define n10=sqrt(||Z10||_2^2+||Z10dot||_2^2), n11=sqrt(||Z11||_2^2+||Z11dot||_2^2). Evaluate A=Z10/n10 and B=Z11/n11. Then Qcross=n10*n11*[Q2(A+mu B)-Q2(A-mu B)]/(4 mu). Primary mu=1; control mu=0.5.",
+      "physical_rescaling": false,
+      "fit": false,
+      "self_consistency_threshold": 1e-12
+    },
+    "boundary_and_propagator": {
+      "canonical_coordinates_q0": "exactly zero for q=(S,u,phi,T)",
+      "canonical_momenta_p0": "Repair18 doubly equilibrated minimum-norm projection from the independent lapse+shift constraints at a=0.4",
+      "integrator": "Repair07 two-stage Radau IIA canonical march",
+      "reconstruction": "Repair07 canonical algebraic reconstruction",
+      "justification": "This is the exact boundary/propagation convention inherited by the Repair22-certified H3/Z20 particular state."
+    }
+  },
+  "frozen_thresholds": {
+    "Q_cross_balanced_polarization_self_consistency_max": 1e-12,
+    "DY2_Nx1024_vs_Nx2048_low_mode_relative_L2_max": 0.0005,
+    "total_H4_source_Nx1024_vs_Nx2048_m1_40_relative_L2_max": 0.0005,
+    "memory_source_Nq1024_vs_Nq2048_relative_L2_max": 0.01,
+    "total_H4_source_Nt64_vs_Nt128_relative_L2_max": 0.005,
+    "canonical_Radau_and_algebraic_linear_residual_max": 1e-8,
+    "H4_state_Nt64_vs_Nt128_global_relative_L2_max": 0.005,
+    "H4_shift_constraint_backward_error_max": 0.000001,
+    "H4_anisotropy_constraint_backward_error_max": 0.000001,
+    "boundary_q0_abs_max": 1e-12,
+    "boundary_projected_momentum_scaled_residual_max": 1e-8,
+    "boundary_lapse_backward_error_max": 0.000001,
+    "boundary_shift_backward_error_max": 0.000001,
+    "boundary_algebraic_relative_residual_max": 1e-8,
+    "all_source_and_state_outputs_finite": true
+  },
+  "threshold_origin": {
+    "source_resolution_and_state_time": "unchanged Repair33 preregistration",
+    "linear_and_constraint": "unchanged H3/H4 gate scales already used in Repair22/Repair33",
+    "boundary_projection": "frozen Repair18 certified thresholds: constraint residual 1e-8, backward error 1e-6, algebraic 1e-8, q0 material floor 1e-12"
+  },
+  "pass_classification": "GE19_REPAIR34_CANONICAL_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR_PASS",
+  "fail_classification": "GE19_REPAIR34_CANONICAL_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR_FAIL",
+  "pass_consequence": {
+    "Z21_window_local_particular_certified": true,
+    "primordial_homogeneous_Z21_certified": false,
+    "full_species_Z21_certified": false,
+    "next": "Separately preregister the first lensing-facing weakly nonlinear memory observable."
+  },
+  "fail_route": "Freeze Repair34 FAIL. Do not change physics/source formula/boundary rule/thresholds in the same test.",
+  "stop_boundary": {
+    "Repair33_relabelled": false,
+    "no_H4_physics_change": true,
+    "no_source_rescaling": true,
+    "no_fitted_normalization": true,
+    "no_threshold_change_after_result": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_primordial_Z21_claim": true,
+    "no_full_species_claim": true
+  }
+}
