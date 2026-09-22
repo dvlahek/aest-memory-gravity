@@ -11,11 +11,13 @@ import argparse
 import hashlib
 import json
 import math
+import sys
 from pathlib import Path
 
 import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 
 import ge19.repair07_window_retarded_reduced_h3_z20_particular as r7
 import ge19.repair31_repair30_h2_dictionary_monitor_audit as r31
