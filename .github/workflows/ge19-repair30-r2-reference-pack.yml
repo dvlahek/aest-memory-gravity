@@ -1,0 +1,47 @@
+name: GE19 Repair30 R2 reference pack
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - '.github/workflows/ge19-repair30-r2-reference-pack.yml'
+
+jobs:
+  pack:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download frozen Repair28 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf frozen_repair28_reference_pack
+          mkdir -p frozen_repair28_reference_pack
+          gh run download 35723905248 \
+            --repo dvlahek/aest-memory-gravity \
+            --name results_bundle_ge19_repair28_full_state_eta_tangent \
+            --dir frozen_repair28_reference_pack
+          REF="$(find frozen_repair28_reference_pack -type f -name ge19_repair28_cancellation_free_full_state_eta_tangent.npz -print -quit)"
+          test -n "$REF"
+          test "$(sha256sum "$REF" | awk '{print $1}')" = "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705"
+          test "$(wc -c < "$REF" | tr -d ' ')" = "530980"
+          mkdir -p reference_pack
+          cp "$REF" reference_pack/
+          echo GE19_REPAIR30_R2_REFERENCE_PACK_HASH_PASS
+
+      - name: Upload lean R2 reference
+        uses: actions/upload-artifact@v4
+        with:
+          name: ge19_repair30_r2_reference_only
+          path: reference_pack/ge19_repair28_cancellation_free_full_state_eta_tangent.npz
+          if-no-files-found: error
+          compression-level: 6
