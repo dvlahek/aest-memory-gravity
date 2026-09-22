@@ -1,0 +1,120 @@
+{
+  "classification": "GE19_REPAIR28_PREDATA_CANCELLATION_FREE_FULL_STATE_ETA_TANGENT",
+  "created_before_repair28_result": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "purpose": "Certify the complete first-order eta tangent needed as the Z11 parent for H4, using the already certified Repair26 cancellation-free eta=0 history to build the retarded memory forcing and GE15 cancellation-free CLASS state coordinates for the plus/minus tangent runs.",
+  "parent_chain": {
+    "Repair22": "GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS",
+    "Repair26": "GE19_REPAIR26_CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_PASS",
+    "Repair27": "GE19_REPAIR27_CANCELLATION_FREE_PARENT_Q20_RECONSTRUCTION_PASS",
+    "GE04": "GE04_DY2_SPECTRAL_CONVERGENCE_PASS",
+    "GE05": "GE05_MEMORY_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "GE06": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "GE07": "GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+    "NL1B2": "NL1B2_DIRECTIONAL_SECOND_ORDER_ETA_TANGENT_PASS"
+  },
+  "motivation": {
+    "H4_requires": "L Z21 = -2 Q(Z10,Z11) - 2 DY2[Z10;Z11] - M1[Z20,q20] - M2[(Z10,q10),(Z10,q10)]",
+    "missing_certified_parent": "complete Z11 state",
+    "already_certified_subset": "GE04 certifies the chi11-dependent DY2 source representation, but not the complete reduced-state Z11 needed by Q(Z10,Z11)."
+  },
+  "frozen_repair26_forcing_parent": {
+    "workflow_run_id": 35721220889,
+    "artifact_id": 10690709843,
+    "R1_full_history_trace_name": "ge19_repair26_R1_full_history_trace.dat",
+    "R1_full_history_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "R1_full_history_trace_bytes": 26643162,
+    "forcing_builder": "v039/build_tau_forcing.py",
+    "forcing_quadrature_primary": 2048,
+    "forcing_quadrature_control": 1024,
+    "forcing_control_relative_L2_max": 0.01,
+    "forcing_control_cosine_min": 0.9999
+  },
+  "frozen_CLASS": {
+    "commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "KB": 0.0665,
+    "tauH0": 10,
+    "physical_eta": 0,
+    "internal_AeST_state": "s=chi/Q",
+    "physical_alpha": "s-a theta/k^2",
+    "physical_chi": "Q*s",
+    "initial_s": 0
+  },
+  "tangent_design": {
+    "signed_lambda_is_physical_eta": false,
+    "lambdas": [
+      10,
+      5,
+      2.5,
+      1.25
+    ],
+    "estimator": "[state(+lambda)-state(-lambda)]/(2 lambda)",
+    "precision_levels": {
+      "R1": {
+        "tol_perturbations_integration": 2.5e-8,
+        "perturbations_sampling_stepsize": 0.00125
+      },
+      "R2": {
+        "tol_perturbations_integration": 1.25e-8,
+        "perturbations_sampling_stepsize": 0.000625
+      }
+    },
+    "trace_grid": "CLASS accepted scalar source-sampling grid after perturbations_einstein",
+    "evaluation_window": "0.4 <= a <= 0.8333333333333334",
+    "common_output_nodes": 128,
+    "interpolation": "PCHIP in ln(a), applied separately to each signed run before the central tangent is formed"
+  },
+  "state_fields": [
+    "phi_newtonian",
+    "psi_newtonian",
+    "phi_prime_conformal",
+    "delta_dark",
+    "theta_dark",
+    "alpha_aest",
+    "E_aest",
+    "alpha_prime_dy",
+    "delta_b",
+    "theta_b",
+    "delta_m_native",
+    "theta_m_native",
+    "total_delta_rho",
+    "total_rho_plus_p_theta",
+    "total_delta_p",
+    "total_rho_plus_p_shear"
+  ],
+  "derived_controls": {
+    "chi11": "central tangent of Q*(a theta_dark/k^2 + alpha_aest), with Q/background eta-independent",
+    "standard_sector_delta_rho11": "central tangent of total_delta_rho-rho_dark*delta_dark",
+    "standard_sector_momentum11": "central tangent of total_rho_plus_p_theta-(rho_dark+p_dark)*theta_dark",
+    "a0_surface": 0.4
+  },
+  "frozen_gates": {
+    "forcing_control_relative_L2_max": 0.01,
+    "forcing_control_cosine_min": 0.9999,
+    "requested_k_relative_miss_max": 1e-12,
+    "common_background_grid_relative_mismatch_max": 1e-12,
+    "lambda_affinity_global_relative_L2_max": 0.005,
+    "lambda_cosine_min": 0.9999,
+    "even_residual_global_normalized_max": 0.005,
+    "R1_R2_consensus_state_global_relative_L2_max": 0.005,
+    "R1_R2_chi11_global_relative_L2_max": 0.005,
+    "a0_R1_R2_state_abs_or_rel_max": 0.005,
+    "all_outputs_finite": true
+  },
+  "pass_license": {
+    "may_use": "Repair28 consensus full-state eta tangent only as the reference/boundary parent for a separately preregistered reduced H2/Z11 reclosure.",
+    "may_not_use": [
+      "direct H4/Z21 certification",
+      "finite eta",
+      "observational inference",
+      "replacement of Repair22 Z10 or Repair27 q20",
+      "post-result rescaling"
+    ]
+  },
+  "stop_boundary": {
+    "reduced_Z11_solve_performed": false,
+    "H4_Z21_solve_performed": false,
+    "Z21_certified": false
+  }
+}
