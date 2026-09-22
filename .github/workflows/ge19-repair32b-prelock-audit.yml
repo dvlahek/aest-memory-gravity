@@ -1,0 +1,90 @@
+name: GE19 Repair32B factor2 H2 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair32b_predata_factor2_corrected_reduced_h2_z11_reclosure.json'
+      - 'ge19/repair32b_factor2_corrected_reduced_h2_z11_reclosure.py'
+      - '.github/workflows/ge19-repair32b-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair32B frozen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair32b_predata_factor2_corrected_reduced_h2_z11_reclosure.json)" = "22e8702460f2153a00a79eba7f3997988ba6bd76"
+          test "$(git rev-parse HEAD:ge19/repair32b_factor2_corrected_reduced_h2_z11_reclosure.py)" = "f4f8c0933c6d9a58e908d64f63d3e817d51860f2"
+          test "$(git rev-parse HEAD:docs/ge19_repair32a_ge06_ge05_raw_residual_normalization_dictionary_result_freeze.md)" = "6c5b7f830cbae95209eda0e8c8663c6620ab7071"
+
+          python3 -m py_compile ge19/repair32b_factor2_corrected_reduced_h2_z11_reclosure.py
+
+          python3 - <<'PY'
+          import inspect,json
+          import numpy as np
+          import ge19.repair30_reduced_h2_z11_reclosure as r30
+          import ge19.repair32b_factor2_corrected_reduced_h2_z11_reclosure as r32
+
+          p=json.load(open("ge19/repair32b_predata_factor2_corrected_reduced_h2_z11_reclosure.json"))
+          assert p["classification"]=="GE19_REPAIR32B_PREDATA_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECLOSURE"
+          assert p["exact_single_change"]["GE05_M1_to_GE06_raw_residual_scale" if False else "Repair32B_value"]==2.0
+          assert p["exact_single_change"]["Repair30_value"]==1.0
+          assert p["unchanged_from_Repair30"]["Repair30_thresholds_unchanged"] is True
+          assert p["stop_boundary"]["no_gate_relaxation_after_result"] is True
+          assert p["stop_boundary"]["no_fitted_normalization"] is True
+          assert p["stop_boundary"]["no_H4_Z21_solve_in_Repair32B"] is True
+
+          assert r32.M1_GE05_TO_GE06_RAW_SCALE==2.0
+          assert r32.B_TIME_MAX==r30.B_TIME_MAX==5e-3
+          assert r32.LINEAR_MAX==r30.LINEAR_MAX==1e-8
+          assert r32.CONSTRAINT_MAX==r30.CONSTRAINT_MAX==1e-6
+          assert r32.TIME_MAX==r30.TIME_MAX==5e-3
+          assert r32.INIT_MAX==r30.INIT_MAX==1e-8
+          assert r32.CHI_PARENT_MAX==r30.CHI_PARENT_MAX==5e-3
+          assert r32.CHI_C_MAX==r30.CHI_C_MAX==5e-3
+
+          unchanged=[
+            "build_backgrounds","load_r2_parent","tangent_on_grid",
+            "integrate_dust_tangent","make_reference","first_order_X",
+            "solve_h2_case","state_time_control","chi_from_state",
+            "full_parent_chi_positive"
+          ]
+          for name in unchanged:
+            assert inspect.getsource(getattr(r32,name))==inspect.getsource(getattr(r30,name)),name
+
+          bg={
+            "Q_action":np.asarray([1.2,1.3]),
+            "a":np.asarray([0.4,0.5]),
+          }
+          B=np.asarray([[1+2j,3+4j]]*len(r32.r7.FOURIER_N),complex)
+          s30=r30.source_from_B(bg,B)
+          s32=r32.source_from_B(bg,B)
+          assert np.array_equal(s32,2.0*s30)
+          assert np.all(s32[:,0]==0)
+          assert np.all(s32[:,1]==0)
+          assert np.all(s32[:,4]==0)
+          assert np.all(s32[:,5]==0)
+
+          sym30=r30.symbolic_m1_audit()
+          sym32=r32.symbolic_m1_audit()
+          assert sym30==sym32
+          assert sym32["partial_px_identity"] and sym32["partial_r_identity"]
+
+          src=open("ge19/repair32b_factor2_corrected_reduced_h2_z11_reclosure.py").read()
+          assert '"GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECLOSURE_PASS"' in src
+          assert '"GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECLOSURE_FAIL"' in src
+          assert '"Repair30_relabelled":False' in src
+          assert '"H4_Z21_solve_performed":False' in src
+          print("GE19_REPAIR32B_PRELOCK_PASS")
+          PY
