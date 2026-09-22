@@ -47,13 +47,29 @@ for f in "${!HASHES[@]}"; do
 done
 echo GE19_REPAIR33_LOCAL_PARENTS_PASS
 
-TRACE="results/ge19_repair26_R1_full_history_trace.dat"
-if [[ ! -f "$TRACE" ]]; then
-  echo "GE19_REPAIR33_MISSING_REPAIR26_TRACE: $TRACE"
-  exit 7
+ARTROOT="$ROOT/frozen_repair26_repair33"
+TRACE="$(find "$ARTROOT" -type f -name ge19_repair26_R1_full_history_trace.dat -print -quit 2>/dev/null || true)"
+
+if [[ -z "$TRACE" ]]; then
+  command -v gh >/dev/null 2>&1 || {
+    echo "GE19_REPAIR33_GH_NOT_AVAILABLE"
+    echo "Install/authenticate GitHub CLI or place the frozen Repair26 artifact under $ARTROOT"
+    exit 7
+  }
+  rm -rf "$ARTROOT"
+  mkdir -p "$ARTROOT"
+  gh run download 35721220889 \
+    --repo dvlahek/aest-memory-gravity \
+    --name results_bundle_ge19_repair26_cancellation_free_full_history_bath_boundary \
+    --dir "$ARTROOT"
+  TRACE="$(find "$ARTROOT" -type f -name ge19_repair26_R1_full_history_trace.dat -print -quit)"
 fi
+
+test -n "$TRACE"
+test -s "$TRACE"
 test "$(sha256sum "$TRACE" | awk '{print $1}')" = "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
 test "$(wc -c < "$TRACE" | tr -d ' ')" = "26643162"
+echo "TRACE=$TRACE"
 echo GE19_REPAIR33_REPAIR26_TRACE_PASS
 
 JSON="results/ge19_repair33_window_local_reduced_h4_z21_particular.json"
