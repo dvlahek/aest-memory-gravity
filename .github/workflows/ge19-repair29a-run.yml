@@ -1,0 +1,98 @@
+name: GE19 Repair29A artifact-only localization
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - '.github/workflows/ge19-repair29a-run.yml'
+
+jobs:
+  repair29a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Frozen implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair29a_predata_repair28_even_residual_localization.json)" = "226ddc9232965368e7d8087a6ea15c19f3ec22bc"
+          test "$(git rev-parse HEAD:ge19/repair29a_repair28_even_residual_localization.py)" = "57ef69a97a6c7dc3a3bf2172799f79f7ce7e7ad7"
+          test "$(git rev-parse HEAD:.github/workflows/ge19-repair29a-prelock-audit.yml)" = "ad19380884f9d199b7921b4d4d48411af9822686"
+          test "$(git rev-parse HEAD:docs/ge19_repair29a_repair28_even_residual_localization_implementation_lock.md)" = "1a9409a9405b406f573008177414b4c0bff1719b"
+          test "$(git rev-parse HEAD:docs/ge19_repair28_cancellation_free_full_state_eta_tangent_result_freeze.md)" = "b4f659f6d06681898ef699f21bba0c77cf5f6880"
+          test "$(git rev-parse HEAD:ge19/repair28_cancellation_free_full_state_eta_tangent.py)" = "b5cb15b46e49c38e1388b6b754d4fa349aa36d5b"
+          python3 -m py_compile ge19/repair29a_repair28_even_residual_localization.py
+          echo GE19_REPAIR29A_LOCK_PASS
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Verify and download frozen Repair28 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          META="$(gh api repos/dvlahek/aest-memory-gravity/actions/artifacts/10692716361)"
+          test "$(printf '%s' "$META" | jq -r .name)" = "results_bundle_ge19_repair28_full_state_eta_tangent"
+          test "$(printf '%s' "$META" | jq -r .digest)" = "sha256:0549f84dc1313c7a34c7d6002939bdc34692b195881145489aa89023e9b9c34d"
+          test "$(printf '%s' "$META" | jq -r .expired)" = "false"
+
+          rm -rf frozen_repair28_repair29a
+          mkdir -p frozen_repair28_repair29a
+          gh run download 35723905248             --repo dvlahek/aest-memory-gravity             --name results_bundle_ge19_repair28_full_state_eta_tangent             --dir frozen_repair28_repair29a
+
+          JSON="$(find frozen_repair28_repair29a -type f -name ge19_repair28_cancellation_free_full_state_eta_tangent.json -print -quit)"
+          NPZ="$(find frozen_repair28_repair29a -type f -name ge19_repair28_cancellation_free_full_state_eta_tangent.npz -print -quit)"
+          FULL="$(find frozen_repair28_repair29a -type f -name ge19_repair28_cancellation_free_full_state_eta_tangent_FULL.log -print -quit)"
+          test -n "$JSON" && test -n "$NPZ" && test -n "$FULL"
+          test "$(sha256sum "$JSON" | awk '{print $1}')" = "1fd3a4310ea737f6da0d16fa37572c175c26005f6a3ee3f84e5e74f9c82b05a0"
+          test "$(sha256sum "$NPZ" | awk '{print $1}')" = "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705"
+          test "$(sha256sum "$FULL" | awk '{print $1}')" = "694fda61ad3f460e79f32ea35ecf6fda0c2a5933f3230b766485518f82af8cc5"
+          echo GE19_REPAIR29A_PARENT_ARTIFACT_PASS
+
+      - name: Run Repair29A localization
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 ge19/repair29a_repair28_even_residual_localization.py             --artifact-dir frozen_repair28_repair29a             --json-out results/ge19_repair29a_repair28_even_residual_localization.json             --npz-out results/ge19_repair29a_repair28_even_residual_localization.npz             2>&1 | tee results/ge19_repair29a_repair28_even_residual_localization_FULL.log
+
+      - name: Print Repair29A summary and hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -s results/ge19_repair29a_repair28_even_residual_localization.json ]; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_repair29a_repair28_even_residual_localization.json"))
+          print("CLASSIFICATION =",d["classification"])
+          print("R1_WORST =",d["R1"]["worst"]["field"],d["R1"]["worst"]["lambda"],d["R1"]["worst"]["global_normalized_even"])
+          print("R2_WORST =",d["R2"]["worst"]["field"],d["R2"]["worst"]["lambda"],d["R2"]["worst"]["global_normalized_even"])
+          print("R1_EXCEEDANCES =",d["R1"]["all_exceedances"])
+          print("REPAIR29B_TARGET_LAMBDAS =",d["Repair29B_target_lambdas"])
+          PY
+          fi
+          for f in             results/ge19_repair29a_repair28_even_residual_localization.json             results/ge19_repair29a_repair28_even_residual_localization.npz             results/ge19_repair29a_repair28_even_residual_localization_FULL.log; do
+            if [ -f "$f" ]; then sha256sum "$f"; wc -c "$f"; fi
+          done
+
+      - name: Upload Repair29A result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge19_repair29a_even_residual_localization
+          path: |
+            results/ge19_repair29a_repair28_even_residual_localization.json
+            results/ge19_repair29a_repair28_even_residual_localization.npz
+            results/ge19_repair29a_repair28_even_residual_localization_FULL.log
+          if-no-files-found: warn
