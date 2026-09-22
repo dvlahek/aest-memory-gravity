@@ -955,3 +955,69 @@ Repair27 licenses a separately preregistered H4/Z21 construction.
 Canonical project status:
 
 **Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 historical q20 FAIL; Repair25 localization complete; Repair26 cancellation-free first-order bath boundary CERTIFIED; Repair27 q20 CERTIFIED; H4/Z21 CONSTRUCTION LICENSED BUT NOT YET CERTIFIED.**
+
+
+---
+
+## Repair28 — cancellation-free complete first-order eta tangent
+
+Classification:
+
+`GE19_REPAIR28_CANCELLATION_FREE_FULL_STATE_ETA_TANGENT_FAIL`.
+
+Workflow run:
+
+`35723905248`.
+
+Artifact:
+
+`10692716361`.
+
+Result-freeze commit:
+
+`6616cb8c1d25edc85b6727a157ba30618c323857`.
+
+Frozen outputs:
+
+- JSON:
+  `1fd3a4310ea737f6da0d16fa37572c175c26005f6a3ee3f84e5e74f9c82b05a0`;
+- NPZ:
+  `101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705`;
+- FULL log:
+  `694fda61ad3f460e79f32ea35ecf6fda0c2a5933f3230b766485518f82af8cc5`.
+
+All preregistered gates pass except one:
+
+- R1 even residual:
+  `0.006093567316834002 > 0.005` — FAIL.
+
+The corresponding R2 even residual is
+
+`0.002932307980192869 < 0.005` — PASS.
+
+Other important controls pass:
+
+- R1 lambda affinity max:
+  `0.0032350146226643416`;
+- R2 lambda affinity max:
+  `0.003920019104722244`;
+- R1/R2 full-state consensus relative L2 max:
+  `0.0021596786199411513`;
+- a=0.4 R1/R2 state mismatch max:
+  `3.757145306980154e-06`;
+- R1/R2 chi11 relative L2:
+  `3.0996811715058834e-07`;
+- forcing 1024/2048 relative L2:
+  `7.3452194491696035e-09`.
+
+Interpretation:
+
+the failure is localized to the even-in-lambda contamination of the coarser R1 signed runs. The tighter R2 level passes the same frozen gate and the R1/R2 tangent itself closes. This is suggestive of a precision effect, but Repair28 remains historical FAIL and no threshold is relaxed.
+
+Next licensed step:
+
+a separately preregistered Repair29 precision/localization audit of the Repair28 even residual before any reduced Z11 or H4/Z21 solve.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair26 first-order cancellation-free bath boundary CERTIFIED; Repair27 q20 CERTIFIED; Repair28 full-state eta tangent FAIL on one R1 even-residual gate; reduced Z11 NOT CERTIFIED; H4/Z21 NOT YET LICENSED.**
