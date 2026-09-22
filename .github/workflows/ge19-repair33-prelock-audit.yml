@@ -1,0 +1,79 @@
+name: GE19 Repair33 H4 Z21 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair33_predata_window_local_reduced_h4_z21_particular.json'
+      - 'ge19/repair33_window_local_reduced_h4_z21_particular.py'
+      - '.github/workflows/ge19-repair33-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair33 H4 contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair33_predata_window_local_reduced_h4_z21_particular.json)" = "f1c646e3011193b7df61014365e985b47ad8e0b4"
+          test "$(git rev-parse HEAD:ge19/repair33_window_local_reduced_h4_z21_particular.py)" = "6863f6dd1f8d22acb9f891659ded34abbb747763"
+          test "$(git rev-parse HEAD:docs/ge19_repair32c_artifact_only_reduced_z11_certification_result_freeze.md)" = "341e6e10de1ced067c69bd28ab6569817b0eb7ab"
+
+          python3 -m py_compile ge19/repair33_window_local_reduced_h4_z21_particular.py
+          python3 ge19/repair33_window_local_reduced_h4_z21_particular.py --help >/tmp/r33_help.txt
+          grep -q -- "--repair26-trace" /tmp/r33_help.txt
+          grep -q -- "--json-out" /tmp/r33_help.txt
+          grep -q -- "--npz-out" /tmp/r33_help.txt
+
+          python3 - <<'PY'
+          import json
+          import numpy as np
+          import ge19.repair33_window_local_reduced_h4_z21_particular as r33
+
+          p=json.load(open("ge19/repair33_predata_window_local_reduced_h4_z21_particular.json"))
+          assert p["classification"]=="GE19_REPAIR33_PREDATA_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR"
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["exact_hierarchy"]["equation_common_GE06_convention"].startswith("L_GE06 Z21 = -2 Q_total")
+          assert p["source_assembly"]["memory_M1_second_order"]["GE05_to_GE06_scale"]==2
+          assert p["source_assembly"]["memory_M2_first_order"]["GE05_to_GE06_scale"]==2
+          assert p["boundary"]["type"]=="window-local particular H4 boundary"
+          assert p["stop_boundary"]["no_posthoc_source_rescaling"] is True
+          assert p["stop_boundary"]["no_primordial_Z21_claim"] is True
+          assert p["stop_boundary"]["no_full_species_claim"] is True
+
+          assert r33.GE05_TO_GE06==2.0
+          assert r33.NT_PRIMARY==128 and r33.NT_CONTROL==64
+          assert r33.NX_DY_PRIMARY==1024 and r33.NX_DY_CONTROL==2048
+          assert r33.NQ_PRIMARY==2048 and r33.NQ_CONTROL==1024
+          assert r33.M_MAX==40
+
+          # Exact M1 mapping sanity: Repair33 must be twice the Repair30
+          # -M1 source in the common GE06 raw-residual convention.
+          bg={"Q_action":np.asarray([1.2,1.3]),"a":np.asarray([0.4,0.5])}
+          B=np.ones((len(r33.r7.BETAS),r33.M_MAX,2),complex)
+          ma,co=r33.m1_mapped_fourier(bg,B)
+          assert np.all(co==0)
+          kfund=float(r33.r7.g9.K_REQ[0]/r33.r7.FOURIER_N[0])
+          k=float(r33.r7.M_SOLVE[0]*kfund)
+          assert np.allclose(ma[:,2,:,1],bg["Q_action"][None,:]*bg["a"][None,:]**3)
+          assert np.allclose(ma[:,3,:,1],-bg["a"][None,:]**2*(1j*k))
+
+          src=open("ge19/repair33_window_local_reduced_h4_z21_particular.py").read()
+          assert '"H4_equation":"L_GE06 Z21 = -2 Q_total(Z10,Z11) - 2 DY2[Z10;Z11] - 2 M1_GE05[Z20,q20] - 2 M2_GE05[(Z10,q10),(Z10,q10)]"' in src
+          assert '"Z21_window_local_particular_certified":passed' in src
+          assert '"primordial_homogeneous_Z21_certified":False' in src
+          assert '"full_species_Z21_certified":False' in src
+          assert '"uses_observational_data":False' in src
+          assert '"finite_physical_eta":False' in src
+          print("GE19_REPAIR33_PRELOCK_PASS")
+          PY
