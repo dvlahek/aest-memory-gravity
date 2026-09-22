@@ -202,8 +202,8 @@ def integrate_dust_tangent(bg,base_state,fields):
     rho_dark=np.asarray([q["rho_dark"] for q in base_state],float)
     p_dark=np.asarray([q["p_dark"] for q in base_state],float)
 
-    std_dr=fields["total_delta_rho"]-rho_dark[None,:]*fields["delta_dark"]
-    std_mom=fields["total_rho_plus_p_theta"]-(rho_dark+p_dark)[None,:]*fields["theta_dark"]
+    std_dr=fields["total_delta_rho"]-rho_dark*fields["delta_dark"]
+    std_mom=fields["total_rho_plus_p_theta"]-(rho_dark+p_dark)*fields["theta_dark"]
 
     phi_interp=[
         PchipInterpolator(x,fields["phi_newtonian"][ik],extrapolate=False)
