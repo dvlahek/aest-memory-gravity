@@ -1,0 +1,100 @@
+{
+  "classification": "GE19_REPAIR35_PREDATA_DIRECT_BILINEAR_MATCHED_SHIFT_H4_Z21",
+  "created_after_Repair34_valid_FAIL": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Re-execute the unchanged H4 construction after correcting only the two Repair34 audit defects: replace floating subtractive Q polarization with the exact symbolic bilinear form of the same frozen GE06/GE07 quadratic source, and restore the already-certified Repair21/Repair22 active/near-null propagated-shift rule.",
+  "frozen_parent_result": {
+    "Repair34": {
+      "historical_classification": "GE19_REPAIR34_CANONICAL_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR_FAIL",
+      "JSON_sha256": "5d6fd3b90e4980e2397058f6785f15b156e4a3826b5b21b614f2fea3acee03d8",
+      "NPZ_sha256": "8e6f7f2b02b48ee5c956822a09a591fa32237cd0c5865a7dfb838996d08824ed",
+      "relabelled": false,
+      "localization": "canonical solver/state/boundary closed; FAIL confined to subtractive Q-cross audit and invalid all-row propagated-shift relative metric"
+    },
+    "Repair34_localization_freeze_commit": "8bab319dccd212ed6a92f4e0f448e46b84eed5c8"
+  },
+  "unchanged_physics": {
+    "H4_equation": "L_GE06 Z21 = -2 Q_total(Z10,Z11) - 2 DY2[Z10;Z11] - 2 M1_GE05[Z20,q20] - 2 M2_GE05[(Z10,q10),(Z10,q10)]",
+    "GE05_to_GE06_raw_residual_scale": 2,
+    "fitted_normalization": false,
+    "source_coefficients_unchanged": true,
+    "parents": [
+      "Repair22 Z10/Z20",
+      "Repair27 q10/q20",
+      "Repair32B/32C Z11",
+      "GE04 DY2",
+      "GE05 M1/M2",
+      "GE06/GE07 L/Q"
+    ],
+    "grids_unchanged": true,
+    "Repair18_projected_boundary_unchanged": true,
+    "Repair07_canonical_Radau_unchanged": true
+  },
+  "q_cross_correction": {
+    "object": "The frozen GE06/GE07 second-direction coefficient Q2(d,d), a homogeneous quadratic polynomial in directional variables.",
+    "direct_bilinear_identity": "B(d,e) = (1/2) sum_i [partial Q2(d,d)/partial d_i] e_i = [Q2(d+e,d+e)-Q2(d-e,d-e)]/4 exactly.",
+    "implementation": "Construct the mixed local-partial expressions symbolically from the already frozen stable GE06 coeff2 expressions and frozen GE07 coeff2 expressions, lambdify them, and assemble them through the unchanged GE06/GE07 Euler-Lagrange assembly.",
+    "exact_symbolic_polarization_identity_required": true,
+    "numerical_symmetry_audit": "B(Z10,Z11) versus B(Z11,Z10)",
+    "numerical_symmetry_relative_L2_max": 1e-12,
+    "old_balanced_polarization_comparison": "report only; not a gate because it is the localized subtractive-cancellation diagnostic",
+    "fitted_factor": false,
+    "physical_rescaling": false
+  },
+  "shift_correction": {
+    "inherited_certification": "Repair21/Repair22",
+    "primary_grid": "Nt128",
+    "S_ref": "maximum natural shift contribution scale on the Nt128 H4 solution across C, beta, mode and time",
+    "near_null_rule": "shift_scale <= sqrt(machine epsilon) * S_ref",
+    "active_rule": "use unchanged componentwise shift backward error",
+    "active_Nt128_Linf_max": 0.000001,
+    "near_null_rule_gate": "max absolute shift residual on near-null rows divided by S_ref <= 1000*machine_epsilon",
+    "matched_control": "PCHIP-interpolate Nt64 shift metric to the Nt128 ln(a) grid and compare only at Nt128-active samples",
+    "observed_order_Linf_min": 2.5,
+    "observed_order_RMS_min": 2.5,
+    "threshold_relaxation": false
+  },
+  "frozen_thresholds": {
+    "Q_cross_direct_symbolic_polarization_identity": true,
+    "Q_cross_direct_symmetry_relative_L2_max": 1e-12,
+    "DY2_Nx1024_vs_Nx2048_low_mode_relative_L2_max": 0.0005,
+    "total_H4_source_Nx1024_vs_Nx2048_m1_40_relative_L2_max": 0.0005,
+    "memory_source_Nq1024_vs_Nq2048_relative_L2_max": 0.01,
+    "total_H4_source_Nt64_vs_Nt128_relative_L2_max": 0.005,
+    "canonical_Radau_and_algebraic_linear_residual_max": 1e-8,
+    "H4_state_Nt64_vs_Nt128_global_relative_L2_max": 0.005,
+    "H4_active_shift_Nt128_Linf_max": 0.000001,
+    "H4_near_null_absolute_residual_over_Sref_max": "1000*eps",
+    "H4_matched_active_shift_Linf_order_min": 2.5,
+    "H4_matched_active_shift_RMS_order_min": 2.5,
+    "H4_anisotropy_constraint_backward_error_max": 0.000001,
+    "boundary_q0_abs_max": 1e-12,
+    "boundary_projected_momentum_scaled_residual_max": 1e-8,
+    "boundary_lapse_backward_error_max": 0.000001,
+    "boundary_shift_backward_error_max": 0.000001,
+    "boundary_algebraic_relative_residual_max": 1e-8,
+    "all_source_and_state_outputs_finite": true
+  },
+  "pass_classification": "GE19_REPAIR35_DIRECT_BILINEAR_MATCHED_SHIFT_H4_Z21_PASS",
+  "fail_classification": "GE19_REPAIR35_DIRECT_BILINEAR_MATCHED_SHIFT_H4_Z21_FAIL",
+  "pass_consequence": {
+    "Z21_window_local_particular_certified": true,
+    "primordial_homogeneous_Z21_certified": false,
+    "full_species_Z21_certified": false,
+    "next": "Separately preregister the first lensing-facing weakly nonlinear memory observable."
+  },
+  "fail_route": "Freeze Repair35 FAIL. Do not alter H4 physics, source coefficients, boundary rule, integrator or thresholds in the same test.",
+  "stop_boundary": {
+    "Repair34_relabelled": false,
+    "no_H4_physics_change": true,
+    "no_source_rescaling": true,
+    "no_fitted_normalization": true,
+    "no_threshold_change_after_result": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_primordial_Z21_claim": true,
+    "no_full_species_claim": true
+  }
+}
