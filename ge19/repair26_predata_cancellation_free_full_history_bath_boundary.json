@@ -1,0 +1,104 @@
+{
+  "classification": "GE19_REPAIR26_PREDATA_CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_RECONSTRUCTION",
+  "created_before_repair26_result": true,
+  "result_informed_followup": true,
+  "diagnostic_and_boundary_certification_only": true,
+  "uses_observational_data": false,
+  "purpose": "Replace the numerically contaminated historical alpha-coordinate v0.77 first-order bath-drive history by a full-history eta=0 trace generated with the already certified exact GE15 cancellation-free state s=chi/Q, and certify the resulting retarded z10 boundary at a=0.4 before any q20 rerun.",
+  "frozen_parent_chain": {
+    "repair24": "GE19_REPAIR24_Q20_CONSTRUCTION_FAIL",
+    "repair25": "GE19_REPAIR25_FIRST_ORDER_BATH_BOUNDARY_DICTIONARY_AUDIT_COMPLETE",
+    "repair25_route": "LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED",
+    "ge14": "GE14_CHI_CANCELLATION_STIFF_SEED_LOCALIZED",
+    "ge15": "GE15_CANCELLATION_FREE_S_STATE_PRECISION_CLOSURE_PASS",
+    "repair22": "GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS"
+  },
+  "frozen_interpretation": {
+    "ge14_mechanism": "Historical alpha-coordinate chi=Q(a theta/k^2+alpha) is seeded by machine-epsilon cancellation under large early-time KQ; the cancellation-induced seed dominates the physical finite-gradient source at the first accepted endpoints.",
+    "ge15_resolution": "Use the exact coordinate change s=chi/Q, alpha=s-a theta/k^2, chi=Q s with s_i=0. No physics coefficient or state dimension changes.",
+    "repair25_localization": "GE15 and Repair22/GE19 agree to machine precision at a=0.4, while the historical v0.77 chi/a amplitude is incompatible and cannot be repaired by one frozen simple convention factor.",
+    "prohibited_inference": "Do not interpret the Repair25 per-mode fitted amplitudes as a physical Fourier normalization map."
+  },
+  "frozen_model": {
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "KB": 0.0665,
+    "tauH0": 10,
+    "eta": 0,
+    "k_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "a_boundary": 0.4,
+    "internal_AeST_state": "s=chi/Q",
+    "physical_alpha": "s-a theta/k^2",
+    "physical_chi": "Q*s",
+    "initial_s": 0,
+    "Fourier_mode_amplitudes_and_phases": "unchanged frozen GE19/Repair22 deterministic six-mode realization"
+  },
+  "precision_pair": {
+    "R1_file": "ge11/pre/R1_repair01.pre",
+    "R2_file": "ge11/pre/R2_repair01.pre",
+    "R1_tol_perturbations_integration": 2.5e-8,
+    "R1_perturbations_sampling_stepsize": 0.00125,
+    "R2_tol_perturbations_integration": 1.25e-8,
+    "R2_perturbations_sampling_stepsize": 0.000625
+  },
+  "reconstruction": {
+    "trace_location": "CLASS perturbations_sources accepted source-sampling grid",
+    "trace_fields": [
+      "k",
+      "tau",
+      "a",
+      "H_over_H0",
+      "chi",
+      "Q"
+    ],
+    "trace_chi_definition": "chi=Q*s directly under GE15 patch",
+    "bath_drive": "X=chi/a, then multiply by the frozen positive-mode spatial gradient factor",
+    "retarded_history": "integrate from the earliest valid accepted-source-grid node with z10=v10=0 to exactly a=0.4, including the final partial ln(a) step",
+    "quadrature_orders": {
+      "primary": 2048,
+      "control": 1024
+    }
+  },
+  "frozen_gates": {
+    "implementation_and_provenance_all_pass": true,
+    "requested_k_relative_miss_max": 1e-12,
+    "common_time_relative_mismatch_max": 1e-12,
+    "both_traces_bracket_a0": true,
+    "trace_a0_target_reconstruction_abs_max": 1e-15,
+    "GE15_dense_X0_R1_trace_abs_or_rel_max": 0.002,
+    "GE15_dense_X0_R2_trace_abs_or_rel_max": 0.002,
+    "R1_R2_trace_X0_abs_or_rel_max": 0.002,
+    "R1_R2_full_z10_boundary_relative_L2_max": 0.005,
+    "R1_R2_full_v10_boundary_relative_L2_max": 0.005,
+    "Nq1024_Nq2048_weighted_z10_boundary_relative_L2_max": 0.005,
+    "Nq1024_Nq2048_weighted_v10_boundary_relative_L2_max": 0.005,
+    "all_outputs_finite": true
+  },
+  "frozen_routes": {
+    "pass": "CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_CERTIFIED",
+    "trace_fail": "CANCELLATION_FREE_TRACE_PRECISION_CLOSURE_FAIL",
+    "bath_fail": "CANCELLATION_FREE_RETARDED_BATH_BOUNDARY_NOT_CLOSED",
+    "implementation_fail": "GE19_REPAIR26_IMPLEMENTATION_FAIL"
+  },
+  "pass_license": {
+    "may_use": "Frozen Repair26 R1 cancellation-free full-history trace and its derived retarded z10/v10 boundary as the only first-order bath parent in a separately preregistered q20 reconstruction rerun.",
+    "may_not_use": [
+      "historical v0.77 chi trace as a physical boundary",
+      "Repair25 fitted per-mode amplitudes",
+      "any ad hoc rescaling",
+      "q20 certification in Repair26",
+      "H4/Z21"
+    ]
+  },
+  "stop_boundary": {
+    "q20_rerun_performed": false,
+    "q20_certified": false,
+    "Z21_licensed": false
+  }
+}
