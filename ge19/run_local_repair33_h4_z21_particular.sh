@@ -9,8 +9,11 @@ test "$(git rev-parse HEAD:ge19/repair33_predata_window_local_reduced_h4_z21_par
 test "$(git rev-parse HEAD:ge19/repair33_window_local_reduced_h4_z21_particular.py)" = "6863f6dd1f8d22acb9f891659ded34abbb747763"
 test "$(git rev-parse HEAD:.github/workflows/ge19-repair33-prelock-audit.yml)" = "4e022a0050a7be1b69895343915f6300fd019475"
 test "$(git rev-parse HEAD:docs/ge19_repair33_h4_z21_implementation_lock.md)" = "ae2bf35a76b67667b07175ca696dff23bf6dcceb"
+test "$(git rev-parse HEAD:.github/workflows/ge19-repair33-repair01-prelock-audit.yml)" = "1b0f5274a6d28f65891b6e26c3d7729c1cd602fd"
+test "$(git rev-parse HEAD:docs/ge19_repair33_initial_execution_missing_trace_freeze.md)" = "5dfbfaba76d56e0d182fd6491ed065584a7716e0"
+test "$(git rev-parse HEAD:docs/ge19_repair33_repair01_trace_fetch_lock.md)" = "e15a36920fed0254c4d74ba9437b91a4624638de"
 
-for c in   b98af3f09a3adcca779f27fd19c9f8d78fa3b814   9534debc82d2d2a50c832f400754ea2feee866c0   2642bb65f47d90732b4c359d8a4004e2c278b60e   a5d4b7d013346c5501ed59f353a57261057b17cf; do
+for c in   b98af3f09a3adcca779f27fd19c9f8d78fa3b814   9534debc82d2d2a50c832f400754ea2feee866c0   2642bb65f47d90732b4c359d8a4004e2c278b60e   a5d4b7d013346c5501ed59f353a57261057b17cf   c3294a169fc752e57ebc778673e49ea7cb4e3dc0   5b07ee7f40f51b1db5a9b3580eca69e981c3781a   fd3ba43afddd7d3c91ec5d1076f01887010d8450   523ce7843f28d6d4023feb4771eb180ba0a0ea52; do
   git merge-base --is-ancestor "$c" HEAD
 done
 echo GE19_REPAIR33_LOCK_PASS
