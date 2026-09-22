@@ -1,0 +1,194 @@
+name: GE19 Repair29B R3 tangent precision science
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - '.github/workflows/ge19-repair29b-run.yml'
+
+jobs:
+  repair29b:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Frozen implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair29b_predata_r3_full_state_tangent_precision_closure.json)" = "22e38e3462288ae3e9eacc6ddc0c703ad4081b57"
+          test "$(git rev-parse HEAD:ge19/pre/R3_repair29b.pre)" = "5b6f992e426124f40eea14ee0f4730d111ce9ee7"
+          test "$(git rev-parse HEAD:ge19/repair29b_r3_full_state_tangent_precision_closure.py)" = "ac0085148ad3032758c36b9593461285a9fdc152"
+          test "$(git rev-parse HEAD:.github/workflows/ge19-repair29b-prelock-audit.yml)" = "606998b4e178fc5d3efdb3cd829b1f9997652394"
+          test "$(git rev-parse HEAD:docs/ge19_repair29b_r3_full_state_tangent_precision_closure_implementation_lock.md)" = "3d1372d167e59645a3de71b25b06d095c91b637b"
+          test "$(git rev-parse HEAD:docs/ge19_repair29a_repair28_even_residual_localization_result_freeze.md)" = "0336cd9b50510a33cf844460c1e026c73cf5a2a2"
+          test "$(git rev-parse HEAD:docs/ge19_repair28_cancellation_free_full_state_eta_tangent_result_freeze.md)" = "b4f659f6d06681898ef699f21bba0c77cf5f6880"
+          test "$(git rev-parse HEAD:docs/ge19_repair26_cancellation_free_full_history_bath_boundary_result_freeze.md)" = "4a620b1ace8445085d3618db177ca76ef9cadb6a"
+          test "$(git rev-parse HEAD:ge19/repair28_cancellation_free_full_state_eta_tangent.py)" = "b5cb15b46e49c38e1388b6b754d4fa349aa36d5b"
+          python3 -m py_compile ge19/repair29b_r3_full_state_tangent_precision_closure.py
+          echo GE19_REPAIR29B_LOCK_PASS
+
+      - name: Download frozen Repair26 parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf frozen_repair26_repair29b
+          mkdir -p frozen_repair26_repair29b
+          gh run download 35721220889 \
+            --repo dvlahek/aest-memory-gravity \
+            --name results_bundle_ge19_repair26_cancellation_free_full_history_bath_boundary \
+            --dir frozen_repair26_repair29b
+          TRACE="$(find frozen_repair26_repair29b -type f -name ge19_repair26_R1_full_history_trace.dat -print -quit)"
+          test -n "$TRACE"
+          test "$(sha256sum "$TRACE" | awk '{print $1}')" = "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+          test "$(wc -c < "$TRACE" | tr -d ' ')" = "26643162"
+          echo "REPAIR26_TRACE=$TRACE" >> "$GITHUB_ENV"
+          echo GE19_REPAIR29B_REPAIR26_PARENT_PASS
+
+      - name: Download frozen Repair29A selector
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf frozen_repair29a_repair29b
+          mkdir -p frozen_repair29a_repair29b
+          gh run download 35740993043 \
+            --repo dvlahek/aest-memory-gravity \
+            --name results_bundle_ge19_repair29a_even_residual_localization \
+            --dir frozen_repair29a_repair29b
+          SEL="$(find frozen_repair29a_repair29b -type f -name ge19_repair29a_repair28_even_residual_localization.json -print -quit)"
+          test -n "$SEL"
+          test "$(sha256sum "$SEL" | awk '{print $1}')" = "1fb5431023869f8e7b688236b03b1dc3f89f54336744afa5a4437d14fce7980c"
+          python3 - "$SEL" <<'PY'
+          import json,sys
+          p=json.load(open(sys.argv[1]))
+          assert p["classification"]=="GE19_REPAIR29A_REPAIR28_EVEN_RESIDUAL_LOCALIZATION_COMPLETE"
+          assert p["Repair29B_target_lambdas"]==[5.0,1.25]
+          assert p["R1"]["worst"]["field"]=="phi_newtonian"
+          assert p["R1"]["worst"]["lambda"]==1.25
+          assert p["R2"]["worst"]["field"]=="phi_newtonian"
+          assert p["R2"]["worst"]["lambda"]==5.0
+          assert p["Repair28_threshold_changed"] is False
+          print("GE19_REPAIR29B_SELECTOR_PASS")
+          PY
+          echo "REPAIR29A_JSON=$SEL" >> "$GITHUB_ENV"
+
+      - name: Download frozen Repair28 R2 reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf frozen_repair28_repair29b
+          mkdir -p frozen_repair28_repair29b
+          gh run download 35723905248 \
+            --repo dvlahek/aest-memory-gravity \
+            --name results_bundle_ge19_repair28_full_state_eta_tangent \
+            --dir frozen_repair28_repair29b
+          REF="$(find frozen_repair28_repair29b -type f -name ge19_repair28_cancellation_free_full_state_eta_tangent.npz -print -quit)"
+          test -n "$REF"
+          test "$(sha256sum "$REF" | awk '{print $1}')" = "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705"
+          echo "REPAIR28_NPZ=$REF" >> "$GITHUB_ENV"
+          echo GE19_REPAIR29B_REPAIR28_REFERENCE_PASS
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_repair29b
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply frozen AeST and GE15 patch chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_repair29b
+          python3 v019i/apply_ic_patch.py class_repair29b
+          python3 v019j/apply_memory_patch.py class_repair29b
+          python3 v019w/apply_variational_forcing_patch.py class_repair29b
+          python3 v019y/apply_output_precision_patch.py class_repair29b
+          python3 v023/apply_source_grid_trace_patch.py class_repair29b
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_repair29b
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_repair29b
+          python3 ge08/apply_full_state_trace_patch.py class_repair29b
+          python3 ge09/apply_dense_accepted_step_trace_patch.py class_repair29b
+          python3 ge15/apply_cancellation_free_s_state_patch.py class_repair29b
+          python3 - <<'PY'
+          import json
+          p=json.load(open("results/ge15_s_state_patch.json"))
+          assert p["classification"]=="GE15_CANCELLATION_FREE_S_STATE_PATCH_PASS"
+          assert p["physics_modified"] is False
+          assert p["state_dimension_modified"] is False
+          assert p["initial_s"]==0.0
+          assert all(p["checks"].values())
+          print("GE19_REPAIR29B_GE15_PATCH_PASS")
+          PY
+
+      - name: Build CLASS executable
+        run: make -C class_repair29b -j2 class
+
+      - name: Run Repair29B R3 science
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge19/repair29b_r3_full_state_tangent_precision_closure.py \
+            --class-root class_repair29b \
+            --repair26-trace "$REPAIR26_TRACE" \
+            --repair29a-json "$REPAIR29A_JSON" \
+            --repair28-npz "$REPAIR28_NPZ" \
+            --results-dir results \
+            --json-out results/ge19_repair29b_r3_full_state_tangent_precision_closure.json \
+            --npz-out results/ge19_repair29b_r3_full_state_tangent_precision_closure.npz \
+            2>&1 | tee results/ge19_repair29b_r3_full_state_tangent_precision_closure_FULL.log
+
+      - name: Print Repair29B summary and hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -s results/ge19_repair29b_r3_full_state_tangent_precision_closure.json ]; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_repair29b_r3_full_state_tangent_precision_closure.json"))
+          print("CLASSIFICATION =",d["classification"])
+          print("TARGET_LAMBDAS =",d["selector"]["target_lambdas"])
+          print("TRACKED_PAIRS =",d["selector"]["tracked_pairs"])
+          print("SUMMARY =",d["summary"])
+          print("GATES =",d["gates"])
+          print("NEXT_STEP =",d["next_step"])
+          PY
+          fi
+          for f in \
+            results/ge19_repair29b_r3_full_state_tangent_precision_closure.json \
+            results/ge19_repair29b_r3_full_state_tangent_precision_closure.npz \
+            results/ge19_repair29b_r3_full_state_tangent_precision_closure_FULL.log \
+            results/ge19_repair29b_repair26_forcing_summary.json \
+            results/ge19_repair29b_repair26_forcing_force.dat; do
+            if [ -f "$f" ]; then sha256sum "$f"; wc -c "$f"; fi
+          done
+
+      - name: Upload Repair29B bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge19_repair29b_r3_tangent_precision
+          path: |
+            results/ge19_repair29b_r3_full_state_tangent_precision_closure.json
+            results/ge19_repair29b_r3_full_state_tangent_precision_closure.npz
+            results/ge19_repair29b_r3_full_state_tangent_precision_closure_FULL.log
+            results/ge19_repair29b_repair26_forcing_summary.json
+            results/ge19_repair29b_repair26_forcing_force.dat
+            results/ge19_repair29b_R3_*_class.log
+            results/ge19_repair29b_R3_*_full_state_trace.dat
+            results/ge15_s_state_patch.json
+          if-no-files-found: warn
