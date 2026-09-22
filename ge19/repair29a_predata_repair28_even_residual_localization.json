@@ -1,0 +1,79 @@
+{
+  "classification": "GE19_REPAIR29A_PREDATA_REPAIR28_EVEN_RESIDUAL_LOCALIZATION",
+  "created_after_frozen_Repair28_FAIL": true,
+  "created_before_Repair29A_result": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "frozen_parent": {
+    "Repair28_classification": "GE19_REPAIR28_CANCELLATION_FREE_FULL_STATE_ETA_TANGENT_FAIL",
+    "workflow_run_id": 35723905248,
+    "workflow_job_id": 106732873966,
+    "artifact_id": 10692716361,
+    "artifact_name": "results_bundle_ge19_repair28_full_state_eta_tangent",
+    "artifact_digest": "sha256:0549f84dc1313c7a34c7d6002939bdc34692b195881145489aa89023e9b9c34d",
+    "Repair28_JSON_sha256": "1fd3a4310ea737f6da0d16fa37572c175c26005f6a3ee3f84e5e74f9c82b05a0",
+    "Repair28_NPZ_sha256": "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705",
+    "Repair28_FULL_sha256": "694fda61ad3f460e79f32ea35ecf6fda0c2a5933f3230b766485518f82af8cc5",
+    "only_failed_gate": "R1_even_residual_global_normalized_le_5e3",
+    "R1_even_residual_global_normalized_max": 0.006093567316834002,
+    "R2_even_residual_global_normalized_max": 0.002932307980192869,
+    "frozen_limit": 0.005
+  },
+  "diagnostic_scope": {
+    "new_CLASS_runs": false,
+    "recompute_physical_tangent_runs": false,
+    "input_only": "frozen Repair28 raw R1/R2 base and signed-lambda full-state traces",
+    "purpose": "Localize the frozen even-in-lambda residual by precision level, primary field, lambda, k mode and ln(a) location, and quantify R1 to R2 scaling.",
+    "Repair28_threshold_changed": false,
+    "Repair28_relabel_allowed": false
+  },
+  "frozen_formula": {
+    "lambdas": [
+      10,
+      5,
+      2.5,
+      1.25
+    ],
+    "primary_fields": [
+      "phi_newtonian",
+      "psi_newtonian",
+      "delta_dark",
+      "theta_dark",
+      "alpha_aest",
+      "E_aest",
+      "delta_m_native",
+      "theta_m_native",
+      "total_delta_rho",
+      "total_rho_plus_p_theta"
+    ],
+    "tangent_consensus": "mean_lambda[(plus-minus)/(2 lambda)]",
+    "even_residual": "plus + minus - 2 base",
+    "global_normalization": "||even_residual||_2 / (2 |lambda| ||tangent_consensus(field)||_2)",
+    "per_mode_normalization": "||even_residual(k,:)||_2 / (2 |lambda| ||tangent_consensus(field,k,:)||_2)",
+    "pointwise_normalization": "|even_residual(k,a)| / max(2 |lambda| |tangent_consensus(field,k,a)|, tiny)"
+  },
+  "outputs_to_freeze": [
+    "all field/lambda global even metrics at R1 and R2",
+    "worst R1 field/lambda and worst R2 field/lambda",
+    "per-mode even metrics for each global worst pair",
+    "worst pointwise location for each global worst pair",
+    "R2/R1 global even ratio for every field/lambda pair",
+    "set of lambda values required by a later targeted R3 follow-up"
+  ],
+  "Repair29B_selection_rule": {
+    "target_lambdas": "union of lambda values associated with (a) the R1 global maximum and (b) the R2 global maximum; additionally include any R1 lambda for which any primary-field global even metric exceeds the frozen Repair28 0.005 limit",
+    "rule_is_frozen_before_localization": true,
+    "no_field_or_lambda_may_be_added_or_removed_after_result_except_by_this_rule": true
+  },
+  "classification_policy": {
+    "success": "GE19_REPAIR29A_REPAIR28_EVEN_RESIDUAL_LOCALIZATION_COMPLETE",
+    "failure": "GE19_REPAIR29A_IMPLEMENTATION_OR_PROVENANCE_FAIL",
+    "scientific_PASS_not_defined": true
+  },
+  "stop_boundary": {
+    "no_threshold_relaxation": true,
+    "no_new_tangent_science_run": true,
+    "no_reduced_Z11": true,
+    "no_H4_Z21": true
+  }
+}
