@@ -131,8 +131,8 @@ def symbolic_m1_audit():
 
 
 def build_backgrounds(dense:Path,r13npz):
-    base128,_,_=r7.build_ge15_reference(dense,128)
-    base64,_,_=r7.build_ge15_reference(dense,64)
+    base128,state128,_=r7.build_ge15_reference(dense,128)
+    base64,state64,_=r7.build_ge15_reference(dense,64)
 
     x64f=np.asarray(r13npz["x64"],float)
     rho64=np.asarray(r13npz["rho_lambda64"],float)
@@ -159,7 +159,7 @@ def build_backgrounds(dense:Path,r13npz):
     if repro>1e-12:
         raise RuntimeError(f"Repair13 reduced-background reproduction failed: {repro}")
 
-    return bgs,{128:base128,64:base64},lambda_by_bg,{
+    return bgs,{128:base128,64:base64},{128:state128,64:state64},lambda_by_bg,{
         "rho_lambda_constant":rhoL,
         "rho_lambda_relative_spread":rho_spread,
         "Repair13_H_Nt64_reproduction_relative_L2_max":repro,
@@ -186,7 +186,7 @@ def tangent_on_grid(x_parent,fields,x):
     return {k:interp_real(x_parent,v,x) for k,v in fields.items()}
 
 
-def integrate_dust_tangent(bg,base_bg,fields):
+def integrate_dust_tangent(bg,base_state,fields):
     """Pressureless reduced standard-sector eta tangent for each k.
 
     Initial absolute density/momentum tangent is inherited from the full
@@ -199,8 +199,8 @@ def integrate_dust_tangent(bg,base_bg,fields):
     calH=a*H
     out=[]
 
-    rho_dark=np.asarray(base_bg["rho_dark"],float)
-    p_dark=np.asarray(base_bg["p_dark"],float)
+    rho_dark=np.asarray([q["rho_dark"] for q in base_state],float)
+    p_dark=np.asarray([q["p_dark"] for q in base_state],float)
 
     std_dr=fields["total_delta_rho"]-rho_dark[None,:]*fields["delta_dark"]
     std_mom=fields["total_rho_plus_p_theta"]-(rho_dark+p_dark)[None,:]*fields["theta_dark"]
@@ -465,7 +465,7 @@ def main():
     z27=np.load(paths["r27n"])
     z28=np.load(paths["r28n"])
 
-    bgs,bases,lambda_by_bg,bgdiag=build_backgrounds(paths["dense"],z13)
+    bgs,bases,base_states,lambda_by_bg,bgdiag=build_backgrounds(paths["dense"],z13)
     r11.install_lambda_operator(r7,lambda_by_bg)
 
     mod6_frozen=r7.load_frozen_generator(
@@ -498,7 +498,7 @@ def main():
         fields=tangent_on_grid(xR2,R2,x)
         for tag in r7.C_TAGS:
             bg=bgs[(nt,tag)]
-            dust,std_dr,std_mom=integrate_dust_tangent(bg,bases[nt],fields)
+            dust,std_dr,std_mom=integrate_dust_tangent(bg,base_states[nt],fields)
             ref,refdot=make_reference(bg,bases[nt],fields,dust)
             refs[(nt,tag)]=ref; refdots[(nt,tag)]=refdot
 
