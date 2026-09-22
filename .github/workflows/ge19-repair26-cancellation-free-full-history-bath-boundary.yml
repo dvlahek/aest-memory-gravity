@@ -1,0 +1,127 @@
+name: GE19 Repair26 cancellation-free full-history bath boundary
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair26_predata_cancellation_free_full_history_bath_boundary.json'
+      - 'ge19/repair26_cancellation_free_full_history_bath_boundary.py'
+      - '.github/workflows/ge19-repair26-cancellation-free-full-history-bath-boundary.yml'
+
+jobs:
+  repair26:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Frozen preregistration and implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair26_predata_cancellation_free_full_history_bath_boundary.json)" = "ae7aa253d8eba0130548c709fb31dc0d082095d1"
+          test "$(git rev-parse HEAD:ge19/repair26_cancellation_free_full_history_bath_boundary.py)" = "499dcd16e6147712ee0cb17c3eca82e728131bb3"
+          test "$(git rev-parse HEAD:ge15/apply_cancellation_free_s_state_patch.py)" = "66b919b362b05721d1023441ab4a7c18f86f500c"
+          test "$(git rev-parse HEAD:ge09/apply_dense_accepted_step_trace_patch.py)" = "23b0cd22ebab499aee0ce03e6b3b678fe727ef55"
+          test "$(git rev-parse HEAD:ge09/repair01_dense_accepted_step_local_jet_bridge.py)" = "509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
+          test "$(git rev-parse HEAD:nl1c4/expanding_memory_source_trajectory.py)" = "7a9ffab9fa903ca61e88627052e2aa589b4bf459"
+          test "$(git rev-parse HEAD:v063/theory_response_map.py)" = "fb373c8118b755c5aa7d5572d910d6ca3684866e"
+          test "$(git rev-parse HEAD:ge19/repair07_window_retarded_reduced_h3_z20_particular.py)" = "e34d28a2062c748f48bc82fa928844b02631de25"
+          test "$(git rev-parse HEAD:ge11/pre/R1_repair01.pre)" = "7497e1a88cc15352641fcaacf7652ed6d6fb03f8"
+          test "$(git rev-parse HEAD:ge11/pre/R2_repair01.pre)" = "63c3be3891a9b4178b179a3f728e72245ea63934"
+          test "$(git rev-parse HEAD:docs/ge14_chi_cancellation_stiff_seed_result_freeze.md)" = "1e892b314bdf54a7744dd420f77bf171c56bd451"
+          test "$(git rev-parse HEAD:docs/ge15_cancellation_free_s_state_precision_closure_local_result_freeze.md)" = "84511c8d40be8a7dad38ad0f3648c81309a559b4"
+          python3 -m py_compile ge19/repair26_cancellation_free_full_history_bath_boundary.py
+          python3 - <<'PY'
+          import json
+          d=json.load(open("ge19/repair26_predata_cancellation_free_full_history_bath_boundary.json"))
+          assert d["classification"]=="GE19_REPAIR26_PREDATA_CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_RECONSTRUCTION"
+          assert d["created_before_repair26_result"] is True
+          assert d["diagnostic_and_boundary_certification_only"] is True
+          assert d["uses_observational_data"] is False
+          assert d["frozen_parent_chain"]["repair25_route"]=="LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED"
+          assert d["frozen_model"]["internal_AeST_state"]=="s=chi/Q"
+          assert d["frozen_model"]["initial_s"]==0.0
+          assert d["reconstruction"]["quadrature_orders"]=={"primary":2048,"control":1024}
+          assert d["frozen_gates"]["GE15_dense_X0_R1_trace_abs_or_rel_max"]==0.002
+          assert d["frozen_gates"]["R1_R2_full_z10_boundary_relative_L2_max"]==0.005
+          assert d["frozen_gates"]["Nq1024_Nq2048_weighted_z10_boundary_relative_L2_max"]==0.005
+          assert d["stop_boundary"]["q20_rerun_performed"] is False
+          assert d["stop_boundary"]["Z21_licensed"] is False
+          print("GE19_REPAIR26_PRELOCK_PASS")
+          PY
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_repair26
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+
+      - name: Apply frozen AeST and GE15 patch chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_repair26
+          python3 v019i/apply_ic_patch.py class_repair26
+          python3 v019j/apply_memory_patch.py class_repair26
+          python3 v019w/apply_variational_forcing_patch.py class_repair26
+          python3 v019y/apply_output_precision_patch.py class_repair26
+          python3 v023/apply_source_grid_trace_patch.py class_repair26
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_repair26
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_repair26
+          python3 ge08/apply_full_state_trace_patch.py class_repair26
+          python3 ge09/apply_dense_accepted_step_trace_patch.py class_repair26
+          python3 ge15/apply_cancellation_free_s_state_patch.py class_repair26
+          python3 - <<'PY'
+          import json
+          p=json.load(open("results/ge15_s_state_patch.json"))
+          assert p["classification"]=="GE15_CANCELLATION_FREE_S_STATE_PATCH_PASS"
+          assert p["physics_modified"] is False
+          assert p["state_dimension_modified"] is False
+          assert p["initial_s"]==0.0
+          assert all(p["checks"].values())
+          print("GE19_REPAIR26_GE15_PATCH_PASS")
+          PY
+
+      - name: Build CLASS executable
+        run: make -C class_repair26 -j2 class
+
+      - name: Run Repair26 science diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge19/repair26_cancellation_free_full_history_bath_boundary.py             --class-root class_repair26             --results-dir results             --json-out results/ge19_repair26_cancellation_free_full_history_bath_boundary.json             --npz-out results/ge19_repair26_cancellation_free_full_history_bath_boundary.npz             2>&1 | tee results/ge19_repair26_cancellation_free_full_history_bath_boundary_FULL.log
+
+      - name: Print Repair26 artifact hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in             results/ge19_repair26_cancellation_free_full_history_bath_boundary.json             results/ge19_repair26_cancellation_free_full_history_bath_boundary.npz             results/ge19_repair26_cancellation_free_full_history_bath_boundary_FULL.log             results/ge19_repair26_R1_full_history_trace.dat             results/ge19_repair26_R2_full_history_trace.dat             results/ge19_repair26_R1_dense_accepted_step_trace.dat             results/ge19_repair26_R2_dense_accepted_step_trace.dat; do
+            if [ -f "$f" ]; then sha256sum "$f"; wc -c "$f"; fi
+          done
+
+      - name: Upload Repair26 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge19_repair26_cancellation_free_full_history_bath_boundary
+          path: |
+            results/ge19_repair26_cancellation_free_full_history_bath_boundary.json
+            results/ge19_repair26_cancellation_free_full_history_bath_boundary.npz
+            results/ge19_repair26_cancellation_free_full_history_bath_boundary_FULL.log
+            results/ge19_repair26_R1_full_history_trace.dat
+            results/ge19_repair26_R2_full_history_trace.dat
+            results/ge19_repair26_R1_dense_accepted_step_trace.dat
+            results/ge19_repair26_R2_dense_accepted_step_trace.dat
+            results/ge19_repair26_R1_class.log
+            results/ge19_repair26_R2_class.log
+            results/ge15_s_state_patch.json
+          if-no-files-found: warn
