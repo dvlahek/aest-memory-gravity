@@ -1,0 +1,48 @@
+name: GE19 Repair33 Repair01 trace-fetch prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_repair33_h4_z21_particular.sh'
+      - 'docs/ge19_repair33_initial_execution_missing_trace_freeze.md'
+      - '.github/workflows/ge19-repair33-repair01-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Audit Repair33 Repair01 trace-fetch wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair33_predata_window_local_reduced_h4_z21_particular.json)" = "f1c646e3011193b7df61014365e985b47ad8e0b4"
+          test "$(git rev-parse HEAD:ge19/repair33_window_local_reduced_h4_z21_particular.py)" = "6863f6dd1f8d22acb9f891659ded34abbb747763"
+          test "$(git rev-parse HEAD:ge19/run_local_repair33_h4_z21_particular.sh)" = "0d9d23357a0717ebf5424268c545f38acca83db0"
+          test "$(git rev-parse HEAD:docs/ge19_repair33_initial_execution_missing_trace_freeze.md)" = "5dfbfaba76d56e0d182fd6491ed065584a7716e0"
+
+          bash -n ge19/run_local_repair33_h4_z21_particular.sh
+
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("ge19/run_local_repair33_h4_z21_particular.sh").read_text()
+
+          assert 'gh run download 35721220889' in s
+          assert '--repo dvlahek/aest-memory-gravity' in s
+          assert '--name results_bundle_ge19_repair26_cancellation_free_full_history_bath_boundary' in s
+          assert 'ge19_repair26_R1_full_history_trace.dat' in s
+          assert '608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8' in s
+          assert '26643162' in s
+          assert 'frozen_repair26_repair33' in s
+
+          # Science implementation remains frozen and is not changed by Repair01.
+          assert 'python3 ge19/repair33_window_local_reduced_h4_z21_particular.py' in s
+          assert '--repair26-trace "$TRACE"' in s
+
+          print("GE19_REPAIR33_REPAIR01_PRELOCK_PASS")
+          PY
