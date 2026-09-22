@@ -1,0 +1,119 @@
+{
+  "classification": "GE19_REPAIR31_PREDATA_REPAIR30_H2_DICTIONARY_AND_MONITOR_AUDIT",
+  "created_after_frozen_Repair30_FAIL": true,
+  "created_before_Repair31_result": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "reruns_Repair30_H2_solve": false,
+  "frozen_parent": {
+    "classification": "GE19_REPAIR30_REDUCED_H2_Z11_RECLOSURE_FAIL",
+    "result_freeze_commit": "86887a238263a92280c575a50c8ef0d940c6ca8b",
+    "JSON_sha256": "de2d282eb0729b12f96e08be434b7bc0a320a606dd96d94057f1a2c94af22ce5",
+    "JSON_bytes": 66490,
+    "NPZ_sha256": "02d7d9d52ca53f2495b84e5a339d396b3f63f9b03d05fd5416dcd4012c454429",
+    "NPZ_bytes": 1082384,
+    "FULL_sha256": "de2d282eb0729b12f96e08be434b7bc0a320a606dd96d94057f1a2c94af22ce5",
+    "runner_sha256": "d0d157fb7c9dba8cd95613540b3b11b1efa201409cb32cae3749b4decac61b3b",
+    "failed_gates": [
+      "shift_constraint_backward_error_le_1e6",
+      "primary128_vs_control64_Z11_state_relative_L2_le_5e3",
+      "reduced_chi11_vs_R2_parent_relative_L2_le_5e3"
+    ]
+  },
+  "purpose": [
+    "Determine if the Repair30 shift failure is dominated by the already-known near-null normalization pathology.",
+    "Separate global/dynamic Nt convergence from the near-zero algebraic dust-density coordinate.",
+    "Quantify the modewise coherent amplitude/shape mismatch between reduced chi11 and the Repair29B R2 parent.",
+    "Evaluate the frozen reduced H2 operator directly on the saved Repair30 solution and on the saved mapped R2 reference, without reintegration, to localize any source/dictionary or reduction mismatch by equation block."
+  ],
+  "audit_A_shift_monitor": {
+    "method": "Reconstruct shift residual, absolute residual and row scale on the frozen saved Nt128/Nt64 states using the same Repair30 operator and H2 source. Apply the exact Repair21/22 near-null rule.",
+    "S_ref": "maximum Nt128 shift row scale over all C,k,time samples",
+    "near_null_threshold": "sqrt(machine_epsilon)*S_ref",
+    "near_null_rule": "scale <= near_null_threshold",
+    "report": [
+      "Nt128 active shift Linf and L2",
+      "Nt64 interpolated-to-Nt128 active shift Linf and L2",
+      "near-null absolute residual / S_ref",
+      "sample counts and worst samples"
+    ],
+    "does_not_change_Repair30_gate": true
+  },
+  "audit_B_state_precision": {
+    "interpolation": "PCHIP in ln(a), primary Nt128 to control Nt64",
+    "report": [
+      "per-field relative L2 exactly as Repair30",
+      "full six-field global relative L2",
+      "four dynamic-field global relative L2 for S,u,varphi,T",
+      "delta_varrho absolute L2 difference and both norms"
+    ],
+    "no_new_threshold": true
+  },
+  "audit_C_chi_parent": {
+    "report_per_C_and_per_k": [
+      "relative L2",
+      "complex shape cosine",
+      "best complex scale reduced_to_parent",
+      "postfit relative L2",
+      "initial-surface abs-or-rel mismatch"
+    ],
+    "report_global": [
+      "C-envelope spread",
+      "mode-to-mode dispersion of best scale"
+    ],
+    "no_fitted_scale_adopted": true
+  },
+  "audit_D_operator_residual_localization": {
+    "states": [
+      "saved Repair30 reduced Z11 solution",
+      "saved mapped Repair29B R2 reference Z11"
+    ],
+    "equation_order": [
+      "lapse",
+      "isotropic_spatial",
+      "aether_rapidity",
+      "scalar_phi",
+      "dust_potential",
+      "dust_density"
+    ],
+    "constraint_order": [
+      "shift",
+      "anisotropy"
+    ],
+    "H2_rhs": "the exact frozen Repair30 M1 RHS saved in the Repair30 NPZ",
+    "evaluation": "Use the unchanged frozen GE06+GE07 linear_operator_batch on the saved trajectories; no ODE integration and no boundary solve.",
+    "report": [
+      "global relative L2 residual by main equation for solution and reference",
+      "global absolute L2 residual by main equation for solution and reference",
+      "constraint metrics by block",
+      "dominant equation block of the R2-reference defect"
+    ]
+  },
+  "audit_E_source_identity": {
+    "checks": [
+      "Gauss-Legendre Drude quadrature weights sum to unity at Repair27 primary/control orders.",
+      "Direct GE05 first-directional metric M1 remains exactly zero.",
+      "Direct symbolic GE05 raw first-directional aether/scalar residual reproduces the frozen Repair30 B10 row formula and signs.",
+      "No post-hoc normalization factor is fitted or adopted."
+    ]
+  },
+  "classification_policy": {
+    "complete": "GE19_REPAIR31_REPAIR30_H2_DICTIONARY_AND_MONITOR_AUDIT_COMPLETE",
+    "implementation_fail": "GE19_REPAIR31_IMPLEMENTATION_FAIL",
+    "scientific_PASS_not_defined": true
+  },
+  "routing_policy": {
+    "if_reference_defect_dominated_by_aether_or_scalar": "Preregister a source/dictionary Repair32 before any new H2 solve.",
+    "if_reference_defect_dominated_by_metric_or_matter": "Preregister a reduced-model/full-parent closure Repair32 before any new H2 solve.",
+    "if_only_monitor_pathologies_and_reference_operator_residual_is_small": "Preregister a certification-only Repair32 using the already saved Repair30 state; do not rerun H2.",
+    "H4_Z21_remains_blocked": true
+  },
+  "stop_boundary": {
+    "Repair30_relabelled": false,
+    "Repair30_thresholds_changed": false,
+    "no_H2_reintegration": true,
+    "no_H4_Z21": true,
+    "no_finite_eta": true,
+    "no_observational_claim": true
+  }
+}
