@@ -1,0 +1,101 @@
+name: GE19 Repair34 canonical H4 Z21 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair34_predata_canonical_window_local_reduced_h4_z21_particular.json'
+      - 'ge19/repair34_canonical_window_local_reduced_h4_z21_particular.py'
+      - '.github/workflows/ge19-repair34-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair34 contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair34_predata_canonical_window_local_reduced_h4_z21_particular.json)" = "5653c99b4fc20fd4ccc286ac0aed6c54a8411185"
+          test "$(git rev-parse HEAD:ge19/repair34_canonical_window_local_reduced_h4_z21_particular.py)" = "f2171a630c2e41055dd966e6dd3ab39cb7839e3b"
+          test "$(git rev-parse HEAD:docs/ge19_repair33_h4_z21_fail_localization_freeze.md)" = "434309199eb58901aa1c0ad6e3f96a6656d72389"
+          test "$(git rev-parse HEAD:ge19/repair33_window_local_reduced_h4_z21_particular.py)" = "6863f6dd1f8d22acb9f891659ded34abbb747763"
+
+          python3 -m py_compile ge19/repair34_canonical_window_local_reduced_h4_z21_particular.py
+          python3 ge19/repair34_canonical_window_local_reduced_h4_z21_particular.py --help >/tmp/r34_help.txt
+          grep -q -- "--repair26-trace" /tmp/r34_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import numpy as np
+          import ge19.repair33_window_local_reduced_h4_z21_particular as r33
+          import ge19.repair34_canonical_window_local_reduced_h4_z21_particular as r34
+
+          p=json.load(open("ge19/repair34_predata_canonical_window_local_reduced_h4_z21_particular.json"))
+          assert p["classification"]=="GE19_REPAIR34_PREDATA_CANONICAL_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR"
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["unchanged_physics"]["GE05_to_GE06_raw_residual_scale"]==2
+          assert p["unchanged_physics"]["fitted_normalization"] is False
+          assert p["implementation_corrections"]["boundary_and_propagator"]["canonical_coordinates_q0"].startswith("exactly zero")
+          assert p["stop_boundary"]["no_H4_physics_change"] is True
+          assert p["stop_boundary"]["no_source_rescaling"] is True
+          assert p["stop_boundary"]["no_threshold_change_after_result"] is True
+
+          assert r34.GE05_TO_GE06==r33.GE05_TO_GE06==2.0
+          assert r34.NT_PRIMARY==r33.NT_PRIMARY==128
+          assert r34.NT_CONTROL==r33.NT_CONTROL==64
+          assert r34.NX_DY_PRIMARY==r33.NX_DY_PRIMARY==1024
+          assert r34.NX_DY_CONTROL==r33.NX_DY_CONTROL==2048
+          assert r34.NQ_PRIMARY==r33.NQ_PRIMARY==2048
+          assert r34.NQ_CONTROL==r33.NQ_CONTROL==1024
+          assert r34.M_MAX==r33.M_MAX==40
+
+          unchanged=[
+            "load_parents","build_context","q2_direction_parts","dy2_real",
+            "m1_mapped_fourier","grav_real_for_memory","memory_m2_chunk",
+            "reconstruct_m2_source","assemble_nonmemory",
+            "build_bath_parent_config","verify_bath_projection",
+            "build_source_config","compare_component","interp_source_config",
+            "state_time_control","source_piece_norms","all_finite_source","save_config"
+          ]
+          for name in unchanged:
+              assert inspect.getsource(getattr(r34,name))==inspect.getsource(getattr(r33,name)),name
+
+          src=open("ge19/repair34_canonical_window_local_reduced_h4_z21_particular.py").read()
+          assert 'r18.projected_momentum_solve' in src
+          assert 'r7._radau2_integrate_canonical' in src
+          assert 'r7._reconstruct_canonical_solution' in src
+          assert 'r18.evaluate_candidate' in src
+          assert 'r7.solve_case(' not in src
+          assert '"H4_equation":"L_GE06 Z21 = -2 Q_total(Z10,Z11) - 2 DY2[Z10;Z11] - 2 M1_GE05[Z20,q20] - 2 M2_GE05[(Z10,q10),(Z10,q10)]"' in src
+
+          # Numerically verify that the new norm balancing leaves an exact
+          # homogeneous quadratic cross independent of mu on a toy Q2.
+          old=r34.q2_direction_parts
+          def toy(mod6,mod7,bg,tag,z,d,nx):
+              v=np.sum(z*z)+2.0*np.sum(z*d)+3.0*np.sum(d*d)
+              a=np.asarray([v],complex)
+              return (a,2*a,3*a,4*a)
+          r34.q2_direction_parts=toy
+          rng=np.random.default_rng(7)
+          z0=rng.normal(size=(6,4,8))+1j*rng.normal(size=(6,4,8))
+          d0=rng.normal(size=(6,4,8))+1j*rng.normal(size=(6,4,8))
+          z1=1e-7*(rng.normal(size=(6,4,8))+1j*rng.normal(size=(6,4,8)))
+          d1=1e-7*(rng.normal(size=(6,4,8))+1j*rng.normal(size=(6,4,8)))
+          a=r34.q_cross(None,None,None,"toy",z0,d0,z1,d1,16,1.0)
+          b=r34.q_cross(None,None,None,"toy",z0,d0,z1,d1,16,0.5)
+          for x,y in zip(a,b):
+              assert np.linalg.norm(x-y)/max(np.linalg.norm(x),np.linalg.norm(y),1e-300) < 1e-12
+          r34.q2_direction_parts=old
+
+          print("GE19_REPAIR34_PRELOCK_PASS")
+          PY
