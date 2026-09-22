@@ -1,0 +1,120 @@
+name: GE19 Repair35 direct bilinear matched-shift prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair35_predata_direct_bilinear_matched_shift_h4_z21.json'
+      - 'ge19/repair35_direct_bilinear_matched_shift_h4_z21.py'
+      - '.github/workflows/ge19-repair35-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair35 contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair35_predata_direct_bilinear_matched_shift_h4_z21.json)" = "77779a3e1fefa2847c47a3afe8000d5434377ed1"
+          test "$(git rev-parse HEAD:ge19/repair35_direct_bilinear_matched_shift_h4_z21.py)" = "41e2907772dd53eb43d41e390bb616b270921cfa"
+          test "$(git rev-parse HEAD:docs/ge19_repair34_h4_z21_valid_fail_localization_freeze.md)" = "f985d45ebc983b56697eb0a3bb37c8b71333339b"
+
+          python3 -m py_compile ge19/repair35_direct_bilinear_matched_shift_h4_z21.py
+          python3 ge19/repair35_direct_bilinear_matched_shift_h4_z21.py --help >/tmp/r35_help.txt
+          grep -q -- "--repair26-trace" /tmp/r35_help.txt
+
+          python3 - <<'PY'
+          import inspect,json,math
+          import numpy as np
+          import ge19.repair07_window_retarded_reduced_h3_z20_particular as r7
+          import ge19.repair34_canonical_window_local_reduced_h4_z21_particular as r34
+          import ge19.repair35_direct_bilinear_matched_shift_h4_z21 as r35
+
+          p=json.load(open("ge19/repair35_predata_direct_bilinear_matched_shift_h4_z21.json"))
+          assert p["classification"]=="GE19_REPAIR35_PREDATA_DIRECT_BILINEAR_MATCHED_SHIFT_H4_Z21"
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["unchanged_physics"]["GE05_to_GE06_raw_residual_scale"]==2
+          assert p["unchanged_physics"]["fitted_normalization"] is False
+          assert p["shift_correction"]["threshold_relaxation"] is False
+          assert p["q_cross_correction"]["fitted_factor"] is False
+          assert p["q_cross_correction"]["physical_rescaling"] is False
+
+          assert r35.GE05_TO_GE06==r34.GE05_TO_GE06==2.0
+          for name in (
+              "NT_PRIMARY","NT_CONTROL","NX_POLY","NX_DY_PRIMARY",
+              "NX_DY_CONTROL","NQ_PRIMARY","NQ_CONTROL","M_MAX",
+              "DY_SPATIAL_MAX","TOTAL_SPATIAL_MAX","MEMORY_QUAD_MAX",
+              "SOURCE_TIME_MAX","LINEAR_MAX","STATE_TIME_MAX","CONSTRAINT_MAX"
+          ):
+              assert getattr(r35,name)==getattr(r34,name),name
+          assert r35.ORDER_MIN==2.5
+          assert r35.NEAR_NULL_RATIO_MAX==1000.0*np.finfo(float).eps
+
+          unchanged=[
+              "dy2_real","m1_mapped_fourier","grav_real_for_memory",
+              "memory_m2_chunk","reconstruct_m2_source",
+              "build_bath_parent_config","verify_bath_projection",
+              "compare_component","interp_source_config","state_time_control",
+              "source_piece_norms","all_finite_source","save_config"
+          ]
+          for name in unchanged:
+              assert inspect.getsource(getattr(r35,name))==inspect.getsource(getattr(r34,name)),name
+
+          src=open("ge19/repair35_direct_bilinear_matched_shift_h4_z21.py").read()
+          assert 'r18.projected_momentum_solve' in src
+          assert 'r7._radau2_integrate_canonical' in src
+          assert 'r7._reconstruct_canonical_solution' in src
+          assert 'r7.solve_case(' not in src
+          assert 'q_cross_direct' in src
+          assert 'sp.Rational(1,2)*sum(sp.diff(expr,d)*e' in src
+          assert 'scale <= sqrt' not in src  # implementation uses exact numerical mask below
+          assert 'mask=sp[ib,jm]>null_thr' in src
+          assert 'NEAR_NULL_RATIO_MAX=1000.0*EPS' in src
+          assert 'ORDER_MIN=2.5' in src
+
+          mod6f=r7.load_frozen_generator(
+              r35.ROOT/"ge06/analytic_aest_directional_source_generator.py","ge06r35audit"
+          )
+          mod6=r7.build_stable_ge06_generator_v2(mod6f)
+          mod7=r7.load_frozen_generator(
+              r35.ROOT/"ge07/pressureless_matter_directional_source_generator.py","ge07r35audit"
+          )
+          q=r35.build_direct_bilinear_generators(mod6f,mod6,mod7)
+          assert q["all_symbolic_polarization_identities_exact"] is True
+          assert all(q["GE06_identity_by_partial"].values())
+          assert all(q["GE07_identity_by_partial"].values())
+
+          rng=np.random.default_rng(35)
+          d6=0.01*rng.normal(size=15)
+          e6=0.01*rng.normal(size=15)
+          bg6=[0.7,8e-5,0.2]
+          pars=[r7.KB,r7.CV,r7.K2,r7.Q0,r7.Z0]
+          a6=tuple(bg6)+tuple(d6)+tuple(pars)
+          b6=tuple(bg6)+tuple(e6)+tuple(pars)
+          for name,fn in q["ge06"].items():
+              x=complex(fn(*a6,*e6))
+              y=complex(fn(*b6,*d6))
+              assert abs(x-y)/max(abs(x),abs(y),1e-300) < 1e-12,(name,x,y)
+
+          d7=0.01*rng.normal(size=7)
+          e7=0.01*rng.normal(size=7)
+          bg7=[0.7,0.3]
+          a7=tuple(bg7)+tuple(d7)
+          b7=tuple(bg7)+tuple(e7)
+          for name,fn in q["ge07"].items():
+              x=complex(fn(*a7,*e7))
+              y=complex(fn(*b7,*d7))
+              assert abs(x-y)/max(abs(x),abs(y),1e-300) < 1e-12,(name,x,y)
+
+          print("GE19_REPAIR35_PRELOCK_PASS")
+          PY
