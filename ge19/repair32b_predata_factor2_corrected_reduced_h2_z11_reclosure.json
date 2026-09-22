@@ -1,0 +1,115 @@
+{
+  "classification": "GE19_REPAIR32B_PREDATA_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECLOSURE",
+  "created_after_Repair32A_PASS": true,
+  "created_before_Repair32B_result": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "purpose": "Repeat the frozen Repair30 reduced H2/Z11 construction with exactly one physics/dictionary change derived by Repair32A: convert GE05 raw M1 into the GE06 raw-residual convention with the exact multiplicative factor 2.",
+  "historical_status": {
+    "Repair30": "historical FAIL; not relabelled",
+    "Repair31": "diagnostic COMPLETE; not relabelled",
+    "Repair32A": "PASS; exact dictionary factor 2"
+  },
+  "exact_single_change": {
+    "parameter": "GE05_M1_to_GE06_raw_residual_scale",
+    "Repair30_value": 1,
+    "Repair32B_value": 2,
+    "source": "Repair32A exact symbolic dictionary, not a fitted normalization",
+    "affected_rows": [
+      "aether_rapidity",
+      "scalar_phi"
+    ],
+    "corrected_H2_rhs": {
+      "aether": "+Q a^3 B10",
+      "scalar": "-a^2 partial_x(B10)"
+    }
+  },
+  "unchanged_from_Repair30": {
+    "H2_equation": "L_total Z11 = -M1 after exact GE05->GE06 raw-residual dictionary conversion",
+    "B10": "X10-weighted_z10",
+    "parent_chain": [
+      "Repair13",
+      "Repair22",
+      "Repair27",
+      "Repair29B R2 reference"
+    ],
+    "window": [
+      0.4,
+      0.8333333333333334
+    ],
+    "primary_time_nodes": 128,
+    "control_time_nodes": 64,
+    "Fourier_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "C_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "inherited_full_history_boundary": true,
+    "dust_tangent_mapping": true,
+    "no_posthoc_rescaling": true,
+    "Repair30_thresholds_unchanged": true
+  },
+  "frozen_parents": {
+    "Repair32A": {
+      "classification": "GE19_REPAIR32A_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_PASS",
+      "JSON_sha256": "adef8fad50233c7fa5df3d57e7f21df80ed99228402831b2861ad06256519725",
+      "GE05_M1_to_GE06_raw_residual_scale": 2,
+      "fitted_normalization_used": false
+    },
+    "Repair30": {
+      "classification": "GE19_REPAIR30_REDUCED_H2_Z11_RECLOSURE_FAIL",
+      "JSON_sha256": "de2d282eb0729b12f96e08be434b7bc0a320a606dd96d94057f1a2c94af22ce5",
+      "NPZ_sha256": "02d7d9d52ca53f2495b84e5a339d396b3f63f9b03d05fd5416dcd4012c454429"
+    },
+    "Repair22_NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+    "Repair27_NPZ_sha256": "2b1566d402e4c9e8daee8e5c7084b3da7735442b4fb604d51489b708662fd9c0",
+    "Repair28_R2_NPZ_sha256": "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705"
+  },
+  "frozen_science_gates_identical_to_Repair30": {
+    "Repair27_B10_primary_vs_time_control_relative_L2_max": 0.005,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "shift_constraint_backward_error_max": 0.000001,
+    "anisotropy_constraint_backward_error_max": 0.000001,
+    "primary128_vs_control64_Z11_state_relative_L2_max": 0.005,
+    "initial_dynamic_boundary_abs_or_rel_max": 1e-8,
+    "reduced_chi11_vs_R2_parent_relative_L2_max": 0.005,
+    "reduced_chi11_C_envelope_relative_L2_max": 0.005,
+    "all_outputs_finite": true
+  },
+  "diagnostic_only_additions": {
+    "note": "Repair31 showed that the Repair30 local shift metric and max-per-field state metric can be pathological. Repair32B reports those same frozen gates unchanged so the source correction is the only science change. It also reports Repair31-style global state/constraint diagnostics, but they do not replace the frozen Repair30 gates in Repair32B.",
+    "corrected_source_R2_reference_operator_check": true,
+    "global_state_precision_report": true,
+    "global_constraint_report": true
+  },
+  "classification_policy": {
+    "pass": "GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECLOSURE_PASS",
+    "fail": "GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECLOSURE_FAIL",
+    "implementation_fail": "GE19_REPAIR32B_IMPLEMENTATION_FAIL"
+  },
+  "pass_license": {
+    "reduced_Z11_certified": true,
+    "H4_Z21_licensed": true,
+    "condition": "only if all original frozen Repair30 gates also pass after the exact factor-two source correction"
+  },
+  "fail_route": {
+    "if_only_known_monitor_gates_fail_but_core_operator_and_chi_close": "Freeze Repair32B FAIL and preregister artifact-only certification Repair33; do not rerun H2.",
+    "otherwise": "Localize remaining reduced/full closure defect without changing Repair32B thresholds."
+  },
+  "stop_boundary": {
+    "no_gate_relaxation_after_result": true,
+    "no_second_source_change": true,
+    "no_fitted_normalization": true,
+    "no_H4_Z21_solve_in_Repair32B": true,
+    "no_finite_eta": true,
+    "no_observational_claim": true
+  }
+}
