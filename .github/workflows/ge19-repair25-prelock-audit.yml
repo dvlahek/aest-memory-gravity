@@ -1,0 +1,81 @@
+name: GE19 Repair25 first-order boundary audit prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair25_*'
+      - '.github/workflows/ge19-repair25-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Compile
+        run: python3 -m py_compile ge19/repair25_first_order_bath_boundary_dictionary_audit.py
+
+      - name: Audit frozen contract and algebraic dictionary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, math, subprocess, importlib.util
+          import numpy as np
+
+          def blob(path):
+              return subprocess.check_output(["git","rev-parse",f"HEAD:{path}"],text=True).strip()
+
+          assert blob("docs/ge19_repair24_q20_construction_result_freeze.md")=="3edde5ac2b751ce78bc42de5a6843934804f9b68"
+          assert blob("ge19/repair25_predata_first_order_bath_boundary_dictionary_audit.json")=="1e7f25eba5a4c8b297b563edfe6f9c4f276ec6c9"
+          assert blob("ge19/repair25_first_order_bath_boundary_dictionary_audit.py")=="d685dbbb0f7a64f5f80c43559bf19c55b64ca7b1"
+          assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
+          assert blob("ge09/repair01_dense_accepted_step_local_jet_bridge.py")=="509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
+
+          pre=json.load(open("ge19/repair25_predata_first_order_bath_boundary_dictionary_audit.json"))
+          assert pre["classification"]=="GE19_REPAIR25_PREDATA_FIRST_ORDER_BATH_BOUNDARY_DICTIONARY_AUDIT"
+          assert pre["created_before_result"] is True
+          assert pre["no_q20_rerun"] is True
+          assert pre["frozen_thresholds"]["Repair22_X10_vs_GE15_relative_L2_max"]==1e-8
+          assert pre["frozen_thresholds"]["v077_vs_GE15_direct_relative_L2_compatible_max"]==1e-3
+          assert pre["frozen_thresholds"]["per_mode_fit_shape_cosine_compatible_min"]==0.9999
+
+          spec=importlib.util.spec_from_file_location(
+              "r7","ge19/repair07_window_retarded_reduced_h3_z20_particular.py"
+          )
+          r7=importlib.util.module_from_spec(spec); spec.loader.exec_module(r7)
+
+          a=0.4; k=0.083; Q=0.117; alpha=-0.024; theta=0.019
+          amp=1.37; phase=0.71
+          usin=-(k/a)*alpha
+          u=r7.positive_mode_coeff(0.0,usin,amp,phase)
+          varphi=Q*a*theta/(k*k)
+          phi=r7.positive_mode_coeff(varphi,0.0,amp,phase)
+          X=Q*u+(1j*k/a)*phi
+          chi=Q*(a*theta/(k*k)+alpha)
+          gradfac=0.5*amp*np.exp(1j*phase)*(1j*k)
+          target=gradfac*(chi/a)
+          err=abs(X-target)/max(abs(X),abs(target),1e-300)
+          assert err<=1e-14,err
+
+          src=open("ge19/repair25_first_order_bath_boundary_dictionary_audit.py").read()
+          assert "solve_z20_chunk" not in src
+          assert "q20_rerun_performed" in src
+          assert '"Z21_licensed":False' in src.replace(" ","")
+          for route in [
+              "LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED",
+              "GE19_LOCAL_DICTIONARY_MISMATCH",
+              "V077_GE15_COMPATIBLE_REPAIR24_ASSEMBLY_BUG",
+              "SIMPLE_LEGACY_NORMALIZATION_CANDIDATE",
+              "MIXED_OR_UNRESOLVED",
+          ]:
+              assert route in src
+
+          print("SYNTHETIC_GE09_TO_GE19_IDENTITY_REL =",err)
+          print("GE19_REPAIR25_PRELOCK_AUDIT_PASS")
+          PY
