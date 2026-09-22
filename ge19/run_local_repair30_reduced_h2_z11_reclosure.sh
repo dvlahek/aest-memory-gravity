@@ -7,15 +7,17 @@ mkdir -p results
 
 # Frozen repository contract.
 test "$(git rev-parse HEAD:ge19/repair30_predata_reduced_h2_z11_reclosure.json)" = "264b52832e762dd2010df1eba83e5f2c1a4d8874"
-test "$(git rev-parse HEAD:ge19/repair30_reduced_h2_z11_reclosure.py)" = "2ce2bf7ccd5bf48504c619500d12d4eb03bfe259"
-test "$(git rev-parse HEAD:.github/workflows/ge19-repair30-prelock-audit.yml)" = "3ad421859cb6745c0708fb247222b135381cf1db"
-test "$(git rev-parse HEAD:docs/ge19_repair30_reduced_h2_z11_reclosure_implementation_lock.md)" = "4f4d177cb6df5ab0b10f1c7c8334b579549bc22f"
+test "$(git rev-parse HEAD:ge19/repair30_reduced_h2_z11_reclosure.py)" = "a014dd3a56914858cb6ca7e0f5bdd45afdf573db"
+test "$(git rev-parse HEAD:.github/workflows/ge19-repair30-repair01-prelock-audit.yml)" = "4cad3fee8bc4574cbf0aec8dcbd31944b877c5d5"
+test "$(git rev-parse HEAD:docs/ge19_repair30_initial_execution_implementation_fail_freeze.md)" = "4e803520f73c97272a3f35ff62b017021908dc1d"
+test "$(git rev-parse HEAD:docs/ge19_repair30_repair01_implementation_lock.md)" = "6d41cbda64d0524217d342d8d45f728d4bba7948"
 
 for c in \
   5fd14e9dc46ced04a838d79cc3b47319c4e4f22f \
-  91e59269dbfd4476230cf8cc25c5579b44691b8d \
-  55e690ebe1414b0929eb75c72ea1b75b4ba9f4a3 \
-  937a0681c07c46eacfc0c021ebd389edb9378840; do
+  37d8b6f1e2e5980f1f423c014b6a6b60157f78bd \
+  0939742f9c518818091bed8a84465b2148c73153 \
+  dc6774329b53531fc0b90f66c3d60916ad05e9d8 \
+  c19ff6dd3ccc859ec54c66edaa05048391f70a3c; do
   git merge-base --is-ancestor "$c" HEAD
 done
 echo GE19_REPAIR30_LOCK_PASS
