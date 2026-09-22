@@ -1,0 +1,65 @@
+name: GE19 Repair30 Repair01 implementation prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair30_reduced_h2_z11_reclosure.py'
+      - 'docs/ge19_repair30_initial_execution_implementation_fail_freeze.md'
+      - '.github/workflows/ge19-repair30-repair01-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install static dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair30 Repair01 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair30_predata_reduced_h2_z11_reclosure.json)" = "264b52832e762dd2010df1eba83e5f2c1a4d8874"
+          test "$(git rev-parse HEAD:ge19/repair30_reduced_h2_z11_reclosure.py)" = "a014dd3a56914858cb6ca7e0f5bdd45afdf573db"
+          test "$(git rev-parse HEAD:docs/ge19_repair30_initial_execution_implementation_fail_freeze.md)" = "4e803520f73c97272a3f35ff62b017021908dc1d"
+
+          python3 -m py_compile ge19/repair30_reduced_h2_z11_reclosure.py
+
+          python3 - <<'PY'
+          import json
+          import ge19.repair30_reduced_h2_z11_reclosure as r30
+
+          p=json.load(open("ge19/repair30_predata_reduced_h2_z11_reclosure.json"))
+          assert p["classification"]=="GE19_REPAIR30_PREDATA_REDUCED_H2_Z11_RECLOSURE"
+          assert p["hierarchy"]["equation"]=="L_total Z11 = -M1[Z10,q10]"
+          assert p["memory_source"]["B10"]=="X10 - weighted_z10"
+          assert p["gates"]["Repair27_B10_primary_vs_time_control_relative_L2_max"]==0.005
+          assert p["gates"]["linear_system_relative_L2_residual_max"]==1e-8
+          assert p["gates"]["shift_constraint_backward_error_max"]==1e-6
+          assert p["gates"]["anisotropy_constraint_backward_error_max"]==1e-6
+          assert p["gates"]["primary128_vs_control64_Z11_state_relative_L2_max"]==0.005
+          assert p["gates"]["initial_dynamic_boundary_abs_or_rel_max"]==1e-8
+          assert p["gates"]["reduced_chi11_vs_R2_parent_relative_L2_max"]==0.005
+          assert p["gates"]["reduced_chi11_C_envelope_relative_L2_max"]==0.005
+          assert p["stop_boundary"]["no_H4_Z21_solve_in_Repair30"] is True
+
+          s=r30.symbolic_m1_audit()
+          assert s["partial_px_identity"] and s["partial_r_identity"]
+
+          src=open("ge19/repair30_reduced_h2_z11_reclosure.py").read()
+          assert 'base128,state128,_=r7.build_ge15_reference(dense,128)' in src
+          assert 'base64,state64,_=r7.build_ge15_reference(dense,64)' in src
+          assert 'rho_dark=np.asarray([q["rho_dark"] for q in base_state],float)' in src
+          assert 'p_dark=np.asarray([q["p_dark"] for q in base_state],float)' in src
+          assert 'base_bg["rho_dark"]' not in src
+          assert 'base_bg["p_dark"]' not in src
+          assert 'rhs[im,2]=0.5*bg["Q_action"]*bg["a"]**3*B[im]' in src
+          assert 'rhs[im,3]=-0.5*bg["a"]**2*(1j*k)*B[im]' in src
+          assert '"H4_Z21_solve_performed":False' in src
+          print("GE19_REPAIR30_REPAIR01_PRELOCK_PASS")
+          PY
