@@ -820,3 +820,87 @@ derive and certify the exact legacy v0.77 mode-amplitude normalization map from 
 Canonical project status:
 
 **Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 q20 science FAIL; Repair25 localizes the blocker to the legacy v0.77 mode-amplitude normalization; q20 NOT CERTIFIED; H4/Z21 NOT LICENSED.**
+
+
+---
+
+## Repair26 — cancellation-free full-history first-order bath boundary
+
+Classification:
+
+`GE19_REPAIR26_CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_PASS`.
+
+Route:
+
+`CANCELLATION_FREE_FULL_HISTORY_BATH_BOUNDARY_CERTIFIED`.
+
+Successful workflow:
+
+- run `35721220889`;
+- job `106724330805`;
+- artifact `10690709843`;
+- artifact ZIP digest:
+  `sha256:33faae31aae0ebe3cc52ac2083193ec8ba3dfe284fb07f06ef2568cad8e3938f`.
+
+Result-freeze commit:
+
+`6564ae09e808bc29889cc11c7f5ab34590452d19`.
+
+Frozen outputs:
+
+- JSON/FULL:
+  `80ba0b5927217be000991c82b4afb5f39b5e0ff369bc9b630a88ec11dabdedb6`;
+- NPZ:
+  `ba6265af81e440c610a4ac4805e7c55b45f3bd681e14731b8d067e47a979fdd8`;
+- R1 full-history cancellation-free trace:
+  `608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8`;
+- R2 full-history cancellation-free trace:
+  `a3fee42d20b94813c2f5e58ca9c77237e7cf7ebf313dac937bdad750554d8f5f`.
+
+The initial dependency-only run `35721094832` remains a frozen implementation failure and produced no science result.
+
+Repair26 regenerates the first-order eta=0 bath-drive history in the exact GE15 state
+
+`s=chi/Q`, `alpha=s-a theta/k^2`, `chi=Q s`,
+
+with exact initial `s=0`.
+
+No physics equation or model parameter changes.
+
+At a=0.4:
+
+- R1 trace X10 vs GE15 dense:
+  `3.9819456608594117e-11`;
+- R2 trace X10 vs GE15 dense:
+  `3.163231556278803e-11`;
+- R1 vs R2 trace X10:
+  `7.11299054009343e-12`.
+
+Retarded bath boundary precision closure:
+
+- R1/R2 z10:
+  `3.5309623104625126e-06`;
+- R1/R2 v10:
+  `0.0023720775441813187`;
+- Nq1024/Nq2048 weighted z10:
+  `4.492427062849641e-06`;
+- Nq1024/Nq2048 weighted v10:
+  `0.0018366352033811495`.
+
+Every frozen Repair26 gate passes.
+
+Scientific conclusion:
+
+the Repair24/25 discrepancy is explained by the historical cancellation-prone alpha-coordinate first-order trace, not by a physical mode-dependent Fourier normalization. No Repair25 fitted scale is adopted.
+
+The cancellation-free full-history first-order parent and its retarded z10/v10 boundary are now certified.
+
+q20 is still not certified and H4/Z21 remains unlicensed.
+
+Next licensed object:
+
+a separately preregistered q20 reconstruction rerun that changes only the first-order bath parent from the historical v0.77 trace to the frozen Repair26 R1 cancellation-free trace/boundary.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 q20 historical FAIL; Repair25 localized the bridge discrepancy; Repair26 cancellation-free full-history bath boundary CERTIFIED; q20 NOT CERTIFIED; H4/Z21 NOT LICENSED.**
