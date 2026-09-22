@@ -1,0 +1,86 @@
+name: GE19 Repair32B reconstruction prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair32b_predata_factor2_corrected_reduced_h2_z11_reconstruction.json'
+      - 'ge19/repair32b_factor2_corrected_reduced_h2_z11_reconstruction.py'
+      - '.github/workflows/ge19-repair32b-reconstruction-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit canonical Repair32B reconstruction
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair32b_predata_factor2_corrected_reduced_h2_z11_reconstruction.json)" = "cce721ac498f84ffd084111065056fef86b5c719"
+          test "$(git rev-parse HEAD:ge19/repair32b_factor2_corrected_reduced_h2_z11_reconstruction.py)" = "6ece578e8a30f48faaded8808687a9bd5c114608"
+          test "$(git rev-parse HEAD:docs/ge19_repair32a_ge06_ge05_raw_residual_normalization_dictionary_result_freeze.md)" = "6c5b7f830cbae95209eda0e8c8663c6620ab7071"
+
+          python3 -m py_compile ge19/repair32b_factor2_corrected_reduced_h2_z11_reconstruction.py
+
+          python3 - <<'PY'
+          import inspect,json
+          import numpy as np
+          import ge19.repair30_reduced_h2_z11_reclosure as r30
+          import ge19.repair32b_factor2_corrected_reduced_h2_z11_reconstruction as r32
+
+          p=json.load(open("ge19/repair32b_predata_factor2_corrected_reduced_h2_z11_reconstruction.json"))
+          assert p["classification"]=="GE19_REPAIR32B_PREDATA_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION"
+          assert p["sole_physics_dictionary_change"]["GE05_M1_to_GE06_raw_residual_scale"]==2
+          assert p["sole_physics_dictionary_change"]["no_other_source_change"] is True
+          assert p["stop_boundary"]["no_fitted_normalization"] is True
+          assert p["stop_boundary"]["no_Z11_certification_in_Repair32B"] is True
+          assert p["stop_boundary"]["no_H4_Z21"] is True
+
+          assert r32.RAW_RESIDUAL_DICTIONARY_SCALE==2.0
+          assert r32.B_TIME_MAX==r30.B_TIME_MAX==5e-3
+          assert r32.LINEAR_MAX==r30.LINEAR_MAX==1e-8
+          assert r32.TIME_MAX==r30.TIME_MAX==5e-3
+          assert r32.INIT_MAX==r30.INIT_MAX==1e-8
+          assert r32.CHI_PARENT_MAX==r30.CHI_PARENT_MAX==5e-3
+          assert r32.CHI_C_MAX==r30.CHI_C_MAX==5e-3
+
+          # All H2 construction blocks are inherited unchanged except:
+          # source_from_B, state_time_control (diagnostics only), and main/reporting.
+          unchanged=[
+            "symbolic_m1_audit","build_backgrounds","load_r2_parent",
+            "tangent_on_grid","integrate_dust_tangent","make_reference",
+            "first_order_X","source_interp","solve_h2_case",
+            "chi_from_state","full_parent_chi_positive"
+          ]
+          for name in unchanged:
+            assert inspect.getsource(getattr(r32,name))==inspect.getsource(getattr(r30,name)),name
+
+          bg={"Q_action":np.asarray([1.2,1.3]),"a":np.asarray([0.4,0.5])}
+          B=np.asarray([[1+2j,3+4j]]*len(r32.r7.FOURIER_N),complex)
+          s30=r30.source_from_B(bg,B)
+          s32=r32.source_from_B(bg,B)
+          assert np.array_equal(s32,2.0*s30)
+
+          assert np.all(s32[:,0]==0)
+          assert np.all(s32[:,1]==0)
+          assert np.all(s32[:,4]==0)
+          assert np.all(s32[:,5]==0)
+
+          src=open("ge19/repair32b_factor2_corrected_reduced_h2_z11_reconstruction.py").read()
+          assert '"GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION_PASS"' in src
+          assert '"GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION_FAIL"' in src
+          assert '"Z11_certified":False' in src
+          assert '"H4_Z21_licensed":False' in src
+          assert 'historical_Repair30_monitors_report_only' in src
+          assert 'primary128_vs_control64_full_six_field_global_relative_L2_le_5e3' in src
+          assert 'primary128_vs_control64_dynamic_global_relative_L2_le_5e3' in src
+          print("GE19_REPAIR32B_RECONSTRUCTION_PRELOCK_PASS")
+          PY
