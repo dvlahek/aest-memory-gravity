@@ -1,0 +1,71 @@
+name: GE19 Repair27 q20 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair27_predata_cancellation_free_parent_q20_reconstruction.json'
+      - 'ge19/repair27_cancellation_free_parent_q20_reconstruction.py'
+      - '.github/workflows/ge19-repair27-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install static-audit dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair27 contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair27_predata_cancellation_free_parent_q20_reconstruction.json)" = "392844e89bab78efdef3c5f8c84f4068cf71cb03"
+          test "$(git rev-parse HEAD:ge19/repair27_cancellation_free_parent_q20_reconstruction.py)" = "adbab56e67f765ab5e2b37980abae42312a55b44"
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          test "$(git rev-parse HEAD:docs/ge19_repair26_cancellation_free_full_history_bath_boundary_result_freeze.md)" = "$(git rev-parse HEAD:docs/ge19_repair26_cancellation_free_full_history_bath_boundary_result_freeze.md)"
+          python3 -m py_compile ge19/repair27_cancellation_free_parent_q20_reconstruction.py
+          python3 - <<'PY'
+          import json, importlib.util
+          from pathlib import Path
+
+          p=json.load(open("ge19/repair27_predata_cancellation_free_parent_q20_reconstruction.json"))
+          assert p["classification"]=="GE19_REPAIR27_PREDATA_CANCELLATION_FREE_PARENT_Q20_RECONSTRUCTION"
+          assert p["created_before_repair27_result"] is True
+          assert p["frozen_repair26_parent"]["workflow_run_id"]==35721220889
+          assert p["frozen_repair26_parent"]["artifact_id"]==10690709843
+          assert p["frozen_repair26_parent"]["R1_full_history_trace_sha256"]=="608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+          assert p["inherited_repair24_core"]["core_blob"]=="fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          assert p["only_allowed_change"]["fitted_rescaling"] is False
+          assert p["only_allowed_change"]["Repair25_per_mode_scales_used"] is False
+          g=p["frozen_gates_inherited_unchanged"]
+          assert g["H1_X10_initial_match_abs_or_rel_max"]==1e-10
+          assert g["G2_Nx256_vs_Nx512_low_mode_relative_L2_max"]==1e-10
+          assert g["q20_quadrature_N1024_vs_N2048_weighted_z20_relative_L2_max"]==0.01
+          assert g["q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max"]==0.005
+          assert g["z10_Nt64_vs_Nt128_weighted_z10_relative_L2_max"]==0.005
+
+          spec=importlib.util.spec_from_file_location("r27",Path("ge19/repair27_cancellation_free_parent_q20_reconstruction.py"))
+          r27=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r27)
+          assert r27.REPAIR26_R1_TRACE_SHA=="608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+          assert r27.REPAIR26_R1_TRACE_BYTES==26643162
+          assert r27.REPAIR26_TRACE_LO_A==0.39953919419256334
+          assert r27.REPAIR26_TRACE_HI_A==0.4000388311146992
+          assert r27.EXPECTED_CORE_CONSTANTS["X_INITIAL_MAX"]==1e-10
+          assert r27.EXPECTED_CORE_CONSTANTS["SPATIAL_MAX"]==1e-10
+          assert r27.EXPECTED_CORE_CONSTANTS["QUAD_MAX"]==1e-2
+          assert r27.EXPECTED_CORE_CONSTANTS["TIME_MAX"]==5e-3
+
+          src=Path("ge19/repair27_cancellation_free_parent_q20_reconstruction.py").read_text()
+          assert "r24.main()" in src
+          assert "r24.TRACE_LO_A=REPAIR26_TRACE_LO_A" in src
+          assert "r24.TRACE_HI_A=REPAIR26_TRACE_HI_A" in src
+          assert "Repair25_fitted_normalization_used" in src
+          assert '"--v077-trace",str(trace)' in src.replace(" ","")
+          assert "q20_rerun_performed" in src
+          print("GE19_REPAIR27_PRELOCK_PASS")
+          PY
