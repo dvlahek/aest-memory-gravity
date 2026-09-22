@@ -202,8 +202,24 @@ def integrate_dust_tangent(bg,base_state,fields):
     rho_dark=np.asarray([q["rho_dark"] for q in base_state],float)
     p_dark=np.asarray([q["p_dark"] for q in base_state],float)
 
+    expected=np.asarray(fields["delta_dark"],float).shape
+    shape_map={
+        "rho_dark":rho_dark.shape,
+        "p_dark":p_dark.shape,
+        "delta_dark":np.asarray(fields["delta_dark"],float).shape,
+        "theta_dark":np.asarray(fields["theta_dark"],float).shape,
+        "total_delta_rho":np.asarray(fields["total_delta_rho"],float).shape,
+        "total_rho_plus_p_theta":np.asarray(fields["total_rho_plus_p_theta"],float).shape,
+    }
+    if expected!=(len(r7.FOURIER_N),len(bg["x"])) or any(v!=expected for v in shape_map.values()):
+        raise RuntimeError(f"standard-sector tangent shape mismatch: expected={expected} shapes={shape_map}")
+
     std_dr=fields["total_delta_rho"]-rho_dark*fields["delta_dark"]
     std_mom=fields["total_rho_plus_p_theta"]-(rho_dark+p_dark)*fields["theta_dark"]
+    if std_dr.shape!=expected or std_mom.shape!=expected:
+        raise RuntimeError(
+            f"standard-sector tangent output shape mismatch: dr={std_dr.shape} mom={std_mom.shape} expected={expected}"
+        )
 
     phi_interp=[
         PchipInterpolator(x,fields["phi_newtonian"][ik],extrapolate=False)
