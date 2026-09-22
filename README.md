@@ -188,7 +188,7 @@ Immediate physics target:
 - Repair21: **PASS-DIAGNOSTIC** — interpolated-H1-parent defect confirmed; on-shell Nt128 active shift `8.067e-7` passes the original `1e-6` threshold with ~third-order matched convergence;
 - Repair22: **PASS / Z20 CERTIFIED** — all 26 frozen gates pass; source spatial mismatch `1.397e-12`, active Nt128 shift `8.067e-7`, matched third-order convergence, boundary reproduction exact;
 - Repair23: **PASS / q20 BRIDGE CERTIFIED** — exact `q<->z` normalization, second-directional bath equation, Drude interval propagator and q20 window boundary are frozen;
-- Repair24: **LOCKED / READY / NOT YET EXECUTED** — actual q20 construction and convergence certification; final prelock `35653683119` SUCCESS, locked runner `de6b6d414311e772cd5574cb8d7c6aa11ea59a12`;
+- Repair24: **LOCKED / READY after implementation-only fix** — first local attempt failed before q20 science output because Repair13 Nt64 `primary` was incorrectly compared with Repair24 Nt128; fixed in `7218e049...`. Post-fix prelock `35696839240` SUCCESS and runner-head static audit `35697045877` SUCCESS; updated locked runner `e2d6b592ce90471f6576149cecbc0d8d79ddeb68`;
 - only after q20 is frozen: H4/Z21 nonlinear memory correction;
 - finite physical eta, lensing/data confrontation and collapse remain later stages.
 
