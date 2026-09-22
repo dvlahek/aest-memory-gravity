@@ -931,20 +931,21 @@ def main():
         raise RuntimeError(f"Repair27 deterministic bath reconstruction mismatch: {bath_repro}")
 
     # Primary H4 source, high-resolution spatial control, quadrature control.
-    srcP,qpolP=build_source_config(
+    srcP,qsymP,qcancelP=build_source_config(
         qdirect,mod6,mod7,ge05,bgs,r22,r32b,pbath,b2048,NQ_PRIMARY,NT_PRIMARY,NX_DY_PRIMARY
     )
-    srcS,qpolS=build_source_config(
+    srcS,qsymS,qcancelS=build_source_config(
         qdirect,mod6,mod7,ge05,bgs,r22,r32b,pbath,b2048,NQ_PRIMARY,NT_PRIMARY,NX_DY_CONTROL
     )
-    srcQ,qpolQ=build_source_config(
+    srcQ,qsymQ,qcancelQ=build_source_config(
         qdirect,mod6,mod7,ge05,bgs,r22,r32b,qbath,b1024,NQ_CONTROL,NT_PRIMARY,NX_DY_PRIMARY
     )
-    srcT,qpolT=build_source_config(
+    srcT,qsymT,qcancelT=build_source_config(
         qdirect,mod6,mod7,ge05,bgs,r22,r32b,tbath,bt2048,NQ_PRIMARY,NT_CONTROL,NX_DY_PRIMARY
     )
 
-    qpolar=max(qpolP,qpolS,qpolQ,qpolT)
+    qsym=max(qsymP,qsymS,qsymQ,qsymT)
+    qcancel=max(qcancelP,qcancelS,qcancelQ,qcancelT)
     dy_spatial=compare_component(srcP,srcS,"2DY2")
     total_spatial=compare_component(srcP,srcS,None)
 
