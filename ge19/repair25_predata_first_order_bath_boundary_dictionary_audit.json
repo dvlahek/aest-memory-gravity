@@ -1,0 +1,78 @@
+{
+  "classification": "GE19_REPAIR25_PREDATA_FIRST_ORDER_BATH_BOUNDARY_DICTIONARY_AUDIT",
+  "created_before_result": true,
+  "parent_repair24": {
+    "classification": "GE19_REPAIR24_Q20_CONSTRUCTION_FAIL",
+    "result_freeze_commit": "82f1f56912f92e628797997d82ffd64de2a4a926",
+    "result_freeze_blob": "3edde5ac2b751ce78bc42de5a6843934804f9b68",
+    "sole_failed_gate": "H1_X10_initial_match_abs_or_rel_le_1e10",
+    "measured_mismatch": 0.9999999471925649
+  },
+  "purpose": "Localize the failed first-order bath boundary bridge before any q20 rerun by comparing the legacy v0.77 chi/a drive, the cancellation-free GE15 certified chi/a drive, and the Repair22 on-shell GE19 X10 drive on the same a=0.4 surface and common overlap window.",
+  "no_q20_rerun": true,
+  "no_physics_edit": true,
+  "frozen_inputs": {
+    "Repair22_JSON_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+    "Repair22_NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+    "Repair13_JSON_sha256": "ae3cc790ecffbd5498b5852273c72ae578d4615de29bbb616673c05cdb3e74b7",
+    "Repair13_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "v077_trace_sha256": "98c8468e8ccdf902cad8d6e65f3852e863c6fd19df62ece61353ab725ac5a43e",
+    "v077_trace_bytes": 2657188
+  },
+  "exact_dictionaries": {
+    "GE15": "chi = Q*(a*theta/k^2 + alpha); x_GE15 = chi/a",
+    "GE09_local_jet": "u_sin=-(k/a)*alpha; varphi=Q*a*theta/k^2",
+    "GE19": "X10 = Q_action*u10 + (i*k/a)*varphi10",
+    "algebraic_expected_identity": "For Q_action=Q and the frozen positive-mode convention, X10 = gradfac*(chi/a), gradfac=(amp/2)*exp(i phase)*(i k)."
+  },
+  "initial_surface": {
+    "a": 0.4,
+    "v077_transport": "same frozen bracketed ln(a)-linear chi/a interpolation established before Repair24",
+    "GE15_evaluation": "cancellation-free R1 dense accepted-step Hermite/PCHIP state at ln(a=0.4)",
+    "GE19_evaluation": "Repair22 on-shell Nt128 H1 first sample"
+  },
+  "common_window": {
+    "lower_a": 0.4,
+    "upper_a": "min(GE15 available end, v0.77 available end, 1/(1+0.2))",
+    "nodes": 128,
+    "interpolation": "GE15 frozen Hermite/PCHIP state; v0.77 PCHIP in ln(a) of chi/a",
+    "compare_raw_scalar_drive": true
+  },
+  "diagnostics": [
+    "Q_action/Q_GE15 at a=0.4 per C and mode",
+    "GE15 reference X10/gradfac versus chi/a algebraic closure",
+    "Repair22 on-shell X10/gradfac versus GE15 chi/a",
+    "v0.77 chi/a versus GE15 chi/a at a=0.4",
+    "per-mode complex ratio and phase for GE19/GE15",
+    "per-mode real ratio for v0.77/GE15",
+    "global and per-mode least-squares multiplicative fits v0.77 = c*GE15 over the overlap window",
+    "post-fit residuals and temporal-shape cosines",
+    "log-log slope of |c_mode| versus k to expose candidate k-power normalization",
+    "candidate deterministic factors 1,k,1/k,a,k/a,a/k evaluated without adopting any"
+  ],
+  "frozen_thresholds": {
+    "Q_action_vs_GE15_relative_max": 1e-10,
+    "GE15_algebraic_X_identity_relative_max": 1e-10,
+    "Repair22_X10_vs_GE15_relative_L2_max": 1e-8,
+    "Repair22_X10_vs_GE15_pointwise_abs_or_rel_max": 0.000001,
+    "v077_vs_GE15_direct_relative_L2_compatible_max": 0.001,
+    "v077_vs_GE15_best_global_scale_residual_compatible_max": 0.001,
+    "per_mode_fit_shape_cosine_compatible_min": 0.9999
+  },
+  "routing": {
+    "LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED": "Q and GE15->GE19 closures pass, but v0.77 direct comparison fails the 1e-3 compatibility gate.",
+    "GE19_LOCAL_DICTIONARY_MISMATCH": "GE15 algebraic identity passes but Repair22 on-shell X10 does not close to GE15 under the frozen GE19 dictionary.",
+    "V077_GE15_COMPATIBLE_REPAIR24_ASSEMBLY_BUG": "v0.77 and GE15 direct drive are compatible while Repair24 historical initial gate failed.",
+    "SIMPLE_LEGACY_NORMALIZATION_CANDIDATE": "v0.77 direct comparison fails but one preregistered global multiplicative fit closes to <=1e-3 with all per-mode shape cosines >=0.9999; this only licenses a separate provenance/derivation check, not automatic rescaling.",
+    "MIXED_OR_UNRESOLVED": "No preceding routing condition is satisfied cleanly.",
+    "IMPLEMENTATION_FAIL": "Frozen provenance or execution fails."
+  },
+  "next_step_constraints": "No Repair24 rerun or replacement boundary is licensed solely from a fitted factor. Any candidate normalization must first be derived from source conventions/provenance in a separate frozen step.",
+  "explicit_nonclaims": [
+    "no q20 certification",
+    "no H4/Z21",
+    "no finite eta",
+    "no observational inference"
+  ],
+  "historical_results_unchanged": true
+}
