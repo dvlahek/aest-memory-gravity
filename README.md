@@ -258,7 +258,7 @@ The memory-off analytic quadratic source is generated, and Repair22 now certifie
 
 The historical Repair14 candidate remains a FAIL. Repair21 identified its surviving active-shift pathology as an off-shell-parent interpolation effect, and Repair22 closes the corrected on-shell route with all certification gates passing.
 
-The remaining prerequisite for H4/Z21 is now only the actual `q20` state. Repair23 has already closed its normalization, equation and boundary convention. Do not start a `Z21` solver until Repair24 constructs and freezes q20.
+The remaining prerequisite for H4/Z21 is the first-order bath boundary dictionary required by q20. Repair24 completed numerically but failed only the frozen initial `X10` bridge gate. Repair25 should localize that dictionary before any q20 rerun. Do not start a `Z21` solver.
 
 ## NL1C7B eta=0 spherical nonlinear-constraint track
 
