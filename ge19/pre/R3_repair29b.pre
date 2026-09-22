@@ -1,0 +1,4 @@
+# GE19 Repair29B fixed refinement R3
+# Exact factor-2 refinement of frozen Repair28 R2 numerical controls.
+tol_perturbations_integration = 6.25e-9
+perturbations_sampling_stepsize = 0.0003125
