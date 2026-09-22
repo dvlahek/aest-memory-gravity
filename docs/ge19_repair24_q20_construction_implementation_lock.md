@@ -52,7 +52,7 @@ Science implementation:
 
 final blob:
 
-`c6c38c93f06ae43811896e11bdec88752039f745`.
+`fc271987d1bddcd023cc9c057ddcad036b1d72fb`.
 
 Dedicated prelock:
 
@@ -60,7 +60,7 @@ Dedicated prelock:
 
 final blob:
 
-`7e5c81b8a60fd720f0f992702bd6f77af89807b2`.
+`bc6bd4d441b7322a42f0f27094e0360370796a6f`.
 
 ## Frozen numerical scope
 
@@ -230,9 +230,33 @@ The exact trace bracket was established by prelock run
 
 `35652450043` — SUCCESS.
 
-The final amended implementation prelock is
+The pre-fix amended implementation prelock was
 
 `35653683119` — SUCCESS.
+
+A first local execution then failed before any q20 science output because `reconstruct_backgrounds()` incorrectly mapped Repair24 Nt128 `primary` onto Repair13's frozen `primary` array, which is Nt64. NumPy therefore raised a `(128,)` versus `(64,)` broadcast error during provenance checking.
+
+This is classified as an **implementation failure before science**. No q20 state, source-convergence value, quadrature-convergence value, time-convergence value, gate result or classification was produced.
+
+Implementation-only repair commit:
+
+`7218e049e5e3a1a413663f587d98f8100f22cfa4`.
+
+The repair changes only background provenance checking:
+
+- Repair24 Nt64 control is compared elementwise to frozen Repair13 Nt64 primary;
+- Repair24 Nt128 background is rebuilt deterministically with the same frozen Repair13 `reduced_background` function, as already done by Repair22;
+- the existing exact Repair22 Nt128 x-grid check remains unchanged.
+
+No q20 equation, source, boundary, Drude measure, grid, threshold or physics parameter changed.
+
+A dedicated regression guard was added to the prelock in commit
+
+`3027179251e227cf4285cc9ae75d2c20770a96b2`.
+
+The final post-fix implementation prelock is
+
+`35696839240` — SUCCESS.
 
 Final prelock controls include:
 
