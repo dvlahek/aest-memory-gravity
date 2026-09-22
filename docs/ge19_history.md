@@ -54,11 +54,19 @@ The second-order bath equation is frozen as
 
 Repair24 is now **LOCKED / READY / NOT YET EXECUTED**.
 
-Final implementation prelock: `35653683119` — SUCCESS.
+Initial locked prelock: `35653683119` — SUCCESS.
 
-Implementation lock commit: `ca7b494616fffc0179486a731183af1e1d1728f2`.
+The first local Repair24 execution failed before any q20 science output with a `(128,)` versus `(64,)` background-array broadcast error. Cause: Repair24 incorrectly mapped its Nt128 `primary` label to Repair13's frozen `primary`, which is Nt64. This is frozen as an implementation failure only.
 
-Locked local runner commit: `de6b6d414311e772cd5574cb8d7c6aa11ea59a12`.
+Background-grid repair commit: `7218e049e5e3a1a413663f587d98f8100f22cfa4`.
+
+Post-fix dedicated prelock: `35696839240` — SUCCESS.
+
+Updated implementation lock commit: `18c80840855480130cc08345e097d487a6ed5991`.
+
+Updated locked local runner commit: `e2d6b592ce90471f6576149cecbc0d8d79ddeb68`.
+
+Post-fix runner-head static audit: `35697045877` — SUCCESS.
 
 The frozen v0.77 trace does not contain a native sample exactly at `a=0.4`; Repair24 therefore uses the exact prefix of the frozen NL1C4 interval model across the certified bracket `0.3799548579266745 < 0.4 < 0.41924557250685585`. The GE19 initial surface is not moved.
 
@@ -667,4 +675,4 @@ Run the locked local Repair24 q20 construction.
 
 Canonical project status:
 
-**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 LOCKED / READY / NOT YET EXECUTED; H4/Z21 NOT YET LICENSED.**
+**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 implementation-failure history frozen and post-fix runner LOCKED / READY; no valid q20 science result yet; H4/Z21 NOT YET LICENSED.**
