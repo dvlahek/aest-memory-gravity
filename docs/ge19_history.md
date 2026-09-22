@@ -1021,3 +1021,73 @@ a separately preregistered Repair29 precision/localization audit of the Repair28
 Canonical project status:
 
 **Repair22 Z20 CERTIFIED; Repair26 first-order cancellation-free bath boundary CERTIFIED; Repair27 q20 CERTIFIED; Repair28 full-state eta tangent FAIL on one R1 even-residual gate; reduced Z11 NOT CERTIFIED; H4/Z21 NOT YET LICENSED.**
+
+
+---
+
+## Repair29B — R2-primary / R3-control complete eta tangent
+
+Classification:
+
+`GE19_REPAIR29B_R2_PRIMARY_R3_CONTROL_FULL_STATE_ETA_TANGENT_PASS`.
+
+Workflow run:
+
+`35744723602`.
+
+Artifact:
+
+`10701244502`.
+
+Artifact digest:
+
+`sha256:a52c1ff21d6a83cf122db412be40a223996015886e06007a03cf93080c3a1459`.
+
+Result-freeze commit:
+
+`b686e50a2a070113ca72b953a82eb868d0bbf841`.
+
+Frozen outputs:
+
+- JSON:
+  `081a80fe892f9cddf5ad38a69e43b82c24887e67a8b26162a2d4a229d04f8890`;
+- NPZ:
+  `c97afa5f42e4066239955ac98475c70e37e14c8f0abc373050cc38bbf10c2f81`;
+- FULL log:
+  `e402030a244b2ae26d084a565cef4033abb90fb0cfe307d1c8944f874dd9c5e4`.
+
+Repair29A froze target lambdas `[5.0,1.25]` and the tracked pairs:
+
+- phi, lambda=5.0;
+- phi, lambda=1.25;
+- psi, lambda=1.25.
+
+All Repair29B gates pass.
+
+Key controls:
+
+- R3/R2 same-lambda tangent relative L2 max:
+  `0.0032949735424532643 <= 0.005`;
+- tracked R3 even residual max:
+  `0.0026472718092593337 <= 0.005`;
+- all tracked R3 even residuals are <= their R2 values;
+- forcing 1024/2048 relative L2:
+  `7.3452194491696035e-09`;
+- requested-k mismatch:
+  `0.0`;
+- background-grid mismatch:
+  `0.0`.
+
+Certified representation:
+
+**R2 primary complete eta-tangent representation with targeted R3 numerical control.**
+
+Repair28 remains historical FAIL and is not relabelled.
+
+Next licensed step:
+
+a separately preregistered reduced H2/Z11 reclosure on the Repair22/Repair27 reduced coordinate system using the Repair29B-certified R2 full-state tangent as reference/boundary parent.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair26 first-order cancellation-free bath boundary CERTIFIED; Repair27 q20 CERTIFIED; Repair28 historical full-state eta-tangent FAIL at coarse R1; Repair29A localization COMPLETE; Repair29B complete eta tangent CERTIFIED as R2 primary with R3 control; reduced Z11 NOT YET CERTIFIED; H4/Z21 NOT YET LICENSED.**
