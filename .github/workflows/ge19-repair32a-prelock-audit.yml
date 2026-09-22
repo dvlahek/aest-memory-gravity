@@ -1,0 +1,41 @@
+name: GE19 Repair32A raw residual normalization prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair32a_predata_ge06_ge05_raw_residual_normalization_dictionary_audit.json'
+      - 'ge19/repair32a_ge06_ge05_raw_residual_normalization_dictionary_audit.py'
+      - '.github/workflows/ge19-repair32a-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: python3 -m pip install sympy
+      - name: Audit frozen Repair32A contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair32a_predata_ge06_ge05_raw_residual_normalization_dictionary_audit.json)" = "7a2b88d49ba1a6f81e5bd9818d5b63fa60d50fb1"
+          test "$(git rev-parse HEAD:ge19/repair32a_ge06_ge05_raw_residual_normalization_dictionary_audit.py)" = "3e10b9c2962b14d615ff8fbbc284e4dd46b3e8af"
+          test "$(git rev-parse HEAD:docs/ge19_repair31_h2_dictionary_monitor_audit_result_freeze.md)" = "19004be2042257919bf80c54d796dfd5dc863684"
+          python3 -m py_compile ge19/repair32a_ge06_ge05_raw_residual_normalization_dictionary_audit.py
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/repair32a_predata_ge06_ge05_raw_residual_normalization_dictionary_audit.json"))
+          assert p["classification"]=="GE19_REPAIR32A_PREDATA_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_AUDIT"
+          assert p["H2_reintegration"] is False
+          assert p["H4_Z21_solve"] is False
+          assert p["exact_symbolic_audit"]["target_dictionary_ratio"].endswith("= 2 exactly")
+          assert p["stop_boundary"]["no_fitted_scale"] is True
+          src=open("ge19/repair32a_ge06_ge05_raw_residual_normalization_dictionary_audit.py").read()
+          assert 'ratio_equals_2' in src
+          assert 'GE05_M1_to_GE06_raw_residual_scale' in src
+          assert 'H2_reintegration":False' in src
+          print("GE19_REPAIR32A_PRELOCK_PASS")
+          PY
