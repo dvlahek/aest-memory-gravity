@@ -1,0 +1,62 @@
+name: GE19 Repair29A even-residual localization prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair29a_predata_repair28_even_residual_localization.json'
+      - 'ge19/repair29a_repair28_even_residual_localization.py'
+      - '.github/workflows/ge19-repair29a-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install static dependencies
+        run: python3 -m pip install numpy scipy
+
+      - name: Audit Repair29A frozen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair29a_predata_repair28_even_residual_localization.json)" = "226ddc9232965368e7d8087a6ea15c19f3ec22bc"
+          test "$(git rev-parse HEAD:ge19/repair29a_repair28_even_residual_localization.py)" = "57ef69a97a6c7dc3a3bf2172799f79f7ce7e7ad7"
+          test "$(git rev-parse HEAD:docs/ge19_repair28_cancellation_free_full_state_eta_tangent_result_freeze.md)" = "b4f659f6d06681898ef699f21bba0c77cf5f6880"
+          test "$(git rev-parse HEAD:ge19/repair28_cancellation_free_full_state_eta_tangent.py)" = "b5cb15b46e49c38e1388b6b754d4fa349aa36d5b"
+          python3 -m py_compile ge19/repair29a_repair28_even_residual_localization.py
+
+          python3 - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+
+          p=json.load(open("ge19/repair29a_predata_repair28_even_residual_localization.json"))
+          assert p["classification"]=="GE19_REPAIR29A_PREDATA_REPAIR28_EVEN_RESIDUAL_LOCALIZATION"
+          assert p["created_before_Repair29A_result"] is True
+          assert p["diagnostic_scope"]["new_CLASS_runs"] is False
+          assert p["diagnostic_scope"]["Repair28_threshold_changed"] is False
+          assert p["frozen_parent"]["artifact_id"]==10692716361
+          assert p["frozen_parent"]["Repair28_JSON_sha256"]=="1fd3a4310ea737f6da0d16fa37572c175c26005f6a3ee3f84e5e74f9c82b05a0"
+          assert p["frozen_parent"]["only_failed_gate"]=="R1_even_residual_global_normalized_le_5e3"
+          assert p["frozen_parent"]["frozen_limit"]==0.005
+          assert p["Repair29B_selection_rule"]["rule_is_frozen_before_localization"] is True
+          assert p["stop_boundary"]["no_reduced_Z11"] is True
+          assert p["stop_boundary"]["no_H4_Z21"] is True
+
+          spec=importlib.util.spec_from_file_location(
+              "r29a",Path("ge19/repair29a_repair28_even_residual_localization.py")
+          )
+          m=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(m)
+          assert m.PARENT_JSON_SHA=="1fd3a4310ea737f6da0d16fa37572c175c26005f6a3ee3f84e5e74f9c82b05a0"
+          assert m.FROZEN_LIMIT==5e-3
+          src=Path("ge19/repair29a_repair28_even_residual_localization.py").read_text()
+          assert "run_class(" not in src
+          assert "subprocess.run" not in src
+          assert "Repair28_relabelled" in src
+          assert "Repair29B_target_lambdas" in src
+          print("GE19_REPAIR29A_PRELOCK_PASS")
+          PY
