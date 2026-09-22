@@ -61,7 +61,7 @@ jobs:
           path: class_repair26
 
       - name: Install Python dependencies
-        run: python3 -m pip install --user numpy scipy cython setuptools wheel
+        run: python3 -m pip install --user numpy scipy sympy cython setuptools wheel
 
       - name: Apply frozen AeST and GE15 patch chain
         shell: bash
