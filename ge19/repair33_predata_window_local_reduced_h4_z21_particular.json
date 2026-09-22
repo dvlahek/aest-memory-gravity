@@ -1,0 +1,184 @@
+{
+  "classification": "GE19_REPAIR33_PREDATA_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR",
+  "created_after_Repair32C_Z11_certification": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Construct and validate the first window-local particular reduced H4/Z21 state using only previously frozen/certified parents and a single common GE06 raw-residual convention.",
+  "exact_hierarchy": {
+    "expansion": "Z=Zbar+eps Z10+eta eps Z11+eps^2/2 Z20+eta eps^2/2 Z21+...",
+    "equation_common_GE06_convention": "L_GE06 Z21 = -2 Q_total(Z10,Z11) - 2 DY2[Z10;Z11] - 2 M1_GE05[Z20,q20] - 2 M2_GE05[(Z10,q10),(Z10,q10)]",
+    "note": "The factor 2 multiplying both GE05 memory blocks is the exact overall GE05->GE06 raw-residual dictionary derived in Repair32A, not a fitted factor."
+  },
+  "frozen_parents": {
+    "Repair22": {
+      "classification": "GE19_REPAIR22_ON_SHELL_PARENT_Z20_CERTIFICATION_PASS",
+      "JSON_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+      "NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+      "supplies": [
+        "certified reduced Z10",
+        "certified window-local particular Z20"
+      ]
+    },
+    "Repair27": {
+      "classification": "GE19_REPAIR27_CANCELLATION_FREE_PARENT_Q20_RECONSTRUCTION_PASS",
+      "JSON_sha256": "99a2183e7088c7492f624cae2d294612380714c1d81aa7ff49cc4fcd1c62c74b",
+      "NPZ_sha256": "2b1566d402e4c9e8daee8e5c7084b3da7735442b4fb604d51489b708662fd9c0",
+      "supplies": [
+        "weighted q10 projection",
+        "weighted q20 projection",
+        "recomputable normalized bath node states"
+      ]
+    },
+    "Repair32B": {
+      "classification": "GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION_PASS",
+      "JSON_sha256": "226dd2a2a0e86ddccc39a62d833960bdf9d5a9af038ad3bf225bbbf69d0b95cf",
+      "NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+      "supplies": [
+        "frozen reduced Z11 arrays"
+      ]
+    },
+    "Repair32C": {
+      "classification": "GE19_REPAIR32C_ARTIFACT_ONLY_REDUCED_Z11_CERTIFICATION_PASS",
+      "JSON_sha256": "037314effa33c5bfaf51f6f3c72459de43cb486c6ef5e9a94f5b1984a68611b9",
+      "JSON_bytes": 18893,
+      "supplies": [
+        "formal certification that the exact Repair32B Z11 parent is on-shell and H4-licensed"
+      ],
+      "result_freeze_commit": "7059080a4319435713d96079dc34b7364f9fa11c"
+    },
+    "Repair32A": {
+      "classification": "GE19_REPAIR32A_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_PASS",
+      "exact_GE05_to_GE06_raw_residual_scale": 2,
+      "fitted_normalization": false
+    },
+    "GE04": {
+      "classification": "GE04_DY2_SPECTRAL_CONVERGENCE_PASS",
+      "source_blob": "c96812aca5d73b0fd0e61625b62c7022a4930a96",
+      "role": "licenses the high-resolution analytic DY2 representation; H4 recomputes DY2 from certified reduced chi10 and chi11 rather than reusing the obsolete v0.77 amplitudes"
+    },
+    "GE05": {
+      "classification": "GE05_MEMORY_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+      "source_blob": "40837d77f89028da30c28899e2d0530a4401844e",
+      "role": "action-derived raw M1/M2 memory residuals"
+    },
+    "GE06": {
+      "classification": "GE06_ANALYTIC_AEST_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+      "source_blob": "a7afe0035054a9dca55d74a6497c081422114b4c",
+      "role": "memory-off Einstein+AeST L/Q operator convention"
+    },
+    "GE07": {
+      "classification": "GE07_PRESSURELESS_MATTER_DIRECTIONAL_SOURCE_GENERATOR_PASS",
+      "source_blob": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+      "role": "pressureless-dust L/Q contribution"
+    }
+  },
+  "source_assembly": {
+    "Q_total_cross": {
+      "definition": "Q_total(Z10,Z11)=Q_GE06(Z10,Z11)+Q_GE07(Z10,Z11)",
+      "construction": "exact quadratic polarization: [Q2(Z10+Z11)-Q2(Z10-Z11)]/4",
+      "H4_multiplier": -2,
+      "output_rows": "main plus shift/anisotropy constraints through the same main_and_constraints dictionary used by certified H3"
+    },
+    "DY2_cross": {
+      "definition": "directional derivative of the nonanalytic Y2 operator at chi10 along chi11",
+      "chi10": "reconstructed from certified Repair22 Z10",
+      "chi11": "reconstructed from certified Repair32C/Repair32B Z11",
+      "analytic_formula": "frozen GE03 directional_analytic, licensed at high resolution by GE04",
+      "H4_multiplier": -2,
+      "no_v077_amplitude_parent": true
+    },
+    "memory_M1_second_order": {
+      "definition": "GE05 first directional residual evaluated on (Z20,q20)",
+      "node_state_policy": "recompute normalized bath q20 node states deterministically from the frozen Repair27 construction; no new initial/boundary choice",
+      "GE05_to_GE06_scale": 2,
+      "H4_sign": "negative after dictionary mapping"
+    },
+    "memory_M2_first_order": {
+      "definition": "GE05 second directional residual evaluated on (Z10,q10)",
+      "node_state_policy": "recompute normalized bath q10 node states deterministically from the frozen Repair27 construction",
+      "GE05_to_GE06_scale": 2,
+      "includes_direct_metric_M2": true,
+      "H4_sign": "negative after dictionary mapping"
+    },
+    "GE05_gravity_row_dictionary": {
+      "scalar_phi": "main scalar_phi",
+      "aether_rapidity": "main aether_rapidity",
+      "metric_lapse": "main lapse",
+      "metric_shift": "shift constraint",
+      "metric_longitudinal_scale_and_transverse_scale": "main isotropic = L+R; anisotropy constraint = L-R/2",
+      "bath_q": "not inserted into the Z21 gravity solve; it is the independently used bath equation that generated q10/q20"
+    }
+  },
+  "grids": {
+    "C_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta0": [
+      1,
+      0.5,
+      0.1
+    ],
+    "input_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "solved_output_modes": "m=1..40",
+    "time_primary": 128,
+    "time_control": 64,
+    "spatial_primary": 1024,
+    "spatial_control": 2048,
+    "bath_quadrature_primary": 2048,
+    "bath_quadrature_control": 1024
+  },
+  "boundary": {
+    "type": "window-local particular H4 boundary",
+    "dynamic_Z21_at_a_0p4": "zero homogeneous contribution, identical particular-state convention to the certified H3/Z20 chain",
+    "claim_limit": "does not certify an unknown primordial/homogeneous Z21 mode"
+  },
+  "preregistered_gates": {
+    "all_parent_hashes_and_classifications_exact": true,
+    "Repair32C_Z11_certified_and_H4_licensed": true,
+    "GE05_to_GE06_dictionary_scale_exactly_2_no_fit": true,
+    "Q_cross_polarization_self_consistency_max": 1e-12,
+    "DY2_Nx1024_vs_Nx2048_low_mode_relative_L2_max": 0.0005,
+    "total_H4_source_Nx1024_vs_Nx2048_m1_40_relative_L2_max": 0.0005,
+    "memory_source_Nq1024_vs_Nq2048_relative_L2_max": 0.01,
+    "total_H4_source_Nt64_vs_Nt128_relative_L2_max": 0.005,
+    "H4_linear_system_relative_L2_residual_max": 1e-8,
+    "H4_state_Nt64_vs_Nt128_global_relative_L2_max": 0.005,
+    "H4_shift_global_relative_to_operator_scale_max": 0.000001,
+    "H4_anisotropy_global_relative_to_operator_scale_max": 0.000001,
+    "zero_dynamic_boundary_abs_max": 1e-12,
+    "all_source_and_state_outputs_finite": true
+  },
+  "source_decomposition_required": [
+    "2Q_GE06_cross",
+    "2Q_GE07_cross",
+    "2DY2",
+    "2M1_GE05_mapped",
+    "2M2_GE05_mapped",
+    "total_H4_rhs"
+  ],
+  "pass_classification": "GE19_REPAIR33_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR_PASS",
+  "fail_classification": "GE19_REPAIR33_WINDOW_LOCAL_REDUCED_H4_Z21_PARTICULAR_FAIL",
+  "pass_consequence": {
+    "Z21_window_local_particular_certified": true,
+    "primordial_homogeneous_Z21_certified": false,
+    "full_species_Z21_certified": false,
+    "next": "Build the first lensing-facing weakly nonlinear memory observable from the certified potential response, with a separate preregistration and no observational tuning."
+  },
+  "stop_boundary": {
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_threshold_change_after_result": true,
+    "no_posthoc_source_rescaling": true,
+    "no_primordial_Z21_claim": true,
+    "no_full_species_claim": true
+  }
+}
