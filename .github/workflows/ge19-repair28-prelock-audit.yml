@@ -1,0 +1,82 @@
+name: GE19 Repair28 full-state eta tangent prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair28_predata_cancellation_free_full_state_eta_tangent.json'
+      - 'ge19/repair28_cancellation_free_full_state_eta_tangent.py'
+      - '.github/workflows/ge19-repair28-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install static-audit dependencies
+        run: python3 -m pip install numpy scipy
+
+      - name: Audit frozen Repair28 contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair28_predata_cancellation_free_full_state_eta_tangent.json)" = "690e6a60b2d3a8369edf03ce2782c1c61db404d0"
+          test "$(git rev-parse HEAD:ge19/repair28_cancellation_free_full_state_eta_tangent.py)" = "b5cb15b46e49c38e1388b6b754d4fa349aa36d5b"
+          test "$(git rev-parse HEAD:ge15/apply_cancellation_free_s_state_patch.py)" = "66b919b362b05721d1023441ab4a7c18f86f500c"
+          test "$(git rev-parse HEAD:ge08/apply_full_state_trace_patch.py)" = "20a3afe24a73b3512c5b5ea639466b8ca9bc3b8c"
+          test "$(git rev-parse HEAD:ge09/apply_dense_accepted_step_trace_patch.py)" = "23b0cd22ebab499aee0ce03e6b3b678fe727ef55"
+          test "$(git rev-parse HEAD:v019w/apply_variational_forcing_patch.py)" = "00c3f5da5a1b7734c67c82aa9181a443736101bf"
+          test "$(git rev-parse HEAD:v039/build_tau_forcing.py)" = "$(git rev-parse HEAD:v039/build_tau_forcing.py)"
+          test "$(git rev-parse HEAD:docs/ge19_repair27_cancellation_free_parent_q20_reconstruction_result_freeze.md)" = "ae9cd41642cad71de7f60b42fd841603729e678f"
+          test "$(git rev-parse HEAD:docs/ge04_dy2_spectral_convergence_result_freeze.md)" = "e2800ce30eb2bf1ecbe33be4afa6f9371d3927c1"
+
+          python3 -m py_compile ge19/repair28_cancellation_free_full_state_eta_tangent.py
+
+          python3 - <<'PY'
+          import importlib.util,json
+          from pathlib import Path
+
+          p=json.load(open("ge19/repair28_predata_cancellation_free_full_state_eta_tangent.json"))
+          assert p["classification"]=="GE19_REPAIR28_PREDATA_CANCELLATION_FREE_FULL_STATE_ETA_TANGENT"
+          assert p["created_before_repair28_result"] is True
+          assert p["uses_observational_data"] is False
+          assert p["frozen_repair26_forcing_parent"]["R1_full_history_trace_sha256"]=="608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+          assert p["frozen_repair26_forcing_parent"]["forcing_quadrature_primary"]==2048
+          assert p["frozen_repair26_forcing_parent"]["forcing_quadrature_control"]==1024
+          assert p["tangent_design"]["lambdas"]==[10.0,5.0,2.5,1.25]
+          assert p["tangent_design"]["common_output_nodes"]==128
+          g=p["frozen_gates"]
+          assert g["lambda_affinity_global_relative_L2_max"]==0.005
+          assert g["lambda_cosine_min"]==0.9999
+          assert g["even_residual_global_normalized_max"]==0.005
+          assert g["R1_R2_consensus_state_global_relative_L2_max"]==0.005
+          assert g["R1_R2_chi11_global_relative_L2_max"]==0.005
+          assert p["stop_boundary"]["reduced_Z11_solve_performed"] is False
+          assert p["stop_boundary"]["H4_Z21_solve_performed"] is False
+
+          spec=importlib.util.spec_from_file_location(
+              "r28",Path("ge19/repair28_cancellation_free_full_state_eta_tangent.py")
+          )
+          r28=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(r28)
+          assert r28.REPAIR26_TRACE_SHA=="608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+          assert r28.REPAIR26_TRACE_BYTES==26643162
+          assert r28.NT==128
+          assert r28.FORCE_REL_MAX==1e-2
+          assert r28.FORCE_COS_MIN==0.9999
+          assert r28.AFFINITY_MAX==5e-3
+          assert r28.PRECISION_MAX==5e-3
+          assert r28.CHI_PRECISION_MAX==5e-3
+
+          src=Path("ge19/repair28_cancellation_free_full_state_eta_tangent.py").read_text()
+          assert '"--control-order","1024","--primary-order","2048"' in src.replace(" ","")
+          assert "AEST_FULL_STATE_TRACE_FILE" in src
+          assert "AEST_TANGENT_FORCE_FILE" in src
+          assert "AEST_TANGENT_LAMBDA" in src
+          assert "reduced_Z11_solve_performed" in src
+          assert "H4_Z21_solve_performed" in src
+          print("GE19_REPAIR28_PRELOCK_PASS")
+          PY
