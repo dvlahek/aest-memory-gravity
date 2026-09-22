@@ -1,0 +1,90 @@
+{
+  "classification": "GE19_REPAIR32B_PREDATA_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION",
+  "created_after_Repair32A_PASS": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "target": "Reconstruct the reduced first-order eta tangent Z11 with the exact GE05-to-GE06 raw-residual dictionary factor derived in Repair32A, while leaving the historical Repair30 certification monitors untouched and report-only.",
+  "frozen_parent_result": {
+    "Repair32A": {
+      "classification": "GE19_REPAIR32A_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_PASS",
+      "JSON_sha256": "adef8fad50233c7fa5df3d57e7f21df80ed99228402831b2861ad06256519725",
+      "JSON_bytes": 2121,
+      "exact_dictionary_factor": 2,
+      "fitted_normalization_used": false,
+      "result_freeze_commit": "5a785ff59007807c5bdadf1da0cdd12de78873a8"
+    },
+    "Repair30": {
+      "historical_classification": "GE19_REPAIR30_REDUCED_H2_Z11_RECLOSURE_FAIL",
+      "relabelled": false
+    },
+    "Repair31": {
+      "classification": "GE19_REPAIR31_REPAIR30_H2_DICTIONARY_AND_MONITOR_AUDIT_COMPLETE",
+      "JSON_sha256": "569ad9b16a26989fd8a9c9c02d83b77eb4afe23d9962fa56b87166d78d0ea33a",
+      "relabelled": false
+    }
+  },
+  "inherited_science_contract": {
+    "source_parent": "Repair22 certified reduced Z10 plus Repair27 certified normalized-bath q10 weighted projection",
+    "boundary_parent": "Repair29B-certified R2 complete full-state eta tangent mapped at a=0.4",
+    "backgrounds": "Repair13 self-consistent reduced C_min/C_star/C_max backgrounds",
+    "time_grids": "Nt128 primary, Nt64 control",
+    "Fourier_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "finite_eta": false,
+    "all_Repair30_parents_and_boundary_rules_unchanged": true
+  },
+  "sole_physics_dictionary_change": {
+    "Repair30_equation": "L_GE06 Z11 = -M1_GE05",
+    "Repair32B_equation": "L_GE06 Z11 = -2 M1_GE05",
+    "GE05_M1_to_GE06_raw_residual_scale": 2,
+    "source_rows": {
+      "aether": "Q a^3 B10",
+      "scalar": "-a^2 partial_x(B10)"
+    },
+    "direct_metric_M1": "zero",
+    "dust_M1": "zero",
+    "no_other_source_change": true
+  },
+  "validation_gates": {
+    "parent_hashes_exact": true,
+    "Repair32A_dictionary_factor_exactly_2": true,
+    "Repair27_B10_primary_vs_time_control_relative_L2_max": 0.005,
+    "linear_system_relative_L2_residual_max": 1e-8,
+    "initial_dynamic_boundary_abs_or_rel_max": 1e-8,
+    "primary128_vs_control64_full_six_field_global_relative_L2_max": 0.005,
+    "primary128_vs_control64_dynamic_S_u_varphi_T_global_relative_L2_max": 0.005,
+    "reduced_chi11_vs_R2_parent_relative_L2_max": 0.005,
+    "reduced_chi11_C_envelope_relative_L2_max": 0.005,
+    "all_outputs_finite": true
+  },
+  "historical_Repair30_monitors_report_only": {
+    "shift_constraint_componentwise_backward_error": true,
+    "anisotropy_constraint_componentwise_backward_error": true,
+    "max_per_field_primary128_vs_control64_state_relative_L2": true,
+    "reason": "Repair31 showed that the local shift metric and max-per-field state metric require a separately preregistered certification dictionary. Repair32B does not modify or reuse them as certification gates."
+  },
+  "pass_classification": "GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION_PASS",
+  "fail_classification": "GE19_REPAIR32B_FACTOR2_CORRECTED_REDUCED_H2_Z11_RECONSTRUCTION_FAIL",
+  "pass_consequence": {
+    "corrected_H2_reconstruction_validated": true,
+    "reduced_Z11_certified": false,
+    "H4_Z21_licensed": false,
+    "next": "Preregister Repair32C artifact-only certification of the frozen Repair32B state using the Repair31-diagnosed global state and constraint normalization rules. No H2 reintegration in Repair32C."
+  },
+  "stop_boundary": {
+    "Repair30_relabelled": false,
+    "Repair31_relabelled": false,
+    "no_fitted_normalization": true,
+    "no_monitor_threshold_relaxation": true,
+    "no_Z11_certification_in_Repair32B": true,
+    "no_H4_Z21": true,
+    "no_finite_eta": true,
+    "no_observational_claim": true
+  }
+}
