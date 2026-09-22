@@ -1,0 +1,136 @@
+name: GE19 Repair28 full-state eta tangent science
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - '.github/workflows/ge19-repair28-run.yml'
+
+jobs:
+  repair28:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout AeST harness
+        uses: actions/checkout@v4
+
+      - name: Frozen implementation audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair28_predata_cancellation_free_full_state_eta_tangent.json)" = "690e6a60b2d3a8369edf03ce2782c1c61db404d0"
+          test "$(git rev-parse HEAD:ge19/repair28_cancellation_free_full_state_eta_tangent.py)" = "b5cb15b46e49c38e1388b6b754d4fa349aa36d5b"
+          test "$(git rev-parse HEAD:.github/workflows/ge19-repair28-prelock-audit.yml)" = "9f50c54340e735bc145adf36cfb81c895b58421a"
+          test "$(git rev-parse HEAD:docs/ge19_repair28_cancellation_free_full_state_eta_tangent_implementation_lock.md)" = "a79d5542d3572d3d71a59f639505d7c63044829b"
+          test "$(git rev-parse HEAD:ge15/apply_cancellation_free_s_state_patch.py)" = "66b919b362b05721d1023441ab4a7c18f86f500c"
+          test "$(git rev-parse HEAD:ge08/apply_full_state_trace_patch.py)" = "20a3afe24a73b3512c5b5ea639466b8ca9bc3b8c"
+          test "$(git rev-parse HEAD:ge09/apply_dense_accepted_step_trace_patch.py)" = "23b0cd22ebab499aee0ce03e6b3b678fe727ef55"
+          test "$(git rev-parse HEAD:v019w/apply_variational_forcing_patch.py)" = "00c3f5da5a1b7734c67c82aa9181a443736101bf"
+          python3 -m py_compile ge19/repair28_cancellation_free_full_state_eta_tangent.py
+          echo GE19_REPAIR28_LOCK_PASS
+
+      - name: Download frozen Repair26 parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf frozen_repair26_repair28
+          mkdir -p frozen_repair26_repair28
+          gh run download 35721220889 \
+            --repo dvlahek/aest-memory-gravity \
+            --name results_bundle_ge19_repair26_cancellation_free_full_history_bath_boundary \
+            --dir frozen_repair26_repair28
+          TRACE="$(find frozen_repair26_repair28 -type f -name ge19_repair26_R1_full_history_trace.dat -print -quit)"
+          test -n "$TRACE"
+          test "$(sha256sum "$TRACE" | awk '{print $1}')" = "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+          test "$(wc -c < "$TRACE" | tr -d ' ')" = "26643162"
+          echo "REPAIR26_TRACE=$TRACE" >> "$GITHUB_ENV"
+          echo GE19_REPAIR28_REPAIR26_PARENT_PASS
+
+      - name: Checkout pinned official CLASS
+        uses: actions/checkout@v4
+        with:
+          repository: lesgourg/class_public
+          ref: e85808324f51fc694d12e3ed7439552a3c3f9540
+          path: class_repair28
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user numpy scipy
+
+      - name: Apply frozen AeST and GE15 patch chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          python3 v019/apply_patch_v019.py class_repair28
+          python3 v019i/apply_ic_patch.py class_repair28
+          python3 v019j/apply_memory_patch.py class_repair28
+          python3 v019w/apply_variational_forcing_patch.py class_repair28
+          python3 v019y/apply_output_precision_patch.py class_repair28
+          python3 v023/apply_source_grid_trace_patch.py class_repair28
+          python3 tools/apply_v072_offline_trace_runtime_reload_patch.py class_repair28
+          python3 tools/apply_v063_classy_runtime_reload_patch.py class_repair28
+          python3 ge08/apply_full_state_trace_patch.py class_repair28
+          python3 ge09/apply_dense_accepted_step_trace_patch.py class_repair28
+          python3 ge15/apply_cancellation_free_s_state_patch.py class_repair28
+          python3 - <<'PY'
+          import json
+          p=json.load(open("results/ge15_s_state_patch.json"))
+          assert p["classification"]=="GE15_CANCELLATION_FREE_S_STATE_PATCH_PASS"
+          assert p["physics_modified"] is False
+          assert p["state_dimension_modified"] is False
+          assert p["initial_s"]==0.0
+          assert all(p["checks"].values())
+          print("GE19_REPAIR28_GE15_PATCH_PASS")
+          PY
+
+      - name: Build CLASS executable
+        run: make -C class_repair28 -j2 class
+
+      - name: Run Repair28 science
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ge19/repair28_cancellation_free_full_state_eta_tangent.py \
+            --class-root class_repair28 \
+            --repair26-trace "$REPAIR26_TRACE" \
+            --results-dir results \
+            --json-out results/ge19_repair28_cancellation_free_full_state_eta_tangent.json \
+            --npz-out results/ge19_repair28_cancellation_free_full_state_eta_tangent.npz \
+            2>&1 | tee results/ge19_repair28_cancellation_free_full_state_eta_tangent_FULL.log
+
+      - name: Print Repair28 hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in \
+            results/ge19_repair28_cancellation_free_full_state_eta_tangent.json \
+            results/ge19_repair28_cancellation_free_full_state_eta_tangent.npz \
+            results/ge19_repair28_cancellation_free_full_state_eta_tangent_FULL.log \
+            results/ge19_repair28_repair26_forcing_summary.json \
+            results/ge19_repair28_repair26_forcing_force.dat; do
+            if [ -f "$f" ]; then sha256sum "$f"; wc -c "$f"; fi
+          done
+
+      - name: Upload Repair28 bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results_bundle_ge19_repair28_full_state_eta_tangent
+          path: |
+            results/ge19_repair28_cancellation_free_full_state_eta_tangent.json
+            results/ge19_repair28_cancellation_free_full_state_eta_tangent.npz
+            results/ge19_repair28_cancellation_free_full_state_eta_tangent_FULL.log
+            results/ge19_repair28_repair26_forcing_summary.json
+            results/ge19_repair28_repair26_forcing_force.dat
+            results/ge19_repair28_*_class.log
+            results/ge19_repair28_*_full_state_trace.dat
+            results/ge15_s_state_patch.json
+          if-no-files-found: warn
