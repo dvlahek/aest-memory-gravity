@@ -6,15 +6,19 @@ cd "$ROOT"
 mkdir -p results
 
 test "$(git rev-parse HEAD:ge19/repair32c_predata_artifact_only_reduced_z11_certification.json)" = "08160cf56534468aa95f5bad08a7d476d8d6e276"
-test "$(git rev-parse HEAD:ge19/repair32c_artifact_only_reduced_z11_certification.py)" = "a8bc2b57051a733e3409db476dc427aed59619a3"
-test "$(git rev-parse HEAD:.github/workflows/ge19-repair32c-prelock-audit.yml)" = "7ea80c377ff609427b6838d186200e9eb98a01d8"
+test "$(git rev-parse HEAD:ge19/repair32c_artifact_only_reduced_z11_certification.py)" = "b2e89fe8e3dc66a430ee47e4d0ba085b82e9ad57"
+test "$(git rev-parse HEAD:.github/workflows/ge19-repair32c-repair01-prelock-audit.yml)" = "59b44fa84d265836ed77d8db31be0a713aae4869"
+test "$(git rev-parse HEAD:docs/ge19_repair32c_initial_execution_import_fail_freeze.md)" = "f57129227ad6a06604a195238c10eaeb8119f3aa"
+test "$(git rev-parse HEAD:docs/ge19_repair32c_repair01_import_path_lock.md)" = "a557188a16713f16b34bbc7f9cdd4a7501e9ffef"
 test "$(git rev-parse HEAD:docs/ge19_repair32b_factor2_corrected_h2_reconstruction_result_freeze.md)" = "9a5bda89c15ca276d102ca58236ce0a7275c7601"
 
 for c in \
   919a0fc095bebdc8747394a39c6ca1c6ae894489 \
   752e3ff755a0bc768d15bfb9f8de05957262a6b7 \
-  b0ec0538a0b9a567b02d015dd55757cd78b723df \
-  0952c48317c829e34cd647f15b365f0685d07fdf; do
+  743c9eb6505ca3f318257c22601e80b35ed0a028 \
+  5f7cc60c0ff45badadd2b01d7d549512040f3b5d \
+  87036cc935ba18b109fc02130ac1b59e450094f7 \
+  6099ec3c0158231947ef30e0a63450ac115b1174; do
   git merge-base --is-ancestor "$c" HEAD
 done
 echo GE19_REPAIR32C_LOCK_PASS
