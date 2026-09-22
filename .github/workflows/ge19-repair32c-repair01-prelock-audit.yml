@@ -1,0 +1,53 @@
+name: GE19 Repair32C Repair01 import-path prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair32c_artifact_only_reduced_z11_certification.py'
+      - 'docs/ge19_repair32c_initial_execution_import_fail_freeze.md'
+      - '.github/workflows/ge19-repair32c-repair01-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair32C Repair01 direct-script import path
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair32c_predata_artifact_only_reduced_z11_certification.json)" = "08160cf56534468aa95f5bad08a7d476d8d6e276"
+          test "$(git rev-parse HEAD:ge19/repair32c_artifact_only_reduced_z11_certification.py)" = "b2e89fe8e3dc66a430ee47e4d0ba085b82e9ad57"
+          test "$(git rev-parse HEAD:docs/ge19_repair32c_initial_execution_import_fail_freeze.md)" = "f57129227ad6a06604a195238c10eaeb8119f3aa"
+
+          python3 -m py_compile ge19/repair32c_artifact_only_reduced_z11_certification.py
+
+          # Crucial Repair01 audit: exercise the same direct-script invocation mode
+          # used by the local runner. --help exits before any science artifact read.
+          python3 ge19/repair32c_artifact_only_reduced_z11_certification.py --help >/tmp/r32c_help.txt
+          grep -q -- "--repair32b-json" /tmp/r32c_help.txt
+          grep -q -- "--repair32b-npz" /tmp/r32c_help.txt
+          grep -q -- "--json-out" /tmp/r32c_help.txt
+
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/repair32c_predata_artifact_only_reduced_z11_certification.json"))
+          assert p["classification"]=="GE19_REPAIR32C_PREDATA_ARTIFACT_ONLY_REDUCED_Z11_CERTIFICATION"
+          assert p["no_new_science_state"]["H2_reintegration"] is False
+          assert p["stop_boundary"]["no_H4_Z21_solve_in_Repair32C"] is True
+          src=open("ge19/repair32c_artifact_only_reduced_z11_certification.py").read()
+          assert "import sys" in src
+          assert "sys.path.insert(0,str(ROOT))" in src
+          assert 'Repair32B_H2_reintegrated":False' in src
+          assert '"Z11_certified":passed' in src
+          assert '"H4_Z21_licensed":passed' in src
+          print("GE19_REPAIR32C_REPAIR01_PRELOCK_PASS")
+          PY
