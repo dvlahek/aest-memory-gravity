@@ -10,11 +10,14 @@ echo "=== GE19 Repair24 lock audit ==="
 test "$(git rev-parse HEAD:docs/ge19_repair22_z20_certification_result_freeze.md)" = "fb4ef607d17b5545985edf557aa67d02bc4dff0f"
 test "$(git rev-parse HEAD:docs/ge19_repair23_q20_normalized_bath_bridge_result_freeze.md)" = "5081fdf87e7e7f76849cf94e01f74c8df5dcca80"
 test "$(git rev-parse HEAD:ge19/repair24_predata_q20_construction.json)" = "df2a197a87c426b2b45aca8ab95bbdbbbbc19fbf"
-test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "c6c38c93f06ae43811896e11bdec88752039f745"
-test "$(git rev-parse HEAD:.github/workflows/ge19-repair24-prelock-audit.yml)" = "7e5c81b8a60fd720f0f992702bd6f77af89807b2"
-test "$(git rev-parse HEAD:docs/ge19_repair24_q20_construction_implementation_lock.md)" = "6012c42345b9eec3ea9f22436ba6d23aa8750eed"
+test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+test "$(git rev-parse HEAD:.github/workflows/ge19-repair24-prelock-audit.yml)" = "bc6bd4d441b7322a42f0f27094e0360370796a6f"
+test "$(git rev-parse HEAD:docs/ge19_repair24_q20_construction_implementation_lock.md)" = "4ad007e9ac012f507019e7095ae7cf0bbe21f409"
 
-for sha in   9174f2e622f42851474ed124b429bf07b2db3ac7   79597296185209e50ef133f680d7b3d3481bac86   e093edcb4fd81bec9f45f31c0c9be60937304c52   ac4814e24694ae01f5fc955d42ca92020b015687   6aead31bb9bdcb9ee384f37b84e73dfec8b82e6b   ca7b494616fffc0179486a731183af1e1d1728f2
+for sha in   9174f2e622f42851474ed124b429bf07b2db3ac7   79597296185209e50ef133f680d7b3d3481bac86   e093edcb4fd81bec9f45f31c0c9be60937304c52   ac4814e24694ae01f5fc955d42ca92020b015687   6aead31bb9bdcb9ee384f37b84e73dfec8b82e6b   ca7b494616fffc0179486a731183af1e1d1728f2 \
+  7218e049e5e3a1a413663f587d98f8100f22cfa4 \
+  3027179251e227cf4285cc9ae75d2c20770a96b2 \
+  18c80840855480130cc08345e097d487a6ed5991
 do
   git merge-base --is-ancestor "$sha" HEAD
 done
