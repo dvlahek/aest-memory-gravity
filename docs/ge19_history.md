@@ -688,10 +688,42 @@ No observational result may be used to choose or tune a repair in the theory cha
 
 ---
 
+## Repair24 — q20 construction
+
+Classification:
+
+`GE19_REPAIR24_Q20_CONSTRUCTION_FAIL`.
+
+This is the first valid Repair24 science execution. The q20 construction ran to completion, but certification failed on exactly one frozen upstream bridge gate.
+
+Result-freeze commit:
+
+`82f1f56912f92e628797997d82ffd64de2a4a926`.
+
+Frozen controls:
+
+- H1 X10 initial bridge mismatch: `0.9999999471925649` — FAIL vs `1e-10`;
+- G2 spatial Nx256/Nx512 relative L2: `2.2947298319652412e-15` — PASS;
+- q20 Nq1024/Nq2048 weighted-z20 relative L2: `8.251855068695476e-05` — PASS;
+- q20 Nt64/Nt128 weighted-z20 relative L2: `3.245459862000118e-05` — PASS;
+- z10 Nt64/Nt128 weighted-z10 relative L2: `0.003453755379112942` — PASS;
+- all outputs finite — PASS;
+- all cases complete — PASS.
+
+Thus 12/13 frozen Repair24 gates pass. The remaining blocker is the initial first-order bath-drive dictionary between frozen v0.77 chi/a and the GE19 on-shell X10 representation.
+
+No q20 certification and no H4/Z21 license.
+
 ## Immediate action
 
-Run a separately preregistered Repair25 first-order bath-boundary dictionary audit. Do not rerun q20 yet.
+Preregister Repair25 as a first-order boundary-dictionary audit only. Compare on the exact a=0.4 surface:
+
+- transported frozen v0.77 chi/a;
+- GE15 certified chi = Q(a theta/k^2 + alpha);
+- Repair22 on-shell X10 = Q_action u10 + partial_x(varphi10)/a.
+
+Report per-mode ratios/phases and candidate normalization residuals before any q20 rerun.
 
 Canonical project status:
 
-**Repair13 H1 PASS; Repair18 boundary PASS; Repair22 Z20 CERTIFIED; Repair23 q20 bridge PASS; Repair24 science FAIL only on v0.77->GE19 initial X10 matching; Repair25 NEXT; H4/Z21 NOT YET LICENSED.**
+**Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 q20 science FAIL localized to the initial X10 bridge; q20 NOT CERTIFIED; H4/Z21 NOT LICENSED.**
