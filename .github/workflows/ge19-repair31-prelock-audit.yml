@@ -1,0 +1,49 @@
+name: GE19 Repair31 H2 dictionary monitor prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair31_predata_repair30_h2_dictionary_monitor_audit.json'
+      - 'ge19/repair31_repair30_h2_dictionary_monitor_audit.py'
+      - '.github/workflows/ge19-repair31-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair31 frozen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair31_predata_repair30_h2_dictionary_monitor_audit.json)" = "0f118cc2b1bee07ee29841a8cb4ebbba6b7c81c3"
+          test "$(git rev-parse HEAD:ge19/repair31_repair30_h2_dictionary_monitor_audit.py)" = "4d8c60c1f3953a179e6a4081ac3f0f507d03e8b9"
+          test "$(git rev-parse HEAD:docs/ge19_repair30_reduced_h2_z11_reclosure_result_freeze.md)" = "d51f673ce825ec3b6aa474675f570e23e0538541"
+
+          python3 -m py_compile ge19/repair31_repair30_h2_dictionary_monitor_audit.py
+
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/repair31_predata_repair30_h2_dictionary_monitor_audit.json"))
+          assert p["classification"]=="GE19_REPAIR31_PREDATA_REPAIR30_H2_DICTIONARY_AND_MONITOR_AUDIT"
+          assert p["reruns_Repair30_H2_solve"] is False
+          assert p["audit_A_shift_monitor"]["near_null_rule"]=="scale <= near_null_threshold"
+          assert p["audit_D_operator_residual_localization"]["H2_rhs"]=="the exact frozen Repair30 M1 RHS saved in the Repair30 NPZ"
+          assert p["routing_policy"]["H4_Z21_remains_blocked"] is True
+          assert p["stop_boundary"]["Repair30_relabelled"] is False
+          assert p["stop_boundary"]["no_H2_reintegration"] is True
+          assert p["stop_boundary"]["no_H4_Z21"] is True
+          src=open("ge19/repair31_repair30_h2_dictionary_monitor_audit.py").read()
+          assert 'Repair30_H2_reintegrated":False' in src
+          assert 'linear_operator_batch' in src
+          assert 'near_null_scale_threshold' in src
+          assert 'best_complex_scale_reduced_to_parent' in src
+          print("GE19_REPAIR31_PRELOCK_PASS")
+          PY
