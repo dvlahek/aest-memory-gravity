@@ -1,0 +1,90 @@
+name: GE19 Repair30 Repair02 shape prelock
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair30_reduced_h2_z11_reclosure.py'
+      - 'docs/ge19_repair30_repair01_execution_implementation_fail02_freeze.md'
+      - '.github/workflows/ge19-repair30-repair02-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair02 code boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/repair30_predata_reduced_h2_z11_reclosure.json)" = "264b52832e762dd2010df1eba83e5f2c1a4d8874"
+          test "$(git rev-parse HEAD:ge19/repair30_reduced_h2_z11_reclosure.py)" = "e32631bceb4ceb11037eef70b8a47b5f7622faff"
+          test "$(git rev-parse HEAD:docs/ge19_repair30_repair01_execution_implementation_fail02_freeze.md)" = "31e6febbb9684cdfd4a1a9433127611753e73102"
+
+          python3 -m py_compile ge19/repair30_reduced_h2_z11_reclosure.py
+
+          python3 - <<'PY'
+          import json
+          import ge19.repair30_reduced_h2_z11_reclosure as r30
+
+          p=json.load(open("ge19/repair30_predata_reduced_h2_z11_reclosure.json"))
+          assert p["classification"]=="GE19_REPAIR30_PREDATA_REDUCED_H2_Z11_RECLOSURE"
+          assert p["hierarchy"]["equation"]=="L_total Z11 = -M1[Z10,q10]"
+          assert p["memory_source"]["B10"]=="X10 - weighted_z10"
+          assert p["gates"]["primary128_vs_control64_Z11_state_relative_L2_max"]==0.005
+          assert p["gates"]["reduced_chi11_vs_R2_parent_relative_L2_max"]==0.005
+          assert p["stop_boundary"]["no_H4_Z21_solve_in_Repair30"] is True
+
+          s=r30.symbolic_m1_audit()
+          assert s["partial_px_identity"] and s["partial_r_identity"]
+
+          src=open("ge19/repair30_reduced_h2_z11_reclosure.py").read()
+          assert 'rho_dark*fields["delta_dark"]' in src
+          assert '(rho_dark+p_dark)*fields["theta_dark"]' in src
+          assert 'rho_dark[None,:]' not in src
+          assert '(rho_dark+p_dark)[None,:]' not in src
+          assert 'standard-sector tangent shape mismatch' in src
+          assert 'standard-sector tangent output shape mismatch' in src
+          assert 'rhs[im,2]=0.5*bg["Q_action"]*bg["a"]**3*B[im]' in src
+          assert 'rhs[im,3]=-0.5*bg["a"]**2*(1j*k)*B[im]' in src
+          print("GE19_REPAIR30_REPAIR02_STATIC_PASS")
+          PY
+
+      - name: Download and inspect frozen R2 reference shapes
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf r2ref
+          mkdir -p r2ref
+          gh run download 35747827610             --repo dvlahek/aest-memory-gravity             --name ge19_repair30_r2_reference_only             --dir r2ref
+          REF="$(find r2ref -type f -name ge19_repair28_cancellation_free_full_state_eta_tangent.npz -print -quit)"
+          test -n "$REF"
+          test "$(sha256sum "$REF" | awk '{print $1}')" = "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705"
+
+          python3 - "$REF" <<'PY'
+          import sys,numpy as np
+          z=np.load(sys.argv[1])
+          assert z["ln_a"].shape==(128,)
+          assert z["k_Mpc"].shape==(6,)
+          fields=[
+            "delta_dark","theta_dark","total_delta_rho","total_rho_plus_p_theta",
+            "phi_newtonian","psi_newtonian","alpha_aest"
+          ]
+          for name in fields:
+            a=np.asarray(z[f"R2_{name}_tangent_consensus"])
+            assert a.shape==(6,128),(name,a.shape)
+          assert np.asarray(z["R2_chi11"]).shape==(6,128)
+          print("GE19_REPAIR30_REPAIR02_REAL_R2_SHAPES_PASS")
+          PY
