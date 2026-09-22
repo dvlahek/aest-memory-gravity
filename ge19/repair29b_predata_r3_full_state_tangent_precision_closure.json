@@ -1,0 +1,101 @@
+{
+  "classification": "GE19_REPAIR29B_PREDATA_R3_FULL_STATE_TANGENT_PRECISION_CLOSURE",
+  "created_before_Repair29A_localization_result": true,
+  "created_before_Repair29B_result": true,
+  "result_informed_parent": "Frozen Repair28 FAIL only; Repair29A numerical localization values were not known when this preregistration was created.",
+  "uses_observational_data": false,
+  "purpose": "Test if the sole frozen Repair28 failure is a coarser-R1 precision effect and, if so, certify R2 as the primary complete eta-tangent representation with a targeted R3 control.",
+  "frozen_parent_chain": {
+    "Repair28_classification": "GE19_REPAIR28_CANCELLATION_FREE_FULL_STATE_ETA_TANGENT_FAIL",
+    "Repair28_run_id": 35723905248,
+    "Repair28_artifact_id": 10692716361,
+    "Repair28_only_failed_gate": "R1_even_residual_global_normalized_le_5e3",
+    "Repair28_R1_even_max": 0.006093567316834002,
+    "Repair28_R2_even_max": 0.002932307980192869,
+    "Repair28_limit": 0.005,
+    "Repair29A_selector": "Use the exact Repair29B_target_lambdas and tracked pairs produced by the already preregistered deterministic Repair29A selection rule."
+  },
+  "frozen_physics": {
+    "CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "KB": 0.0665,
+    "tauH0": 10,
+    "physical_eta": 0,
+    "signed_lambda_is_physical_eta": false,
+    "Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "forcing_primary_order": 2048,
+    "forcing_control_order": 1024,
+    "GE15_internal_state": "s=chi/Q",
+    "physical_alpha": "s-a theta/k^2"
+  },
+  "precision_ladder": {
+    "R1": {
+      "tol_perturbations_integration": 2.5e-8,
+      "perturbations_sampling_stepsize": 0.00125
+    },
+    "R2": {
+      "tol_perturbations_integration": 1.25e-8,
+      "perturbations_sampling_stepsize": 0.000625
+    },
+    "R3": {
+      "tol_perturbations_integration": 6.25e-9,
+      "perturbations_sampling_stepsize": 0.0003125
+    },
+    "R3_rule": "exact factor-2 refinement of both R2 controls"
+  },
+  "R3_execution": {
+    "base_run": true,
+    "signed_runs": "plus/minus only for lambda values selected by the frozen Repair29A rule",
+    "output_window": {
+      "a_min": 0.4,
+      "a_max": 0.8333333333333334,
+      "common_ln_a_nodes": 128
+    },
+    "interpolation": "same PCHIP-in-ln(a) representation as Repair28",
+    "primary_fields": [
+      "phi_newtonian",
+      "psi_newtonian",
+      "delta_dark",
+      "theta_dark",
+      "alpha_aest",
+      "E_aest",
+      "delta_m_native",
+      "theta_m_native",
+      "total_delta_rho",
+      "total_rho_plus_p_theta"
+    ]
+  },
+  "frozen_normalization": {
+    "R3_even_denominator": "2 |lambda| times L2 norm of the frozen Repair29A R2 consensus tangent for the same field",
+    "no_R3_consensus_refit": true,
+    "tangent_precision_reference": "Repair29A R2 same-lambda tangent for the same field"
+  },
+  "tracked_pair_rule": {
+    "pairs": "union of (R1 global-worst field/lambda), (R2 global-worst field/lambda), and every R1 primary-field/lambda pair above the frozen Repair28 0.005 even-residual limit",
+    "derived_only_from_Repair29A_predeclared_outputs": true
+  },
+  "gates": {
+    "Repair29A_provenance_and_selector_exact": true,
+    "forcing_control_relative_L2_max": 0.01,
+    "forcing_control_cosine_min": 0.9999,
+    "requested_k_relative_miss_max": 1e-12,
+    "background_grid_relative_mismatch_max": 1e-12,
+    "R3_vs_R2_same_lambda_tangent_relative_L2_max": 0.005,
+    "tracked_R3_even_residual_max": 0.005,
+    "tracked_R3_even_not_greater_than_R2": true,
+    "all_outputs_finite": true
+  },
+  "pass_classification": "GE19_REPAIR29B_R2_PRIMARY_R3_CONTROL_FULL_STATE_ETA_TANGENT_PASS",
+  "fail_classification": "GE19_REPAIR29B_R3_FULL_STATE_TANGENT_PRECISION_CLOSURE_FAIL",
+  "pass_license": {
+    "complete_eta_tangent_certified_representation": "R2 primary with targeted R3 precision control",
+    "next_step": "Separately preregister reduced H2/Z11 reclosure on the Repair22/Repair27 coordinate system.",
+    "Repair28_relabelled": false
+  },
+  "stop_boundary": {
+    "no_Repair28_threshold_change": true,
+    "no_finite_eta": true,
+    "no_reduced_Z11_solve": true,
+    "no_H4_Z21_solve": true,
+    "no_observational_claim": true
+  }
+}
