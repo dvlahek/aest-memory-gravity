@@ -1,0 +1,66 @@
+{
+  "classification": "GE19_REPAIR32A_PREDATA_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_AUDIT",
+  "created_after_Repair31_complete": true,
+  "uses_observational_data": false,
+  "result_informed_followup": true,
+  "Repair30_relabelled": false,
+  "Repair31_relabelled": false,
+  "H2_reintegration": false,
+  "H4_Z21_solve": false,
+  "frozen_inputs": {
+    "Repair31_JSON_sha256": "569ad9b16a26989fd8a9c9c02d83b77eb4afe23d9962fa56b87166d78d0ea33a",
+    "Repair31_JSON_bytes": 138692,
+    "Repair31_runner_sha256": "39382281bd351b70674ff3ab86f8c2f05506ab0a018d8afeb97ec0c1c98f14c3",
+    "Repair31_result_freeze_commit": "3e750030b6ac78d0da0503b65109abd8c36695fc"
+  },
+  "question": "Derive, rather than fit, the exact conversion between the physical CLASS eta-tangent memory forcing and the raw GE06 Euler-Lagrange residual convention used by the reduced solver, and compare it with the separately normalized raw GE05 M1 residual.",
+  "exact_symbolic_audit": {
+    "isolated_channel": "homogeneous local aether perturbation with E=udot, no spatial gradients, H=0 for coefficient isolation",
+    "GE06_reduced_aether_lagrangian_piece": "L_GE06 = a^3 K_B E^2",
+    "GE06_raw_EL_derivative_coefficient": "d L_GE06 / d udot = 2 a^3 K_B E",
+    "CLASS_physical_memory_equation": "dE/dt|mem = -Q B/(2 K_B)",
+    "GE06_raw_rhs_implied_by_CLASS": "a^3 Q B",
+    "GE05_raw_M1_aether": "M1_r = -a^3 Q B/2",
+    "Repair30_H2_rhs": "-M1_r = a^3 Q B/2",
+    "target_dictionary_ratio": "GE06_raw_rhs_implied_by_CLASS / Repair30_H2_rhs = 2 exactly"
+  },
+  "implementation_audits": [
+    "Verify GE06 source text contains the a^3 K_B E^2 normalization.",
+    "Verify GE05 source text contains the 1/4 completed-square memory normalization.",
+    "Verify v039 force builder uses -0.5*a^2*Q*B/KB.",
+    "Verify v019w runtime tangent patch declares dEprime/deta|0 = -a Q Braw/(2 KB).",
+    "Verify NL0B frozen result states the factor 1/2 is fixed by the preregistered physical action normalization."
+  ],
+  "Repair31_empirical_consistency": {
+    "aether_reference_LHS_over_frozen_RHS": 2.0002926513914643,
+    "scalar_reference_LHS_over_frozen_RHS": 2.0004430883773,
+    "exact_target": 2,
+    "max_abs_deviation_from_two": 0.001,
+    "purpose": "consistency check only; it does not determine the factor"
+  },
+  "classification_policy": {
+    "pass": "GE19_REPAIR32A_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_PASS",
+    "fail": "GE19_REPAIR32A_GE06_GE05_RAW_RESIDUAL_NORMALIZATION_DICTIONARY_FAIL",
+    "implementation_fail": "GE19_REPAIR32A_IMPLEMENTATION_FAIL"
+  },
+  "pass_requirements": [
+    "symbolic GE06 raw source implied by the frozen CLASS physical forcing simplifies exactly to a^3 Q B",
+    "symbolic GE05 -M1 simplifies exactly to a^3 Q B/2",
+    "their ratio simplifies exactly to 2",
+    "frozen implementation strings match the two independently frozen conventions",
+    "Repair31 driven-row empirical ratios each lie within 0.001 of 2"
+  ],
+  "routing_policy": {
+    "on_pass": "Preregister Repair32B corrected reduced H2/Z11 reclosure with the only physics/dictionary change M1_GE05_to_GE06_raw_scale=2. No fitted normalization is permitted.",
+    "on_fail": "Do not rerun H2; localize the exact action-normalization inconsistency.",
+    "H4_Z21_remains_blocked": true
+  },
+  "stop_boundary": {
+    "no_H2_solve": true,
+    "no_threshold_relaxation_of_Repair30": true,
+    "no_fitted_scale": true,
+    "no_H4_Z21": true,
+    "no_finite_eta": true,
+    "no_observational_claim": true
+  }
+}
