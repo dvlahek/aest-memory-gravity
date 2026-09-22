@@ -904,3 +904,54 @@ a separately preregistered q20 reconstruction rerun that changes only the first-
 Canonical project status:
 
 **Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 q20 historical FAIL; Repair25 localized the bridge discrepancy; Repair26 cancellation-free full-history bath boundary CERTIFIED; q20 NOT CERTIFIED; H4/Z21 NOT LICENSED.**
+
+
+---
+
+## Repair27 — cancellation-free-parent q20 reconstruction
+
+Classification:
+
+`GE19_REPAIR27_CANCELLATION_FREE_PARENT_Q20_RECONSTRUCTION_PASS`.
+
+Route:
+
+`CANCELLATION_FREE_PARENT_Q20_CERTIFIED`.
+
+Result-freeze commit:
+
+`514dc6b9d26d0b6b7360b7f3cbe1397371bb4baf`.
+
+Frozen local outputs:
+
+- JSON/FULL:
+  `99a2183e7088c7492f624cae2d294612380714c1d81aa7ff49cc4fcd1c62c74b`;
+- NPZ:
+  `2b1566d402e4c9e8daee8e5c7084b3da7735442b4fb604d51489b708662fd9c0`.
+
+The Repair26 cancellation-free R1 parent is used directly; the historical v0.77 trace is not used and no Repair25 fitted normalization is adopted.
+
+All inherited Repair24 gates pass without modification:
+
+- H1 X10 bridge:
+  `3.981945660904338e-11 <= 1e-10`;
+- G2 Nx256/Nx512:
+  `3.4518767056924556e-15 <= 1e-10`;
+- q20 Nq1024/Nq2048:
+  `8.23684251511779e-05 <= 1e-2`;
+- q20 Nt64/Nt128:
+  `3.2441966579873734e-05 <= 5e-3`;
+- z10 Nt64/Nt128:
+  `2.567987045993896e-05 <= 5e-3`.
+
+All outputs are finite and all cases complete.
+
+Therefore q20 is now certified on the frozen window-local particular low-mode scope.
+
+Repair24 remains historical FAIL.
+
+Repair27 licenses a separately preregistered H4/Z21 construction.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair23 bath bridge PASS; Repair24 historical q20 FAIL; Repair25 localization complete; Repair26 cancellation-free first-order bath boundary CERTIFIED; Repair27 q20 CERTIFIED; H4/Z21 CONSTRUCTION LICENSED BUT NOT YET CERTIFIED.**
