@@ -33,13 +33,20 @@ jobs:
 
           assert blob("docs/ge19_repair24_q20_construction_result_freeze.md")=="3edde5ac2b751ce78bc42de5a6843934804f9b68"
           assert blob("ge19/repair25_predata_first_order_bath_boundary_dictionary_audit.json")=="1e7f25eba5a4c8b297b563edfe6f9c4f276ec6c9"
-          assert blob("ge19/repair25_first_order_bath_boundary_dictionary_audit.py")=="d685dbbb0f7a64f5f80c43559bf19c55b64ca7b1"
+          assert blob("ge19/repair25_amendment01_complete_boundary_dictionary_diagnostics.json")=="23c85b181fdb095e7c91d2601cee251878b57b5c"
+          assert blob("ge19/repair25_first_order_bath_boundary_dictionary_audit.py")=="1827b1a03268964043be9f7b13fdc704f54d4d05"
           assert blob("ge19/repair07_window_retarded_reduced_h3_z20_particular.py")=="e34d28a2062c748f48bc82fa928844b02631de25"
           assert blob("ge09/repair01_dense_accepted_step_local_jet_bridge.py")=="509fa9d7bb323034bbf77b26792f35e1cc2ff7c7"
 
           pre=json.load(open("ge19/repair25_predata_first_order_bath_boundary_dictionary_audit.json"))
+          amend=json.load(open("ge19/repair25_amendment01_complete_boundary_dictionary_diagnostics.json"))
           assert pre["classification"]=="GE19_REPAIR25_PREDATA_FIRST_ORDER_BATH_BOUNDARY_DICTIONARY_AUDIT"
           assert pre["created_before_result"] is True
+          assert amend["classification"]=="GE19_REPAIR25_PREDATA_AMENDMENT01_COMPLETE_BOUNDARY_DICTIONARY_DIAGNOSTICS"
+          assert amend["created_before_result"] is True
+          assert amend["science_result_exists_before_amendment"] is False
+          assert amend["unchanged"]["routing_logic_unchanged"] is True
+          assert amend["requires_new_prelock_before_science"] is True
           assert pre["no_q20_rerun"] is True
           assert pre["frozen_thresholds"]["Repair22_X10_vs_GE15_relative_L2_max"]==1e-8
           assert pre["frozen_thresholds"]["v077_vs_GE15_direct_relative_L2_compatible_max"]==1e-3
@@ -67,6 +74,15 @@ jobs:
           assert "solve_z20_chunk" not in src
           assert "q20_rerun_performed" in src
           assert '"Z21_licensed":False' in src.replace(" ","")
+          assert "def complex_ls_scale" in src
+          assert "Q_trace_vs_GE15_relative_L2" in src
+          assert "per_mode_complex_dictionary" in src
+          for factor in [
+              '"1/a"','"i*k"','"-i*k"','"Q"','"1/Q"','"H0"',
+              '"c_light/H0"','"2"','"1/2"','"i"','"-i"',
+          ]:
+              assert factor in src,factor
+          assert '"routing_or_threshold_changed":False' in src.replace(" ","")
           for route in [
               "LEGACY_V077_BOUNDARY_TRACE_INCOMPATIBLE_GE15_CERTIFIED",
               "GE19_LOCAL_DICTIONARY_MISMATCH",

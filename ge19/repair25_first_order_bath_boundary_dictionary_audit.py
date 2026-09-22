@@ -88,17 +88,57 @@ def complex_json(z):
     return [float(z.real),float(z.imag)]
 
 
+def complex_record(z):
+    z=complex(z)
+    return {
+        "complex":complex_json(z),
+        "magnitude":float(abs(z)),
+        "phase_rad":float(np.angle(z)),
+    }
+
+
+def complex_ratio_record(num,den):
+    num=complex(num); den=complex(den)
+    if abs(den)<=TINY:
+        return {"defined":False}
+    out={"defined":True}
+    out.update(complex_record(num/den))
+    return out
+
+
+def complex_ls_scale(x,y):
+    """Least-squares c for y ~= c*x with complex amplitudes."""
+    xx=np.asarray(x,complex).ravel()
+    yy=np.asarray(y,complex).ravel()
+    den=np.vdot(xx,xx)
+    if abs(den)<=TINY:
+        return 0.0+0.0j
+    return complex(np.vdot(xx,yy)/den)
+
+
+def complex_shape_coherence(x,y):
+    xx=np.asarray(x,complex).ravel()
+    yy=np.asarray(y,complex).ravel()
+    den=np.linalg.norm(xx)*np.linalg.norm(yy)
+    if den<=TINY:
+        return 0.0
+    return float(abs(np.vdot(xx,yy))/den)
+
+
 def v077_interps(c4,trace):
     rows=c4.read_trace(trace)
     histories,kmiss,tmiss=c4.select_and_align(rows)
     out=[]
+    qout=[]
     for hist in histories:
         x=np.log(np.asarray([q["a"] for q in hist],float))
         y=np.asarray([q["chi"]/q["a"] for q in hist],float)
+        q=np.asarray([q["Q"] for q in hist],float)
         if np.any(np.diff(x)<=0):
             raise RuntimeError("v0.77 ln(a) grid not increasing")
         out.append(PchipInterpolator(x,y,extrapolate=False))
-    return histories,out,float(kmiss),float(tmiss)
+        qout.append(PchipInterpolator(x,q,extrapolate=False))
+    return histories,out,qout,float(kmiss),float(tmiss)
 
 
 def ge15_modes(g9,dense):
@@ -117,13 +157,31 @@ def ge15_scalar_drive(g9,interp,x,k):
     return chi/a,st
 
 
-def candidate_factor(name,k,a):
-    if name=="1": return np.ones_like(a,float)
-    if name=="k": return np.full_like(a,float,k)
-    if name=="1/k": return np.full_like(a,float,1.0/k)
-    if name=="a": return np.asarray(a,float)
-    if name=="k/a": return k/np.asarray(a,float)
-    if name=="a/k": return np.asarray(a,float)/k
+def candidate_factor(name,k,a,Q,H0,c_over_H0):
+    a=np.asarray(a,float)
+    Q=np.asarray(Q,float)
+    one=np.ones(a.shape,dtype=complex)
+    if name=="1": return one
+    if name=="-1": return -one
+    if name=="a": return a.astype(complex)
+    if name=="1/a": return (1.0/a).astype(complex)
+    if name=="k": return np.full(a.shape,k,dtype=complex)
+    if name=="1/k": return np.full(a.shape,1.0/k,dtype=complex)
+    if name=="i*k": return np.full(a.shape,1j*k,dtype=complex)
+    if name=="-i*k": return np.full(a.shape,-1j*k,dtype=complex)
+    if name=="i*k/a": return (1j*k/a).astype(complex)
+    if name=="-i*k/a": return (-1j*k/a).astype(complex)
+    if name=="a/(i*k)": return (a/(1j*k)).astype(complex)
+    if name=="Q": return Q.astype(complex)
+    if name=="1/Q": return (1.0/Q).astype(complex)
+    if name=="H0": return np.full(a.shape,H0,dtype=complex)
+    if name=="c_light/H0": return np.full(a.shape,c_over_H0,dtype=complex)
+    if name=="2": return 2.0*one
+    if name=="1/2": return 0.5*one
+    if name=="i": return 1j*one
+    if name=="-i": return -1j*one
+    if name=="k/a": return (k/a).astype(complex)
+    if name=="a/k": return (a/k).astype(complex)
     raise KeyError(name)
 
 
@@ -182,7 +240,7 @@ def main():
     c4=load_module(ROOT/"nl1c4/expanding_memory_source_trajectory.py","c4r25")
 
     modes,g15,km15=ge15_modes(g9,req["dense"])
-    vhist,v77,km77,tm77=v077_interps(c4,vtrace)
+    vhist,v77,vQ77,km77,tm77=v077_interps(c4,vtrace)
     z22=np.load(req["r22n"])
     z13=np.load(req["r13n"])
 
@@ -207,6 +265,7 @@ def main():
     alpha0=np.empty(len(g9.K_REQ),float)
     theta0=np.empty(len(g9.K_REQ),float)
     xv0=np.empty(len(g9.K_REQ),float)
+    Qv0=np.empty(len(g9.K_REQ),float)
     for i,k in enumerate(g9.K_REQ):
         xx,st=ge15_scalar_drive(g9,g15[i],[x0],float(k))
         xg0[i]=float(xx[0])
@@ -214,6 +273,7 @@ def main():
         alpha0[i]=float(st["alpha_aest"][0])
         theta0[i]=float(st["theta_dark"][0])
         xv0[i]=float(v77[i](x0))
+        Qv0[i]=float(vQ77[i](x0))
 
     # Algebraic GE09 -> GE19 reference identity on the exact a=0.4 state.
     refX=np.empty(len(g9.K_REQ),complex)
@@ -228,6 +288,12 @@ def main():
     algebraic_target=gradfac*xg0
     alg_rel=rel_l2(refX,algebraic_target)
     alg_point=aor(refX,algebraic_target)
+    v077_X0=gradfac*xv0
+    ge15_X0=algebraic_target
+    init_complex_scale=complex_ls_scale(ge15_X0,v077_X0)
+    init_complex_fit_resid=rel_l2(v077_X0,init_complex_scale*ge15_X0)
+    q_trace_ge15_rel=rel_l2(Qv0,Qg0)
+    q_trace_ge15_point=aor(Qv0,Qg0)
 
     # Repair22 on-shell X10 at the first sample for each reduced-C envelope.
     perC=[]
@@ -249,15 +315,35 @@ def main():
         q_rel_max=max(q_rel_max,qrel)
         ge19_gl_max=max(ge19_gl_max,gl)
         ge19_point_max=max(ge19_point_max,pp)
+        c_g15_g19=complex_ls_scale(X,ge15_X0)
+        c_v77_g19=complex_ls_scale(X,v077_X0)
+        complex_modes=[]
+        for i,k in enumerate(g9.K_REQ):
+            complex_modes.append({
+                "mode_index":i,
+                "k_Mpc_inv":float(k),
+                "v077_transported_X":complex_record(v077_X0[i]),
+                "GE15_reference_X":complex_record(ge15_X0[i]),
+                "GE19_on_shell_X":complex_record(X[i]),
+                "ratio_v077_over_GE15":complex_ratio_record(v077_X0[i],ge15_X0[i]),
+                "ratio_GE15_over_GE19":complex_ratio_record(ge15_X0[i],X[i]),
+                "ratio_v077_over_GE19":complex_ratio_record(v077_X0[i],X[i]),
+            })
         perC.append({
             "C":tag,
             "Q_action_at_a0":float(bg["Q_action"][0]),
             "Q_action_over_GE15_Q_minus_1_abs_max":qrel,
+            "Q_action_over_v077_Q_minus_1_abs_max":float(np.max(np.abs(bg["Q_action"][0]/Qv0-1.0))),
             "Repair22_X10_vs_GE15_grad_chi_over_a_relative_L2":gl,
             "Repair22_X10_vs_GE15_grad_chi_over_a_pointwise_abs_or_rel_max":pp,
+            "best_complex_scale_GE15_eq_c_GE19":complex_record(c_g15_g19),
+            "best_complex_scale_GE15_eq_c_GE19_postfit_relative_L2":rel_l2(ge15_X0,c_g15_g19*X),
+            "best_complex_scale_v077_eq_c_GE19":complex_record(c_v77_g19),
+            "best_complex_scale_v077_eq_c_GE19_postfit_relative_L2":rel_l2(v077_X0,c_v77_g19*X),
             "per_mode_scalar_X10_over_gradfac":[complex_json(z) for z in scalar],
             "per_mode_scalar_over_GE15":[complex_json(scalar[i]/xg0[i]) for i in range(len(xg0))],
             "per_mode_phase_difference_rad":[float(np.angle(X[i]/algebraic_target[i])) for i in range(len(X))],
+            "per_mode_complex_dictionary":complex_modes,
         })
 
     # Exact-surface v0.77 vs GE15.
@@ -271,6 +357,12 @@ def main():
             "v077_chi_over_a":float(xv0[i]),
             "GE15_chi_over_a":float(xg0[i]),
             "v077_over_GE15":float(ratio),
+            "Q_trace":float(Qv0[i]),
+            "Q_GE15":float(Qg0[i]),
+            "Q_trace_over_GE15":float(Qv0[i]/Qg0[i]),
+            "v077_transported_X":complex_record(v077_X0[i]),
+            "GE15_reference_X":complex_record(ge15_X0[i]),
+            "complex_ratio_v077_over_GE15":complex_ratio_record(v077_X0[i],ge15_X0[i]),
             "abs_or_relative_error":float(min(abs(xv0[i]-xg0[i]),abs(xv0[i]-xg0[i])/max(abs(xv0[i]),abs(xg0[i]),TINY))),
         })
     init_v77_rel=rel_l2(xv0,xg0)
@@ -290,16 +382,23 @@ def main():
 
     G=np.empty((len(g9.K_REQ),NCOMMON),float)
     V=np.empty_like(G)
+    QG=np.empty_like(G)
+    QV=np.empty_like(G)
     per_mode=[]
     fit_scales=[]
     fit_resids=[]
     fit_cos=[]
     for i,k in enumerate(g9.K_REQ):
-        G[i],_=ge15_scalar_drive(g9,g15[i],xc,float(k))
+        G[i],stc=ge15_scalar_drive(g9,g15[i],xc,float(k))
+        QG[i]=np.asarray(stc["Q"],float)
         V[i]=np.asarray(v77[i](xc),float)
+        QV[i]=np.asarray(vQ77[i](xc),float)
         c=real_ls_scale(G[i],V[i])
         rr=rel_l2(V[i],c*G[i])
         co=cosine(G[i],V[i])
+        gx=gradfac[i]*G[i]
+        vx=gradfac[i]*V[i]
+        ccx=complex_ls_scale(gx,vx)
         fit_scales.append(c); fit_resids.append(rr); fit_cos.append(co)
         per_mode.append({
             "mode_index":i,
@@ -310,6 +409,11 @@ def main():
             "best_scale_v077_eq_c_GE15":c,
             "best_scale_postfit_relative_L2":rr,
             "temporal_shape_cosine":co,
+            "best_complex_scale_v077_X_eq_c_GE15_X":complex_record(ccx),
+            "best_complex_scale_postfit_relative_L2":rel_l2(vx,ccx*gx),
+            "complex_shape_coherence":complex_shape_coherence(gx,vx),
+            "Q_trace_vs_GE15_relative_L2":rel_l2(QV[i],QG[i]),
+            "Q_trace_vs_GE15_pointwise_abs_or_rel_max":aor(QV[i],QG[i]),
         })
 
     vdirect=rel_l2(V,G)
@@ -317,19 +421,34 @@ def main():
     cglobal=real_ls_scale(G,V)
     global_fit=rel_l2(V,cglobal*G)
     global_cos=cosine(G,V)
+    GX=gradfac[:,None]*G
+    VX=gradfac[:,None]*V
+    cglobal_complex=complex_ls_scale(GX,VX)
+    global_complex_fit=rel_l2(VX,cglobal_complex*GX)
+    q_window_rel=rel_l2(QV,QG)
+    q_window_point=aor(QV,QG)
 
-    # Candidate deterministic shape factors; always refit one global scalar,
-    # then report residual only. No candidate is adopted by this diagnostic.
+    # Explicit frozen-convention factor audit. These are diagnostics only:
+    # no factor is adopted and routing remains on the original frozen gates.
     candidate={}
-    for name in ("1","k","1/k","a","k/a","a/k"):
-        F=np.empty_like(G)
+    candidate_names=(
+        "1","-1","a","1/a","k","1/k","i*k","-i*k",
+        "i*k/a","-i*k/a","a/(i*k)","Q","1/Q","H0",
+        "c_light/H0","2","1/2","i","-i","k/a","a/k",
+    )
+    c_over_H0=(float(c4.C_M_S)/1000.0)/float(c4.H0)
+    for name in candidate_names:
+        F=np.empty(GX.shape,dtype=complex)
         for i,k in enumerate(g9.K_REQ):
-            F[i]=candidate_factor(name,float(k),ac)*G[i]
-        c=real_ls_scale(F,V)
+            F[i]=candidate_factor(
+                name,float(k),ac,QG[i],float(c4.H0),c_over_H0
+            )*GX[i]
+        cc=complex_ls_scale(F,VX)
         candidate[name]={
-            "best_global_scale":c,
-            "postfit_relative_L2":rel_l2(V,c*F),
-            "shape_cosine":cosine(F,V),
+            "exact_factor_direct_relative_L2":rel_l2(VX,F),
+            "exact_factor_complex_shape_coherence":complex_shape_coherence(F,VX),
+            "best_additional_complex_scale":complex_record(cc),
+            "postfit_relative_L2_after_additional_scale":rel_l2(VX,cc*F),
         }
 
     # k-power trend in the per-mode fitted scales.
@@ -381,6 +500,10 @@ def main():
             "Repair22_X10_vs_GE15_pointwise_abs_or_rel_max":ge19_point_max,
             "v077_vs_GE15_direct_relative_L2":init_v77_rel,
             "v077_vs_GE15_pointwise_abs_or_rel_max":init_v77_point,
+            "Q_trace_vs_GE15_relative_L2":q_trace_ge15_rel,
+            "Q_trace_vs_GE15_pointwise_abs_or_rel_max":q_trace_ge15_point,
+            "best_global_complex_scale_v077_X_eq_c_GE15_X":complex_record(init_complex_scale),
+            "best_global_complex_scale_postfit_relative_L2":init_complex_fit_resid,
             "per_mode_v077_GE15":init_rows,
             "per_C_Repair22_GE15":perC,
         },
@@ -391,6 +514,10 @@ def main():
             "global_shape_cosine":global_cos,
             "best_global_scale_v077_eq_c_GE15":cglobal,
             "best_global_scale_postfit_relative_L2":global_fit,
+            "best_global_complex_scale_v077_X_eq_c_GE15_X":complex_record(cglobal_complex),
+            "best_global_complex_scale_postfit_relative_L2":global_complex_fit,
+            "Q_trace_vs_GE15_relative_L2":q_window_rel,
+            "Q_trace_vs_GE15_pointwise_abs_or_rel_max":q_window_point,
             "per_mode":per_mode,
             "per_mode_scale_abs_loglog_k_slope":k_slope,
             "per_mode_scale_abs_loglog_k_intercept":k_intercept,
@@ -405,6 +532,13 @@ def main():
             "all_per_mode_shape_cosines_ge_0p9999":bool(min(fit_cos)>=COS_MIN),
         },
         "routing":{"next_route":route},
+        "diagnostic_amendment01":{
+            "expanded_complex_amplitude_ratio_phase_reporting":True,
+            "expanded_complex_least_squares_fits":True,
+            "explicit_Q_trace_Q_GE15_Q_action_audit":True,
+            "expanded_frozen_convention_factor_tests":True,
+            "routing_or_threshold_changed":False,
+        },
         "next_step_constraint":"No fitted normalization is adopted here. Any replacement of the legacy v0.77 boundary must be derived and preregistered separately before q20 is rerun.",
         "q20_rerun_performed":False,
         "Z21_licensed":False,

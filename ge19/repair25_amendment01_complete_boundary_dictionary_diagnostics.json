@@ -1,0 +1,41 @@
+{
+  "classification": "GE19_REPAIR25_PREDATA_AMENDMENT01_COMPLETE_BOUNDARY_DICTIONARY_DIAGNOSTICS",
+  "created_before_result": true,
+  "parent_predata_classification": "GE19_REPAIR25_PREDATA_FIRST_ORDER_BATH_BOUNDARY_DICTIONARY_AUDIT",
+  "reason": "Pre-science completeness audit found that the locked Repair25 implementation covered the frozen routing gates but did not yet emit every explicitly requested convention diagnostic: raw complex amplitudes/magnitudes/phases/ratios, complex least-squares scales, v0.77 Q_trace closure, and the full declared frozen-convention factor set.",
+  "science_result_exists_before_amendment": false,
+  "scope": "Diagnostic-output completion only. No physical equation, parent artifact, comparison surface, interpolation rule, frozen threshold, routing rule, or claim boundary is changed.",
+  "unchanged": {
+    "a_initial": 0.4,
+    "common_window_nodes": 128,
+    "Q_action_vs_GE15_relative_max": 1e-10,
+    "GE15_algebraic_X_identity_relative_max": 1e-10,
+    "Repair22_X10_vs_GE15_relative_L2_max": 1e-8,
+    "Repair22_X10_vs_GE15_pointwise_abs_or_rel_max": 1e-6,
+    "v077_vs_GE15_direct_relative_L2_compatible_max": 1e-3,
+    "v077_vs_GE15_best_global_scale_residual_compatible_max": 1e-3,
+    "per_mode_fit_shape_cosine_compatible_min": 0.9999,
+    "routing_logic_unchanged": true
+  },
+  "added_diagnostics": [
+    "At a=0.4 report raw positive-mode complex amplitudes for transported v0.77, GE15 reference, and Repair22/GE19 on-shell X10, including real/imaginary parts, magnitude, phase, and the complex ratios v0.77/GE15, GE15/GE19, and v0.77/GE19.",
+    "Report global complex least-squares factors c=argmin||A-cB||_2 and post-fit residuals at the exact surface where meaningful.",
+    "On the common overlap window report global and per-mode complex least-squares factors and phase-aware complex shape coherence.",
+    "Audit v0.77 Q_trace against GE15 Q at a=0.4 and on the overlap window, and audit Q_action against both representations at a=0.4.",
+    "Explicitly test frozen-convention factors without adopting them: 1, -1, a, 1/a, k, 1/k, i*k, -i*k, i*k/a, -i*k/a, a/(i*k), Q, 1/Q, H0, c_light/H0, 2, 1/2, i, -i, k/a, a/k.",
+    "For each candidate factor report the exact-factor direct residual before any additional fit, plus an optional best additional complex scale only as a shape diagnostic."
+  ],
+  "unit_conventions_for_diagnostic_constants": {
+    "H0": "Frozen NL1C4 H0=67.3324639084866 km s^-1 Mpc^-1.",
+    "c_light_over_H0": "Use (C_M_S/1000)/H0, giving the conventional Mpc-valued c/H0 diagnostic factor from the frozen NL1C4 constants."
+  },
+  "anti_tuning": [
+    "Do not alter any frozen Repair25 threshold.",
+    "Do not alter routing based on newly added diagnostics.",
+    "Do not adopt any fitted or candidate factor in Repair25.",
+    "Do not rerun q20.",
+    "Do not run H4/Z21."
+  ],
+  "historical_prelock_preserved": true,
+  "requires_new_prelock_before_science": true
+}
