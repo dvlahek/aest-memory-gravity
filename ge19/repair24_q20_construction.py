@@ -315,16 +315,32 @@ def reconstruct_backgrounds(r7,r11,r13,results_dir,r13npz):
     lamb=results_dir/"ge15_R1_cli_background.dat"
     bgs={}
     controls=[]
-    for nt,label in ((NT_PRIMARY,"primary"),(NT_CONTROL,"control")):
+    for nt in (NT_PRIMARY,NT_CONTROL):
         base,_,_=r7.build_ge15_reference(dense,nt)
         rho=r11.interp_lambda(lamb,base["x"])
         for tag in r7.C_TAGS:
             bg,_=r13.reduced_background(r7,base,tag,rho)
-            href=np.asarray(r13npz[f"{tag}_H_reduced_{label}"],float)
-            hm=rel_l2(bg["H"],href)
-            controls.append({"Nt":nt,"C":tag,"H_vs_Repair13_relative_L2":hm})
-            if hm>1e-12:
-                raise RuntimeError(f"background H does not reproduce Repair13: Nt={nt} C={tag} rel={hm}")
+            row={
+                "Nt":nt,
+                "C":tag,
+                "construction":"frozen Repair13 reduced_background on target grid",
+            }
+            # Repair13's own frozen primary grid is Nt64, not Nt128.
+            # Therefore only the Repair24 Nt64 control can be compared
+            # elementwise to the stored Repair13 primary H array.
+            if nt==NT_CONTROL:
+                href=np.asarray(r13npz[f"{tag}_H_reduced_primary"],float)
+                hm=rel_l2(bg["H"],href)
+                row["H_vs_Repair13_Nt64_primary_relative_L2"]=hm
+                if hm>1e-12:
+                    raise RuntimeError(
+                        f"background H does not reproduce Repair13 Nt64 primary: "
+                        f"Nt={nt} C={tag} rel={hm}"
+                    )
+            else:
+                row["H_vs_Repair13_Nt64_primary_relative_L2"]=None
+                row["direct_array_reference_available"]=False
+            controls.append(row)
             bgs[(nt,tag)]=bg
     return bgs,controls
 
