@@ -25,7 +25,7 @@ jobs:
           set -euo pipefail
 
           test "$(git rev-parse HEAD:ge19/repair38_predata_frozen_source_radau_substep_localization.json)" = "41a2925cf4f705c4bf8418cbcc2cee48af4a673d"
-          test "$(git rev-parse HEAD:ge19/repair38_frozen_source_radau_substep_localization.py)" = "fd0c80f73f0e1b485ecb895566bef078a12ba957"
+          test "$(git rev-parse HEAD:ge19/repair38_frozen_source_radau_substep_localization.py)" = "fbab2cd31cfcb69c21c3e066e6d8d17844369d32"
           test "$(git rev-parse HEAD:docs/ge19_repair37_valid_fail_propagation_order_localization_freeze.md)" = "d120915221b5fc1b0860c682cb8edac876571e83"
 
           python3 -m py_compile ge19/repair38_frozen_source_radau_substep_localization.py
@@ -77,6 +77,12 @@ jobs:
           assert 'r7._constraint_backward_error' in src
           assert 'Z21_window_local_particular_certified":False' in src
           assert 'lensing_licensed":False' in src
+          # Repair38 repair01: every c2=1 stage must remain on-domain.
+          assert 'if isub==substeps-1' in src
+          assert 'float(x[i+1])' in src
+          assert 'x2=xr' in src
+          assert 'hs=float(xr-xl)' in src
+          assert 'x2=float(xl+c2*h)' not in src
 
           # Frozen two-stage Radau IIA tableau: exact order-3 conditions.
           A=np.asarray([[5/12,-1/12],[3/4,1/4]],float)
