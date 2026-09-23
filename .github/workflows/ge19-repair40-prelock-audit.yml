@@ -1,0 +1,128 @@
+name: GE19 Repair40 piecewise stage-source prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair40_predata_piecewise_stage_source_decomposition.json'
+      - 'ge19/repair40_piecewise_stage_source_decomposition.py'
+      - '.github/workflows/ge19-repair40-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair40 piecewise-only contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair40_predata_piecewise_stage_source_decomposition.json)" = "05b34db63552d8e0c6be9ee90d705770350bd567"
+          test "$(git rev-parse HEAD:ge19/repair40_piecewise_stage_source_decomposition.py)" = "a8801d2b517540b6407a12ca2ff42774ea2b84b3"
+          test "$(git rev-parse HEAD:docs/ge19_repair39_valid_stage_source_dependence_freeze.md)" = "1e93a0111d385fb062fb1eff2f34af6d722487e1"
+
+          python3 -m py_compile ge19/repair40_piecewise_stage_source_decomposition.py
+          python3 ge19/repair40_piecewise_stage_source_decomposition.py --help >/tmp/r40_help.txt
+          grep -q -- "--results-dir" /tmp/r40_help.txt
+          grep -q -- "--json-out" /tmp/r40_help.txt
+          grep -q -- "--npz-out" /tmp/r40_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import ge19.repair40_piecewise_stage_source_decomposition as r40
+          import ge19.repair39_frozen_source_stage_interpolation_localization as r39
+          import ge19.repair38_frozen_source_radau_substep_localization as r38
+
+          p=json.load(open("ge19/repair40_predata_piecewise_stage_source_decomposition.json"))
+          assert p["classification"]=="GE19_REPAIR40_PREDATA_PIECEWISE_STAGE_SOURCE_DECOMPOSITION"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair39"]["route"]=="STAGE_SOURCE_REPRESENTATION_DEPENDENCE_CONFIRMED"
+          assert p["frozen_Repair39"]["relabelled"] is False
+          assert p["frozen_Repair37"]["relabelled"] is False
+          assert p["unchanged_contract"]["H4_source_nodes_not_recomputed"] is True
+          assert p["unchanged_contract"]["projected_p0_not_resolved"] is True
+          assert p["unchanged_contract"]["internal_substeps_per_Nt128_interval"]==4
+          assert p["unchanged_contract"]["science_shift_target_report_only"]==1e-6
+          assert p["unchanged_contract"]["threshold_relaxed"] is False
+          assert p["additional_component"]=="INTERPOLATION_COUPLING"
+          assert p["diagnostic_quantities"]["no_dominance_threshold"] is True
+          assert p["stop_boundary"]["Z21_certification_forbidden_in_Repair40"] is True
+          assert p["stop_boundary"]["no_lensing_claim"] is True
+
+          assert r40.R39_JSON_SHA=="b058d4acb51dd4e0b964fcccb306b7eb105466941b5e0900ae0c84a29374624e"
+          assert r40.R39_NPZ_SHA=="0bf5b0c2f26cc06b98eab1fb326757ed409cf91c86c23e995251dfd32571c451"
+          assert r40.SUBSTEPS==4
+          assert r40.ACTIVE_COUNT==23850
+          assert r40.PIECES==(
+              "2Q_GE06_cross",
+              "2Q_GE07_cross",
+              "2Q_Lambda_cross",
+              "2DY2",
+              "2M1_GE05_mapped",
+              "2M2_GE05_mapped",
+          )
+          assert r40.COUPLING=="INTERPOLATION_COUPLING"
+          assert r40.COMPONENTS==r40.PIECES+(r40.COUPLING,)
+
+          src=open("ge19/repair40_piecewise_stage_source_decomposition.py").read()
+
+          # No H4 physics/source node reconstruction is allowed in Repair40.
+          for bad in (
+              "build_source_config(",
+              "q_cross_direct(",
+              "dy2_real(",
+              "memory_m2_chunk(",
+              "reconstruct_m2_source(",
+              "build_bath_parent_config(",
+              "construct_configuration(",
+          ):
+              assert bad not in src,bad
+
+          # Frozen Repair37 piece arrays are the only piece inputs.
+          fp=inspect.getsource(r40.frozen_piece_by_beta)
+          assert 'primary_{tag}_beta{ib}_{piece}_main' in fp
+          assert 'primary_{tag}_beta{ib}_{piece}_constraint' in fp
+
+          # Exact decomposition includes the nonlinear interpolation coupling.
+          ms=inspect.getsource(r40.make_source_bundle)
+          assert 'r39.source_interp(xgrid,total_by_beta,m,"PCHIP")' in ms
+          assert 'r39.source_interp(xgrid,total_by_beta,m,"AKIMA")' in ms
+          assert 'coupling_rhs=_sub(full_delta_rhs,sum_piece_rhs)' in ms
+          assert 'coupling_con=_sub(full_delta_con,sum_piece_con)' in ms
+
+          # Every propagation uses the frozen factor-4 endpoint-safe Repair38 march.
+          rv=inspect.getsource(r40.run_variant)
+          assert 'r38.radau2_integrate_substepped' in rv
+          assert 'SUBSTEPS' in rv
+          assert 'r38.shift_trace_from_canonical' in rv
+          prop=inspect.getsource(r38.radau2_integrate_substepped)
+          assert 'if isub==substeps-1' in prop
+          assert 'float(x[i+1])' in prop
+          assert 'x2=xr' in prop
+
+          # Baseline/full reproduction, source closure and Z21 linear response
+          # closure must gate interpretation.
+          main=inspect.getsource(r40.main)
+          assert 'PCHIP_baseline_Z21_vs_Repair39_relative_L2_le_1e11' in main
+          assert 'AKIMA_full_Z21_vs_Repair39_relative_L2_le_1e11' in main
+          assert 'stage_source_decomposition_closure_relative_L2_le_1e12' in main
+          assert 'propagated_Z21_response_decomposition_closure_relative_L2_le_1e9' in main
+          assert '"Z21_window_local_particular_certified":False' in main
+          assert '"lensing_licensed":False' in main
+
+          # Follow-up target is deterministic ranking, not a tuned threshold.
+          assert 'largest_Z21_response_component' in main
+          assert 'largest_shift_metric_effect_component' in main
+          assert 'mandatory_followup_targets' in main
+
+          print("GE19_REPAIR40_PRELOCK_PASS")
+          PY
