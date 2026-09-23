@@ -1,0 +1,128 @@
+name: GE19 Repair36 Lambda-complete H4 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair36_predata_lambda_complete_h4_z21_reclosure.json'
+      - 'ge19/repair36_lambda_complete_h4_z21_reclosure.py'
+      - '.github/workflows/ge19-repair36-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair36 contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair36_predata_lambda_complete_h4_z21_reclosure.json)" = "89ec97f3b3e92d1077c9faf174a308ea73dce339"
+          test "$(git rev-parse HEAD:ge19/repair36_lambda_complete_h4_z21_reclosure.py)" = "cf2caafd5ae2399cd3e6f6db7716aece20e8bb6c"
+          test "$(git rev-parse HEAD:docs/ge19_repair35_h4_z21_valid_fail_lambda_omission_freeze.md)" = "578510ab2cf270edc518f0cbbe90c8e0ef50f4cd"
+
+          python3 -m py_compile ge19/repair36_lambda_complete_h4_z21_reclosure.py
+          python3 ge19/repair36_lambda_complete_h4_z21_reclosure.py --help >/tmp/r36_help.txt
+          grep -q -- "--repair26-trace" /tmp/r36_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import numpy as np
+          import sympy as sp
+          import ge19.repair11_lambda_inclusive_reduced_h1_reclosure as r11
+          import ge19.repair14_self_consistent_reduced_h3_z20_particular as r14
+          import ge19.repair35_direct_bilinear_matched_shift_h4_z21 as r35
+          import ge19.repair36_lambda_complete_h4_z21_reclosure as r36
+
+          p=json.load(open("ge19/repair36_predata_lambda_complete_h4_z21_reclosure.json"))
+          assert p["classification"]=="GE19_REPAIR36_PREDATA_LAMBDA_COMPLETE_H4_Z21_RECLOSURE"
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["unchanged_H4"]["GE05_to_GE06_raw_residual_scale"]==2.0
+          assert p["unchanged_H4"]["fitted_normalization"] is False
+          assert p["stop_boundary"]["no_threshold_relaxation"] is True
+
+          # Frozen Repair11 linear Lambda matrix identity.
+          a,rho=sp.symbols("a rho", positive=True, real=True)
+          # Numerical implementation coefficients are exact by inspection of the frozen helper.
+          C=r11.lambda_c1_matrix(0.7,0.2)
+          assert C.shape==(16,10)
+          assert C[4,2]==-18.0*0.2*0.7**2
+          assert C[6,0]==-18.0*0.2*0.7**2
+          assert C[6,2]==-36.0*0.2*0.7
+          assert np.max(np.abs(C[10:14]))==0.0
+
+          # Exact Repair14 Lambda bilinear polarization identity.
+          N0,S0,N1,S1,aa,rr=sp.symbols("N0 S0 N1 S1 aa rr", real=True)
+          N,S=sp.symbols("N S", real=True)
+          qN=-36*rr*aa*S**2
+          qI=-72*rr*aa*N*S-36*rr*S**2
+          directN=-36*rr*aa*S0*S1
+          directI=-36*rr*aa*(N0*S1+N1*S0)-36*rr*S0*S1
+          polN=sp.expand((
+              qN.subs({N:N0+N1,S:S0+S1})
+              -qN.subs({N:N0-N1,S:S0-S1})
+          )/4)
+          polI=sp.expand((
+              qI.subs({N:N0+N1,S:S0+S1})
+              -qI.subs({N:N0-N1,S:S0-S1})
+          )/4)
+          assert sp.simplify(directN-polN)==0
+          assert sp.simplify(directI-polI)==0
+          assert sp.simplify(directN-directN.xreplace({S0:S1,S1:S0}))==0
+          swapI=-36*rr*aa*(N1*S0+N0*S1)-36*rr*S1*S0
+          assert sp.simplify(directI-swapI)==0
+
+          src=open("ge19/repair36_lambda_complete_h4_z21_reclosure.py").read()
+          assert 'r11.install_lambda_operator(r7,lambda_by_bg)' in src
+          assert 'bg["rho_lambda_action"]' in src
+          assert '"2Q_Lambda_cross"' in src
+          assert 'lambda_cross_direct' in src
+          assert 'r14.lambda_c2_equation_source' in src
+          assert 'Q_lambda_direct_vs_exact_polarization_relative_L2_le_1e12' in src
+          assert 'Q_lambda_direct_symmetry_relative_L2_le_1e12' in src
+
+          # Repair35 numerical/science machinery must otherwise stay unchanged.
+          for name in (
+              "build_direct_bilinear_generators",
+              "q_cross_direct",
+              "q2_direction_parts",
+              "q_cross_balanced_report_only",
+              "dy2_real",
+              "m1_mapped_fourier",
+              "grav_real_for_memory",
+              "memory_m2_chunk",
+              "reconstruct_m2_source",
+              "build_bath_parent_config",
+              "verify_bath_projection",
+              "compare_component",
+              "interp_source_config",
+              "shift_trace_from_canonical",
+              "solve_config",
+              "observed_order",
+              "matched_shift_control",
+              "state_time_control",
+              "all_finite_source",
+              "save_config",
+          ):
+              assert inspect.getsource(getattr(r36,name))==inspect.getsource(getattr(r35,name)),name
+
+          for name in (
+              "NT_PRIMARY","NT_CONTROL","NX_POLY","NX_DY_PRIMARY",
+              "NX_DY_CONTROL","NQ_PRIMARY","NQ_CONTROL","M_MAX",
+              "GE05_TO_GE06","Q_SYMMETRY_MAX","DY_SPATIAL_MAX",
+              "TOTAL_SPATIAL_MAX","MEMORY_QUAD_MAX","SOURCE_TIME_MAX",
+              "LINEAR_MAX","STATE_TIME_MAX","CONSTRAINT_MAX","BOUNDARY_MAX",
+              "ORDER_MIN","NEAR_NULL_RATIO_MAX"
+          ):
+              assert getattr(r36,name)==getattr(r35,name),name
+
+          print("GE19_REPAIR36_PRELOCK_PASS")
+          PY
