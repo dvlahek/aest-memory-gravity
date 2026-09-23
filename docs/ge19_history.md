@@ -1269,3 +1269,87 @@ CERTIFIED and H4 licensed; Repair33--Repair37 remain immutable historical
 FAILs; Repair38 is a valid diagnostic COMPLETE result and excludes internal
 Radau step resolution as the dominant remaining floor. Window-local
 particular Z21 remains NOT CERTIFIED. Lensing remains blocked.**
+
+
+---
+
+## Repair39 — frozen-source stage interpolation localization
+
+Classification:
+
+`GE19_REPAIR39_FROZEN_SOURCE_STAGE_INTERPOLATION_LOCALIZATION_COMPLETE`.
+
+Result-freeze commit:
+
+`5c6740d3ca4dbc49f148c869a2cbcca092b844cb`.
+
+Frozen outputs:
+
+- JSON/FULL:
+  `b058d4acb51dd4e0b964fcccb306b7eb105466941b5e0900ae0c84a29374624e`;
+- NPZ:
+  `0bf5b0c2f26cc06b98eab1fb326757ed409cf91c86c23e995251dfd32571c451`;
+- outer runner:
+  `d2470549728e2a34256753baa6330267ed1ba5df7d4ff23e8ffbbd1adf786504`.
+
+Repair39 is diagnostic-only and does not relabel Repair37 or Repair38.
+
+All implementation gates pass.
+
+PCHIP factor4 reproduces frozen Repair38 substep4 with:
+
+- Z21 relative L2:
+  `3.7172606261726e-18`;
+- active shift-metric relative L2:
+  `3.882369515821824e-12`.
+
+All three interpolation methods reproduce the frozen Nt128 source nodes to
+approximately machine precision; the maximum nodal relative L2 is
+`3.1222622128280023e-16`.
+
+Frozen active shift results:
+
+- PCHIP Linf:
+  `1.3797699672147026e-06`;
+- CubicSpline Linf:
+  `1.4170655920646319e-06`;
+- Akima Linf:
+  `1.2068124462343292e-06`.
+
+The frozen Repair38 PCHIP factor2-to-factor4 active-field difference RMS is
+
+`2.4751527730021507e-08`.
+
+Relative to that scale:
+
+- CubicSpline/PCHIP active-field difference ratio:
+  `3.4334457790648143`;
+- Akima/PCHIP active-field difference ratio:
+  `15.280884251999465`.
+
+The preregistered route is therefore:
+
+`STAGE_SOURCE_REPRESENTATION_DEPENDENCE_CONFIRMED`.
+
+This establishes that the remaining shift floor materially depends on the
+off-node H4 source representation. It does not identify a physically
+preferred interpolant.
+
+Because PCHIP and Akima slope construction is nonlinear in nodal data, the
+next localization must decompose the Akima-PCHIP dependence into the six
+frozen Repair37 H4 source pieces plus an explicit interpolation-coupling
+residual.
+
+Next licensed step:
+
+Repair40 piecewise stage-source decomposition. No new Z21 science reclosure is
+licensed until the leading source-representation target is localized.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair27 q20 CERTIFIED; Repair32B/32C reduced Z11
+CERTIFIED and H4 licensed; Repair33--Repair37 immutable historical FAILs;
+Repair38 excludes insufficient Radau internal resolution as the dominant
+floor; Repair39 confirms material off-node H4 source-representation
+dependence. Window-local particular Z21 remains NOT CERTIFIED. Lensing
+remains blocked.**
