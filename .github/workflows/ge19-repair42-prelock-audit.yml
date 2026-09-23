@@ -1,0 +1,121 @@
+name: GE19 Repair42 direct-target H4 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair42_predata_direct_target_h4_propagation_diagnostic.json'
+      - 'ge19/repair42_direct_target_h4_propagation_diagnostic.py'
+      - '.github/workflows/ge19-repair42-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair42 direct-target propagation contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair42_predata_direct_target_h4_propagation_diagnostic.json)" = "cbdb7b66e57a24c44fb03c0856ffdc1977303844"
+          test "$(git rev-parse HEAD:ge19/repair42_direct_target_h4_propagation_diagnostic.py)" = "8576118fec60dd6ac1593459da9354d424d04fd5"
+          test "$(git rev-parse HEAD:docs/ge19_repair41_valid_direct_fine_grid_target_reference_freeze.md)" = "cfbc013969a6572c52c5d8d3d090355755b81ee2"
+
+          python3 -m py_compile ge19/repair42_direct_target_h4_propagation_diagnostic.py
+          python3 ge19/repair42_direct_target_h4_propagation_diagnostic.py --help >/tmp/r42_help.txt
+          grep -q -- "--results-dir" /tmp/r42_help.txt
+          grep -q -- "--json-out" /tmp/r42_help.txt
+          grep -q -- "--npz-out" /tmp/r42_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import ge19.repair42_direct_target_h4_propagation_diagnostic as r42
+
+          p=json.load(open("ge19/repair42_predata_direct_target_h4_propagation_diagnostic.json"))
+          assert p["classification"]=="GE19_REPAIR42_PREDATA_DIRECT_TARGET_H4_PROPAGATION_DIAGNOSTIC"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair41"]["route"]=="DIRECT_TARGET_REFERENCE_RESOLVED"
+          assert p["frozen_Repair41"]["mandatory_targets"]==[
+              "2M1_GE05_mapped","2Q_GE06_cross"
+          ]
+          assert p["propagation_grid"]["Nt"]==128
+          assert p["propagation_grid"]["Radau_substeps_per_interval"]==1
+          assert p["unchanged_contract"]["science_shift_target"]==1e-6
+          assert p["unchanged_contract"]["threshold_relaxed"] is False
+          assert p["stop_boundary"]["Z21_certification_forbidden_in_Repair42"] is True
+          assert p["stop_boundary"]["no_lensing_claim"] is True
+
+          assert r42.SHIFT_TARGET==1e-6
+          assert r42.ACTIVE_COUNT==23850
+          assert r42.STAGE_X_MAX==1e-13
+          assert r42.TARGET_PCHIP_REPRO_MAX==1e-12
+          assert r42.BASELINE_STATE_REPRO_MAX==1e-11
+          assert r42.BASELINE_SHIFT_REPRO_MAX==1e-10
+          assert r42.TARGETS==("2M1_GE05_mapped","2Q_GE06_cross")
+
+          src=open("ge19/repair42_direct_target_h4_propagation_diagnostic.py").read()
+
+          # No H4 source physics is rebuilt in Repair42.
+          for bad in (
+              "build_source_config(",
+              "q_cross_direct(",
+              "memory_m2_chunk(",
+              "m1_mapped_fourier(",
+              "dy2_real(",
+              "construct_q20_direct(",
+          ):
+              assert bad not in src,bad
+
+          # Baseline is exactly Repair37 PCHIP total source.
+          sf=inspect.getsource(r42.source_functions)
+          assert 'r38.frozen_source_by_beta' in sf
+          assert 'r7._source_interp(xref,total,m)' in sf
+
+          # Direct target correction is exact saved stage lookup, never
+          # interpolated direct target data.
+          ssp=inspect.getsource(r42.saved_stage_pair)
+          assert 'direct{resolution_or_pchip}' in ssp
+          assert 'pchip' in ssp
+          sl=inspect.getsource(r42.stage_locator)
+          assert 'np.searchsorted' in sl
+          assert 'STAGE_X_MAX' in sl
+          assert 'PchipInterpolator' not in sf
+          assert 'Akima' not in sf
+
+          # Corrections are direct minus frozen standalone PCHIP target.
+          assert 'dm-pm' in sf
+          assert 'dc-pc' in sf
+
+          # Original Repair37 factor-1 propagation only.
+          rv=inspect.getsource(r42.run_variant)
+          assert 'r38.radau2_integrate_substepped' in rv
+          assert 'rhsfun,confun,1' in rv
+
+          # Stable delta-Z21 diagnostic uses zero delta p0.
+          rd=inspect.getsource(r42.run_delta)
+          assert 'y0=np.zeros((8,nb),complex)' in rd
+          assert 'delta_source_functions' in rd
+          assert 'rhsfun,confun,1' in rd
+
+          main=inspect.getsource(r42.main)
+          assert 'PCHIP_baseline_Z21_vs_Repair37_relative_L2_le_1e11' in main
+          assert 'PCHIP_baseline_shift_metric_vs_Repair37_relative_L2_le_1e10' in main
+          assert 'Repair41_saved_PCHIP_target_stage_values_reproduce_Repair37_target_PCHIP_relative_L2_le_1e12' in main
+          assert 'DIRECT_TARGET_CORRECTION_BELOW_SCIENCE_TARGET' in main
+          assert 'DIRECT_TARGET_CORRECTION_ABOVE_SCIENCE_TARGET' in main
+          assert 'DIRECT_TARGET_CORRECTION_THRESHOLD_SIDE_UNRESOLVED' in main
+          assert '"Z21_window_local_particular_certified":False' in main
+          assert '"science_H4_Z21_reclosure_performed":False' in main
+          assert '"lensing_licensed":False' in main
+
+          print("GE19_REPAIR42_PRELOCK_PASS")
+          PY
