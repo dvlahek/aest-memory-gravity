@@ -25,7 +25,7 @@ jobs:
           set -euo pipefail
 
           test "$(git rev-parse HEAD:ge19/repair40_predata_piecewise_stage_source_decomposition.json)" = "05b34db63552d8e0c6be9ee90d705770350bd567"
-          test "$(git rev-parse HEAD:ge19/repair40_piecewise_stage_source_decomposition.py)" = "a8801d2b517540b6407a12ca2ff42774ea2b84b3"
+          test "$(git rev-parse HEAD:ge19/repair40_piecewise_stage_source_decomposition.py)" = "b0cd4b29e20339d11cac83a073fb0c662094f891"
           test "$(git rev-parse HEAD:docs/ge19_repair39_valid_stage_source_dependence_freeze.md)" = "1e93a0111d385fb062fb1eff2f34af6d722487e1"
 
           python3 -m py_compile ge19/repair40_piecewise_stage_source_decomposition.py
@@ -109,6 +109,15 @@ jobs:
           assert 'float(x[i+1])' in prop
           assert 'x2=xr' in prop
 
+          # Repair40 repair01: Z21 response closure must use direct delta
+          # propagation from zero delta p0, not subtraction of huge states.
+          rd=inspect.getsource(r40.run_delta_response)
+          assert 'y0=np.zeros((8,nb),complex)' in rd
+          assert 'r38.radau2_integrate_substepped' in rd
+          assert 'bundle["deltas"][response]' in rd
+          assert '_sub(bundle["full"][0],bundle["baseline"][0])' in rd
+          assert 'Projected p0 is frozen and common' in rd
+
           # Baseline/full reproduction, source closure and Z21 linear response
           # closure must gate interpretation.
           main=inspect.getsource(r40.main)
@@ -116,6 +125,10 @@ jobs:
           assert 'AKIMA_full_Z21_vs_Repair39_relative_L2_le_1e11' in main
           assert 'stage_source_decomposition_closure_relative_L2_le_1e12' in main
           assert 'propagated_Z21_response_decomposition_closure_relative_L2_le_1e9' in main
+          assert 'delta_runs={response:run_delta_response' in main
+          assert 'full_state_delta=concat_states(delta_runs[FULL]["states"])' in main
+          assert 'sd=concat_states(delta_runs[comp]["states"])' in main
+          assert 'runs[comp]["states"])-s0' not in main
           assert '"Z21_window_local_particular_certified":False' in main
           assert '"lensing_licensed":False' in main
 
