@@ -1353,3 +1353,81 @@ Repair38 excludes insufficient Radau internal resolution as the dominant
 floor; Repair39 confirms material off-node H4 source-representation
 dependence. Window-local particular Z21 remains NOT CERTIFIED. Lensing
 remains blocked.**
+
+
+---
+
+## Repair40 — piecewise stage-source decomposition
+
+Classification:
+
+`GE19_REPAIR40_PIECEWISE_STAGE_SOURCE_DECOMPOSITION_COMPLETE`.
+
+Valid-diagnostic freeze commit:
+
+`bd9446feccb28779fa3f59bd0206e18d2ebaed4e`.
+
+Frozen outputs:
+
+- JSON/FULL:
+  `f5618344db31328dc4e680eb41bb6a715da3fbe7e54ddff3cb53bc027386bf44`;
+- NPZ:
+  `06c7799787abcc510259c626bcb9ca925f96efce13c7949a89690f243fbf01b5`;
+- outer runner:
+  `112bffc28a638bff5a1148795068111475ee4781a923432b6b52cd5a34ec72f4`.
+
+Repair40 is diagnostic-only. The initial Repair40 cancellation-contaminated
+attempt remains immutable IMPLEMENTATION_FAIL and is not relabelled.
+
+All Repair40 gates pass after repair01:
+
+- PCHIP Repair39 reproduction exactly zero relative L2;
+- Akima Repair39 reproduction exactly zero relative L2;
+- frozen source-node reproduction max `5.669184795383803e-16`;
+- stage-source decomposition closure `7.050062442856047e-19`;
+- direct-delta Z21 response closure `2.8954027388379403e-14`
+  under the unchanged preregistered `1e-9` gate;
+- all outputs finite.
+
+The two deterministic rankings separate the remaining representation
+sensitivity:
+
+- largest propagated Z21-response component:
+  `2M1_GE05_mapped`;
+- largest active shift-response component:
+  `2Q_GE06_cross`.
+
+The preregistered mandatory follow-up targets are therefore both:
+
+- `2M1_GE05_mapped`;
+- `2Q_GE06_cross`.
+
+Frozen follow-up kind:
+
+`DIRECT_FINE_GRID_RECONSTRUCTION_OF_TARGET_PHYSICAL_PIECES`.
+
+For the shift-sensitive GE06 cross term, replacing only its stage
+representation by the Akima-minus-PCHIP delta changes active Linf from
+`1.3797699672147026e-6` to `1.2156072341464537e-6`, with active shift
+difference RMS `3.3448872380344193e-7`, equal to about 88.4% of the full
+Akima-minus-PCHIP shift response and aligned at `0.9896848662049436`.
+
+For the mapped GE05 M1 term, the propagated direct-delta Z21 response has
+relative norm `1.000000025452115` and complex alignment
+`0.9999999999999967` with the full Akima-minus-PCHIP Z21 response, while
+its direct shift-metric effect is negligible.
+
+Next licensed step:
+
+a separately preregistered fine-time reconstruction diagnostic for both
+mandatory physical source targets. No new H4/Z21 science reclosure is
+licensed before that direct target check.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair27 q20 CERTIFIED; Repair32B/32C reduced Z11
+CERTIFIED and H4 licensed; Repair33--Repair37 immutable historical FAILs;
+Repair38 excludes Radau step resolution as the dominant floor; Repair39
+confirms off-node source-representation dependence; Repair40 localizes the
+mandatory direct fine-grid targets to 2M1_GE05_mapped and 2Q_GE06_cross.
+Window-local particular Z21 remains NOT CERTIFIED. Lensing remains blocked.**
