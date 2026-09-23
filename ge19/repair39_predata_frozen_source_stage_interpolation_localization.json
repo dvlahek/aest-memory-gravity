@@ -1,0 +1,99 @@
+{
+  "classification": "GE19_REPAIR39_PREDATA_FROZEN_SOURCE_STAGE_INTERPOLATION_LOCALIZATION",
+  "created_after_Repair38_valid_diagnostic": true,
+  "result_informed_followup": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Localize the Repair38 PCHIP-or-other floor by freezing the Repair37 Nt128 H4 source nodes, Repair37 projected p0, Repair13 reduced background, H4 operator, shift metric and science target, then varying only the off-node source-at-stage interpolation rule at a fixed internal Radau substep factor of 4.",
+  "frozen_Repair38": {
+    "classification": "GE19_REPAIR38_FROZEN_SOURCE_RADAU_SUBSTEP_LOCALIZATION_COMPLETE",
+    "route": "PCHIP_OR_OTHER_FLOOR_REMAINS",
+    "JSON_sha256": "08dd95c614118c66e37349e2b8d058e85163812fed77c9b048e0ce57e339e5dd",
+    "NPZ_sha256": "aff63771c1800b0db236cd020cf0d2772f6d9a0fd0328573d055392f2c60da67",
+    "FULL_sha256": "08dd95c614118c66e37349e2b8d058e85163812fed77c9b048e0ce57e339e5dd",
+    "outer_runner_sha256": "6e6b4477528ca63858a14f2fecf7bd2183498739b4c6a4d8db2d4cf3ba10dd16",
+    "freeze_commit": "ada593c99c7bc217313b1f7c8ff99504f13e8d10",
+    "relabelled": false
+  },
+  "frozen_inputs": {
+    "Repair37_JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "Repair37_NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f",
+    "Repair13_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "GE15_dense_sha256": "7f57ab676f2a31cf0abf93ff0f8b0f1f2f80bb9a58d7cf1e47e10a158c57c69f",
+    "source_nodes": "Repair37 frozen primary total_main and total_constraint arrays on Nt128",
+    "projected_p0": "Repair37 frozen primary projected_p0",
+    "active_mask": "Repair37 frozen primary shift-scale mask with the Repair37 near-null threshold"
+  },
+  "unchanged_contract": {
+    "H4_equation_unchanged": true,
+    "H4_source_nodes_not_recomputed": true,
+    "projected_p0_not_resolved": true,
+    "Lambda_sector_unchanged": true,
+    "canonical_operator_unchanged": true,
+    "constraint_metric_unchanged": true,
+    "Radau_tableau_unchanged": true,
+    "internal_substeps_per_Nt128_interval": 4,
+    "output_nodes": "same frozen Nt128 nodes",
+    "science_shift_target_report_only": 1e-6,
+    "threshold_relaxed": false,
+    "observational_tuning": false
+  },
+  "only_varied_numerical_control": {
+    "dimension": "off-node source-at-stage interpolation",
+    "methods": [
+      {
+        "id": "PCHIP",
+        "definition": "Repair07 PchipInterpolator separately on real and imaginary parts, extrapolate=False",
+        "role": "frozen Repair38 baseline"
+      },
+      {
+        "id": "CUBIC_SPLINE",
+        "definition": "scipy CubicSpline with not-a-knot boundary condition, separately on real and imaginary parts, extrapolate=False",
+        "role": "independent C2 interpolating alternative"
+      },
+      {
+        "id": "AKIMA",
+        "definition": "scipy Akima1DInterpolator, separately on real and imaginary parts, extrapolate=False",
+        "role": "independent local shape-adaptive interpolating alternative"
+      }
+    ],
+    "all_methods_must_reproduce_frozen_source_nodes": true,
+    "main_and_constraint_use_same_method": true
+  },
+  "implementation_gates": {
+    "PCHIP_factor4_Z21_vs_Repair38_substep4_global_relative_L2_max": 1e-11,
+    "PCHIP_factor4_shift_metric_vs_Repair38_substep4_global_relative_L2_max": 1e-10,
+    "all_interpolants_nodal_source_relative_L2_max": 1e-12,
+    "frozen_active_sample_count_required": 23850,
+    "all_outputs_finite": true
+  },
+  "diagnostic_reference_scale": {
+    "definition": "frozen Repair38 PCHIP factor2-to-factor4 change on the same active shift-metric field",
+    "purpose": "Use the already observed propagation discretization change as the uncertainty scale instead of an arbitrary absolute interpolation threshold."
+  },
+  "diagnostic_routes": {
+    "STAGE_SOURCE_REPRESENTATION_DEPENDENCE_CONFIRMED": "All implementation gates pass and at least one independent interpolant has active shift-metric field L2 difference from PCHIP factor4 at least 4 times the frozen PCHIP factor2-to-factor4 active-field L2 difference. This localizes the remaining floor to off-node source-at-stage representation dependence but does not identify a preferred interpolant or certify Z21.",
+    "STAGE_SOURCE_REPRESENTATION_INVARIANT_OTHER_FLOOR": "All implementation gates pass and both independent interpolants have active shift-metric field L2 difference from PCHIP factor4 no larger than the frozen PCHIP factor2-to-factor4 active-field L2 difference. This disfavors source interpolation as the dominant floor and routes to reconstruction/constraint consistency.",
+    "MIXED_STAGE_REPRESENTATION_SENSITIVITY": "All implementation gates pass but the alternatives fall between the two preregistered localization regimes. Freeze and localize method-specific source/constraint consistency before any science reclosure.",
+    "IMPLEMENTATION_FAIL": "Frozen input binding, PCHIP baseline reproduction, nodal interpolation exactness or finiteness fails. Repair39 may be repaired without changing this preregistered diagnostic contract."
+  },
+  "report_only": {
+    "alternative_active_Linf_and_RMS": true,
+    "alternative_below_1e6": true,
+    "source_stage_relative_differences": true,
+    "no_interpolant_is_declared_physically_correct": true
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair38_relabelled": false,
+    "Z21_certification_forbidden_in_Repair39": true,
+    "no_threshold_relaxation": true,
+    "no_H4_physics_change": true,
+    "no_source_node_recomputation": true,
+    "no_boundary_resolve": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
