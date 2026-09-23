@@ -16,11 +16,11 @@
     "freeze_blob": "d120915221b5fc1b0860c682cb8edac876571e83",
     "relabelled": false,
     "sole_false_gate": "H4_active_shift_Nt128_Linf_le_1e6",
-    "Nt128_active_Linf": 1.1749387207106255e-6,
-    "Nt64_interpolated_active_Linf": 1.1134127189405345e-5,
+    "Nt128_active_Linf": 0.0000011749387207106255,
+    "Nt64_interpolated_active_Linf": 0.000011134127189405345,
     "observed_Linf_order": 3.2077474489146236,
-    "Nt128_active_RMS": 1.0515104304068532e-6,
-    "Nt64_interpolated_active_RMS": 8.780910986609813e-6,
+    "Nt128_active_RMS": 0.0000010515104304068532,
+    "Nt64_interpolated_active_RMS": 0.000008780910986609813,
     "observed_RMS_order": 3.027380898364344
   },
   "frozen_inputs": {
@@ -41,13 +41,17 @@
     "source_stage_interpolator": "unchanged Repair07 PchipInterpolator on the frozen Nt128 source grid",
     "canonical_operator": "unchanged Repair07 GE06+GE07 plus frozen Repair11 Lambda operator",
     "constraint_metric": "unchanged Repair07 cancellation-safe shift backward error",
-    "science_shift_threshold": 1e-6,
+    "science_shift_threshold": 0.000001,
     "threshold_relaxed": false,
     "observational_tuning": false
   },
   "only_varied_numerical_control": {
     "method": "same frozen two-stage Radau IIA tableau",
-    "internal_substeps_per_frozen_Nt128_interval": [1, 2, 4],
+    "internal_substeps_per_frozen_Nt128_interval": [
+      1,
+      2,
+      4
+    ],
     "output_nodes": "the same frozen Nt128 nodes",
     "factor1_required_to_reproduce_frozen_Repair37": true,
     "no_source_resampling_or_recomputation": true
@@ -57,11 +61,12 @@
     "factor1_shift_metric_global_relative_L2_max": 1e-10,
     "factor1_projected_p0_exact": true,
     "frozen_active_sample_count_required": 23850,
-    "all_outputs_finite": true
+    "all_outputs_finite": true,
+    "material_improvement_finer_over_coarser_max_ratio": 0.8
   },
   "diagnostic_routes": {
-    "RADAU_PROPAGATION_FLOOR_CONFIRMED": "Factor 1 reproduces Repair37; factor 2 improves the frozen-active Linf with observed factor1-to-factor2 order >=2.5 and reaches <=1e-6; factor 4 does not regress above 1e-6. This licenses a separately preregistered higher-accuracy H4 reclosure but does not certify Z21.",
-    "PROPAGATION_ACCURACY_DEPENDENCE_CONFIRMED": "Factor 1 reproduces Repair37 and finer internal propagation materially improves the frozen-active shift metric, but the strict third-order confirmation condition is not met. Further propagation diagnostics are required.",
+    "RADAU_PROPAGATION_FLOOR_CONFIRMED": "Factor 1 reproduces Repair37; factor 2 frozen-active Linf / factor 1 frozen-active Linf <= 0.8, observed factor1-to-factor2 order >=2.5, factor 2 reaches <=1e-6, and factor 4 remains <=1e-6. This licenses a separately preregistered higher-accuracy H4 reclosure but does not certify Z21.",
+    "PROPAGATION_ACCURACY_DEPENDENCE_CONFIRMED": "Factor 1 reproduces Repair37 and either factor 2 or factor 4 reduces the frozen-active Linf by at least 20% relative to the immediately coarser propagation, but the strict Radau confirmation condition is not met. Further propagation diagnostics are required.",
     "PCHIP_OR_OTHER_FLOOR_REMAINS": "Factor 1 reproduces Repair37 but Radau substepping does not materially remove the defect. The next localization target is the frozen PCHIP stage-source representation or another propagation-stage numerical component.",
     "IMPLEMENTATION_FAIL": "Frozen input binding or factor-1 reproduction fails. Repair38 may be repaired without changing this preregistered diagnostic contract."
   },
