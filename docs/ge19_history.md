@@ -1173,3 +1173,99 @@ FAILs; Repair37 closes the Lambda-audit and FD4-source issues but exposes a
 convergent approximately third-order propagation floor. Window-local
 particular Z21 remains NOT CERTIFIED. Lensing remains blocked pending a
 separately preregistered numerical reclosure.**
+
+
+---
+
+## Repair38 — frozen-source Radau substep localization
+
+Classification:
+
+`GE19_REPAIR38_FROZEN_SOURCE_RADAU_SUBSTEP_LOCALIZATION_COMPLETE`.
+
+Valid-diagnostic freeze commit:
+
+`ada593c99c7bc217313b1f7c8ff99504f13e8d10`.
+
+Frozen outputs:
+
+- JSON/FULL:
+  `08dd95c614118c66e37349e2b8d058e85163812fed77c9b048e0ce57e339e5dd`;
+- NPZ:
+  `aff63771c1800b0db236cd020cf0d2772f6d9a0fd0328573d055392f2c60da67`;
+- outer runner:
+  `6e6b4477528ca63858a14f2fecf7bd2183498739b4c6a4d8db2d4cf3ba10dd16`.
+
+Repair38 is diagnostic-only and does not relabel Repair37.
+
+Factor-1 reproduces frozen Repair37 exactly:
+
+- Z21 global relative L2:
+  `0.0`;
+- shift-metric global relative L2:
+  `0.0`;
+- projected p0 exact:
+  `true`;
+- frozen active sample count:
+  `23850`.
+
+All implementation gates pass.
+
+Frozen active-shift results:
+
+- substep 1 Linf:
+  `1.1749387207106255e-06`;
+- substep 2 Linf:
+  `1.341600178925417e-06`;
+- substep 4 Linf:
+  `1.3797699672147026e-06`;
+- substep 1 RMS:
+  `1.0515104304068532e-06`;
+- substep 2 RMS:
+  `1.1859570854138313e-06`;
+- substep 4 RMS:
+  `1.2040175184159568e-06`.
+
+The preregistered Radau-floor hypothesis is not confirmed. The frozen route is:
+
+`PCHIP_OR_OTHER_FLOOR_REMAINS`.
+
+Post-freeze NPZ localization shows that the propagated Z21 state itself
+converges cleanly under substepping:
+
+- ||Z1-Z2|| / ||Z2-Z4|| =
+  `8.030548956166639`;
+- observed state order =
+  `3.0054986115619555`.
+
+The complete shift-metric field differences also converge with the expected
+third-order Radau signature:
+
+- ||m1-m2|| / ||m2-m4|| =
+  `7.9105878110222365`;
+- observed metric-difference order =
+  `2.983784900834436`.
+
+Thus internal Radau discretization converges as expected, but toward a
+nonzero shift floor. A report-only p=3 Richardson estimate gives a limiting
+active Linf of approximately `1.385222794113172e-06` and limiting RMS of
+approximately `1.2065975802734033e-06`.
+
+This removes insufficient Radau internal step resolution as the leading
+explanation for the Repair37 threshold miss.
+
+Next licensed step:
+
+a separately preregistered frozen-source stage-representation diagnostic,
+keeping the same Repair37 source nodes, projected boundary, H4 operator and
+`1e-6` science target fixed, and localizing the Repair07 PCHIP
+source-at-stage representation against an independently frozen alternative
+before any new science reclosure.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair27 q20 CERTIFIED; Repair32B/32C reduced Z11
+CERTIFIED and H4 licensed; Repair33--Repair37 remain immutable historical
+FAILs; Repair38 is a valid diagnostic COMPLETE result and excludes internal
+Radau step resolution as the dominant remaining floor. Window-local
+particular Z21 remains NOT CERTIFIED. Lensing remains blocked.**
