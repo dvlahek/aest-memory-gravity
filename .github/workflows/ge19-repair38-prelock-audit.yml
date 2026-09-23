@@ -1,0 +1,119 @@
+name: GE19 Repair38 frozen-source Radau substep prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair38_predata_frozen_source_radau_substep_localization.json'
+      - 'ge19/repair38_frozen_source_radau_substep_localization.py'
+      - '.github/workflows/ge19-repair38-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair38 propagation-only contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair38_predata_frozen_source_radau_substep_localization.json)" = "41a2925cf4f705c4bf8418cbcc2cee48af4a673d"
+          test "$(git rev-parse HEAD:ge19/repair38_frozen_source_radau_substep_localization.py)" = "fd0c80f73f0e1b485ecb895566bef078a12ba957"
+          test "$(git rev-parse HEAD:docs/ge19_repair37_valid_fail_propagation_order_localization_freeze.md)" = "d120915221b5fc1b0860c682cb8edac876571e83"
+
+          python3 -m py_compile ge19/repair38_frozen_source_radau_substep_localization.py
+          python3 ge19/repair38_frozen_source_radau_substep_localization.py --help >/tmp/r38_help.txt
+          grep -q -- "--results-dir" /tmp/r38_help.txt
+          grep -q -- "--json-out" /tmp/r38_help.txt
+          grep -q -- "--npz-out" /tmp/r38_help.txt
+
+          python3 - <<'PY'
+          import inspect,json,math
+          import numpy as np
+          import ge19.repair07_window_retarded_reduced_h3_z20_particular as r7
+          import ge19.repair38_frozen_source_radau_substep_localization as r38
+
+          p=json.load(open("ge19/repair38_predata_frozen_source_radau_substep_localization.json"))
+          assert p["classification"]=="GE19_REPAIR38_PREDATA_FROZEN_SOURCE_RADAU_SUBSTEP_LOCALIZATION"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair37_FAIL"]["relabelled"] is False
+          assert p["frozen_Repair37_FAIL"]["sole_false_gate"]=="H4_active_shift_Nt128_Linf_le_1e6"
+          assert p["unchanged_contract"]["H4_source_not_recomputed"] is True
+          assert p["unchanged_contract"]["projected_p0_loaded_from_frozen_Repair37_NPZ"] is True
+          assert p["unchanged_contract"]["science_shift_threshold"]==1e-6
+          assert p["unchanged_contract"]["threshold_relaxed"] is False
+          assert p["only_varied_numerical_control"]["internal_substeps_per_frozen_Nt128_interval"]==[1,2,4]
+          assert p["implementation_gates"]["material_improvement_finer_over_coarser_max_ratio"]==0.8
+          assert p["stop_boundary"]["Repair37_rerun_forbidden"] is True
+          assert p["stop_boundary"]["Z21_certification_forbidden_in_Repair38"] is True
+          assert p["stop_boundary"]["no_lensing_claim"] is True
+
+          assert r38.R37_JSON_SHA=="da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a"
+          assert r38.R37_NPZ_SHA=="572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f"
+          assert r38.SUBSTEP_FACTORS==(1,2,4)
+          assert r38.SCIENCE_SHIFT_TARGET==1e-6
+          assert r38.ORDER_CONFIRM_MIN==2.5
+          assert r38.MATERIAL_RATIO_MAX==0.8
+          assert r38.FROZEN_ACTIVE_COUNT==23850
+
+          src=open("ge19/repair38_frozen_source_radau_substep_localization.py").read()
+          assert "build_source_config" not in src
+          assert "assemble_nonmemory" not in src
+          assert "reconstruct_m2_source" not in src
+          assert "q_cross_direct" not in src
+          assert 'primary_{tag}_beta{ib}_total_main' in src
+          assert 'primary_{tag}_beta{ib}_total_constraint' in src
+          assert '_projected_p0_primary' in src
+          assert 'r7._source_interp' in src
+          assert 'r7._constraint_backward_error' in src
+          assert 'Z21_window_local_particular_certified":False' in src
+          assert 'lensing_licensed":False' in src
+
+          # Frozen two-stage Radau IIA tableau: exact order-3 conditions.
+          A=np.asarray([[5/12,-1/12],[3/4,1/4]],float)
+          b=np.asarray([3/4,1/4],float)
+          c=np.asarray([1/3,1],float)
+          one=np.ones(2)
+          assert abs(b@one-1.0)<1e-15
+          assert abs(b@c-0.5)<1e-15
+          assert abs(b@(c*c)-1/3)<1e-15
+          assert abs(b@(A@c)-1/6)<1e-15
+          # It is not a fourth-order method.
+          fourth=[
+              abs(b@(c**3)-1/4),
+              abs(b@(A@(c*c))-1/12),
+              abs(b@(c*(A@c))-1/8),
+              abs(b@(A@(A@c))-1/24),
+          ]
+          assert max(fourth)>1e-8
+
+          # Factor 1 must use the exact same tableau constants as Repair07.
+          base=inspect.getsource(r7._radau2_integrate_canonical)
+          diag=inspect.getsource(r38.radau2_integrate_substepped)
+          for tok in (
+              "a11=5.0/12.0","a12=-1.0/12.0",
+              "a21=3.0/4.0","a22=1.0/4.0",
+              "b1=3.0/4.0","b2=1.0/4.0",
+              "c1=1.0/3.0","c2=1.0",
+              "r7._dense_equilibrated_solve",
+          ):
+              assert tok in diag,tok
+          for tok in (
+              "a11=5.0/12.0","a12=-1.0/12.0",
+              "a21=3.0/4.0","a22=1.0/4.0",
+              "b1=3.0/4.0","b2=1.0/4.0",
+              "c1=1.0/3.0","c2=1.0",
+          ):
+              assert tok in base,tok
+
+          print("GE19_REPAIR38_PRELOCK_PASS")
+          PY
