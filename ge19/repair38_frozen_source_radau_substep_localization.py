@@ -170,9 +170,21 @@ def radau2_integrate_substepped(
         H=float(x[i+1]-x[i])
         h=H/float(substeps)
         for isub in range(substeps):
+            # Preserve Repair07's c2=1 domain-safety exactly.  Computing the
+            # right stage as xl+h can overshoot x[i+1] by a few ULPs after
+            # subdivision, which makes the frozen extrapolate=False PCHIP
+            # Lambda/source interpolators return NaN.  Bind every substep to
+            # its parent interval and use the exact parent right endpoint for
+            # the final internal substep.
             xl=float(x[i]+isub*h)
-            x1=float(xl+c1*h)
-            x2=float(xl+c2*h)
+            xr=(
+                float(x[i+1])
+                if isub==substeps-1
+                else float(x[i]+(isub+1)*h)
+            )
+            hs=float(xr-xl)
+            x1=float(xl+c1*hs)
+            x2=xr
 
             M1,Fmap1,*rest1=r7._canonical_operator_matrices(
                 mod6,mod7,bg,tag,k,x1
