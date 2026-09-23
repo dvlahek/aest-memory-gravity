@@ -1,0 +1,121 @@
+{
+  "classification": "GE19_REPAIR42_PREDATA_DIRECT_TARGET_H4_PROPAGATION_DIAGNOSTIC",
+  "created_after_Repair41_valid_diagnostic": true,
+  "result_informed_followup": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Propagate the frozen Repair37 H4 system on the original Nt128 factor-1 Repair07 Radau grid after replacing only the two mandatory Repair40 target source pieces by their resolved Repair41 direct382 and direct763 stage values, and determine on which side of the unchanged 1e-6 active-shift target the direct-target-corrected propagation lies.",
+  "frozen_Repair41": {
+    "classification": "GE19_REPAIR41_DIRECT_FINE_GRID_TARGET_SOURCE_RECONSTRUCTION_COMPLETE",
+    "route": "DIRECT_TARGET_REFERENCE_RESOLVED",
+    "JSON_sha256": "1b18fede26b021e077ffe5c8b6b7ff0dc727b4defaab48e63491c86d868d1320",
+    "NPZ_sha256": "6bfb87ea21d55e2a1d2b16aee9bc8d7246111f91a064a78b74d2ed946ec2ba45",
+    "FULL_sha256": "1b18fede26b021e077ffe5c8b6b7ff0dc727b4defaab48e63491c86d868d1320",
+    "outer_runner_sha256": "8d9360c8bad9f7f7ed985957cf2230e0713715dd7057347feb10f31f5bee4375",
+    "freeze_commit": "1e1ffa694eb9661be72907f59b1de317d87f713d",
+    "mandatory_targets": [
+      "2M1_GE05_mapped",
+      "2Q_GE06_cross"
+    ],
+    "relabelled": false
+  },
+  "frozen_Repair37": {
+    "classification": "GE19_REPAIR37_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE_FAIL",
+    "JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f",
+    "active_shift_target": 1e-6,
+    "relabelled": false
+  },
+  "propagation_grid": {
+    "Nt": 128,
+    "Radau_substeps_per_interval": 1,
+    "reason": "Repair41 direct target values are resolved exactly at the original factor-1 Repair07 two-stage Radau coordinates c1=1/3 and c2=1."
+  },
+  "baseline": {
+    "total_source": "Frozen Repair37 primary total H4 source nodes evaluated with the unchanged Repair07 PCHIP stage interpolator.",
+    "projected_p0": "Frozen Repair37 primary projected p0.",
+    "operator": "Frozen Repair07 GE06+GE07 canonical operator plus Repair11 Lambda operator.",
+    "active_mask": "Frozen Repair37 active mask from sqrt(eps)*S_ref.",
+    "must_reproduce_Repair37_factor1": true
+  },
+  "direct_stage_correction_definition": {
+    "for_each_target": "delta_target_directN(stage) = Repair41 directN target(stage) - Repair41 frozen-PCHIP target(stage), for N in {382,763}.",
+    "corrected_total_stage_source": "Repair37 PCHIP total(stage) + sum(selected delta_target_directN(stage)).",
+    "initial_x0": "No correction. The frozen PCHIP node value is retained because Repair41 direct target reference is defined at factor-1 Radau stages/right endpoints and the frozen target nodes are exact at x0.",
+    "right_endpoint_nodes": "Use the Repair41 direct target value stored at the c2=1 stage.",
+    "no_target_source_interpolation": true
+  },
+  "propagated_variants": [
+    "PCHIP_BASELINE",
+    "DIRECT382_M1_ONLY",
+    "DIRECT382_Q_GE06_ONLY",
+    "DIRECT382_BOTH",
+    "DIRECT763_M1_ONLY",
+    "DIRECT763_Q_GE06_ONLY",
+    "DIRECT763_BOTH"
+  ],
+  "unchanged_contract": {
+    "H4_equation": "L_total Z21 = -2Q_total(Z10,Z11) -2DY2[Z10;Z11] -2M1[Z20,q20] -2M2[(Z10,q10),(Z10,q10)]",
+    "non_target_source_pieces": "Frozen Repair37 PCHIP stage representation.",
+    "projected_p0_unchanged": true,
+    "canonical_operator_unchanged": true,
+    "Radau_tableau_unchanged": true,
+    "active_mask_unchanged": true,
+    "science_shift_target": 1e-6,
+    "threshold_relaxed": false,
+    "observational_tuning": false
+  },
+  "implementation_gates": {
+    "Repair41_and_Repair37_hashes_and_routes_exact": true,
+    "Repair41_stage_x_matches_generated_factor1_stage_x_abs_max": 1e-13,
+    "Repair41_saved_PCHIP_target_stage_values_reproduce_Repair37_target_PCHIP_relative_L2_max": 1e-12,
+    "PCHIP_baseline_Z21_vs_Repair37_relative_L2_max": 1e-11,
+    "PCHIP_baseline_shift_metric_vs_Repair37_relative_L2_max": 1e-10,
+    "projected_p0_exact": true,
+    "frozen_active_sample_count": 23850,
+    "all_outputs_finite": true
+  },
+  "diagnostic_quantities": {
+    "per_variant": [
+      "active_shift_Linf",
+      "active_shift_RMS",
+      "active_shift_median",
+      "max_absolute_shift_residual",
+      "canonical_Radau_and_algebraic_linear_residual_max"
+    ],
+    "direct_delta_response_report_only": [
+      "directly propagated delta-Z21 L2 from zero delta p0",
+      "complex alignment of M1-only and Q_GE06-only delta-Z21 with BOTH delta-Z21"
+    ],
+    "direct382_vs_direct763": [
+      "combined active-shift Linf difference",
+      "combined active-shift RMS difference",
+      "combined directly propagated delta-Z21 relative L2"
+    ]
+  },
+  "routing_rule": {
+    "DIRECT_TARGET_CORRECTION_BELOW_SCIENCE_TARGET": "Both DIRECT382_BOTH and DIRECT763_BOTH have active-shift Linf <= 1e-6.",
+    "DIRECT_TARGET_CORRECTION_ABOVE_SCIENCE_TARGET": "Both DIRECT382_BOTH and DIRECT763_BOTH have active-shift Linf > 1e-6.",
+    "DIRECT_TARGET_CORRECTION_THRESHOLD_SIDE_UNRESOLVED": "DIRECT382_BOTH and DIRECT763_BOTH lie on opposite sides of 1e-6.",
+    "IMPLEMENTATION_FAIL": "Any frozen binding, stage-coordinate, PCHIP-target reproduction, baseline reproduction, projected-p0, active-mask or finiteness gate fails."
+  },
+  "next_step_rule": {
+    "if_below": "Freeze Repair42 and preregister a separate direct-target H4/Z21 science reclosure with unchanged science thresholds and an explicit time-control construction.",
+    "if_above": "Freeze Repair42 and localize the residual non-target source representation before any science reclosure.",
+    "if_threshold_side_unresolved": "Freeze Repair42 and increase only the direct target-parent time resolution before any science reclosure."
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair38_relabelled": false,
+    "Repair39_relabelled": false,
+    "Repair40_relabelled": false,
+    "Repair41_relabelled": false,
+    "Z21_certification_forbidden_in_Repair42": true,
+    "no_science_reclosure": true,
+    "no_threshold_relaxation": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
