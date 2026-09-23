@@ -1,0 +1,123 @@
+{
+  "classification": "GE19_REPAIR41_PREDATA_DIRECT_FINE_GRID_TARGET_SOURCE_RECONSTRUCTION",
+  "created_after_Repair40_valid_diagnostic": true,
+  "result_informed_followup": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Directly reconstruct the two mandatory Repair40 physical source targets, 2M1_GE05_mapped and 2Q_GE06_cross, on finer time grids whose nodes exactly contain the original Nt128 two-stage Radau factor-1 stage coordinates, and compare the direct fine-grid target values against the frozen Nt128 PCHIP and Akima stage representations.",
+  "frozen_Repair40": {
+    "classification": "GE19_REPAIR40_PIECEWISE_STAGE_SOURCE_DECOMPOSITION_COMPLETE",
+    "route": "PIECEWISE_STAGE_SOURCE_DECOMPOSITION_COMPLETE",
+    "JSON_sha256": "f5618344db31328dc4e680eb41bb6a715da3fbe7e54ddff3cb53bc027386bf44",
+    "NPZ_sha256": "06c7799787abcc510259c626bcb9ca925f96efce13c7949a89690f243fbf01b5",
+    "FULL_sha256": "f5618344db31328dc4e680eb41bb6a715da3fbe7e54ddff3cb53bc027386bf44",
+    "outer_runner_sha256": "112bffc28a638bff5a1148795068111475ee4781a923432b6b52cd5a34ec72f4",
+    "freeze_commit": "bd9446feccb28779fa3f59bd0206e18d2ebaed4e",
+    "mandatory_followup_targets": [
+      "2M1_GE05_mapped",
+      "2Q_GE06_cross"
+    ],
+    "followup_kind": "DIRECT_FINE_GRID_RECONSTRUCTION_OF_TARGET_PHYSICAL_PIECES",
+    "relabelled": false
+  },
+  "frozen_parent_hashes": {
+    "Repair13_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "Repair18_JSON_sha256": "d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc",
+    "Repair22_JSON_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+    "Repair22_NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+    "Repair27_JSON_sha256": "99a2183e7088c7492f624cae2d294612380714c1d81aa7ff49cc4fcd1c62c74b",
+    "Repair27_NPZ_sha256": "2b1566d402e4c9e8daee8e5c7084b3da7735442b4fb604d51489b708662fd9c0",
+    "Repair28_NPZ_sha256": "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705",
+    "Repair32A_JSON_sha256": "adef8fad50233c7fa5df3d57e7f21df80ed99228402831b2861ad06256519725",
+    "Repair32B_JSON_sha256": "226dd2a2a0e86ddccc39a62d833960bdf9d5a9af038ad3bf225bbbf69d0b95cf",
+    "Repair32B_NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+    "Repair32C_JSON_sha256": "037314effa33c5bfaf51f6f3c72459de43cb486c6ef5e9a94f5b1984a68611b9",
+    "GE18_NPZ_sha256": "b6ccaf2257fbb09df701c43bc9a593a3f68238826277a510a0b3b531ea9fa6fe",
+    "GE15_dense_sha256": "7f57ab676f2a31cf0abf93ff0f8b0f1f2f80bb9a58d7cf1e47e10a158c57c69f",
+    "Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+  },
+  "direct_time_grids": {
+    "coarse_reference_Nt": 128,
+    "fine_primary_Nt": 382,
+    "fine_control_Nt": 763,
+    "fine_primary_subdivision_per_coarse_interval": 3,
+    "fine_control_subdivision_per_coarse_interval": 6,
+    "reason": "For the Repair07 two-stage Radau IIA factor-1 tableau c1=1/3 and c2=1, both fine grids contain every Nt128 factor-1 stage coordinate exactly as a grid node."
+  },
+  "direct_parent_reconstruction": {
+    "Z10": "Repair21 on-shell reduced H1 canonical solve on each fine grid",
+    "Z20": "Repair14 Lambda-inclusive H3 source plus Repair18 projected zero-coordinate boundary and Repair07 canonical propagation on each fine grid",
+    "q10_q20": "Repair27 cancellation-free Repair26 full-history bath parent with Repair24 normalized GE05 q20 equations, Nq=2048, Nx=512, on each fine grid",
+    "Z11": "Repair32B factor-two corrected H2 reconstruction using the Repair28 R2 tangent parent and the directly reconstructed fine-grid weighted q10",
+    "no_frozen_parent_state_interpolation_used_to_construct_target_sources": true
+  },
+  "direct_target_definitions": {
+    "2M1_GE05_mapped": "Repair37 m1_mapped_fourier evaluated from directly reconstructed fine-grid B20_linear = X20 - weighted_z20",
+    "2Q_GE06_cross": "Repair37 exact direct GE06 bilinear cross evaluated from directly reconstructed fine-grid Z10,Z10dot,Z11,Z11dot with the unchanged degree-8 exact FD8 time assembly"
+  },
+  "comparison_coordinates": {
+    "set": "original Nt128 Repair07 factor-1 Radau stage coordinates",
+    "c1": 0.3333333333333333,
+    "c2": 1.0,
+    "direct_fine_grid_lookup": "exact integer-node lookup only; no target-source interpolation",
+    "frozen_comparators": [
+      "PCHIP of frozen Repair37 Nt128 target nodes",
+      "AKIMA of frozen Repair37 Nt128 target nodes"
+    ]
+  },
+  "unchanged_contract": {
+    "H4_equation_not_solved": true,
+    "no_Z21_reclosure": true,
+    "physical_equations_unchanged": true,
+    "raw_residual_dictionary_scale": 2.0,
+    "Repair26_bath_parent_unchanged": true,
+    "quadrature_order": 2048,
+    "spatial_grid_Nx": 512,
+    "Repair18_boundary_rule_unchanged": true,
+    "Repair32B_H2_equation_unchanged": true,
+    "science_shift_target_report_only": 1e-6,
+    "threshold_relaxed": false,
+    "observational_tuning": false
+  },
+  "implementation_reproduction_gates": {
+    "frozen_parent_hashes_exact": true,
+    "Nt128_formula_adapter_2M1_vs_Repair37_target_relative_L2_max": 1e-12,
+    "Nt128_formula_adapter_2Q_GE06_vs_Repair37_target_relative_L2_max": 1e-12,
+    "fine_stage_coordinate_exact_abs_max": 1e-13,
+    "all_outputs_finite": true
+  },
+  "resolution_gates": {
+    "fine382_vs_fine763_Z10_stage_relative_L2_max": 0.005,
+    "fine382_vs_fine763_Z20_stage_relative_L2_max": 0.005,
+    "fine382_vs_fine763_weighted_z20_stage_relative_L2_max": 0.005,
+    "fine382_vs_fine763_Z11_stage_relative_L2_max": 0.005,
+    "fine382_vs_fine763_2M1_stage_source_relative_L2_max": 0.005,
+    "fine382_vs_fine763_2Q_GE06_stage_source_relative_L2_max": 0.005,
+    "threshold_source": "The 5e-3 ceiling is inherited from the certified parent time-resolution controls; it is not chosen from Repair41 output."
+  },
+  "report_only": {
+    "per_target_PCHIP_vs_direct763_relative_L2": true,
+    "per_target_AKIMA_vs_direct763_relative_L2": true,
+    "per_target_PCHIP_to_AKIMA_delta_alignment_with_PCHIP_to_direct_delta": true,
+    "which_frozen_interpolant_is_closer_to_direct763": true,
+    "no_interpolant_declared_physically_correct": true
+  },
+  "diagnostic_routes": {
+    "DIRECT_TARGET_REFERENCE_RESOLVED": "All implementation reproduction and fine382-vs-fine763 resolution gates pass. Freeze the direct763 target reference and its comparison to PCHIP/Akima; Repair42 may test H4 propagation with the direct target-stage corrections.",
+    "DIRECT_TARGET_REFERENCE_UNRESOLVED": "Implementation reproduction passes but at least one inherited 5e-3 fine-grid resolution gate fails. Freeze and increase only target-parent time resolution before any H4 reclosure.",
+    "IMPLEMENTATION_FAIL": "Frozen bindings, Nt128 formula reproduction, exact stage-node mapping or finiteness fails. Repair41 may be repaired without changing this preregistered contract."
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair38_relabelled": false,
+    "Repair39_relabelled": false,
+    "Repair40_relabelled": false,
+    "Z21_certification_forbidden_in_Repair41": true,
+    "no_H4_reclosure": true,
+    "no_threshold_relaxation": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
