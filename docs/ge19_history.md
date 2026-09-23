@@ -1431,3 +1431,85 @@ Repair38 excludes Radau step resolution as the dominant floor; Repair39
 confirms off-node source-representation dependence; Repair40 localizes the
 mandatory direct fine-grid targets to 2M1_GE05_mapped and 2Q_GE06_cross.
 Window-local particular Z21 remains NOT CERTIFIED. Lensing remains blocked.**
+
+
+---
+
+## Repair41 — direct fine-grid target source reconstruction
+
+Classification:
+
+`GE19_REPAIR41_DIRECT_FINE_GRID_TARGET_SOURCE_RECONSTRUCTION_COMPLETE`.
+
+Route:
+
+`DIRECT_TARGET_REFERENCE_RESOLVED`.
+
+Valid-diagnostic freeze commit:
+
+`1e1ffa694eb9661be72907f59b1de317d87f713d`.
+
+Frozen outputs:
+
+- JSON/FULL:
+  `1b18fede26b021e077ffe5c8b6b7ff0dc727b4defaab48e63491c86d868d1320`;
+- NPZ:
+  `6bfb87ea21d55e2a1d2b16aee9bc8d7246111f91a064a78b74d2ed946ec2ba45`;
+- outer runner:
+  `8d9360c8bad9f7f7ed985957cf2230e0713715dd7057347feb10f31f5bee4375`.
+
+Repair41 is diagnostic-only and does not relabel Repair37--Repair40.
+
+All implementation gates and inherited fine-grid resolution gates pass.
+
+Direct time grids:
+
+- Nt382 = 3x subdivision of Nt128 intervals;
+- Nt763 = 6x subdivision;
+- original factor-1 Radau stage coordinate mismatch:
+  `1.1102230246251565e-16`.
+
+Fine382 versus fine763 target resolution:
+
+- `2M1_GE05_mapped` stage-source relative L2:
+  `6.169210815952087e-08`;
+- `2Q_GE06_cross` stage-source relative L2:
+  `1.0122348516611055e-05`.
+
+Both are far below the inherited `5e-3` parent time-resolution ceiling.
+
+Against the direct763 reference:
+
+- M1 PCHIP relative L2:
+  `2.104807968459713e-06`;
+- M1 Akima relative L2:
+  `2.0255490463534962e-06`;
+- Q_GE06 PCHIP relative L2:
+  `1.1217479471594003e-05`;
+- Q_GE06 Akima relative L2:
+  `1.1561946756579428e-05`.
+
+For the shift-critical `2Q_GE06_cross`, PCHIP is slightly closer to the
+direct reference. More importantly, the PCHIP-to-Akima source displacement
+has alignment `-0.34747480302850875` with the actual PCHIP-to-direct
+displacement. Therefore the prior Akima response is not a faithful proxy for
+the true direct correction.
+
+Next licensed step:
+
+Repair42 direct-target H4 propagation diagnostic. It must preserve the frozen
+Repair37 total-source baseline and projected p0, use factor-1 Radau because
+Repair41 direct values are defined exactly at those stage coordinates, and
+propagate direct382/direct763 corrections for M1 only, Q_GE06 only and both
+targets. No new arbitrary threshold is introduced: threshold-side stability
+is judged only against the existing `1e-6` science target.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair27 q20 CERTIFIED; Repair32B/32C reduced Z11
+CERTIFIED and H4 licensed; Repair33--Repair37 immutable historical FAILs;
+Repair38 excludes Radau step resolution as the dominant floor; Repair39
+confirms off-node source-representation dependence; Repair40 localizes the
+mandatory targets to 2M1_GE05_mapped and 2Q_GE06_cross; Repair41 resolves
+their direct fine-grid stage references. Window-local particular Z21 remains
+NOT CERTIFIED. Lensing remains blocked.**
