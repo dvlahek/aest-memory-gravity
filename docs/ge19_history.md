@@ -1,6 +1,6 @@
 # GE19 reduced weakly nonlinear track — persistent history
 
-Last updated: 2026-09-21
+Last updated: 2026-09-23
 
 Branch:
 
@@ -1091,3 +1091,85 @@ a separately preregistered reduced H2/Z11 reclosure on the Repair22/Repair27 red
 Canonical project status:
 
 **Repair22 Z20 CERTIFIED; Repair26 first-order cancellation-free bath boundary CERTIFIED; Repair27 q20 CERTIFIED; Repair28 historical full-state eta-tangent FAIL at coarse R1; Repair29A localization COMPLETE; Repair29B complete eta tangent CERTIFIED as R2 primary with R3 control; reduced Z11 NOT YET CERTIFIED; H4/Z21 NOT YET LICENSED.**
+
+
+---
+
+## Repair37 — cancellation-safe FD8 H4/Z21 reclosure
+
+Classification:
+
+`GE19_REPAIR37_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE_FAIL`.
+
+Result-localization freeze commit:
+
+`8ef52885d33aac1f91bc75261d53ce8b3b4c54dc`.
+
+Frozen outputs:
+
+- JSON/FULL:
+  `da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a`;
+- NPZ:
+  `572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f`;
+- outer runner:
+  `e3ca1f3c049b45b320c5cdd7db752fa790ed5969de1f9ef350eed0ca72e64522`.
+
+Repair37 is a historical valid FAIL and is not relabelled.
+
+Repair37 closes both numerical targets inherited from Repair36:
+
+- Lambda direct-vs-expanded exact bilinear audit:
+  `1.9148071003126113e-16`;
+- 9-point degree-8 exact GE06/GE07 nonlinear Euler-Lagrange
+  `Dt @ partial` source assembly.
+
+Exactly one gate remains false:
+
+`H4_active_shift_Nt128_Linf_le_1e6`.
+
+Frozen matched-shift values:
+
+- Nt128 active Linf:
+  `1.1749387207106255e-06`;
+- Nt64 matched Linf:
+  `1.1134127189405345e-05`;
+- observed Linf order:
+  `3.2077474489146236`;
+- Nt128 active RMS:
+  `1.0515104304068532e-06`;
+- Nt64 matched RMS:
+  `8.780910986609813e-06`;
+- observed RMS order:
+  `3.027380898364344`.
+
+Frozen-NPZ localization shows:
+
+- ~99.72% of active samples improve Nt64 -> Nt128;
+- 100% of samples still failing at Nt128 improve;
+- failed-sample pointwise order is approximately 2.95--3.03;
+- the median per-mode active order is approximately 2.98055.
+
+The frozen Repair07 propagation path uses PCHIP stage-source interpolation
+and a two-stage Radau IIA march. After the FD4 source derivative is removed,
+the remaining defect therefore has the expected approximately third-order
+propagation signature.
+
+The result is numerical, not evidence for a physical H4 inconsistency.
+
+No Repair37 rerun, threshold relaxation or observational tuning is licensed.
+
+Next licensed step:
+
+a separately preregistered propagation-accuracy localization, keeping the
+Repair37 physics, parents, source arrays, boundary and `1e-6` science target
+fixed. Internal Radau substepping is the minimal first diagnostic; if that
+plateaus, localize the PCHIP stage-source representation.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair27 q20 CERTIFIED; Repair32B/32C reduced Z11
+CERTIFIED and H4 licensed; Repair33--Repair37 remain immutable historical
+FAILs; Repair37 closes the Lambda-audit and FD4-source issues but exposes a
+convergent approximately third-order propagation floor. Window-local
+particular Z21 remains NOT CERTIFIED. Lensing remains blocked pending a
+separately preregistered numerical reclosure.**
