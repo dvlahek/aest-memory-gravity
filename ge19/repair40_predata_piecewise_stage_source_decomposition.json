@@ -1,0 +1,106 @@
+{
+  "classification": "GE19_REPAIR40_PREDATA_PIECEWISE_STAGE_SOURCE_DECOMPOSITION",
+  "created_after_Repair39_valid_diagnostic": true,
+  "result_informed_followup": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Decompose the frozen Repair39 Akima-versus-PCHIP stage-source representation dependence into the six frozen Repair37 H4 source pieces plus an explicit nonlinear interpolation-coupling residual, with the H4 operator, projected boundary, active mask, output grid and factor-4 Radau propagation fixed.",
+  "frozen_Repair39": {
+    "classification": "GE19_REPAIR39_FROZEN_SOURCE_STAGE_INTERPOLATION_LOCALIZATION_COMPLETE",
+    "route": "STAGE_SOURCE_REPRESENTATION_DEPENDENCE_CONFIRMED",
+    "JSON_sha256": "b058d4acb51dd4e0b964fcccb306b7eb105466941b5e0900ae0c84a29374624e",
+    "NPZ_sha256": "0bf5b0c2f26cc06b98eab1fb326757ed409cf91c86c23e995251dfd32571c451",
+    "FULL_sha256": "b058d4acb51dd4e0b964fcccb306b7eb105466941b5e0900ae0c84a29374624e",
+    "outer_runner_sha256": "d2470549728e2a34256753baa6330267ed1ba5df7d4ff23e8ffbbd1adf786504",
+    "freeze_commit": "5c6740d3ca4dbc49f148c869a2cbcca092b844cb",
+    "freeze_blob": "1e93a0111d385fb062fb1eff2f34af6d722487e1",
+    "relabelled": false
+  },
+  "frozen_Repair37": {
+    "JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f",
+    "relabelled": false
+  },
+  "decomposition_definition": {
+    "baseline": "S_P = PCHIP(total frozen Repair37 primary H4 source)",
+    "full_alternative": "S_A = AKIMA(total frozen Repair37 primary H4 source)",
+    "physical_piece_deltas": "delta_j = AKIMA(piece_j) - PCHIP(piece_j)",
+    "coupling_delta": "delta_c = S_A - S_P - sum_j delta_j",
+    "component_variant": "S_j = S_P + delta_j, including j=coupling",
+    "exact_identity": "S_A - S_P = sum_j delta_j + delta_c at every evaluated x",
+    "reason_for_coupling": "PCHIP and Akima slope construction is nonlinear in nodal data, so interpolating the summed total source need not equal summing separately interpolated pieces."
+  },
+  "physical_pieces": [
+    "2Q_GE06_cross",
+    "2Q_GE07_cross",
+    "2Q_Lambda_cross",
+    "2DY2",
+    "2M1_GE05_mapped",
+    "2M2_GE05_mapped"
+  ],
+  "additional_component": "INTERPOLATION_COUPLING",
+  "unchanged_contract": {
+    "H4_source_nodes_not_recomputed": true,
+    "projected_p0_not_resolved": true,
+    "Lambda_operator_unchanged": true,
+    "canonical_operator_unchanged": true,
+    "constraint_metric_unchanged": true,
+    "Radau_tableau_unchanged": true,
+    "internal_substeps_per_Nt128_interval": 4,
+    "output_nodes": "same frozen Repair37 Nt128 nodes",
+    "frozen_active_sample_count": 23850,
+    "science_shift_target_report_only": 1e-6,
+    "threshold_relaxed": false,
+    "observational_tuning": false
+  },
+  "implementation_gates": {
+    "PCHIP_baseline_Z21_vs_Repair39_relative_L2_max": 1e-11,
+    "PCHIP_baseline_shift_metric_vs_Repair39_relative_L2_max": 1e-10,
+    "AKIMA_full_Z21_vs_Repair39_relative_L2_max": 1e-11,
+    "AKIMA_full_shift_metric_vs_Repair39_relative_L2_max": 1e-10,
+    "component_variants_reproduce_frozen_source_nodes_relative_L2_max": 1e-12,
+    "stage_source_decomposition_closure_relative_L2_max": 1e-12,
+    "propagated_Z21_response_decomposition_closure_relative_L2_max": 1e-9,
+    "all_outputs_finite": true
+  },
+  "diagnostic_quantities": {
+    "per_component": [
+      "stage_source_delta_L2_over_full_Akima_minus_PCHIP_stage_source_L2",
+      "Z21_response_L2_over_full_Akima_minus_PCHIP_Z21_response_L2",
+      "Z21_response_complex_alignment_with_full_response",
+      "active_shift_metric_difference_RMS_over_full_Akima_minus_PCHIP_shift_difference_RMS",
+      "active_shift_metric_difference_alignment_with_full_shift_difference",
+      "active_Linf_change_from_PCHIP",
+      "active_RMS_change_from_PCHIP"
+    ],
+    "rankings": [
+      "descending_Z21_response_L2",
+      "descending_active_shift_metric_difference_RMS"
+    ],
+    "no_dominance_threshold": true
+  },
+  "next_target_rule": {
+    "if_same_largest_component_in_both_rankings": "That component is the primary follow-up target.",
+    "if_different_largest_components": "Both largest components are mandatory joint follow-up targets.",
+    "if_INTERPOLATION_COUPLING_is_a_target": "The follow-up must test sum-before-interpolation versus interpolation-before-sum representation before direct reconstruction of a physical piece.",
+    "if_only_physical_piece_targets": "The follow-up may directly reconstruct those frozen physical source pieces on a finer time grid before any new Z21 science reclosure."
+  },
+  "diagnostic_routes": {
+    "PIECEWISE_STAGE_SOURCE_DECOMPOSITION_COMPLETE": "All implementation gates pass. Freeze the rankings and the deterministic next target(s); no Z21 certification is allowed.",
+    "IMPLEMENTATION_FAIL": "Frozen input binding, baseline/full reproduction, nodal identity, stage-source closure, propagated linear response closure or finiteness fails. Repair40 may be repaired without changing this preregistered contract."
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair38_relabelled": false,
+    "Repair39_relabelled": false,
+    "Z21_certification_forbidden_in_Repair40": true,
+    "no_threshold_relaxation": true,
+    "no_H4_physics_change": true,
+    "no_source_node_recomputation": true,
+    "no_boundary_resolve": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
