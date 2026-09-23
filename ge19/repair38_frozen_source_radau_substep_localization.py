@@ -344,10 +344,21 @@ def run_factor(factor,bgs,mod6,mod7,r37npz):
                 finite
                 and np.all(np.isfinite(Y))
                 and np.all(np.isfinite(state))
-                and np.all(np.isfinite(mt))
-                and np.all(np.isfinite(at))
-                and np.all(np.isfinite(sc))
+                and np.all(np.isfinite(mtr))
+                and np.all(np.isfinite(atr))
+                and np.all(np.isfinite(scr))
             )
+
+        # The full per-tag arrays are initialized with np.empty and become
+        # meaningful only after every Fourier mode has been filled.  Do not
+        # inspect future uninitialized mode slots inside the loop above.
+        finite=bool(
+            finite
+            and np.all(np.isfinite(st))
+            and np.all(np.isfinite(mt))
+            and np.all(np.isfinite(at))
+            and np.all(np.isfinite(sc))
+        )
 
         states[tag]=st
         metrics[tag]=mt
