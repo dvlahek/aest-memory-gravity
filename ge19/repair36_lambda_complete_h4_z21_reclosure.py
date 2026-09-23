@@ -140,7 +140,7 @@ def load_parents(rd:Path,args):
     }
     missing=[str(v) for v in paths.values() if not v.exists()]
     if missing:
-        raise RuntimeError("missing Repair33 frozen inputs: "+", ".join(missing))
+        raise RuntimeError("missing Repair36 frozen inputs: "+", ".join(missing))
     expected={
         "r13n":R13_NPZ_SHA,"r22j":R22_JSON_SHA,"r22n":R22_NPZ_SHA,
         "r27j":R27_JSON_SHA,"r27n":R27_NPZ_SHA,
@@ -1186,7 +1186,7 @@ def main():
                 "H4_Z21_FAIL_FREEZE_AND_LOCALIZE"
             )
         },
-        "claim_boundary":"Repair36 certifies only the canonical window-local particular reduced H4/Z21 state on the frozen late-time scalar/AeST/pressureless-dust+Lambda scope. It restores the exact Repair11 Lambda first-directional operator and Repair14 mixed Lambda quadratic source while retaining the Repair36 direct GE06/GE07 bilinear Q cross, Repair21/Repair22 shift certification rule, and unchanged Repair18/Repair07 boundary/propagator. It does not choose a primordial homogeneous Z21 mode, certify a full-species nonlinear cosmology, introduce finite eta, or establish an observational signal."
+        "claim_boundary":"Repair36 certifies only the canonical window-local particular reduced H4/Z21 state on the frozen late-time scalar/AeST/pressureless-dust+Lambda scope. It restores the exact Repair11 Lambda first-directional operator and Repair14 mixed Lambda quadratic source while retaining the Repair35 direct GE06/GE07 bilinear Q cross, Repair21/Repair22 shift certification rule, and unchanged Repair18/Repair07 boundary/propagator. It does not choose a primordial homogeneous Z21 mode, certify a full-species nonlinear cosmology, introduce finite eta, or establish an observational signal."
     }
 
     outj=Path(args.json_out); outn=Path(args.npz_out)
