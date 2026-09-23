@@ -1,0 +1,100 @@
+{
+  "classification": "GE19_REPAIR37_PREDATA_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE",
+  "created_after_Repair36_valid_FAIL": true,
+  "result_informed_followup": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Re-execute the frozen Lambda-complete H4/Z21 construction after two localized numerical-only repairs: replace the cancellation-dominated floating Lambda polarization relative gate by a cancellation-safe exact/direct audit, and replace the fourth-order nonlinear Euler-Lagrange time-derivative assembly by an eighth-order finite-difference operator. Keep the physical H4 equation and the 1e-6 shift threshold unchanged.",
+  "frozen_Repair36_FAIL": {
+    "classification": "GE19_REPAIR36_LAMBDA_COMPLETE_H4_Z21_RECLOSURE_FAIL",
+    "JSON_sha256": "5ba2dacf586ccbbdd5eb41c4ea7cf5c839f5aa2829c294702b4fc37d84ef113f",
+    "NPZ_sha256": "e19962ca71ea002c61b3251365496ee46ac1467054fff81625fb2bce5b5c652a",
+    "FULL_sha256": "5ba2dacf586ccbbdd5eb41c4ea7cf5c839f5aa2829c294702b4fc37d84ef113f",
+    "outer_runner_sha256": "200ac7f4011420ca604b9518a52d791ef783e24de3f18d3b0ebc7bed6ea8e2d2",
+    "freeze_commit": "fa82cf21c3bfd0b1bdb9f6c451670e83b1e115c0",
+    "relabelled": false,
+    "failed_gates": [
+      "Q_lambda_direct_vs_exact_polarization_relative_L2_le_1e12",
+      "H4_active_shift_Nt128_Linf_le_1e6"
+    ]
+  },
+  "unchanged_physics": {
+    "H4_equation": "L_total(GE06+GE07+Lambda) Z21 = -2 Q_total(GE06+GE07+Lambda;Z10,Z11) - 2 DY2[Z10;Z11] - 2 M1_GE05[Z20,q20] - 2 M2_GE05[(Z10,q10),(Z10,q10)]",
+    "parents": [
+      "Repair22 Z10/Z20",
+      "Repair27 q10/q20",
+      "Repair32B/Repair32C Z11"
+    ],
+    "Repair11_Lambda_linear_operator_unchanged": true,
+    "Repair14_Lambda_mixed_Q_formula_unchanged": true,
+    "GE06_GE07_direct_bilinear_Q_formula_unchanged": true,
+    "DY2_unchanged": true,
+    "GE05_M1_M2_unchanged": true,
+    "GE05_to_GE06_raw_residual_scale": 2,
+    "Repair18_projected_boundary_unchanged": true,
+    "Repair07_canonical_Radau_unchanged": true,
+    "Nt_primary": 128,
+    "Nt_control": 64,
+    "spatial_and_bath_grids_unchanged": true,
+    "fitted_normalization": false
+  },
+  "repair_A_lambda_audit": {
+    "problem": "The frozen floating polarization audit evaluates [Q(d+e)-Q(d-e)]/4 on a Lambda mixed source whose complete 2Q L2 norm is ~4.24e-24, producing a ~1e-31 absolute subtraction error but a misleading ~5e-8 relative error.",
+    "direct_source_formula_unchanged": true,
+    "exact_symbolic_bilinear_identity_required": true,
+    "direct_swap_symmetry_relative_L2_max": 1e-12,
+    "cancellation_safe_check": "Compare the direct Lambda mixed source with the analytically expanded exact bilinear formula, not with a subtractive floating polarization evaluation.",
+    "subtractive_polarization_retained_report_only": true,
+    "no_source_rescaling": true,
+    "no_threshold_fit": true
+  },
+  "repair_B_time_derivative": {
+    "problem": "Repair36 matched shift converges with observed order 3.53 Linf / 3.37 RMS but Nt128 remains slightly above 1e-6. The nonlinear GE06/GE07 Euler-Lagrange source assembly uses the frozen fourth-order fd4_matrix in Dt@partial terms.",
+    "replacement": "Use a 9-point eighth-order first-derivative matrix on the same uniform ln(a) grids, with one-sided 9-point degree-8 exact stencils at the first/last four nodes and centered 9-point degree-8 exact stencils in the interior.",
+    "polynomial_exactness_required_degree": 8,
+    "same_grid_points": true,
+    "same_parent_arrays": true,
+    "same_Radau_solver": true,
+    "same_H4_shift_threshold": 0.000001,
+    "fd4_result_retained_as_report_only_control": true
+  },
+  "frozen_thresholds": {
+    "Q_cross_GE06_GE07_direct_symmetry_relative_L2_max": 1e-12,
+    "Q_lambda_direct_symmetry_relative_L2_max": 1e-12,
+    "Q_lambda_exact_expanded_relative_L2_max": 1e-12,
+    "DY2_Nx1024_vs_Nx2048_low_mode_relative_L2_max": 0.0005,
+    "total_H4_source_Nx1024_vs_Nx2048_m1_40_relative_L2_max": 0.0005,
+    "memory_source_Nq1024_vs_Nq2048_relative_L2_max": 0.01,
+    "total_H4_source_Nt64_vs_Nt128_relative_L2_max": 0.005,
+    "canonical_Radau_and_algebraic_linear_residual_max": 1e-8,
+    "H4_state_Nt64_vs_Nt128_global_relative_L2_max": 0.005,
+    "H4_active_shift_Nt128_Linf_max": 0.000001,
+    "H4_near_null_absolute_residual_over_Sref_max": "1000*eps",
+    "H4_matched_active_shift_Linf_order_min": 2.5,
+    "H4_matched_active_shift_RMS_order_min": 2.5,
+    "H4_anisotropy_constraint_backward_error_max": 0.000001,
+    "boundary_q0_abs_max": 1e-12,
+    "boundary_projected_momentum_scaled_residual_max": 1e-8,
+    "boundary_lapse_backward_error_max": 0.000001,
+    "boundary_shift_backward_error_max": 0.000001,
+    "boundary_algebraic_relative_residual_max": 1e-8,
+    "all_source_and_state_outputs_finite": true
+  },
+  "pass_classification": "GE19_REPAIR37_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE_PASS",
+  "fail_classification": "GE19_REPAIR37_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE_FAIL",
+  "pass_consequence": {
+    "Z21_window_local_particular_certified": true,
+    "primordial_homogeneous_Z21_certified": false,
+    "full_species_Z21_certified": false,
+    "next": "Separately preregister first lensing-facing weakly nonlinear memory observable."
+  },
+  "fail_route": "Freeze Repair37 valid FAIL and localize. Do not alter physics or thresholds inside the same test.",
+  "stop_boundary": {
+    "Repair36_relabelled": false,
+    "no_threshold_relaxation": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_primordial_Z21_claim": true,
+    "no_full_species_claim": true
+  }
+}
