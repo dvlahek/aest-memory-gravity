@@ -1,0 +1,121 @@
+name: GE19 Repair39 stage-source interpolation prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair39_predata_frozen_source_stage_interpolation_localization.json'
+      - 'ge19/repair39_frozen_source_stage_interpolation_localization.py'
+      - '.github/workflows/ge19-repair39-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair39 interpolation-only contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair39_predata_frozen_source_stage_interpolation_localization.json)" = "7f289263768e0eb1e3a9af47ecc6b10f71f0065a"
+          test "$(git rev-parse HEAD:ge19/repair39_frozen_source_stage_interpolation_localization.py)" = "91e65251198983205394196893b862f08dd2a585"
+          test "$(git rev-parse HEAD:ge19/repair38_frozen_source_radau_substep_localization.py)" = "df485d3c4752b96b2dae96ef9fa7d77b686fe158"
+          test "$(git rev-parse HEAD:docs/ge19_repair38_valid_diagnostic_pchip_or_other_floor_freeze.md)" = "040af5dcb90070d05e3ab7e98623a4e03aa25009"
+
+          python3 -m py_compile ge19/repair39_frozen_source_stage_interpolation_localization.py
+          python3 ge19/repair39_frozen_source_stage_interpolation_localization.py --help >/tmp/r39_help.txt
+          grep -q -- "--results-dir" /tmp/r39_help.txt
+          grep -q -- "--json-out" /tmp/r39_help.txt
+          grep -q -- "--npz-out" /tmp/r39_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import ge19.repair39_frozen_source_stage_interpolation_localization as r39
+          import ge19.repair38_frozen_source_radau_substep_localization as r38
+
+          p=json.load(open("ge19/repair39_predata_frozen_source_stage_interpolation_localization.json"))
+          assert p["classification"]=="GE19_REPAIR39_PREDATA_FROZEN_SOURCE_STAGE_INTERPOLATION_LOCALIZATION"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair38"]["route"]=="PCHIP_OR_OTHER_FLOOR_REMAINS"
+          assert p["frozen_Repair38"]["relabelled"] is False
+          assert p["unchanged_contract"]["H4_source_nodes_not_recomputed"] is True
+          assert p["unchanged_contract"]["projected_p0_not_resolved"] is True
+          assert p["unchanged_contract"]["internal_substeps_per_Nt128_interval"]==4
+          assert p["unchanged_contract"]["science_shift_target_report_only"]==1e-6
+          assert p["unchanged_contract"]["threshold_relaxed"] is False
+          assert p["only_varied_numerical_control"]["dimension"]=="off-node source-at-stage interpolation"
+          assert [q["id"] for q in p["only_varied_numerical_control"]["methods"]]==[
+              "PCHIP","CUBIC_SPLINE","AKIMA"
+          ]
+          assert p["stop_boundary"]["Z21_certification_forbidden_in_Repair39"] is True
+          assert p["stop_boundary"]["no_lensing_claim"] is True
+
+          assert r39.R38_JSON_SHA=="08dd95c614118c66e37349e2b8d058e85163812fed77c9b048e0ce57e339e5dd"
+          assert r39.R38_NPZ_SHA=="aff63771c1800b0db236cd020cf0d2772f6d9a0fd0328573d055392f2c60da67"
+          assert r39.METHODS==("PCHIP","CUBIC_SPLINE","AKIMA")
+          assert r39.SUBSTEPS==4
+          assert r39.ACTIVE_COUNT==23850
+          assert r39.PCHIP_STATE_REPRO_MAX==1e-11
+          assert r39.PCHIP_SHIFT_REPRO_MAX==1e-10
+          assert r39.NODAL_SOURCE_REPRO_MAX==1e-12
+          assert r39.DEPENDENCE_RATIO_MIN==4.0
+          assert r39.INVARIANT_RATIO_MAX==1.0
+
+          src=open("ge19/repair39_frozen_source_stage_interpolation_localization.py").read()
+
+          # Frozen-node diagnostic must not rebuild any H4 source physics.
+          for bad in (
+              "build_source_config(",
+              "q_cross_direct(",
+              "dy2_real(",
+              "memory_m2_chunk(",
+              "reconstruct_m2_source(",
+              "build_bath_parent_config(",
+          ):
+              assert bad not in src,bad
+
+          # PCHIP baseline is exactly Repair07's frozen source interpolator.
+          interp=inspect.getsource(r39.source_interp)
+          assert 'return r7._source_interp(xgrid,source_by_beta,m)' in interp
+          assert 'CubicSpline' in interp
+          assert 'Akima1DInterpolator' in interp
+          assert 'extrapolate=False' in interp
+
+          # Propagation must reuse repaired Repair38 substepping and stay fixed at 4.
+          run=inspect.getsource(r39.run_method)
+          assert 'r38.radau2_integrate_substepped' in run
+          assert 'SUBSTEPS' in run
+          assert 'r38.shift_trace_from_canonical' in run
+          assert r39.SUBSTEPS==4
+
+          # Frozen source nodes and projected p0 are loaded from Repair37.
+          assert 'r38.frozen_source_by_beta' in run
+          assert '_projected_p0_primary' in run
+
+          # Diagnostic reference is frozen Repair38 factor2 -> factor4 field change.
+          main=inspect.getsource(r39.main)
+          assert 'substep4_shift_metric' in main
+          assert 'substep2_shift_metric' in main
+          assert 'propagation_reference_rms' in main
+          assert 'max(ratios)>=DEPENDENCE_RATIO_MIN' in main
+          assert 'all(q<=INVARIANT_RATIO_MAX for q in ratios)' in main
+          assert '"Z21_window_local_particular_certified":False' in main
+          assert '"lensing_licensed":False' in main
+
+          # Repair39 inherits exactly the endpoint-safe Repair38 propagator.
+          prop=inspect.getsource(r38.radau2_integrate_substepped)
+          assert 'if isub==substeps-1' in prop
+          assert 'float(x[i+1])' in prop
+          assert 'x2=xr' in prop
+
+          print("GE19_REPAIR39_PRELOCK_PASS")
+          PY
