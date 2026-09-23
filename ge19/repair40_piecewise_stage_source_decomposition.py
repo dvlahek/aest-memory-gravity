@@ -332,6 +332,78 @@ def run_variant(variant,bgs,mod6,mod7,r37npz):
     }
 
 
+def run_delta_response(response,bgs,mod6,mod7,r37npz):
+    """Propagate a source-representation delta directly from zero delta p0.
+
+    This is algebraically identical to subtracting two physical solutions,
+    but avoids catastrophic cancellation between ~1e12 baseline states when
+    the representation response is only ~1e3--1e4.
+    """
+    nt=128
+    states={}
+    finite=True
+    linear_res=0.0
+    xref=np.asarray(r37npz["x_primary"],float)
+
+    for tag in r7.C_TAGS:
+        bg=bgs[(nt,tag)]
+        if not np.array_equal(np.asarray(bg["x"],float),xref):
+            raise RuntimeError(f"Repair40 delta x-grid mismatch for {tag}")
+
+        total=r38.frozen_source_by_beta(r37npz,tag)
+        pieces={p:frozen_piece_by_beta(r37npz,tag,p) for p in PIECES}
+        frozen_state=np.asarray(r37npz[f"{tag}_Z21_primary"],complex)
+
+        nb=len(r7.BETAS)
+        nm=len(r7.M_SOLVE)
+        st=np.empty_like(frozen_state)
+
+        for jm,m in enumerate(r7.M_SOLVE):
+            k=float(m*r7.g9.K_REQ[0]/r7.FOURIER_N[0])
+            bundle=make_source_bundle(xref,total,pieces,m)
+
+            if response==FULL:
+                rhsfun=_sub(bundle["full"][0],bundle["baseline"][0])
+                confun=_sub(bundle["full"][1],bundle["baseline"][1])
+            elif response in COMPONENTS:
+                rhsfun,confun=bundle["deltas"][response]
+            else:
+                raise ValueError(response)
+
+            # Projected p0 is frozen and common to baseline/full/component
+            # variants, hence its exact representation delta is zero.
+            y0=np.zeros((8,nb),complex)
+
+            Y,rdiag=r38.radau2_integrate_substepped(
+                mod6,mod7,bg,tag,k,y0,rhsfun,confun,SUBSTEPS
+            )
+            state,dd,odiag=r7._reconstruct_canonical_solution(
+                mod6,mod7,bg,tag,k,Y,rhsfun,confun
+            )
+            st[:,jm]=state
+
+            linear_res=max(
+                linear_res,
+                float(rdiag["radau_block_scaled_relative_L2_residual_max"]),
+                float(odiag["algebraic_scaled_relative_L2_residual_max"]),
+                float(odiag["lapse_noether_row_relative_residual_max"]),
+            )
+            finite=bool(
+                finite
+                and np.all(np.isfinite(Y))
+                and np.all(np.isfinite(state))
+            )
+
+        finite=bool(finite and np.all(np.isfinite(st)))
+        states[tag]=st
+
+    return {
+        "states":states,
+        "canonical_Radau_and_algebraic_linear_residual_max":float(linear_res),
+        "all_outputs_finite":bool(finite),
+    }
+
+
 def active_concat(mapping,masks):
     return np.concatenate([
         np.asarray(mapping[tag])[masks[tag]].ravel()
@@ -450,9 +522,11 @@ def main():
         active_concat(frozen_a_metric,masks),
     )
 
-    s0=concat_states(runs[BASELINE]["states"])
-    sf=concat_states(runs[FULL]["states"])
-    full_state_delta=sf-s0
+    # Stable linear-response extraction: propagate representation deltas
+    # directly from zero delta p0.  Do not subtract ~1e12 physical states.
+    delta_runs={response:run_delta_response(response,bgs,mod6,mod7,r37npz)
+                for response in (FULL,)+COMPONENTS}
+    full_state_delta=concat_states(delta_runs[FULL]["states"])
     full_state_norm=float(np.linalg.norm(full_state_delta))
 
     m0=np.asarray(active_concat(runs[BASELINE]["metrics"],masks),float)
@@ -464,7 +538,7 @@ def main():
     comp_metric_deltas={}
     component_report={}
     for comp in COMPONENTS:
-        sd=concat_states(runs[comp]["states"])-s0
+        sd=concat_states(delta_runs[comp]["states"])
         md=np.asarray(active_concat(runs[comp]["metrics"],masks),float)-m0
         comp_state_deltas[comp]=sd
         comp_metric_deltas[comp]=md
@@ -515,7 +589,10 @@ def main():
         followup_kind="DIRECT_FINE_GRID_RECONSTRUCTION_OF_TARGET_PHYSICAL_PIECES"
 
     nodal_max=max(runs[v]["nodal_source_relative_L2_max"] for v in VARIANTS)
-    finite=bool(all(runs[v]["all_outputs_finite"] for v in VARIANTS))
+    finite=bool(
+        all(runs[v]["all_outputs_finite"] for v in VARIANTS)
+        and all(delta_runs[v]["all_outputs_finite"] for v in (FULL,)+COMPONENTS)
+    )
     implementation_gates={
         "Repair39_and_Repair37_hashes_and_routes_exact":True,
         "frozen_active_sample_count_exact":bool(active_count==ACTIVE_COUNT),
@@ -618,7 +695,11 @@ def main():
             for comp in COMPONENTS
         },
         "propagated_linear_response_closure":{
+            "response_extraction":"direct_delta_propagation_from_zero_delta_p0",
             "Z21_response_decomposition_relative_L2":float(state_closure),
+            "full_delta_linear_residual_max":float(
+                delta_runs[FULL]["canonical_Radau_and_algebraic_linear_residual_max"]
+            ),
         },
         "rankings":{
             "descending_Z21_response_L2":list(rank_state),
@@ -658,7 +739,7 @@ def main():
         for comp in COMPONENTS:
             safe=comp.lower()
             save[f"{tag}_{safe}_Z21_response_delta"]=(
-                runs[comp]["states"][tag]-runs[BASELINE]["states"][tag]
+                delta_runs[comp]["states"][tag]
             )
             save[f"{tag}_{safe}_shift_metric_delta"]=(
                 runs[comp]["metrics"][tag]-runs[BASELINE]["metrics"][tag]
