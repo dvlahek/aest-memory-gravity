@@ -1,0 +1,79 @@
+{
+  "classification": "GE19_REPAIR38_PREDATA_FROZEN_SOURCE_RADAU_SUBSTEP_LOCALIZATION",
+  "created_after_Repair37_valid_FAIL": true,
+  "result_informed_followup": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Localize the sole remaining Repair37 H4/Z21 shift failure by freezing the emitted Repair37 Nt128 total H4 source arrays and projected boundary data and varying only the number of internal two-stage Radau IIA substeps per frozen Nt128 interval.",
+  "frozen_Repair37_FAIL": {
+    "classification": "GE19_REPAIR37_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE_FAIL",
+    "JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f",
+    "FULL_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "outer_runner_sha256": "e3ca1f3c049b45b320c5cdd7db752fa790ed5969de1f9ef350eed0ca72e64522",
+    "freeze_commit": "8ef52885d33aac1f91bc75261d53ce8b3b4c54dc",
+    "freeze_blob": "d120915221b5fc1b0860c682cb8edac876571e83",
+    "relabelled": false,
+    "sole_false_gate": "H4_active_shift_Nt128_Linf_le_1e6",
+    "Nt128_active_Linf": 1.1749387207106255e-6,
+    "Nt64_interpolated_active_Linf": 1.1134127189405345e-5,
+    "observed_Linf_order": 3.2077474489146236,
+    "Nt128_active_RMS": 1.0515104304068532e-6,
+    "Nt64_interpolated_active_RMS": 8.780910986609813e-6,
+    "observed_RMS_order": 3.027380898364344
+  },
+  "frozen_inputs": {
+    "Repair37_primary_total_H4_source_arrays": true,
+    "Repair37_primary_projected_p0": true,
+    "Repair37_primary_active_mask_definition": "freeze the Repair37 Nt128 scale arrays and the Repair37 threshold sqrt(eps)*S_ref",
+    "Repair37_primary_output_grid": 128,
+    "Repair13_background_parent_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "GE15_dense_sha256": "7f57ab676f2a31cf0abf93ff0f8b0f1f2f80bb9a58d7cf1e47e10a158c57c69f"
+  },
+  "unchanged_contract": {
+    "H4_equation_unchanged": true,
+    "H4_source_not_recomputed": true,
+    "Lambda_sector_unchanged": true,
+    "GE05_GE06_normalization_unchanged": true,
+    "Repair18_projected_boundary_not_resolved": true,
+    "projected_p0_loaded_from_frozen_Repair37_NPZ": true,
+    "source_stage_interpolator": "unchanged Repair07 PchipInterpolator on the frozen Nt128 source grid",
+    "canonical_operator": "unchanged Repair07 GE06+GE07 plus frozen Repair11 Lambda operator",
+    "constraint_metric": "unchanged Repair07 cancellation-safe shift backward error",
+    "science_shift_threshold": 1e-6,
+    "threshold_relaxed": false,
+    "observational_tuning": false
+  },
+  "only_varied_numerical_control": {
+    "method": "same frozen two-stage Radau IIA tableau",
+    "internal_substeps_per_frozen_Nt128_interval": [1, 2, 4],
+    "output_nodes": "the same frozen Nt128 nodes",
+    "factor1_required_to_reproduce_frozen_Repair37": true,
+    "no_source_resampling_or_recomputation": true
+  },
+  "implementation_gates": {
+    "factor1_Z21_global_relative_L2_max": 1e-11,
+    "factor1_shift_metric_global_relative_L2_max": 1e-10,
+    "factor1_projected_p0_exact": true,
+    "frozen_active_sample_count_required": 23850,
+    "all_outputs_finite": true
+  },
+  "diagnostic_routes": {
+    "RADAU_PROPAGATION_FLOOR_CONFIRMED": "Factor 1 reproduces Repair37; factor 2 improves the frozen-active Linf with observed factor1-to-factor2 order >=2.5 and reaches <=1e-6; factor 4 does not regress above 1e-6. This licenses a separately preregistered higher-accuracy H4 reclosure but does not certify Z21.",
+    "PROPAGATION_ACCURACY_DEPENDENCE_CONFIRMED": "Factor 1 reproduces Repair37 and finer internal propagation materially improves the frozen-active shift metric, but the strict third-order confirmation condition is not met. Further propagation diagnostics are required.",
+    "PCHIP_OR_OTHER_FLOOR_REMAINS": "Factor 1 reproduces Repair37 but Radau substepping does not materially remove the defect. The next localization target is the frozen PCHIP stage-source representation or another propagation-stage numerical component.",
+    "IMPLEMENTATION_FAIL": "Frozen input binding or factor-1 reproduction fails. Repair38 may be repaired without changing this preregistered diagnostic contract."
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair37_rerun_forbidden": true,
+    "Z21_certification_forbidden_in_Repair38": true,
+    "no_threshold_relaxation": true,
+    "no_H4_physics_change": true,
+    "no_source_recomputation": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
