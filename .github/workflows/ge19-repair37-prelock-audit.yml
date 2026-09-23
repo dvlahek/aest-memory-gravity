@@ -1,0 +1,127 @@
+name: GE19 Repair37 cancellation-safe FD8 H4 prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair37_predata_cancellation_safe_fd8_h4_z21_reclosure.json'
+      - 'ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py'
+      - '.github/workflows/ge19-repair37-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit frozen Repair37 numerical-only contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair37_predata_cancellation_safe_fd8_h4_z21_reclosure.json)" = "cd60e8bc725588cdc13f22255fcba16ba27393d1"
+          test "$(git rev-parse HEAD:ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py)" = "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+          test "$(git rev-parse HEAD:docs/ge19_repair36_valid_fail_numerical_localization_freeze.md)" = "4ff3b601e96936963e8f2d36e2a22ba5c5f059ed"
+
+          python3 -m py_compile ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py
+          python3 ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py --help >/tmp/r37_help.txt
+          grep -q -- "--repair26-trace" /tmp/r37_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import numpy as np
+          import sympy as sp
+          import ge19.repair36_lambda_complete_h4_z21_reclosure as r36
+          import ge19.repair37_cancellation_safe_fd8_h4_z21_reclosure as r37
+
+          p=json.load(open("ge19/repair37_predata_cancellation_safe_fd8_h4_z21_reclosure.json"))
+          assert p["classification"]=="GE19_REPAIR37_PREDATA_CANCELLATION_SAFE_FD8_H4_Z21_RECLOSURE"
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["unchanged_physics"]["GE05_to_GE06_raw_residual_scale"]==2.0
+          assert p["unchanged_physics"]["fitted_normalization"] is False
+          assert p["repair_B_time_derivative"]["same_H4_shift_threshold"]==1e-6
+          assert p["stop_boundary"]["no_threshold_relaxation"] is True
+
+          # FD8 must be degree-8 exact to floating roundoff.
+          e=r37.fd8_polynomial_exactness()
+          assert np.isfinite(e) and e<=1e-10,e
+
+          # Interior stencil must be antisymmetric and annihilate constants.
+          w=r37._FD8_W
+          assert w.shape==(9,9)
+          assert np.max(np.abs(w[4]+w[4][::-1]))<=1e-15
+          assert abs(np.sum(w[4]))<=1e-15
+          assert abs(np.sum(w[0]))<=1e-13
+          assert abs(np.sum(w[8]))<=1e-13
+
+          # q_cross_direct may differ from Repair36 only by fd4 -> fd8.
+          a=inspect.getsource(r36.q_cross_direct)
+          b=inspect.getsource(r37.q_cross_direct)
+          b=b.replace('Dx=fd8_matrix(len(bg["x"]),bg["x"][0],bg["x"][-1])',
+                      'Dx=r7.fd4_matrix(len(bg["x"]),bg["x"][0],bg["x"][-1])')
+          assert a==b
+
+          # Exact Lambda mixed formula identity and symmetry.
+          N0,S0,N1,S1,aa,rr=sp.symbols("N0 S0 N1 S1 aa rr", real=True)
+          directN=-36*rr*aa*S0*S1
+          directI=-36*rr*aa*(N0*S1+N1*S0)-36*rr*S0*S1
+          expandedN=(-36*rr*aa*S0)*S1
+          expandedI=(-36*rr*aa*N0)*S1+(-36*rr*aa*N1)*S0+(-36*rr*S0)*S1
+          assert sp.simplify(directN-expandedN)==0
+          assert sp.simplify(directI-expandedI)==0
+          assert sp.simplify(directN-directN.xreplace({S0:S1,S1:S0}))==0
+          swapI=-36*rr*aa*(N1*S0+N0*S1)-36*rr*S1*S0
+          assert sp.simplify(directI-swapI)==0
+
+          src=open("ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py").read()
+          assert 'Q_lambda_direct_vs_exact_expanded_relative_L2_le_1e12' in src
+          assert 'Q_lambda_subtractive_polarization_relative_L2_report_only' in src
+          assert 'FD8_degree8_polynomial_exactness_abs_le_1e10' in src
+          assert 'H4_active_shift_Nt128_Linf_le_1e6' in src
+          assert 'CONSTRAINT_MAX=1e-6' in src
+
+          # All physical/numerical machinery not explicitly changed above remains exact.
+          for name in (
+              "build_context",
+              "build_direct_bilinear_generators",
+              "_bilinear_fnmap",
+              "_direct_cross_locals",
+              "q2_direction_parts",
+              "q_cross_balanced_report_only",
+              "dy2_real",
+              "m1_mapped_fourier",
+              "grav_real_for_memory",
+              "memory_m2_chunk",
+              "reconstruct_m2_source",
+              "build_bath_parent_config",
+              "verify_bath_projection",
+              "compare_component",
+              "interp_source_config",
+              "shift_trace_from_canonical",
+              "solve_config",
+              "observed_order",
+              "matched_shift_control",
+              "state_time_control",
+              "all_finite_source",
+              "save_config",
+          ):
+              assert inspect.getsource(getattr(r37,name))==inspect.getsource(getattr(r36,name)),name
+
+          for name in (
+              "NT_PRIMARY","NT_CONTROL","NX_POLY","NX_DY_PRIMARY",
+              "NX_DY_CONTROL","NQ_PRIMARY","NQ_CONTROL","M_MAX",
+              "GE05_TO_GE06","Q_SYMMETRY_MAX","DY_SPATIAL_MAX",
+              "TOTAL_SPATIAL_MAX","MEMORY_QUAD_MAX","SOURCE_TIME_MAX",
+              "LINEAR_MAX","STATE_TIME_MAX","CONSTRAINT_MAX","BOUNDARY_MAX",
+              "ORDER_MIN","NEAR_NULL_RATIO_MAX"
+          ):
+              assert getattr(r37,name)==getattr(r36,name),name
+
+          print("GE19_REPAIR37_PRELOCK_PASS")
+          PY
