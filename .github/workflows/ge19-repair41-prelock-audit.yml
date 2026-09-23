@@ -1,0 +1,121 @@
+name: GE19 Repair41 direct fine-grid target prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair41_predata_direct_fine_grid_target_source_reconstruction.json'
+      - 'ge19/repair41_direct_fine_grid_target_source_reconstruction.py'
+      - '.github/workflows/ge19-repair41-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+
+      - name: Audit Repair41 direct target-only contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair41_predata_direct_fine_grid_target_source_reconstruction.json)" = "bc07d4130a22906496588f4bc539b19119b21885"
+          test "$(git rev-parse HEAD:ge19/repair41_direct_fine_grid_target_source_reconstruction.py)" = "b04d39d650afaa0a4657d4d96232ea67a35d725d"
+          test "$(git rev-parse HEAD:docs/ge19_repair40_valid_piecewise_stage_source_decomposition_freeze.md)" = "d2dfd61d765a8fd3c96382bd19b89b7295c841f5"
+
+          python3 -m py_compile ge19/repair41_direct_fine_grid_target_source_reconstruction.py
+          python3 ge19/repair41_direct_fine_grid_target_source_reconstruction.py --help >/tmp/r41_help.txt
+          grep -q -- "--repair26-trace" /tmp/r41_help.txt
+          grep -q -- "--repair28-npz" /tmp/r41_help.txt
+          grep -q -- "--json-out" /tmp/r41_help.txt
+          grep -q -- "--npz-out" /tmp/r41_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import ge19.repair41_direct_fine_grid_target_source_reconstruction as r41
+
+          p=json.load(open("ge19/repair41_predata_direct_fine_grid_target_source_reconstruction.json"))
+          assert p["classification"]=="GE19_REPAIR41_PREDATA_DIRECT_FINE_GRID_TARGET_SOURCE_RECONSTRUCTION"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair40"]["mandatory_followup_targets"]==[
+              "2M1_GE05_mapped","2Q_GE06_cross"
+          ]
+          assert p["direct_time_grids"]["fine_primary_Nt"]==382
+          assert p["direct_time_grids"]["fine_control_Nt"]==763
+          assert p["direct_time_grids"]["fine_primary_subdivision_per_coarse_interval"]==3
+          assert p["direct_time_grids"]["fine_control_subdivision_per_coarse_interval"]==6
+          assert p["direct_parent_reconstruction"]["no_frozen_parent_state_interpolation_used_to_construct_target_sources"] is True
+          assert p["unchanged_contract"]["H4_equation_not_solved"] is True
+          assert p["unchanged_contract"]["no_Z21_reclosure"] is True
+          assert p["unchanged_contract"]["quadrature_order"]==2048
+          assert p["unchanged_contract"]["spatial_grid_Nx"]==512
+          assert p["stop_boundary"]["Z21_certification_forbidden_in_Repair41"] is True
+          assert p["stop_boundary"]["no_lensing_claim"] is True
+
+          assert r41.NT_COARSE==128
+          assert r41.NT_FINE3==382
+          assert r41.NT_FINE6==763
+          assert r41.NQ==2048
+          assert r41.NX==512
+          assert r41.TIME_MAX==5e-3
+          assert r41.ADAPTER_MAX==1e-12
+          assert r41.STAGE_COORD_MAX==1e-13
+          assert r41.TARGETS==("2M1_GE05_mapped","2Q_GE06_cross")
+
+          src=open("ge19/repair41_direct_fine_grid_target_source_reconstruction.py").read()
+
+          # Fine parents are solved from the physical parent equations, not
+          # interpolated from Repair22/Repair27/Repair32B state arrays.
+          sh1=inspect.getsource(r41.solve_h1)
+          assert 'r7.solve_reduced_h1_case_canonical' in sh1
+          sz20=inspect.getsource(r41.solve_z20)
+          assert 'r14.source_bundle_reduced_lambda' in sz20
+          assert 'r18.projected_momentum_solve' in sz20
+          assert 'r7._radau2_integrate_canonical' in sz20
+
+          q20=inspect.getsource(r41.construct_q20_direct)
+          assert 'r24.evolve_z10' in q20
+          assert 'r24.normalized_g2_chunk' in q20
+          assert 'r24.solve_z20_chunk' in q20
+          assert 'B20_linear' in q20
+
+          z11=inspect.getsource(r41.solve_z11)
+          assert 'r32.integrate_dust_tangent' in z11
+          assert 'r32.source_from_B' in z11
+          assert 'r32.solve_h2_case' in z11
+
+          tq=inspect.getsource(r41.target_q6)
+          assert 'r37.q_cross_direct' in tq
+          assert '-2.0*r37.fft_low' in tq
+          tm=inspect.getsource(r41.target_m1)
+          assert 'r37.m1_mapped_fourier' in tm
+
+          # Direct target values must be exact fine-grid node lookup.
+          si=inspect.getsource(r41.stage_indices)
+          assert 'idx.extend([mult*i+mult//3,mult*(i+1)])' in si
+          est=inspect.getsource(r41.extract_target_stage)
+          assert 'np.take' in est
+          assert 'axis=2' in est
+
+          # Frozen PCHIP/Akima may only be comparators.
+          comp=inspect.getsource(r41.frozen_stage_representation)
+          assert 'r39.source_interp' in comp
+          main=inspect.getsource(r41.main)
+          assert 'target_comparison' in main
+          assert 'H4_Z21_reclosure_performed":False' in main
+          assert '"Z21_window_local_particular_certified":False' in main
+          assert '"lensing_licensed":False' in main
+
+          # Inherited resolution ceiling remains 5e-3.
+          assert all(v==0.005 for k,v in p["resolution_gates"].items()
+                     if k!="threshold_source")
+
+          print("GE19_REPAIR41_PRELOCK_PASS")
+          PY
