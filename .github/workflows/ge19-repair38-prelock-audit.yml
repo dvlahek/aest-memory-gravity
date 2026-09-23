@@ -25,7 +25,7 @@ jobs:
           set -euo pipefail
 
           test "$(git rev-parse HEAD:ge19/repair38_predata_frozen_source_radau_substep_localization.json)" = "41a2925cf4f705c4bf8418cbcc2cee48af4a673d"
-          test "$(git rev-parse HEAD:ge19/repair38_frozen_source_radau_substep_localization.py)" = "fbab2cd31cfcb69c21c3e066e6d8d17844369d32"
+          test "$(git rev-parse HEAD:ge19/repair38_frozen_source_radau_substep_localization.py)" = "df485d3c4752b96b2dae96ef9fa7d77b686fe158"
           test "$(git rev-parse HEAD:docs/ge19_repair37_valid_fail_propagation_order_localization_freeze.md)" = "d120915221b5fc1b0860c682cb8edac876571e83"
 
           python3 -m py_compile ge19/repair38_frozen_source_radau_substep_localization.py
@@ -83,6 +83,11 @@ jobs:
           assert 'x2=xr' in src
           assert 'hs=float(xr-xl)' in src
           assert 'x2=float(xl+c2*h)' not in src
+          # Repair38 repair02: do not inspect uninitialized np.empty mode slots.
+          assert 'and np.all(np.isfinite(mtr))' in src
+          assert 'and np.all(np.isfinite(atr))' in src
+          assert 'and np.all(np.isfinite(scr))' in src
+          assert 'future uninitialized mode slots' in src
 
           # Frozen two-stage Radau IIA tableau: exact order-3 conditions.
           A=np.asarray([[5/12,-1/12],[3/4,1/4]],float)
