@@ -1,0 +1,65 @@
+{
+  "classification": "GE19_H4F1_PREDATA_LONGITUDINAL_BATH_SPATIAL_WARD_COVARIANCE",
+  "scope": "Analytic exact 1+1 longitudinal spatial diffeomorphism of frozen NL0B bath covector U=q s and NL1C3B/GE05 reduced node action. This is a necessary restricted input to full all-sector H4 Noether, not the mixed H4 source/parent identity and not a Z21 solve.",
+  "prior_H3F_H3G_status": {
+    "H3F": "GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED",
+    "H3G": "GE19_H3G_CORRECTED_Y_Q20_RECONSTRUCTION_PASS",
+    "H3G_local_json_sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+    "H3G_uploaded_npz_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "H3G_uploaded_npz_bytes": 3550825,
+    "H3G_independent_npz_audit_blob": "01046254c9cfef2aba4fa285e1b42a2eba73820a"
+  },
+  "frozen_action_inputs": {
+    "NL0B_covariant_action_blob": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "NL1C3B_longitudinal_predata_blob": "22e38a08b7ee52fee8e1b0564887cdf931915644",
+    "NL1C3B_longitudinal_generator_blob": "f64e42186f489b37800f33d99f72668268211d23",
+    "GE05_per_node_generator_blob": "40837d77f89028da30c28899e2d0530a4401844e",
+    "StageB_reduced_geometric_Ward_primitives_blob": "5695cf064dcc32bf4385687cbe6052521f2e36b4",
+    "H4_structural_stop_gate_blob": "249193f946e98b13fb5fa4175e997ab721d891c4"
+  },
+  "exact_coframe_and_action": {
+    "coframe": "theta0=N dt, theta1=L(dx+b dt), theta2=R dy, theta3=R dz",
+    "aether_and_longitudinal_unit_frame": "A=cosh(u)e0+sinh(u)e1; s=sinh(u)e0+cosh(u)e1",
+    "bath_covector": "U_jmu=q_j s_mu, q_j is the orthonormal longitudinal coefficient and not an independently assumed coordinate covector",
+    "reduced_components": "U_t=q*(-sinh(u)*N+cosh(u)*L*b); U_x=q*cosh(u)*L",
+    "aether_contravariant": "A^t=cosh(u)/N; A^x=-b*cosh(u)/N+sinh(u)/L",
+    "gradient": "Xphi=sinh(u)*(phi_t-b phi_x)/N+cosh(u)*phi_x/L",
+    "bath_drive": "Aq=cosh(u)*(q_t-b q_x)/N+sinh(u)*q_x/L",
+    "bath_node_density": "N*L*R**2/4*((Aq)**2-(omega*q-sqrt(w)*Xphi)**2)"
+  },
+  "fixed_spatial_relabeling": {
+    "arbitrary": "xi(t,x)",
+    "scalar_coefficient": "delta q=xi*q_x, derived from U=q s and s frame",
+    "scalar_fields": "delta phi=xi*phi_x, delta u=xi*u_x",
+    "metric": "delta N=xi*N_x; delta R=xi*R_x; delta L=xi*L_x+L*xi_x",
+    "shift": "delta b=xi_t+xi*b_x-b*xi_x",
+    "derivative_transform": "delta q_t=xi*q_xt+xi_t*q_x; delta q_x=xi*q_xx+xi_x*q_x; similarly phi",
+    "covector_tests": "delta U_t=xi*U_t,x+U_x*xi_t; delta U_x=xi*U_x,x+U_x*xi_x",
+    "vector_tests": "delta A^t=xi*A^t,x; delta A^x=xi*A^x,x-A^t*xi_t-A^x*xi_x",
+    "density_test": "delta Lmem=partial_x(xi*Lmem)"
+  },
+  "exact_gates": [
+    "Pin each source file to exact Git blob and verify frozen NL0B and NL1C3B U=q s construction before any algebra.",
+    "Prove longitudinal bath covector U_t/U_x transforms as coordinate covector using scalar q and the frozen coframe.",
+    "Prove A^t/A^x transforms as coordinate vector and A^mu U_mu vanishes exactly.",
+    "Prove Aq=A^mu partial_mu q and Xphi=s(phi) each transform as x-scalar.",
+    "Prove NLR^2 and the full reduced GE05 memory node Lagrangian transform as x-density up to a total spatial derivative.",
+    "Do not assume generic transverse bath components or a full 3+1 gauge transformation are certified by this scalar-longitudinal proof.",
+    "Do not derive or claim the mixed H4 Noether source coefficient, parent residual cancellations or an H4/Z21 solution in this stage."
+  ],
+  "route": {
+    "LONGITUDINAL_BATH_WARD_COVARIANCE_DERIVED": "Freeze the exact reduced bath action covariance and scalar q transformation; carry its signed E_q q_x contribution into a separately preregistered complete H4 all-sector Ward coefficient.",
+    "LONGITUDINAL_BATH_WARD_COVARIANCE_UNRESOLVED": "Freeze any nonzero exact transformation defect or unbound action convention; do not patch a constraint source."
+  },
+  "forbidden": [
+    "old_Repair37_to_44_relabel",
+    "new_H4_Z21_solve",
+    "fitted_shift_source",
+    "posthoc_constraint_mask",
+    "threshold_relaxation",
+    "finite_physical_eta",
+    "observational_data",
+    "lensing"
+  ],
+  "status": "PREDATA_ONLY_NO_H4_NOETHER_OR_Z21_CERTIFICATION"
+}
