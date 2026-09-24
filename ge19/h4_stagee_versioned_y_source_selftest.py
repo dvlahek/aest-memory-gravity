@@ -22,7 +22,7 @@ import ge19.repair37_cancellation_safe_fd8_h4_z21_reclosure as r37
 ROOT=Path(__file__).resolve().parents[1]
 BLOBS={
     "ge19/h4_stagee_predata_versioned_y_source_rows.json":
-        "STAGEE_PREDATA_BLOB",
+        "e5ff7d12e963fa7487a1dff42ce06053f4b8d82e",
     "docs/ge19_h4_staged_local_analytic_reproduction_freeze.md":
         "cb41f5633caaebf87924f464d509747ca7a7c4dc",
     "docs/ge19_h4_staged_common_y_action_rows_valid_freeze.md":
