@@ -1,0 +1,45 @@
+name: GE19 H4F2 Full Mixed Ward Prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json'
+      - '.github/workflows/ge19-h4f2-full-ward-prelock.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check frozen H3F H3G Z11 Stage E and H4F1 source dictionary boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json)" = "8097a4770ae8aed74cb4dd0721c1c9bd6907533c"
+          test "$(git rev-parse HEAD:docs/ge19_h3f_corrected_y_z20_valid_local_science_result_freeze.md)" = "e69fd766a36c219ecf46aa7bbf547a38c244f482"
+          test "$(git rev-parse HEAD:docs/ge19_h3g_corrected_y_q20_valid_local_science_result_freeze.md)" = "e5b273a16a131be324162d3e66cf799e4ac543c3"
+          test "$(git rev-parse HEAD:docs/ge19_h3g_independent_uploaded_npz_audit_addendum.md)" = "01046254c9cfef2aba4fa285e1b42a2eba73820a"
+          test "$(git rev-parse HEAD:docs/ge19_h4f1_longitudinal_bath_ward_valid_freeze.md)" = "5aa99f10383a253e934c0c2833230fa714c3ef1d"
+          test "$(git rev-parse HEAD:docs/ge19_repair32c_artifact_only_reduced_z11_certification_result_freeze.md)" = "341e6e10de1ced067c69bd28ab6569817b0eb7ab"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_versioned_y_source_rows.py)" = "282166ea5840d7fba4dbc328d40d7687afa6fa0f"
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json"))
+          assert p["classification"]=="GE19_H4F2_PREDATA_COMPLETE_MIXED_H4_WARD_SOURCE_PARENT_DICTIONARY"
+          assert p["frozen_parents"]["H3F_classification"]=="GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED"
+          assert p["frozen_parents"]["H3G_classification"]=="GE19_H3G_CORRECTED_Y_Q20_RECONSTRUCTION_PASS"
+          assert p["frozen_parents"]["H3G_uploaded_NPZ_sha256"]=="9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452"
+          assert p["frozen_parents"]["H4F1_exact_result_json_sha256"]=="105797e68ebb50a2b9b9cbdb78434f48a9d6f0c387bfc9fd1bbff86b7af7ef8c"
+          assert len(p["fixed_source_dictionary"]["row_order"])==8
+          assert len(p["fixed_source_dictionary"]["six_pieces"])==6
+          assert p["fixed_source_dictionary"]["six_pieces"][3]=="2DY2_action_complete_Y_u_and_phi"
+          assert p["planned_common_grid_structural_followup"]["permitted_only_after_full_analytic_identity"] is True
+          assert p["planned_common_grid_structural_followup"]["retain_original_active_shift_target"]==1e-6
+          assert p["stops"]["no_numerical_Z21_solve"] is True
+          assert p["stops"]["no_relaxed_1e_minus6"] is True
+          assert p["current_status"]=="PREDATA_ONLY_FULL_ALL_SECTOR_MIXED_H4_IDENTITY_NOT_YET_DERIVED"
+          print("GE19_H4F2_COMPLETE_MIXED_WARD_PREDATA_PRELOCK_PASS")
+          PY
