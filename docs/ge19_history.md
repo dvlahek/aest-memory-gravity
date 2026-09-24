@@ -2080,3 +2080,89 @@ Repair38--Repair44 remain diagnostic-only.
 Full all-sector H4 Noether identity is still unproved.
 Window-local particular Z21 remains NOT CERTIFIED;
 lensing remains blocked.
+
+
+---
+
+## Latest restart checkpoint — valid local Stage D and standalone Stage E Y source (2026-09-24)
+
+This entry is the current canonical continuation point, superseding only
+the NEXT-action text of the older Stage C/D checkpoints.
+The original Repair37 science FAIL and all Repair38--44
+diagnostic results remain immutable.
+
+**Stage D local reproduction: PASS.**
+The user-provided local JSON and FULL log are byte-identical
+at 4876 bytes with SHA-256
+`2d900249d1e030a9b11b2b3d3e4b65ada8cbfb39a119b40ac0aba3ce10380d11`,
+exactly matching CI run `35984187949`. The uploaded
+outer runner log has SHA-256
+`2bc7bd4521874a616aa0bb64c59d85d3ada73866407075bec463d145b88a2ab0`
+and 6728 bytes.
+Terminal marker:
+`GE19_H4_STAGED_LOCAL_ANALYTIC_PASS`.
+Local freeze:
+`docs/ge19_h4_staged_local_analytic_reproduction_freeze.md`.
+
+**Stage E standalone complete Y-only source implementation: PASS.**
+Preregistration and source contract:
+`ge19/h4_stagee_predata_versioned_y_source_rows.json`.
+Source implementation:
+`ge19/h4_stagee_versioned_y_source_rows.py`.
+Deterministic test:
+`ge19/h4_stagee_versioned_y_source_selftest.py`.
+
+The first CI run `35995106055` stopped before executing any
+source tests because its path-based Python invocation could not
+import the `ge19` namespace. It is frozen as
+`GE19_H4_STAGEE_FIRST_CI_PREEXECUTION_IMPORT_FAIL` in
+`docs/ge19_h4_stagee_first_ci_import_failure_freeze.md`.
+The sole repair was to invoke the **unchanged** test with
+`python3 -m ge19.h4_stagee_versioned_y_source_selftest`.
+
+The valid CI run `35995241998` passed all preregistered
+gates and is classified as
+`GE19_H4_STAGEE_Y_SOURCE_ROW_DICTIONARY_IMPLEMENTATION_PASS`.
+Frozen JSON SHA-256:
+`c3ff4cc18dc8c7a69ba661a68ea3de987818f1b9c1db3275b08f2976c385896e`;
+3371 bytes.
+Full freeze:
+`docs/ge19_h4_stagee_versioned_y_rows_valid_freeze.md`.
+
+The standalone module returns six main GE19 rows
+`[N,L+R,u,phi,T,rho]` and two constraint rows
+`[shift,anisotropy]`. Only the Y-only u/phi rows are
+nonzero. They implement the Stage D GR-anchored,
+action-derived H3 and eta-tangent H4 RHS with the common
+`a^3` raw action-density factor and one fixed
+2/3-projected pseudo-spectral real-space flux.
+All `beta={1,0.5,0.1}` tests, zero-set controls,
+eta-tangent, frozen low-mode scalar comparators,
+finite/shape/sign and invalid-input gates pass.
+No historical H3/H4 file was changed.
+
+**Lightweight local Stage E source test available:**
+`ge19/run_local_h4_stagee_y_source_rows.sh`;
+static runner audit `35995568675` PASS.
+Local runner freeze:
+`docs/ge19_h4_stagee_local_runner_lock.md`.
+It does not run any parent/H4 solver.
+
+**NEXT PHYSICS/NUMERICS GATE:** preregister a separately
+versioned corrected H3/Z20 parent reclosure using *both*
+action-derived Y u and phi rows, unchanged analytic
+GE06/GE07/Lambda operator and unchanged projected
+homogeneous-boundary convention. A corrected Z20 requires
+reassessment of dependent q20 bath/memory parents and
+independent time/source controls. Assess unchanged
+linear H2 Z11 compatibility separately. Do not reuse old
+Z20/q20 as a physically corrected variational parent.
+
+Before any integrated science H4/Z21 run, check
+the complete all-sector source/Noether identity on
+one common parent/time representation; the standalone
+Y-sector PASS is not such a proof.
+
+No science target relaxation, observational tuning,
+finite physical eta or lensing is licensed.
+Window-local particular Z21 remains NOT CERTIFIED.
