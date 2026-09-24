@@ -199,7 +199,12 @@ def main():
     subset=bool(all(d["exact"] for d in blobs.values())
                 and all(primitive.values()) and all(bindings.values())
                 and all(all(g.values()) for g in symbolic.values())
-                and all(all(g.values()) for g in numeric.values()))
+                and all(
+                    all(v is True for k,v in g.items()
+                        if not k.endswith("_relative_L2"))
+                    and all(float(v)<=1e-9 for k,v in g.items()
+                            if k.endswith("_relative_L2"))
+                    for g in numeric.values()))
     result={
       "classification":(
         "GE19_H4F2F_GE06_SPATIAL_WARD_SHIFT_SOURCE_SUBSET_PASS"
