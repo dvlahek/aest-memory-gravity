@@ -8,7 +8,7 @@ mkdir -p results
 test "$(git rev-parse HEAD:ge19/h3g_predata_corrected_y_q20_reconstruction.json)" = "09fc1bd7fc06459d90fc6f6ba37a84adba757d37"
 test "$(git rev-parse HEAD:ge19/h3g_corrected_y_q20_core.py)" = "688920e840a0a13bc85a6f416c2573cf0472eaa3"
 test "$(git rev-parse HEAD:ge19/h3g_corrected_y_q20_reconstruction.py)" = "de929ae025e3ce58e60e6d229682cf885e7b1007"
-test "$(git rev-parse HEAD:docs/ge19_h3g_corrected_y_q20_implementation_lock.md)" = "8aaa263ef8a98bb88d514a0e311e4a128e45cfa0"
+test "$(git rev-parse HEAD:docs/ge19_h3g_corrected_y_q20_implementation_lock.md)" = "beae8d8a49eaedab58e3bc1e67a45fe7f7174bf6"
 test "$(git rev-parse HEAD:.github/workflows/ge19-h3g-corrected-y-preexecution.yml)" = "a6a60064cb8d979ee2c466a8a05a656d80fc6b45"
 test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
 test "$(git rev-parse HEAD:ge19/repair27_cancellation_free_parent_q20_reconstruction.py)" = "adbab56e67f765ab5e2b37980abae42312a55b44"
