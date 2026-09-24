@@ -55,7 +55,7 @@ def bind():
         "lag=N*L*R**2*sp.Rational(1,4)*(Aq**2-(om*q-sw*Xphi)**2)" in compact(m),
       "frozen_Lambda_density":"L_lambda=-6rho_lambdaNLR^2" in compact(l),
       "NL0C_Y_relative_action_factor_bound":
-        "relative NL0C-to-GE06 raw action factor is **1**" in y,
+        "NL0C-to-GE06 raw action factor is **1**" in y,
     }
 
 def exact_density():
