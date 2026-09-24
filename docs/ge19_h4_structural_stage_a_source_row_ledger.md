@@ -77,6 +77,48 @@ Noether relation can involve other equations, derivatives and parent
 residuals. It is invalid to infer termwise identity from a zero
 constraint-source array.
 
+## Independently checked exact GE05 memory-shift variation
+
+The frozen per-node NL0B longitudinal memory action in
+`ge05/memory_directional_source_generator.py` is
+
+`L_mem = N L R^2 / 4 [ A_q^2 - (omega q - sqrt(w) X_phi)^2 ]`,
+
+where
+
+`A_q = cosh(u) (q_t - b q_x)/N + sinh(u) q_x/L`,
+
+`X_phi = sinh(u) (phi_t - b phi_x)/N + cosh(u) phi_x/L`.
+
+Writing `C = omega q - sqrt(w) X_phi`, its exact shift variation is
+
+`dL_mem/db = -(L R^2/2) [ A_q cosh(u) q_x + C sqrt(w) sinh(u) phi_x ]`.
+
+This identity follows directly by differentiating the same frozen action
+and was independently verified by symbolic simplification; no
+numerical source output is used.
+
+For the frozen FLRW directional substitution of GE05,
+`N=1+eps*dN`, `L=R=a+O(eps)`, `b=eps*db`,
+`u=eps*du`, `q=eps*dq`,
+`q_t=eps*dqt`, `q_x=eps*dqx`,
+`phi_t=Q+eps*dpt`, `phi_x=eps*dpx`, the exact
+second directional coefficient is
+
+`(d^2/deps^2)(dL_mem/db) at eps=0 = -a^3 dqt dqx`.
+
+It does **not** vanish. Repair37 maps the GE05 second-order residual into
+the H4 RHS with the unchanged factor `-2`, so the per-node mapped
+M2 shift source contains the corresponding positive
+`2 a^3 dqt dqx` contribution before bath summation and Fourier
+projection.
+
+This proves directly from the frozen action that M2 can supply an
+H4 shift-source term. It does not establish that its specific
+coefficient cancels the GE06 Q-cross shift source at H4: the full
+Noether identity, bath/parent equations, and common representation
+are still required.
+
 ## Exact operator lemma explaining Repair44
 
 Let `y=(S,u,phi,T,pS,pu,pphi,pT)` and let the frozen canonical affine
