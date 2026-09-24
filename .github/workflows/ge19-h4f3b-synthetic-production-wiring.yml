@@ -1,0 +1,57 @@
+name: GE19 H4F3b Synthetic Production Wiring Runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3b_predata_synthetic_production_wiring.json'
+      - 'ge19/h4f3b_synthetic_production_wiring_selftest.py'
+      - '.github/workflows/ge19-h4f3b-synthetic-production-wiring.yml'
+
+jobs:
+  synthetic-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic and array dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Execute actual source wrapper wiring with manufactured external fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3b_predata_synthetic_production_wiring.json)" = "7121c2fa7ca2502dbf66923a2522fb2340003ee3"
+          test "$(git rev-parse HEAD:ge19/h4f3b_synthetic_production_wiring_selftest.py)" = "3b74108dadb1273e435cc687ffd7a124ab67bab0"
+          test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
+          python3 -m py_compile ge19/h4f3b_synthetic_production_wiring_selftest.py
+          python3 -m ge19.h4f3b_synthetic_production_wiring_selftest \
+            --json-out results/ge19_h4f3b_synthetic_production_wiring.json \
+            > results/ge19_h4f3b_synthetic_production_wiring_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f3b_synthetic_production_wiring.json"))
+          assert d["classification"]=="GE19_H4F3B_SYNTHETIC_PRODUCTION_WIRING_PASS"
+          assert d["all_wiring_gates_pass"] is True
+          assert all(v["exact"] for v in d["frozen_source_blobs"].values())
+          assert len(d["manufactured_runtime"]["cases"])==3
+          assert all(v["checks"]["pass"] for v in d["manufactured_runtime"]["cases"])
+          assert d["manufactured_runtime"]["wrong_physical_time_grid_rejected"] is True
+          assert d["actual_corrected_parent_binary_consumed"] is False
+          assert d["certified_Repair32B_Z11_binary_consumed"] is False
+          assert d["actual_six_source_H4F3b_executed"] is False
+          assert d["full_operator_parent_Ward_derived"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3B_SYNTHETIC_PRODUCTION_WIRING_PASS")
+          PY
+          sha256sum results/ge19_h4f3b_synthetic_production_wiring.json
+          wc -c results/ge19_h4f3b_synthetic_production_wiring.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3b_synthetic_production_wiring
+          path: |
+            results/ge19_h4f3b_synthetic_production_wiring.json
+            results/ge19_h4f3b_synthetic_production_wiring_FULL.log
+          retention-days: 90
