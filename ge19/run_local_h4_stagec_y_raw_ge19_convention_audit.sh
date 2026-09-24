@@ -49,7 +49,8 @@ set -e
 
 if [[ "$rc" -ne 0 || ! -s "$JSON" ]]; then
   echo GE19_H4_STAGEC_LOCAL_ANALYTIC_FAIL
-  exit "$rc"
+  if [[ "$rc" -ne 0 ]]; then exit "$rc"; fi
+  exit 3
 fi
 
 python3 - <<'PY'
