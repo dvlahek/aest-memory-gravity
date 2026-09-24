@@ -29,7 +29,7 @@ jobs:
           python3 -m py_compile \
             ge19/h4_stagee_versioned_y_source_rows.py \
             ge19/h4_stagee_versioned_y_source_selftest.py
-          python3 ge19/h4_stagee_versioned_y_source_selftest.py \
+          python3 -m ge19.h4_stagee_versioned_y_source_selftest \
             --json-out results/ge19_h4_stagee_y_source_rows.json \
             > results/ge19_h4_stagee_y_source_rows_FULL.log
           python3 - <<'PY'
