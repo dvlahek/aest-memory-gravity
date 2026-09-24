@@ -1,0 +1,77 @@
+name: GE19 H3F Corrected Y Z20 Preexecution Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h3f_corrected_y_parent_core.py'
+      - 'ge19/h3f_corrected_y_z20_science_reclosure.py'
+      - '.github/workflows/ge19-h3f-corrected-y-preexecution.yml'
+
+jobs:
+  preexecution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen operator and symbolic dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Verify immutable source, boundary and gates without state propagation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json)" = "6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_source_adapter.py)" = "395294868191111b9b01201315cd2e6a30e47578"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_parent_core.py)" = "7e1da10ae8d79b6269b306f5483783de0fd3fd30"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_z20_science_reclosure.py)" = "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0"
+          test "$(git rev-parse HEAD:ge19/repair07_window_retarded_reduced_h3_z20_particular.py)" = "e34d28a2062c748f48bc82fa928844b02631de25"
+          test "$(git rev-parse HEAD:ge19/repair14_self_consistent_reduced_h3_z20_particular.py)" = "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de"
+          test "$(git rev-parse HEAD:ge19/repair21_on_shell_h1_parent_matched_shift_audit.py)" = "73e7fa0f5b3a58f0462308bf11d2a53b7616abfb"
+          test "$(git rev-parse HEAD:ge19/repair22_on_shell_parent_z20_certification.py)" = "4860d13c881f41dbacbdc16ff179e917644ea6a5"
+          python3 -m py_compile \
+            ge19/h3f_corrected_y_source_adapter.py \
+            ge19/h3f_corrected_y_parent_core.py \
+            ge19/h3f_corrected_y_z20_science_reclosure.py
+          python3 -m ge19.h3f_corrected_y_parent_core --help > /tmp/h3fcore_help.txt
+          python3 -m ge19.h3f_corrected_y_z20_science_reclosure --help > /tmp/h3fscience_help.txt
+          python3 - <<'PY'
+          import ast
+          import json
+          from pathlib import Path
+          pre=json.load(open("ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json"))
+          core=Path("ge19/h3f_corrected_y_parent_core.py").read_text()
+          sci=Path("ge19/h3f_corrected_y_z20_science_reclosure.py").read_text()
+          adapter=Path("ge19/h3f_corrected_y_source_adapter.py").read_text()
+          assert pre["unchanged_science_gates"]["H3_active_shift_backward_error_max"]==1e-6
+          assert pre["unchanged_science_gates"]["H3_matched_active_Linf_order_min"]==2.5
+          assert pre["scope"]["boundary"].startswith("Retain exactly the Repair18 initial q0=0")
+          for needle in (
+            "h3f_adapter.source_bundle_reduced_lambda(",
+            '"--legacy-y-control"',
+            "r18.projected_momentum_solve(A,b)",
+            "H3F_CORRECTED_SOURCE_SCIENCE_GATE_FAIL",
+            "H3F_CORRECTED_SOURCE_DIAGNOSTIC_GATES_PASS",
+            "H3F_LEGACY_Y_CONTROL_PASS",
+            "near_null_absolute_residual_over_Sref_le_1000eps",
+          ):
+            assert needle in core,needle
+          for needle in (
+            "h3f_adapter.source_bundle_reduced_lambda(",
+            "source_aware_projected_p0_reproduction_le_1e12",
+            "Y_disabled_Repair22_Z20_and_p0_reproduction_le_1e11",
+            "legacy_state_rel<=1e-11 and legacy_p0_rel<=1e-11",
+            "H3F_CORRECTED_Y_H3_Z20_SCIENCE_FAIL",
+            "H3F_CORRECTED_Y_H3_Z20_CERTIFIED",
+            "StageE_local_JSON_sha256",
+            "r18.projected_momentum_solve(A,bb)",
+          ):
+            assert needle in sci,needle
+          assert '"rhs"]=np.asarray(non_y+low,complex)' in adapter
+          assert 'item["Y_H3_legacy_report_only"]=oldy.copy()' in adapter
+          assert '"H3F_non_Y_reproduction_relative_L2"' in adapter
+          for script in (core,sci):
+            ast.parse(script)
+            assert "SHIFT_MAX=1e-6" in core or "SHIFT_ACTIVE_MAX=1e-6" in script
+          print("GE19_H3F_CORRECTED_Y_PREEXECUTION_AUDIT_PASS")
+          PY
