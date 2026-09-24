@@ -1,0 +1,83 @@
+{
+  "classification": "GE19_H4_STRUCTURAL_STAGE_B_PREDATA_ACTION_NOETHER_IDENTITY",
+  "preregistered_after_valid_Repair44": true,
+  "analytic_audit_only": true,
+  "numerical_H4_Z21_solve_permitted": false,
+  "observational_data_permitted": false,
+  "finite_eta_permitted": false,
+  "purpose": "Derive and independently verify the signed off-shell reduced spatial-diffeomorphism/Noether identity for the complete frozen GE06+GE07+Lambda+Y2+NL0B/GE05 action before projecting its H4 inhomogeneous coefficient and parent-equation terms. No numerical source patch or fitted normalization is permitted.",
+  "parents": {
+    "structural_stop_gate_blob": "249193f946e98b13fb5fa4175e997ab721d891c4",
+    "source_row_ledger_blob": "44d4f01a05aba26926d6a8e13a2b7aac995258d5",
+    "Repair44_valid_freeze_blob": "78f3f144a621f456daab882aad9541177d6c4f82",
+    "Repair44_JSON_sha256": "4f59f9a1aac21b267a00f75c5d5f0a0f791cfc20a4825f78b433729a4c50d435",
+    "Repair44_NPZ_sha256": "951694b7d83cdef312b766945b1f8a9844d1d6dd3a875929c5befc834c87f051",
+    "Repair37_JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "Repair37_NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f"
+  },
+  "exact_frozen_reduced_source_order": [
+    "lapse_N",
+    "isotropic_L_plus_R",
+    "aether_u",
+    "scalar_phi",
+    "dust_potential_T",
+    "dust_density_rho",
+    "independent_shift_b",
+    "anisotropy_L_minus_half_R"
+  ],
+  "six_source_pieces": [
+    "2Q_GE06_cross",
+    "2Q_GE07_cross",
+    "2Q_Lambda_cross",
+    "2DY2",
+    "2M1_GE05_mapped",
+    "2M2_GE05_mapped"
+  ],
+  "action_modules": [
+    "ge06/analytic_aest_directional_source_generator.py",
+    "ge07/pressureless_matter_directional_source_generator.py",
+    "ge05/memory_directional_source_generator.py",
+    "docs/nl0b_covariant_memory_completion_result.md",
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py",
+    "ge19/repair32a_ge06_ge05_raw_residual_normalization_dictionary_audit.py"
+  ],
+  "candidate_reduced_spatial_diffeomorphism": {
+    "status": "DERIVATION_TARGET_NOT_YET_CERTIFIED",
+    "definition": "Use infinitesimal arbitrary spatial relabeling xi(t,x) before applying the isotropic L=R reduction. Derive correct transformations of the two-dimensional coframe, scalar/aether/dust/bath variables from the frozen action; never assume a bath variable is scalar without checking its covariant origin.",
+    "preliminary_geometric_variations_for_scalar_tetrad_components": {
+      "scalar_fields": "delta f = xi partial_x f",
+      "longitudinal_metric_density": "delta L = xi partial_x L + L partial_x xi",
+      "shift": "delta b = partial_t xi + xi partial_x b - b partial_x xi",
+      "lapse_and_transverse_scale": "delta N = xi partial_x N; delta R = xi partial_x R"
+    },
+    "formal_Euler_Lagrange_identity_to_verify": "E_N N_x + E_L L_x + E_R R_x + E_b b_x + sum_{other fields} E_field field_x - partial_x(L E_L - b E_b) - partial_t E_b = 0",
+    "physical_EL_from_source_rows": "E_L=(E_isotropic+2 E_anisotropy)/3; this relation must be applied before assigning Noether source-row coefficients.",
+    "require_all_action_sectors": true,
+    "require_bath_field_transformation_and_bath_EOM": true,
+    "nonanalytic_Y2_zero_set_handling_required": true
+  },
+  "exact_h4_proof_obligations": {
+    "continuum_action_invariance": "Derive full reduced gauge variation and verify each action sector including all boundary terms and possible bath-aether projection effects. A proof of the gauge transformation law must accompany the identity.",
+    "H4_source_coefficient": "Extract precisely the mixed H4 coefficient of the complete identity using the frozen hierarchy and keep all terms proportional to background, Z10, Z20, Z11, q10/q20 and dust parent residuals.",
+    "source_sign_and_normalization": "Use the source-is-on-RHS convention of Repair37 and the exact GE05-to-GE06 residual factor 2 established in Repair32A. No fitted factor.",
+    "source_dictionary": "Give the signed contribution of each of the six H4 pieces to the independent shift, isotropic and anisotropy rows and to the on-shell parent residual terms.",
+    "gauge_before_reduction": "Perform the Noether derivation before imposing L=R and document the projection back to (L+R,L-R/2).",
+    "continuum_vs_discrete": "Separate action-level continuum identity from the existing FD8 GE06/GE07 versus FD4 GE05 M2 time derivatives, Fourier/NY2 spatial derivatives, bath quadrature and projected boundary.",
+    "no_particular_source_patch": true
+  },
+  "outcome_routes": {
+    "ACTION_AND_H4_IDENTITY_DERIVED": "All sectors have verified gauge transformations, the signed complete off-shell identity is derived, and its H4 coefficient is given as an exact source-plus-parent-residual identity. License only a separately preregistered common-representation structural evaluation; NOT a Z21 science PASS.",
+    "ACTION_OR_H4_IDENTITY_INCONSISTENT": "The derivation yields a concrete nonzero analytic remainder after accounting for all parent/bath equations and boundary terms. Freeze the failed symbolic relation and pursue a separate theoretical version. Do not relabel earlier results.",
+    "IDENTITY_UNRESOLVED": "Some bath transformation, Y2 zero-set term, boundary term or H4 parent residual cannot be derived from frozen materials. Freeze the precise missing derivation and stop rather than assuming it vanishes."
+  },
+  "forbidden": [
+    "fitted_constraint_source",
+    "new_interpolator_choice",
+    "post_hoc_mask",
+    "relaxed_science_target",
+    "relabel_Repair37",
+    "declare_Z21_certified",
+    "lensing_predictions_from_H4"
+  ],
+  "current_status": "PREDATA_ONLY; NO DERIVED_FULL_H4_NOETHER_CERTIFICATE"
+}
