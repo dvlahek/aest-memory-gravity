@@ -1,0 +1,52 @@
+name: GE19 H4F3b Real Six Source Local Runner Static
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh'
+      - '.github/workflows/ge19-h4f3b-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen H4F3b local inputs and no H4/Z21 numerical solve
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh)" = "ef0fd6656add30cec667dda0d7bc9a435c3a2562"
+          test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
+          test "$(git rev-parse HEAD:ge19/h4f3b_predata_actual_corrected_six_piece_source.json)" = "c3362f5360c2a9951d77060027c82830c031c145"
+          bash -n ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path("ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh").read_text()
+          needed=(
+            "GE19_H4F3B_LOCAL_SOURCE_LOCK_PASS",
+            "GE19_H4F3B_ACTUAL_CORRECTED_PARENT_PREEXECUTION_PASS",
+            "GE19_H4F3B_ACTUAL_SIX_SOURCE_PASS_FULL_WARD_OPEN",
+            "GE19_H4F3B_ACTUAL_SIX_SOURCE_SCIENCE_FAIL",
+            "GE19_H4F3B_IMPLEMENTATION_OR_EXECUTION_FAIL",
+            "s.frozen_inputs(rd,trace)",
+            "ge19_repair26_R1_full_history_trace.dat",
+            "gh run download 35721220889",
+            'cd "$TMP"',
+            'export PYTHONPATH="$ROOT"',
+            'rm -rf "$TMP"',
+            "ge19_h4f3b_actual_corrected_six_piece_source.npz",
+            "ge19_h4f3b_actual_corrected_six_piece_source.json",
+            "GE19_H4F3B_ACTUAL_CORRECTED_PARENT_PREEXECUTION_PASS",
+            "Z21_CERTIFIED",
+            "git diff --cached --quiet",
+          )
+          for token in needed:
+            assert token in src,token
+          assert "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --" not in src
+          assert "run_local_repair37" not in src
+          assert "rm -f results/ge19_repair37" not in src
+          print("GE19_H4F3B_LOCAL_RUNNER_STATIC_PASS")
+          PY
