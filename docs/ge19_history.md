@@ -1513,3 +1513,78 @@ confirms off-node source-representation dependence; Repair40 localizes the
 mandatory targets to 2M1_GE05_mapped and 2Q_GE06_cross; Repair41 resolves
 their direct fine-grid stage references. Window-local particular Z21 remains
 NOT CERTIFIED. Lensing remains blocked.**
+
+
+---
+
+## Repair42 — direct target H4 propagation diagnostic
+
+Classification:
+`GE19_REPAIR42_DIRECT_TARGET_H4_PROPAGATION_DIAGNOSTIC_COMPLETE`.
+
+Frozen preregistered route:
+`DIRECT_TARGET_CORRECTION_ABOVE_SCIENCE_TARGET`.
+
+Valid diagnostic freeze commit:
+`9a7fd6262832a44ca7d0d2cb73c322b856dcf514`.
+
+Frozen artifacts:
+
+- JSON/FULL SHA-256:
+  `4a211581a77c1ad00e14cc398ca7a19b12642f3f3e35b416314d6721f5f81e25`;
+- NPZ SHA-256:
+  `a60515f3d92bbd388fd2fadae6cf2dd07f3ee68e8690b07632bbe5091e9013c5`;
+- outer runner SHA-256:
+  `855067c5f733374d98a97e5013c0f23ea1cfbcb1f62494a596beab9768cbcf9c`.
+
+All Repair42 implementation gates pass; the frozen Repair37 factor-1
+baseline is reproduced exactly in Z21 and shift metric, projected p0 is
+exact, stage coordinates and stored target PCHIP are exact, and the active
+mask remains 23850 samples.
+
+The original science target is `1e-6` and is not relaxed.
+
+Active-shift Linf:
+
+- frozen PCHIP baseline: `1.1749387207106255e-6`;
+- direct382 M1-only: `1.174938735937822e-6`;
+- direct763 M1-only: `1.1749387364482247e-6`;
+- direct382 Q_GE06-only: `4.755180483851141e-4`;
+- direct763 Q_GE06-only: `1.4187840843421127e-4`;
+- direct382 BOTH: `4.755180486721134e-4`;
+- direct763 BOTH: `1.4187840851992924e-4`.
+
+Both combined corrections are above the frozen science target, so Repair42
+does not license a Z21 science reclosure.
+
+Post-freeze NPZ localization identifies an early-window mode-8 active
+hotspot at `ln(a)=-0.8989528773447014`, Nt128 time index 3, in each C
+case and beta. At C_max/beta0, frozen shift scale is
+`4.457554307372833e-12`. The direct382-minus-PCHIP Q_GE06 constraint
+row0 correction has magnitude `2.1600003821566376e-15`, or
+`4.845707383943654e-4` of that frozen scale. The direct763 correction is
+`7.310994371678159e-16`, or `1.640135793653868e-4` of the scale.
+Those ratios closely match the two observed normalized shift defects.
+Global absolute shift residual maxima are smaller for both corrected runs
+than for the frozen PCHIP baseline.
+
+Thus the immediate open question is **Q_GE06 main-versus-constraint
+source compatibility in the mixed fine-parent/coarse-total stage
+representation**, not an established defect in the non-target physics.
+
+Next licensed step:
+
+Repair43 diagnostic-only Q_GE06 main/constraint stage-correction split with
+exact reproduction of the Repair42 Q_GE06-only variants, absolute residual
+and backward-error denominator localization, unchanged factor-1
+propagation, projected p0, active mask and science target.
+
+Canonical project status:
+
+**Repair22 Z20 CERTIFIED; Repair27 q20 CERTIFIED; Repair32B/32C reduced Z11
+CERTIFIED and H4 licensed; Repair33--Repair37 immutable historical FAILs;
+Repair38--Repair42 valid diagnostic localization results. Repair41 resolves
+the direct source targets; Repair42 shows that partial direct target
+corrections violate the active shift threshold through an early-time
+constraint-row sensitivity. Window-local particular Z21 remains NOT
+CERTIFIED. Lensing remains blocked.**
