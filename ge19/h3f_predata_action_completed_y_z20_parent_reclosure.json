@@ -1,0 +1,98 @@
+{
+  "classification": "GE19_H3F_PREDATA_ACTION_COMPLETED_Y_Z20_PARENT_RECLOSURE",
+  "licensing_parent": "GE19_H4_STAGEE_Y_SOURCE_ROW_DICTIONARY_IMPLEMENTATION_PASS",
+  "purpose": "Reconstruct a new, separately versioned reduced window-local particular H3/Z20 parent using the frozen on-shell H1, analytic GE06+GE07+Lambda sources and complete Stage E NL0C Y-only u+phi raw RHS rows, without changing historical Repair22 or using old physical Y scalar-only source as a substitute.",
+  "parents": {
+    "StageE_valid_freeze_blob": "ddec5651400a843994779114d61203e4187cef04",
+    "StageE_predata_blob": "e5ff7d12e963fa7487a1dff42ce06053f4b8d82e",
+    "StageE_implementation_blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "StageE_test_blob": "05bbbb5d2dba2193adcbf468efc81eda6fb71ce6",
+    "StageE_CI_json_sha256": "c3ff4cc18dc8c7a69ba661a68ea3de987818f1b9c1db3275b08f2976c385896e",
+    "Repair22_science_result_json_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+    "Repair22_science_result_npz_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+    "Repair22_historical_freeze_blob": "fb4ef607d17b5545985edf557aa67d02bc4dff0f",
+    "Repair18_projected_boundary_json_sha256": "d5603138c2f488413686323d1241613f6ef707b586116aa7fe865ae25ceb0edc",
+    "Repair13_h1_npz_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "Repair21_on_shell_h1_npz_sha256": "c6fcde7d39480ec7f03de2acf0f33f648a997404c9cca8f83990ed7b50667f3b"
+  },
+  "scope": {
+    "background": "Same frozen Repair13 Exp self-consistent background and C_min/C_star/C_max.",
+    "H1": "Re-solve frozen Repair21 on-shell reduced H1 Z10 at Nt128/Nt64; H1 equations are unchanged by Y which begins at second physical order.",
+    "H3_equation": "L_total Z20_new = -Q_GE06(Z10,Z10)-Q_GE07(Z10,Z10)-Q_Lambda(Z10,Z10)+S_Y,H3_full(Z10), where S_Y from Stage E in GE06 raw action-density RHS convention.",
+    "non_Y_source": "Exactly frozen Repair14/22 source assembly and Lambda c2, no change.",
+    "Y_source": "Generate all six main/two constraint Stage E rows from real-space g=Q u10+phi10_x/a, 2/3 projected common flux, original fixed KB,a0,beta and kfund. Replace the complete historical scalar-only Y piece instead of adding a correction on top of it.",
+    "H3_source_decomposition": "Report non-Y GA, dust, Lambda, replaced historical scalar-only Y report-only, new Y u and phi, full source and both constraint rows.",
+    "boundary": "Retain exactly the Repair18 initial q0=0 constraint-projection ALGORITHM and homogeneous-mode convention, but recompute its p0 from the new complete source when necessary; old numeric p0 arrays are historical comparators only, never imposed if inconsistent.",
+    "solver": "Frozen Repair07 canonical GE06+GE07+Lambda linear operator and 2-stage Radau IIA integrator, with original on-shell H1 initial bridge.",
+    "report_only": "Numerical difference versus old certified Repair22 Z20; no retrospective relabeling."
+  },
+  "cohorts": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta": [
+      1,
+      0.5,
+      0.1
+    ],
+    "modes": "1..40",
+    "Nt_primary": 128,
+    "Nt_control": 64,
+    "Nx_primary": 1024,
+    "Nx_source_control": 2048,
+    "source_flux_mask": "Stage E common 2/3 projected real-space flux, same at both spatial resolutions"
+  },
+  "unchanged_science_gates": {
+    "H1_Nt64_Repair13_reproduction_relative_L2_max": 1e-12,
+    "H1_linear_relative_L2_max": 1e-8,
+    "H1_shift_backward_error_max": 0.000001,
+    "H1_anisotropy_backward_error_max": 0.000001,
+    "H1_state_time_relative_L2_max": 0.005,
+    "H3_source_spatial_relative_L2_max": 0.0005,
+    "boundary_initial_scaled_constraint_relative_residual_max": 1e-8,
+    "boundary_initial_lapse_backward_error_max": 0.000001,
+    "boundary_initial_shift_backward_error_max": 0.000001,
+    "boundary_initial_algebraic_relative_residual_max": 1e-8,
+    "boundary_rank": 2,
+    "H3_linear_system_relative_residual_max": 1e-8,
+    "H3_anisotropy_backward_error_max": 0.000001,
+    "H3_state_time_relative_L2_max": 0.005,
+    "H3_active_shift_backward_error_max": 0.000001,
+    "H3_near_null_absolute_residual_over_Sref_max": "1000*machine_epsilon_float64",
+    "H3_matched_active_Linf_order_min": 2.5,
+    "H3_matched_active_L2_order_min": 2.5,
+    "active_mask_rule": "S_ref computed once from complete primary cohort; active if local natural scale > sqrt(machine_eps)*S_ref, near-null otherwise, no posthoc exclusions",
+    "all_outputs_finite": true,
+    "all_frozen_cases_complete": true
+  },
+  "controls": {
+    "new_Y_standalone_against_StageE_exact": true,
+    "all_non_Y_pieces_against_Repair22_exact": true,
+    "Y_off_old_Repair22_baseline_reproduction": "When the new Stage E Y module is disabled and the historical Y piece restored for an isolated adapter control, reproduce old Repair22 Z20 and p0 to 1e-11 relative L2; diagnostic comparator only.",
+    "source_action_coverage": "Check new Y u and phi rows and zero Y metric/shift/anisotropy rows at source level for every C,beta,m.",
+    "q20_reconstruction_this_step": false,
+    "H2_Z11_reintegration_this_step": false,
+    "H4_Z21_reclosure_this_step": false
+  },
+  "outcomes": {
+    "CORRECTED_Y_H3_Z20_CERTIFIED": "All immutable inputs, source identity, H1, source-spatial, boundary, linear, time, active and near-null, order and completeness gates pass. New Z20 is certified ONLY for its separately versioned corrected Y action.",
+    "CORRECTED_Y_H3_Z20_SCIENCE_FAIL": "Implementation and provenance pass but one or more unchanged H3 science gates fails. Preserve full residual fields and route to structural analysis before any new numerics.",
+    "IMPLEMENTATION_FAIL": "Any frozen parent/source match, adapter reproduction, new boundary recomputation or execution integrity gate fails."
+  },
+  "next_if_PASS": "Reconstruct dependent q20 using the same cancellation-free Repair26 R1 history and unchanged normalized bath equations, with corrected Z20 parent and independent time/quadrature controls. Then full all-sector H4 source/Noether compatibility must be established before new Z21.",
+  "stop_boundary": {
+    "historical_Repair22_remains_its_original_science_PASS": true,
+    "historical_Repair27_q20_remains_its_original_science_PASS": true,
+    "historical_Repair37_remains_science_FAIL": true,
+    "historical_Repair38_to_44_remain_diagnostic_only": true,
+    "no_Y_source_coefficient_fit": true,
+    "no_adjustment_of_1e_minus6_target": true,
+    "no_obs_data": true,
+    "no_finite_eta": true,
+    "no_lensing": true,
+    "no_inference_of_Z21_certification": true
+  },
+  "execution_status": "PREDATA_ONLY; NO NEW H3 NUMERICAL RUN PERFORMED"
+}
