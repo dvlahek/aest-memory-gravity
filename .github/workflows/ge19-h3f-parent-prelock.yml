@@ -1,0 +1,42 @@
+name: GE19 H3F Action-Completed Y Parent Prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json'
+      - '.github/workflows/ge19-h3f-parent-prelock.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Freeze unchanged H3 science controls and corrected Y parent contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json)" = "6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_versioned_y_source_rows.py)" = "282166ea5840d7fba4dbc328d40d7687afa6fa0f"
+          test "$(git rev-parse HEAD:docs/ge19_h4_stagee_versioned_y_rows_valid_freeze.md)" = "ddec5651400a843994779114d61203e4187cef04"
+          test "$(git rev-parse HEAD:ge19/repair22_on_shell_parent_z20_certification.py)" = "4860d13c881f41dbacbdc16ff179e917644ea6a5"
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json"))
+          assert p["classification"]=="GE19_H3F_PREDATA_ACTION_COMPLETED_Y_Z20_PARENT_RECLOSURE"
+          assert p["licensing_parent"]=="GE19_H4_STAGEE_Y_SOURCE_ROW_DICTIONARY_IMPLEMENTATION_PASS"
+          assert p["cohorts"]["C"]==["C_min","C_star","C_max"]
+          assert p["cohorts"]["beta"]==[1.0,0.5,0.1]
+          assert p["cohorts"]["Nt_primary"]==128 and p["cohorts"]["Nt_control"]==64
+          assert p["cohorts"]["Nx_primary"]==1024 and p["cohorts"]["Nx_source_control"]==2048
+          assert p["unchanged_science_gates"]["H3_active_shift_backward_error_max"]==1e-6
+          assert p["unchanged_science_gates"]["H3_matched_active_Linf_order_min"]==2.5
+          assert p["scope"]["boundary"].startswith("Retain exactly the Repair18 initial q0=0")
+          assert p["controls"]["q20_reconstruction_this_step"] is False
+          assert p["stop_boundary"]["no_Y_source_coefficient_fit"] is True
+          assert p["stop_boundary"]["no_adjustment_of_1e_minus6_target"] is True
+          assert p["execution_status"].startswith("PREDATA_ONLY")
+          print("GE19_H3F_PARENT_PREDATA_PRELOCK_PASS")
+          PY
