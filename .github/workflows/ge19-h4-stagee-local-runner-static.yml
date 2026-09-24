@@ -1,0 +1,48 @@
+name: GE19 H4 Stage E Local Runner Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4_stagee_y_source_rows.sh'
+      - '.github/workflows/ge19-h4-stagee-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check frozen source-only local runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4_stagee_y_source_rows.sh)" = "3d455fb2dd5b9bf7d4f8dc51e06bfd03962b99a1"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_predata_versioned_y_source_rows.json)" = "e5ff7d12e963fa7487a1dff42ce06053f4b8d82e"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_versioned_y_source_rows.py)" = "282166ea5840d7fba4dbc328d40d7687afa6fa0f"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_versioned_y_source_selftest.py)" = "05bbbb5d2dba2193adcbf468efc81eda6fb71ce6"
+          bash -n ge19/run_local_h4_stagee_y_source_rows.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path("ge19/run_local_h4_stagee_y_source_rows.sh").read_text()
+          for term in (
+              "GE19_H4_STAGEE_LOCAL_LOCK_PASS",
+              "GE19_H4_STAGEE_LOCAL_PREEXECUTION_PASS",
+              "GE19_H4_STAGEE_LOCAL_SOURCE_ROWS_PASS",
+              "GE19_H4_STAGEE_LOCAL_IMPLEMENTATION_FAIL",
+              "source .venv/bin/activate",
+              "python3 -m ge19.h4_stagee_versioned_y_source_selftest",
+              "git diff --cached --quiet",
+              "H3_Z20_reclosure_performed",
+              "H4_Z21_solve_performed",
+              "Z21_window_local_particular_certified",
+          ):
+              assert term in src,term
+          for forbidden in (
+              "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --",
+              "repair07_window_retarded_reduced_h3_z20_particular.py --",
+          ):
+              assert forbidden not in src
+          print("GE19_H4_STAGEE_LOCAL_RUNNER_STATIC_PASS")
+          PY
