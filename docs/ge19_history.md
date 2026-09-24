@@ -1634,3 +1634,59 @@ anisotropy-row source-stage split, with exact Repair43 constraint-family
 reproduction and unchanged projected p0, operator, active mask and target.
 
 Z21 remains NOT CERTIFIED; lensing remains blocked.
+
+
+---
+
+## Repair44 — GE06 shift-row0 versus anisotropy-row1 stage-source split
+
+Classification:
+`GE19_REPAIR44_QGE06_SHIFT_ANISOTROPY_ROW_SPLIT_COMPLETE`.
+
+Preregistered route:
+`QGE06_SHIFT_ROW0_FIELD_CLOSER_TO_FULL`.
+
+Valid freeze commit:
+`f2935ead5e27eb99498c1e53850f551bc1bb1426`.
+
+Frozen SHA-256:
+
+- JSON/FULL:
+  `4f59f9a1aac21b267a00f75c5d5f0a0f791cfc20a4825f78b433729a4c50d435`;
+- NPZ:
+  `951694b7d83cdef312b766945b1f8a9844d1d6dd3a875929c5befc834c87f051`;
+- outer runner:
+  `ba532ceda0cb8b3fc7ba79699d49b95c3b1517061243500efc7257475dd77103`.
+
+All 13 implementation gates pass. Frozen Repair43 baseline and both
+direct-resolution full constraint-family variants reproduce exactly in
+Z21 and shift metric. The source stage x and frozen target PCHIP checks
+are exact, and the frozen active mask retains 23850 samples.
+
+For both Nt382 and Nt763 the single-row intervention closer to the full
+GE06 two-constraint-row active shift field is the independent shift
+source row0, not anisotropy row1.
+
+Shift-row0-only leaves all reconstructed Z21 states **exactly unchanged**
+versus PCHIP baseline (maximum absolute difference 0.0). At the frozen
+early-window C_max/beta0=1/m8/it3 hotspot the complex change in shift
+constraint residual equals the negative injected shift-source delta
+with an absolute identity defect of 0.0 for both resolutions.
+
+This is a decisive localization of the mixed-representation intervention:
+the frozen canonical solution is held fixed while the independent shift
+constraint RHS is changed. The ensuing constraint residual is algebraically
+expected and is not proof of erroneous GE06 source physics.
+
+The corrected-row active Linf values remain above the untouched
+`1e-6` science target. Repair44 is diagnostic-only; Repair37 remains
+immutable science FAIL.
+
+**Structural stop boundary:** no further one-row/interpolator patch
+iterations. Audit the full H4 source shift/anisotropy/main-row and
+Noether compatibility on a *common* parent/time representation before
+any new integrated science Z21 reclosure. If the common-representation
+source is inconsistent, revise the physical derivation separately and
+preserve all historical artifacts.
+
+Window-local particular Z21 remains NOT CERTIFIED. Lensing remains blocked.
