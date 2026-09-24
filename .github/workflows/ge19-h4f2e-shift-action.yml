@@ -23,7 +23,7 @@ jobs:
           set -euo pipefail
           mkdir -p results
           test "$(git rev-parse HEAD:ge19/h4f2e_predata_dust_m2_lambda_shift_action.json)" = "a48ea8b15bf1c1141d9407c7400f416171f4b22b"
-          test "$(git rev-parse HEAD:ge19/h4f2e_dust_m2_lambda_shift_action_audit.py)" = "0c6aa6539b8a1a2d18b9ba09e87e5fe578c691e5"
+          test "$(git rev-parse HEAD:ge19/h4f2e_dust_m2_lambda_shift_action_audit.py)" = "7dab9b996fc97ca9a291eb90166babec1abfba23"
           python3 -m py_compile ge19/h4f2e_dust_m2_lambda_shift_action_audit.py
           python3 -m ge19.h4f2e_dust_m2_lambda_shift_action_audit \
             --json-out results/ge19_h4f2e_dust_m2_lambda_shift_action.json \
