@@ -1,0 +1,34 @@
+name: GE19 H4F3 Integrated Ward Prelock
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3_predata_integrated_corrected_parent_ward.json'
+      - '.github/workflows/ge19-h4f3-parent-ward-prelock.yml'
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original parent and physical-clock prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3_predata_integrated_corrected_parent_ward.json)" = "3e17163cb6f52f3a78c41e6f37f83ef682359162"
+          test "$(git rev-parse HEAD:docs/ge19_h4f2h_physical_clock_source_ward_valid_freeze.md)" = "13e508d6b9bea96cc8be25aef991df03d55d8cf3"
+          test "$(git rev-parse HEAD:ge19/h4f2g_action_completed_six_piece_source_ledger.py)" = "d9778da0bb6cc52a15015238810c79978527ffc5"
+          test "$(git rev-parse HEAD:ge19/h4f2h_physical_time_source_ward_bridge.py)" = "65ce1e68a2f77e063c4bb8848d770abb4baeeebf"
+          python3 - <<'PY'
+          import json
+          p=json.load(open('ge19/h4f3_predata_integrated_corrected_parent_ward.json'))
+          assert p['classification']=='GE19_H4F3_PREDATA_INTEGRATED_CORRECTED_PARENT_WARD'
+          assert p['status']=='PREDATA_ONLY'
+          assert len(p['obligations'])==6
+          assert len(p['parent_hashes'])==5
+          assert p['stop']['no_full_Ward_claim_from_prelock'] is True
+          assert p['stop']['no_Z21_solve'] is True
+          assert p['stop']['no_lensing'] is True
+          print('GE19_H4F3_INTEGRATED_PARENT_WARD_PREDATA_PRELOCK_PASS')
+          PY
