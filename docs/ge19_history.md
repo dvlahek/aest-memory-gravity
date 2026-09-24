@@ -2980,3 +2980,70 @@ science solve. The original active-shift
 
 **Full H4 Noether NOT CERTIFIED.
 Z21 NOT CERTIFIED. Lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F2h physical-clock PASS and H4F3 integrated Ward prelock (2026-09-24)
+
+This is the latest canonical restart point. All previously certified
+H3F corrected-Y Z20 and H3G corrected-Y q20 results, and H4F2a--g
+restricted action/source PASS results, remain unchanged. The original
+Repair37 Z21 science FAIL and Repair38--44 diagnostics are immutable.
+
+**New explicit physical-clock defect isolated:** GE19 stores
+`x=ln(a)` and physical `d_t=H(x)d_x`. Frozen Repair37 uses
+`Dt=H[:,None]*FD8_x` for GE06/GE07/Lambda, while frozen
+Repair07/GE05 memory uses `Dt=H[:,None]*FD4_x`. The H4F2g
+source-only helper's `np.gradient(S_b,time)` is a valid
+synthetic coordinate test, but passing GE19 `bg['x']` directly
+would compute d/dln(a) instead of d/dt and introduce second-order
+FD in place of frozen FD8/FD4. Do NOT feed H4F2g's generic
+source-only Ward output to the physical H4 parent/constraint
+identity without the independently checked clock bridge.
+
+**H4F2h physical clock / discrete source Ward: valid Actions PASS.**
+
+Predata `ge19/h4f2h_predata_physical_clock_discrete_ward_bridge.json`
+blob `dc5b29219d25c89d18b1bc37a7ce116f3818e349`.
+Implementation `ge19/h4f2h_physical_time_source_ward_bridge.py`
+blob `65ce1e68a2f77e063c4bb8848d770abb4baeeebf`.
+Selftest `ge19/h4f2h_physical_time_source_ward_selftest.py`
+blob `248dc1e815d345b56ff51d065327773518a9a0ae`.
+Successful dedicated GitHub Actions run `36053845610`, job
+`107815811239`, marker
+`GE19_H4F2H_PHYSICAL_CLOCK_DISCRETE_SOURCE_WARD_PASS`.
+JSON SHA-256 `efb37f8dc66188183995ecd9909396cf58fee8ec8b819bb2a5301f4a1bca21f7`.
+Valid freeze:
+`docs/ge19_h4f2h_physical_clock_source_ward_valid_freeze.md`,
+blob `13e508d6b9bea96cc8be25aef991df03d55d8cf3`.
+All frozen source/clock, six manufactured Nt64/Nt128 beta tests,
+FD8/FD4, wrong-clock negative controls and source-family
+linearity checks passed. This is not an actual corrected-parent
+or H4/Z21 science computation.
+
+**H4F3 integrated full corrected-parent Ward audit: PREREGISTERED ONLY.**
+
+Predata `ge19/h4f3_predata_integrated_corrected_parent_ward.json`,
+blob `3e17163cb6f52f3a78c41e6f37f83ef682359162`.
+Dedicated prelock workflow run `36054356467`, job
+`107817504286`, PASS
+`GE19_H4F3_INTEGRATED_PARENT_WARD_PREDATA_PRELOCK_PASS`.
+The actual integrated operator/source/parent residual evaluator
+has NOT been implemented or executed. Full off-shell-to-on-shell
+H4 Ward identity, physical common-grid discretization and the
+original early-window shift hotspot remain open.
+
+NEXT: implement ONE integrated H4F3 structural test from actual six
+source families and independent canonical operator, on the exact
+certified H3F/H3G/H1/Z11 physical parent/time grid. Preserve the
+formal H4F2b background/H1/Z11/Z20/q20/dust/bath Euler residuals
+and boundaries, and use H4F2h's physical H*FD8/FD4 differentiation.
+GitHub Actions alone cannot consume the local H3F/H3G binary
+artifacts unless those exact files are made available to the workflow;
+do not imply that the static CI already tested physical parents.
+
+Only after one separately frozen full structural Ward PASS may
+ONE new preregistered H4/Z21 science reclosure run. The original
+active-shift target `1e-6` and matched order >=2.5 remain unchanged.
+**Full H4 Noether NOT CERTIFIED; Z21 NOT CERTIFIED; lensing blocked.**
