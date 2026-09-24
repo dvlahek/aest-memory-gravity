@@ -3047,3 +3047,73 @@ Only after one separately frozen full structural Ward PASS may
 ONE new preregistered H4/Z21 science reclosure run. The original
 active-shift target `1e-6` and matched order >=2.5 remain unchanged.
 **Full H4 Noether NOT CERTIFIED; Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3a actual H3F/H3G binary interface partial PASS (2026-09-24)
+
+The H4F3 full operator/source/parent Ward evaluator is still NOT
+implemented and has not been run. The frozen H4F3 preregistration,
+H4F2a--h restricted PASS results, certified corrected-Y H3F Z20,
+certified corrected-Y H3G q20, and original Repair32C Z11
+classification remain unchanged. Historical Repair37 Z21 SCIENCE_FAIL
+and Repair38--44 diagnostics are immutable.
+
+**Actual H4F3a input-interface audit on real uploaded binaries:**
+`GE19_H4F3A_H3F_H3G_BINARY_INTERFACE_PASS_Z11_REQUIRED`.
+
+- code: `ge19/h4f3a_actual_parent_array_interface_audit.py`,
+  blob `0b4fb3ca120f54fef3b53aab452511d374062b68`;
+- true-data report:
+  `results/ge19_h4f3a_actual_parent_array_interface.json`,
+  blob `0e7fa9969e9c46490bf81b0073b4d4fcfcb41ae1`,
+  2695 bytes, SHA-256
+  `77777bf942e771c3f22dff7f43651b6f944af58790e0353e5919c9972fd7a4c9`;
+- freeze:
+  `docs/ge19_h4f3a_real_parent_binary_interface_valid_partial_freeze.md`.
+
+Four actual user-provided H3F/H3G JSON/NPZ files passed **exact**
+previously frozen SHA-256 and original certification checks.
+The H3F and H3G physical parent `x=ln(a)` grids are
+elementwise identical at Nt128 and Nt64, with zero mismatch
+and the original C/beta/m cohorts. Every C has finite H3F
+Z20, H1, H3G weighted q20, X20 and B20 arrays with
+registered shapes; weighted q20 is exactly zero initially,
+and `B20_linear=X20-weighted_z20` holds elementwise
+with maximum absolute defect **0.0** for every C.
+
+The locally executed script has the same exact Git blob
+as the newly committed script. The actual source files
+were read in the active runtime; **the binary files were
+not uploaded into GitHub Actions**. The dedicated static
+attestation workflow `.github/workflows/ge19-h4f3a-parent-interface-static.yml`,
+run `36056344500`, job `107824177598`, PASS, verifies only
+the script, original H4F3 parent hashes and committed true-data
+report. Do not equate Actions' static PASS with a second physical
+binary run.
+
+**OPEN INPUT:** no exact frozen Repair32B `Z11` NPZ
+(SHA-256 `5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327`)
+was available among the current conversation's mounted
+files or indexed conversation/Library file searches.
+That original certified result remains valid in the
+user's existing local scientific pipeline. The new
+auditor accepts `--z11-npz` to verify the exact hash,
+Nt128/Nt64 time grids and all C-case Z11/Z11dot shapes
+once the existing frozen local file is supplied.
+
+**NEXT ONE INTEGRATED PHYSICAL GATE:** finish the H4F3
+input binding including Z11, the original Repair13 H(x)
+background and frozen first-order R1 bath; instantiate
+all six **actual** corrected-parent H4 RHS families on
+one common time representation; evaluate independently
+the canonical linear-operator Ward term and all signed
+background/H1/Z11/H3F Z20/H3G q20/dust/bath Euler
+residuals and boundaries, using the frozen H4F2h
+physical H*FD8 / H*FD4 schemes. Do not substitute
+H4F2g synthetic sources or old Repair37 parent data.
+Retain the original active shift target `1e-6`.
+
+No full H4 Noether PASS or H4/Z21 science solve exists.
+**Z21 NOT CERTIFIED; lensing blocked.**
