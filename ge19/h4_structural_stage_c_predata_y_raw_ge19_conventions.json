@@ -1,0 +1,45 @@
+{
+  "classification": "GE19_H4_STRUCTURAL_STAGE_C_PREDATA_Y_ACTION_DENSITY_TO_GE19_SOURCE_CONVENTION",
+  "date": "2026-09-24",
+  "scope": "Analytic convention audit only; no source patch and no numerical H3/H4 solve.",
+  "follows_valid_analytic_parent": {
+    "classification": "GE19_H4_STAGEB_Y_AETHER_SOURCE_ROW_COVERAGE_GAP_CONFIRMED",
+    "JSON_sha256": "6f20168f0fff685d697ce5a981754513a5c8733067c22ffbbf55f2e904c1ac46",
+    "freeze_blob": "7b713928f3b3d453353089fd596da4896e509fdd"
+  },
+  "fixed_action": "L_Y = -lambda*c_beta*N*L*R^2*|X|^3, lambda=(2-KB), c_beta=2/[3(1+beta)*a0], X=sinh(u)*(phi_t-b*phi_x)/N+cosh(u)*phi_x/L",
+  "perturbation_convention": "physical first-order X=eps*g with g=Q*u10+phi10_x/a; physical second directional coefficient is second derivative in eps, not epsilon^2/2 coefficient",
+  "frozen_GE19_source_rule": {
+    "GE06_raw_EL": "assemble_ga_local returns Euler-Lagrange action-density expressions from frozen GE06 lag and the caller stacks them without dividing by background a^3.",
+    "H3_scalar_Y_source": "y2_source returns kappa*physical_divergence(|g|g) with kappa=2*lambda/((1+beta)*a0); source_real_reduced inserts rhs[3] += -2*y.",
+    "H4_scalar_DY_source": "dy2_real directional derivative of y2_source, assemble_nonmemory inserts main[3]=-2*fft_low(dy) and no aether row.",
+    "coupling_warning": "NL0C published action has a sector-level global factor; its exact coefficient relative to frozen GE06 raw reduced action must be checked before using the raw-to-GE19 expressions as equations of motion."
+  },
+  "independent_symbolic_gates": [
+    "Derive raw H3 Euler second directional scalar flux and aether algebraic row on both strict-sign branches of X.",
+    "Derive eta-tangent H4 rows and zero-set continuous extension.",
+    "Compare raw scalar action-density Euler residual to the exact physical divergence used by y2_source and expose any time-dependent a^3 factor.",
+    "Check raw GE06 scalar/aether EL assembly and GE19 source insertion for hidden a^-3 or other normalization.",
+    "Verify aether-to-scalar-flux relative identity independent of overall action normalization.",
+    "Prove any remaining overall constant action-sector normalization from frozen source documents, or classify as unresolved; do not fit it from Repair37 shift metric.",
+    "Do not silently change the existing H3/H4 parent or classification."
+  ],
+  "outcomes": {
+    "RAW_ACTION_DENSITY_TO_Y_VOLUME_DICTIONARY_RESOLVED": "Exact relative a^3 volume factor and aether/scalar flux ratio are derived, and any common global action factor is independently bound from frozen documents.",
+    "RAW_VOLUME_FACTOR_ESTABLISHED_GLOBAL_NORMALIZATION_OPEN": "Exact a^3 geometric relation is established and no hidden local scaling is found, but action-sector global prefactor cannot be proved with frozen evidence.",
+    "ACTION_TO_GE19_MAPPING_UNRESOLVED": "The row convention, source assembly or symbolic relation cannot be verified from frozen inputs."
+  },
+  "stop_boundary": {
+    "no_y_aether_patch": true,
+    "no_Y_scalar_patch": true,
+    "no_h3_h4_solve": true,
+    "no_new_interpolator": true,
+    "no_threshold_relaxation": true,
+    "no_observational_data": true,
+    "no_finite_eta": true,
+    "no_historical_relabelling": true,
+    "no_Z21_certification": true,
+    "no_lensing": true
+  },
+  "next_step": "Freeze exact result, then derive a separately versioned complete Y variational row dictionary with independently verified overall action and time-dependent volume conventions before reconsidering certified H3/H4 parents."
+}
