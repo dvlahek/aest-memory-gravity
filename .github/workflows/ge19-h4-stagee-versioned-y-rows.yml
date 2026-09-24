@@ -1,0 +1,60 @@
+name: GE19 H4 Stage E Versioned Y Source Rows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4_stagee_predata_versioned_y_source_rows.json'
+      - 'ge19/h4_stagee_versioned_y_source_rows.py'
+      - 'ge19/h4_stagee_versioned_y_source_selftest.py'
+      - '.github/workflows/ge19-h4-stagee-versioned-y-rows.yml'
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen source-comparator dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit preregistered isolated Y-only source dictionary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4_stagee_predata_versioned_y_source_rows.json)" = "e5ff7d12e963fa7487a1dff42ce06053f4b8d82e"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_versioned_y_source_rows.py)" = "282166ea5840d7fba4dbc328d40d7687afa6fa0f"
+          test "$(git rev-parse HEAD:ge19/h4_stagee_versioned_y_source_selftest.py)" = "05bbbb5d2dba2193adcbf468efc81eda6fb71ce6"
+          python3 -m py_compile \
+            ge19/h4_stagee_versioned_y_source_rows.py \
+            ge19/h4_stagee_versioned_y_source_selftest.py
+          python3 ge19/h4_stagee_versioned_y_source_selftest.py \
+            --json-out results/ge19_h4_stagee_y_source_rows.json \
+            > results/ge19_h4_stagee_y_source_rows_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4_stagee_y_source_rows.json"))
+          assert d["classification"]=="GE19_H4_STAGEE_Y_SOURCE_ROW_DICTIONARY_IMPLEMENTATION_PASS"
+          assert d["all_implementation_gates_pass"] is True
+          assert all(x["exact"] for x in d["frozen_blobs"].values())
+          assert all(t["pass"] and t["row_and_zero_set_exact"] for t in d["beta_cases"])
+          assert d["invalid_inputs_rejected"] is True
+          assert d["historical_H3_H4_sources_modified"] is False
+          assert d["H3_Z20_reclosure_performed"] is False
+          assert d["full_H4_Noether_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_window_local_particular_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4_STAGEE_VERSIONED_Y_ROWS_PASS")
+          PY
+          sha256sum results/ge19_h4_stagee_y_source_rows.json
+          wc -c results/ge19_h4_stagee_y_source_rows.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4_stagee_versioned_y_source_rows
+          path: |
+            results/ge19_h4_stagee_y_source_rows.json
+            results/ge19_h4_stagee_y_source_rows_FULL.log
+          retention-days: 90
