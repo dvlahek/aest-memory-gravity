@@ -1,0 +1,51 @@
+{
+  "classification": "GE19_H4_STAGE_C_PREDATA_Y_ACTION_DENSITY_TO_RAW_SOURCE_DICTIONARY",
+  "reason": "A prior independently frozen analytic audit established that the NL0C Y action has a nonzero H3/H4 aether row omitted by frozen GE19 source insertions. This follow-up tests the remaining raw-vs-physical scalar convention before any new numerical solve.",
+  "analytic_only": true,
+  "observational_data": false,
+  "finite_physical_eta": false,
+  "nonlinear_run": false,
+  "frozen_inputs": {
+    "Y_gap_freeze": "docs/ge19_h4_stageb_y_aether_row_gap_valid_freeze.md",
+    "Y_gap_freeze_blob": "7b713928f3b3d453353089fd596da4896e509fdd",
+    "Y_gap_JSON_SHA256": "6f20168f0fff685d697ce5a981754513a5c8733067c22ffbbf55f2e904c1ac46",
+    "NL0C_result_blob": "6fe02e60e4de34a247003c1f4ab449c159850e99",
+    "GE06_generator_blob": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "GE19_H3_source_blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "GE19_H4_source_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "NL1B2_H4_hierarchy_blob": "67b580f62118773ea4a41b84f5a8cc18f2174f47"
+  },
+  "variables": {
+    "a": "homogeneous FLRW scale factor, positive and independent of spatial x",
+    "Q": "homogeneous background scalar time derivative",
+    "c_beta": "2/[3(1+beta)*a0]",
+    "lambda": "2-KB, exact frozen Y prefactor",
+    "g10": "Q*u10+phi10_x/a",
+    "g11": "Q*u11+phi11_x/a",
+    "direct_source_convention": "Raw Euler-Lagrange density from the same GE06 reduced 3+1 action; H3/H4 source sits on RHS with factor -2 relative to the epsilon^2 coefficient"
+  },
+  "target_proofs": [
+    "GE06 phi residual is the raw action-density Euler row -partial_t(dL/dphi_t)-partial_x(dL/dphi_x), without division by NLR^2 in frozen assemble_ga_local",
+    "Y leading H3 action-density phi residual equals a^3 times the volume-normalized NL0C Y2 divergence for any homogeneous a",
+    "Y leading H4 eta tangent action-density phi residual equals a^3 times frozen dy2_real physical divergence",
+    "H3 action-density aether Y RHS has a generically nonzero row2 and sign fixed by -2*Y2",
+    "H4 action-density aether Y RHS has a generically nonzero row2 and sign fixed by -2*DY2",
+    "Y source has no H3/H4 direct metric rows at this perturbative order, and this does not eliminate either scalar or aether source",
+    "Do not infer that the previous H3/Z20 numerical results certify the corrected full variational theory"
+  ],
+  "decision_rules": {
+    "ACTION_TO_RAW_Y_DICTIONARY_DERIVED_AND_FROZEN_SOURCE_MISMATCH_CONFIRMED": "Exact action row proof and raw-vs-physical a^3 identity pass, the frozen H3/H4 source assembly has no corresponding aether Y row, and its scalar Y injection lacks the raw a^3 factor.",
+    "RAW_SOURCE_NORMALIZATION_UNRESOLVED": "Any necessary factor or Euler row convention cannot be shown to match exact pinned GE06 assembly.",
+    "EQUIVALENT_COMPLETION_ALREADY_ACCOUNTED": "All required Y variational rows and raw density factors are demonstrably present elsewhere in frozen implemented equations."
+  },
+  "stop_boundary": {
+    "no_source_patch": true,
+    "no_fitted_parameter": true,
+    "no_threshold_change": true,
+    "no_relabel_prior_runs": true,
+    "no_H3_H4_numerical_reintegration": true,
+    "no_lensing": true,
+    "no_Z21_science_pass": true
+  },
+  "next_step_if_mismatch": "Freeze a separately versioned complete variational Y2/DY2 dictionary with analytic source-unit tests and new H3 parent certification from the corrected action. Only then can q20 and H4 source compatibility be reevaluated. No prior historical classification changes."
+}
