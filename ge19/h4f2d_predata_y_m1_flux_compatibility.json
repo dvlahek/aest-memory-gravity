@@ -1,0 +1,44 @@
+{
+  "classification": "GE19_H4F2D_PREDATA_Y_AND_M1_ACTION_FLUX_COMPATIBILITY",
+  "purpose": "Exact action-derived Y and GE05 M1 aether/scalar mixed-H4 flux relation using Stage E and exact Repair32A factor two, independently of a Z21 solve; a subset of full H4F2 six-piece Ward source identity.",
+  "parents": {
+    "StageE_module_blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "StageD_freeze_blob": "7d140a608d91a39106c34565cd50e4aa729ec30b",
+    "Repair37_original_source_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "Repair32A_result_blob": "6c5b7f830cbae95209eda0e8c8663c6620ab7071",
+    "H3G_certified_parent_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "H4F2c_full_action_result_sha256": "3fbee288b3cbd062b5b0a255712266f07b332a093c3bf47ef7a1455856bd121a"
+  },
+  "equations": {
+    "Y_H4_u": "+2*a^3*Q*kappa*P(2*abs(g10)*g11)",
+    "Y_H4_phi": "-2*a^2*kappa*dx(P(2*abs(g10)*g11))",
+    "M1_H4_u": "+a^3*Q*B20",
+    "M1_H4_phi": "-a^2*dx(B20)",
+    "common_flux_relation": "dx(S_u)+a*Q*S_phi = 0 for both Y and GE05 M1 when a,Q depend only on time",
+    "M1_B20": "X20-weighted_z20 from certified H3G; no nodal q20 needed for implemented M1"
+  },
+  "gates": {
+    "exact_symbolic_relation_both_families": true,
+    "actual_frozen_code_row_binding": true,
+    "all_beta": [
+      1,
+      0.5,
+      0.1
+    ],
+    "deterministic_mixed_gradient_with_zero_set": true,
+    "two_thirds_projected_flux": true,
+    "relative_fourier_defect_max": 1e-12,
+    "M1_zero_constraint_rows": true,
+    "Y_zero_constraint_rows": true,
+    "no_source_intervention": true
+  },
+  "claim_boundary": {
+    "full_six_piece_Ward_identity": false,
+    "corrected_parent_common_grid_source": false,
+    "H4_Z21_solve": false,
+    "change_sci_target": false,
+    "Z21_certified": false,
+    "lensing_licensed": false
+  },
+  "route": "If gates pass, freeze Y/M1 flux subset, then instantiate the remaining GE06/GE07/Lambda/M2 signed parent-residual and source rows; do not claim full H4F2 PASS."
+}
