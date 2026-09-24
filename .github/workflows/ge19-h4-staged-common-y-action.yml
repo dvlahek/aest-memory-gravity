@@ -1,0 +1,56 @@
+name: GE19 H4 Stage D Common Y Action Normalization
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4_structural_stage_d_predata_global_y_normalization.json'
+      - 'ge19/h4_structural_stage_d_common_action_y_rows.py'
+      - '.github/workflows/ge19-h4-staged-common-y-action.yml'
+
+jobs:
+  analytic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Verify frozen action binding and derive complete Y-only rows
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_d_predata_global_y_normalization.json)" = "764d064c76d44bc597ab6c4f96044ba2a90433a5"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_d_common_action_y_rows.py)" = "162357ce845a93982b46aef7d839a7171964b47e"
+          python3 -m py_compile ge19/h4_structural_stage_d_common_action_y_rows.py
+          python3 ge19/h4_structural_stage_d_common_action_y_rows.py \
+            --json-out results/ge19_h4_staged_common_y_action_rows.json \
+            > results/ge19_h4_staged_common_y_action_rows_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4_staged_common_y_action_rows.json"))
+          assert d["classification"]=="GE19_H4_STAGED_COMMON_GR_NORMALIZATION_AND_Y_ROWS_DERIVED"
+          assert d["all_analytic_gates_pass"] is True
+          assert all(x["exact"] for x in d["frozen_blob_controls"].values())
+          assert all(d["common_action_normalization"]["checks"].values())
+          assert all(d["complete_Y_sector_raw_source_rows"]["checks"].values())
+          assert d["common_action_normalization"]["relative_Y_sector_action_prefactor_in_GE06_raw_units"]=="1"
+          assert d["full_H4_Noether_identity_derived"] is False
+          assert d["numerical_H3_H4_Z21_solve_performed"] is False
+          assert d["historical_results_relabelled"] is False
+          assert d["window_local_particular_Z21_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4_STAGED_COMMON_Y_ACTION_AUDIT_PASS")
+          PY
+          sha256sum results/ge19_h4_staged_common_y_action_rows.json
+          wc -c results/ge19_h4_staged_common_y_action_rows.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4_staged_common_y_action_rows
+          path: |
+            results/ge19_h4_staged_common_y_action_rows.json
+            results/ge19_h4_staged_common_y_action_rows_FULL.log
+          retention-days: 90
