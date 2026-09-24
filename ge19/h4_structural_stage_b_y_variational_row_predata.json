@@ -1,0 +1,73 @@
+{
+  "classification": "GE19_H4_STRUCTURAL_STAGE_B_Y_SECTOR_VARIATIONAL_SOURCE_COVERAGE_PREDATA",
+  "follows": "ge19/h4_structural_stage_b_predata_action_noether_identity.json",
+  "audit_kind": "action-derived analytic source-row coverage audit",
+  "results_informed_selection": "The audit target was identified by inspecting the frozen H3/H4 source implementation after Repair44. No numerical outcome, fitted coefficient, or alternative action is used.",
+  "purpose": "Check the complete frozen NL0C Y^(3/2) variational source at second physical order and its eta-tangent against the actual implemented GE19 H3 Y2 and H4 DY2 source rows. Derive all required rows from the same frozen scalar/aether geometry without changing the solver.",
+  "frozen_sources": {
+    "NL0C_action_result": {
+      "path": "docs/nl0c_y_sector_weakly_nonlinear_result.md",
+      "blob": "6fe02e60e4de34a247003c1f4ab449c159850e99"
+    },
+    "NL1B2_H4_hierarchy": {
+      "path": "docs/nl1b2_directional_second_order_eta_tangent_result.md",
+      "blob": "67b580f62118773ea4a41b84f5a8cc18f2174f47"
+    },
+    "GE06_analytic_generator": {
+      "path": "ge06/analytic_aest_directional_source_generator.py",
+      "blob": "a7afe0035054a9dca55d74a6497c081422114b4c"
+    },
+    "GE19_H3_source": {
+      "path": "ge19/repair07_window_retarded_reduced_h3_z20_particular.py",
+      "blob": "e34d28a2062c748f48bc82fa928844b02631de25"
+    },
+    "GE19_H4_source": {
+      "path": "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py",
+      "blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+    },
+    "GE19_stageA_source_ledger": {
+      "path": "docs/ge19_h4_structural_stage_a_source_row_ledger.md",
+      "blob": "44d4f01a05aba26926d6a8e13a2b7aac995258d5"
+    }
+  },
+  "theory_contract": {
+    "unchanged_Y_action": "L_Y = -(2-K_B) N L R^2 [2/(3(1+beta)a0)] |X|^3, where X= sinh(u)(phi_t-b phi_x)/N + cosh(u) phi_x/L",
+    "background": "N=1, L=R=a(t), b=u=0, phi_t=Q(t), phi_x=0, Q nonzero",
+    "first_order_gradient": "g = Q u_1 + phi_{1,x}/a",
+    "perturbation_convention": "Z = Zbar + eps Z10 + eta eps Z11 + eps^2 Z20/2 + eta eps^2 Z21/2; take eps->0+ for the directional nonanalytic Y branch.",
+    "checked_field_rows": [
+      "aether_rapidity_u",
+      "scalar_phi",
+      "metric_lapse",
+      "isotropic_L_plus_R",
+      "independent_shift_b",
+      "anisotropy_L_minus_half_R"
+    ],
+    "eta_tangent": "g = g10 + eta g11 at the first perturbative order; derive directional eta derivative of exact H3 Y2 row before applying H4 RHS -2 mapping",
+    "sign_and_unit_rule": "Report action-density Euler residual and volume-normalized residual separately, and DO NOT map their numerical normalization to GE19 without independent convention validation.",
+    "zero_set_rule": "Use continuous |g|g directional derivative 2|g|h including g=0; do not assert a global bilinear Hessian at FLRW."
+  },
+  "implementation_coverage_controls": {
+    "H3": "Inspect only Y2 insertion inside frozen source_real_reduced, excluding analytic GE06 generator because its documented contract excludes nonanalytic Y.",
+    "H4": "Inspect only DY2 insertion inside frozen Repair37 assemble_nonmemory and compare its declared main/constraint row arrays.",
+    "forbid_hidden_source_assumption": "If an equivalent Y-dependent aether contribution is found in another frozen row, classify as unresolved until the exact mapping is demonstrated."
+  },
+  "routing": {
+    "Y_AETHER_SOURCE_ROW_COVERAGE_GAP_CONFIRMED": "Independent exact action variation has a nonzero second-directional aether row for generic Q*g, yet frozen H3 and H4 Y source builders contain only the scalar row and no equivalent aether row under their current explicit source contract.",
+    "Y_SOURCE_ROW_VARIATION_OR_MAPPING_UNRESOLVED": "Action variation, branch, source-binding or equivalent-source mapping cannot be proved exact.",
+    "Y_SOURCE_ROW_COVERAGE_COMPLETE": "Both aether and scalar Y source contributions are explicitly or exactly equivalently accounted for in the frozen GE19 source convention."
+  },
+  "stop_boundary": {
+    "no_fitted_source": false,
+    "no_fitted_source_used": true,
+    "no_new_solver": true,
+    "no_Repair37_relabel": true,
+    "no_existing_certifications_relabelled": true,
+    "no_H4_Z21_solve": true,
+    "no_science_threshold_relaxation": true,
+    "no_observational_data": true,
+    "no_finite_physical_eta": true,
+    "no_lensing_claim": true
+  },
+  "certification_boundary": "A source-row coverage discrepancy is a structural implementation-vs-action finding, not a demonstration that the full Noether identity fails. It blocks promotion of the implemented H3/H4 as complete variational equations until a separately versioned analytic mapping or correction is established."
+}
