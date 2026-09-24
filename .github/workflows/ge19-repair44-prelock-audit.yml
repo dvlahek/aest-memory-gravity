@@ -1,0 +1,118 @@
+name: GE19 Repair44 GE06 shift-anisotropy row prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair44_predata_qge06_shift_anisotropy_row_split.json'
+      - 'ge19/repair44_qge06_shift_anisotropy_row_split.py'
+      - '.github/workflows/ge19-repair44-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit Repair44 immutable row split
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair44_predata_qge06_shift_anisotropy_row_split.json)" = "85b20ae36482cc343ce756c00970250ea51f1624"
+          test "$(git rev-parse HEAD:ge19/repair44_qge06_shift_anisotropy_row_split.py)" = "3c734e55a8ac72874e78bd48b8fdd14112cd321f"
+          test "$(git rev-parse HEAD:docs/ge19_repair43_valid_ge06_constraint_family_freeze.md)" = "2d3daec4c6f52d9d53071ee04fd8834825c2ce10"
+
+          python3 -m py_compile ge19/repair44_qge06_shift_anisotropy_row_split.py
+          python3 ge19/repair44_qge06_shift_anisotropy_row_split.py --help >/tmp/r44_help.txt
+          grep -q -- "--results-dir" /tmp/r44_help.txt
+          grep -q -- "--json-out" /tmp/r44_help.txt
+          grep -q -- "--npz-out" /tmp/r44_help.txt
+
+          python3 - <<'PY'
+          import inspect,json
+          import ge19.repair44_qge06_shift_anisotropy_row_split as r44
+
+          p=json.load(open("ge19/repair44_predata_qge06_shift_anisotropy_row_split.json"))
+          assert p["classification"]=="GE19_REPAIR44_PREDATA_QGE06_SHIFT_ANISOTROPY_ROW_SPLIT"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair43"]["route"]=="QGE06_CONSTRAINT_ROW_FIELD_CLOSER_TO_FULL"
+          assert p["frozen_Repair43"]["JSON_sha256"]==r44.R43_JSON_SHA
+          assert p["frozen_Repair43"]["NPZ_sha256"]==r44.R43_NPZ_SHA
+          assert p["unchanged_contract"]["Nt"]==128
+          assert p["unchanged_contract"]["Radau_substeps"]==1
+          assert p["unchanged_contract"]["frozen_active_count"]==23850
+          assert p["unchanged_contract"]["science_shift_target_report_only"]==1e-6
+          assert p["unchanged_contract"]["threshold_relaxed"] is False
+          assert p["operator_structure"]["no_operator_modification"] is True
+          assert p["correction_definition"]["direct_target_source_interpolation"] is False
+          assert p["implementation_gates"]["shift_row0_only_Z21_equal_baseline_exact"] is True
+          assert p["stop_boundary"]["Z21_certification_forbidden"] is True
+
+          assert r44.ACTIVE_COUNT==23850
+          assert r44.SCIENCE_TARGET_REPORT_ONLY==1e-6
+          assert r44.STAGE_X_MAX==1e-13
+          assert r44.PCHIP_TARGET_REPRO_MAX==1e-12
+          assert r44.STATE_REPRO_MAX==1e-11
+          assert r44.METRIC_REPRO_MAX==1e-10
+          assert len(r44.VARIANTS)==7
+          assert r44.parse_variant("PCHIP_BASELINE")== (None,None)
+          assert r44.parse_variant("DIRECT382_Q_GE06_SHIFT_ROW0_ONLY")== (382,"SHIFT_ROW0_ONLY")
+          assert r44.parse_variant("DIRECT763_Q_GE06_ANISOTROPY_ROW1_ONLY")== (763,"ANISOTROPY_ROW1_ONLY")
+          assert r44.parse_variant("DIRECT763_Q_GE06_BOTH_CONSTRAINT_ROWS")== (763,"BOTH_CONSTRAINT_ROWS")
+
+          src=open("ge19/repair44_qge06_shift_anisotropy_row_split.py").read()
+          for forbidden in (
+              "q_cross_direct(",
+              "m1_mapped_fourier(",
+              "build_source_config(",
+              "construct_q20_direct(",
+              "dy2_real(",
+          ):
+              assert forbidden not in src,forbidden
+
+          sf=inspect.getsource(r44.source_functions)
+          assert 'r42.source_functions(' in sf
+          assert '"PCHIP_BASELINE"' in sf
+          assert 'r42.saved_stage_pair(r41npz,tag,r42.Q6,resolution,jm)' in sf
+          assert 'delta_con=np.asarray(dc-pc,complex)' in sf
+          assert 'r42.stage_locator' in sf
+          assert 'out[0,:]+=delta_con[:,0,k]' in sf
+          assert 'out[1,:]+=delta_con[:,1,k]' in sf
+          assert 'return base_rhs,confun' in sf
+          assert 'PchipInterpolator' not in sf
+          assert 'Akima' not in sf
+
+          rv=inspect.getsource(r44.run_variant)
+          assert 'r38.radau2_integrate_substepped' in rv
+          assert 'rhsfun,confun,1' in rv
+          assert 'r38.shift_trace_from_canonical' in rv
+          assert 'hotspot_canonical_y' in rv
+          assert 'and np.all(np.isfinite(st))' in rv
+
+          hp=inspect.getsource(r44.hotspot_report)
+          assert 'r7._canonical_operator_matrices' in hp
+          assert 'Cmat[10]+Cmat[11]' in hp
+          assert 'complex_shift_residual' in hp
+          assert 'row0_independent_constraint_identity_report_only' in hp
+
+          main=inspect.getsource(r44.main)
+          assert 'r42.pchip_target_reproduction' in main
+          assert 'shift_row0_only_Z21_equal_baseline_exact' in main
+          assert 'np.array_equal' in main
+          assert 'DIRECT382_BOTH_CONSTRAINT_ROWS_Z21_relative_L2_le_1e11' in main
+          assert 'DIRECT763_BOTH_CONSTRAINT_ROWS_shift_relative_L2_le_1e10' in main
+          assert 'QGE06_SHIFT_ROW0_FIELD_CLOSER_TO_FULL' in main
+          assert 'QGE06_ANISOTROPY_ROW1_FIELD_CLOSER_TO_FULL' in main
+          assert 'QGE06_MIXED_CONSTRAINT_ROW_SENSITIVITY' in main
+          assert '"Z21_window_local_particular_certified":False' in main
+          assert '"science_H4_Z21_reclosure_performed":False' in main
+          assert '"lensing_licensed":False' in main
+
+          print("GE19_REPAIR44_PRELOCK_PASS")
+          PY
