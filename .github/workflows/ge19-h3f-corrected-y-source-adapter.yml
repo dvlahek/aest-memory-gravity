@@ -1,0 +1,56 @@
+name: GE19 H3F Corrected Y Source Adapter
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h3f_corrected_y_source_adapter.py'
+      - 'ge19/h3f_corrected_y_source_adapter_selftest.py'
+      - '.github/workflows/ge19-h3f-corrected-y-source-adapter.yml'
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deterministic source-test dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit new H3F source adapter without H3 propagation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json)" = "6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_source_adapter.py)" = "395294868191111b9b01201315cd2e6a30e47578"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_source_adapter_selftest.py)" = "98f40f231fe691c8af91ce4ca20d1da665b606af"
+          python3 -m py_compile ge19/h3f_corrected_y_source_adapter.py ge19/h3f_corrected_y_source_adapter_selftest.py
+          python3 -m ge19.h3f_corrected_y_source_adapter_selftest \
+            --json-out results/ge19_h3f_corrected_y_source_adapter.json \
+            > results/ge19_h3f_corrected_y_source_adapter_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h3f_corrected_y_source_adapter.json"))
+          assert d["classification"]=="GE19_H3F_COMPLETE_Y_SOURCE_ADAPTER_PASS"
+          assert d["all_gates_pass"] is True
+          assert all(v["exact"] for v in d["frozen_blobs"].values())
+          assert all(q["pass"] for q in d["beta_cases"])
+          assert d["production_wrapper_exact"] is True
+          assert d["invalid_cases_rejected"] is True
+          assert d["old_H3_H4_modules_modified"] is False
+          assert d["H3F_Z20_reclosure_performed"] is False
+          assert d["Z21_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H3F_COMPLETE_Y_SOURCE_ADAPTER_PASS")
+          PY
+          sha256sum results/ge19_h3f_corrected_y_source_adapter.json
+          wc -c results/ge19_h3f_corrected_y_source_adapter.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h3f_corrected_y_source_adapter
+          path: |
+            results/ge19_h3f_corrected_y_source_adapter.json
+            results/ge19_h3f_corrected_y_source_adapter_FULL.log
+          retention-days: 90
