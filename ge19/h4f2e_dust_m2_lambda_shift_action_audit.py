@@ -140,7 +140,7 @@ def exact_action():
 
 def finite_fourier():
     nt,nx,nn=5,256,3
-    tt=np.arange(nt)[:,None,None]
+    tt=np.arange(nt)[None,:,None]
     xx=2*np.pi*np.arange(nx)[None,None,:]/nx
     jj=np.arange(nn)[:,None,None]
     phase=(jj+1)*xx+0.17*tt+0.2*jj
