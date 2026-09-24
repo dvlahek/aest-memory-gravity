@@ -3217,3 +3217,99 @@ Historical Repair37 SCIENCE_FAIL and
 Repair38--44 diagnostics remain immutable.
 **Full H4 Noether NOT CERTIFIED;
 Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3b synthetic production wiring PASS; actual Z11 still required (2026-09-24)
+
+This is the newest canonical restart point. The already certified
+corrected-Y H3F Z20 and H3G q20, the independent uploaded H3G
+NPZ array audit and H4F2a--h restricted analytic/source-clock
+PASS results remain immutable. Original Repair37 H4/Z21
+science FAIL and Repair38--44 diagnostic classifications
+remain unchanged.
+
+**H4F3b actual corrected-parent six-piece source calculation:**
+its existing implementation and local runner are unchanged
+and statically PASS, but the true physical source run
+has **NOT** occurred. The original frozen Repair32B
+Z11 NPZ is missing from the currently accessible
+conversation/Library/mounted data. The required SHA-256 is
+
+`5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327`.
+
+The historical Repair32B workflow runs
+`35758781356` and `35758540985`
+contain no downloadable numerical artifact.
+Do not claim that Actions has the missing Z11
+or substitute a made-up parent.
+
+**New H4F3b production-path manufactured wiring runtime: valid CI PASS.**
+
+Preregistration:
+`ge19/h4f3b_predata_synthetic_production_wiring.json`,
+blob `7121c2fa7ca2502dbf66923a2522fb2340003ee3`.
+
+Unmodified true source wrapper:
+`ge19/h4f3b_actual_corrected_six_piece_source.py`,
+blob `0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c`.
+
+New integration selftest:
+`ge19/h4f3b_synthetic_production_wiring_selftest.py`,
+blob `2daf44fa2377495eed69a7272727478426a585ad`.
+
+Dedicated successful GitHub Actions run `36060197350`,
+job `107837030623`,
+classification
+`GE19_H4F3B_SYNTHETIC_PRODUCTION_WIRING_PASS`,
+4703-byte JSON SHA-256
+`4c015f242cbbd97628c4775b4e1978b80c9d95a1e650830485aceb3c608ffd49`,
+artifact `10833717959`.
+Full implementation, provenance, first three
+audit attempts and strict claim boundary:
+`docs/ge19_h4f3b_synthetic_production_wiring_valid_freeze.md`,
+blob `564211a52941976015dfec81e30618d3aacb5d3f`.
+
+The actual frozen H4F3b source-wrapper path,
+r7 complex Fourier reconstruction, M1(B20),
+actual Stage E u+phi Y, H4F2g source assembly
+and H4F2h H*FD8/H*FD4 physical source-Ward
+were exercised with manufactured external
+GE06/GE07/Lambda/M2 fixtures. All three
+beta cases have exact zero six-piece
+assembly and physical source-Ward sum
+defects. Wrong q10 and inconsistent
+physical time controls reject correctly.
+
+This is **engineering/integration certification
+only**, not an actual H3F/H3G/Z11 six-piece
+source evaluation, nor a full Noether PASS.
+The first two CI failures were caused by the
+test expecting two instead of the actual
+four GE06/GE07 direct+swapped cross calls
+in the nominal and negative-control paths.
+The third run was a stale workflow blob lock.
+The valid final run changed only the test
+call-count expectation and workflow pin,
+not any frozen source, physical parameter
+or historical science output.
+
+**NEXT PHYSICAL EXECUTION:** obtain the exact
+existing frozen Repair32B Z11 NPZ and run
+
+`ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh`
+
+on the original hash-locked local H3F/H3G,
+R13 and R1 bath parent files. This does
+NOT run a H4/Z21 state solver.
+Freeze the actual six-piece source
+PASS/FAIL before deriving/evaluating the
+independent linear-operator plus signed
+all-parent Euler/boundary H4 Ward identity.
+
+The original active-shift threshold
+`1e-6` and matched-order threshold
+`>=2.5` remain unchanged.
+**Full H4 Noether NOT CERTIFIED.
+Z21 NOT CERTIFIED. Lensing blocked.**
