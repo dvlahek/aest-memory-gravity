@@ -228,7 +228,7 @@ def main():
       all(v["exact"] for v in blobs.values())
       and all(case["checks"]["pass"] for case in fixture["cases"])
       and len(fixture["cases"])==3
-      and fixture["mock_calls"]=={"cross":2,"lambda":2,"M2":2}
+      and fixture["mock_calls"]=={"cross":4,"lambda":2,"M2":2}
       and fixture["q10_exact_match_relative_L2"]==0.0
       and fixture["wrong_q10_detected_relative_L2"]>1e-10
       and fixture["wrong_physical_time_grid_rejected"]
