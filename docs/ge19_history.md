@@ -2797,3 +2797,101 @@ corrected-parent/H4 state solve. A local
 PASS would reproduce only the H4F2e action
 subset, not the full H4F2 certificate.
 
+
+
+---
+
+## Latest checkpoint — H4F2f GE06 Ward/shift source valid Actions PASS (2026-09-24)
+
+**The user requested Actions-only progress while away from
+the local computer. No local run is required for H4F2f.**
+
+All previously frozen corrected-Y H3F/Z20 and H3G/q20
+science certifications, the independent H3G NPZ audit,
+and H4F2a–e restricted action/ward PASS results remain
+unchanged. The original Repair37 H4/Z21 science FAIL
+and Repair38–44 diagnostic-only results remain immutable.
+
+**H4F2f GE06 action/shift subset is now valid PASS.**
+
+Preregistration:
+`ge19/h4f2f_predata_ge06_shift_ward_mixed_source.json`,
+blob `551294c5763b086919c9f27076a922c29ca953e5`.
+
+Valid audit implementation:
+`ge19/h4f2f_ge06_shift_ward_mixed_source_audit.py`,
+blob `49e7546e5ccb76d27436486f8baddd2a4d17956e`.
+
+Valid dedicated workflow:
+`.github/workflows/ge19-h4f2f-ge06-ward-shift.yml`,
+blob `17415c334d93d1e46374eca02eb9beb9e184bc11`.
+
+Successful GitHub Actions run `36037212512`,
+job `107760180126`, commit
+`5f5d14d332b6d1da4b86d95d53ec4767df0029ad`,
+terminal marker
+`GE19_H4F2F_GE06_SHIFT_ACTION_SUBSET_PASS`.
+Result artifact ID `10825093346`.
+JSON/FULL are the source-only H4F2f artifact
+outputs; JSON is 4200 bytes, SHA-256
+`b6aca9808ae36eaebea2356c0f3443e571e6ede8a4c0436be7cd80bf2bc3eb40`.
+
+Valid result freeze:
+`docs/ge19_h4f2f_ge06_ward_shift_valid_freeze.md`,
+blob `3ea436c1f535d9477847bb690c7b5fc7652951d2`.
+
+All exact frozen source pins, ten GE06 unreduced
+coframe-jet scalar/density transformations,
+actual frozen action/source bindings and
+both independent `b_f`/`b_x` mixed
+action-source partial tests PASS. Actual
+frozen generator source-only relative L2
+differences are `0.0` and
+`1.6592729300491167e-16`, both below
+the unchanged `1e-9` numerical gate.
+
+Previous failed executions are **preserved
+without retrospective relabeling**:
+
+- `36030973726`: audit half/full directional
+  coefficient gate definition mistake
+  (first failure freeze retained);
+- `36031713914`: stale static code-blob
+  preexecution failure;
+- `36031753394`: actual tests pass but
+  raw aggregate incorrectly treats exact
+  zero numeric error as Boolean false;
+  freeze `docs/ge19_h4f2f_second_ci_numeric_truthiness_failure_freeze.md`;
+- `36036837437`: corrected audit produces
+  exactly the final 4200-byte PASS JSON,
+  but Actions post-audit repeats the
+  same incorrect numeric truthiness
+  assertion; freeze
+  `docs/ge19_h4f2f_third_ci_workflow_numeric_truthiness_failure_freeze.md`.
+
+The successful Actions run fixes ONLY
+the workflow post-audit metric aggregation,
+with the preregistered GE06 action,
+existing source generators, parameters,
+H4 shift threshold, repaired audit physics
+and all historical science outputs unchanged.
+
+**NEXT:** build the actual complete six-piece
+H4 source-plus-parent Euler residual ledger,
+using H4F2a–f exact restricted results,
+the signed H4F2b mixed Ward template,
+Stage E both u+phi Y source rows, GE05
+factor-two mapping, GE07 dust and Lambda
+all-row entries, and the corrected certified
+H3F/H3G plus compatible frozen H1/Z11
+on one parent/time representation.
+
+No full all-sector mixed H4 source/Noether
+identity or common-grid compatibility PASS
+exists yet. No H4/Z21 numerical science
+reclosure was performed by any H4F2
+source-only Actions run.
+
+Original active shift `1e-6` target
+is unchanged. **Z21 NOT CERTIFIED.
+Lensing blocked.**
