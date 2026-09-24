@@ -230,7 +230,7 @@ def main():
                 dh1=np.asarray(h3f[f"{tag}_H1dot_{label}"],complex)
                 tangent=np.asarray(z11[f"{tag}_Z11_{label}"],complex)
                 tangent_dot=np.asarray(z11[f"{tag}_Z11dot_{label}"],complex)
-                B20=np.asarray(h3g[f"{tag}_B20_linear_{'primary' if nt==128 else 'primary'}"],complex) if nt==128 else None
+                B20=np.asarray(h3g[f"{tag}_B20_linear_primary"],complex) if nt==128 else None
                 if nt==64:
                     # H3G's certified Nt64 output stores weighted z20 and
                     # weighted z10, not X20/B20. Reconstruct X20 from the
