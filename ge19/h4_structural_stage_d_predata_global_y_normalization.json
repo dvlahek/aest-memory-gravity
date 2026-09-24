@@ -1,0 +1,39 @@
+{
+  "classification": "GE19_H4_STRUCTURAL_STAGE_D_PREDATA_GLOBAL_Y_NORMALIZATION",
+  "diagnostic_kind": "action-level exact symbolic and frozen-source normalization audit",
+  "user_trigger": "Valid local Stage C output reproduced the same geometric a^3 factor as frozen CI, leaving only the common global NL0C versus GE06 action normalization open.",
+  "no_numerical_H3_H4_solve": true,
+  "frozen_parents": {
+    "StageC_local_freeze_blob": "25d896278fe82c30c4d6475fbcabcac8879f0961",
+    "StageC_CI_JSON_SHA256": "76f6af0ec5f765c2cf6cf9f33a6cb35d3bd0b8dbfbdec18832955cd8cf5ccb55",
+    "StageC_local_JSON_SHA256": "76f6af0ec5f765c2cf6cf9f33a6cb35d3bd0b8dbfbdec18832955cd8cf5ccb55",
+    "NL0C_covariant_action_blob": "6fe02e60e4de34a247003c1f4ab449c159850e99",
+    "NL1C6_full_AeST_action_blob": "e3eeb820fa1826fb7ac29f3fce2fe0bdde8d564f",
+    "GE06_analytic_action_blob": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "GE06_action_lock_blob": "962427b4a52ba084081f9328670f672c0109471e"
+  },
+  "exact_proof_targets": {
+    "common_global_EH_anchor": "NL0C explicitly uses S_J=-1/(16*pi*Gtilde) int sqrt(-g) C J(Y); GE06 raw grav is the EH ADM action with canonical -4 kL kR-2 kR^2 and NL1C6 full GR+AeST uses the same common action sum grav+aest+mem. Verify there is no separate multiplicative Y-sector rescaling.",
+    "analytic_sector_AST": "After renaming C2->C, X->Xinv, K->Kfun, full NL1C6 aest minus GE06 aest equals exactly -N L R^2 C J, including a common GR-normalized action coefficient.",
+    "spherical_plane_GR_control": "The spherical NL1C6 GR curvature differs from plane GE06 by exactly +2 N L after matching spatial radius-derivative symbols; kinetic EH sector matches exactly.",
+    "Y_variational_2nd_directional": "Derive scalar and aether raw 2nd directional Y Euler rows with g=Q*u10+phi10_x/a, kappa=2C/((1+beta)a0), strict branches and continuous g=0 extension.",
+    "Y_eta_tangent": "Derive signed eta derivative under eta-independent background Q and beta; avoid assuming the scalar source alone closes a Noether identity.",
+    "GE19_RHS_mapping": "Map full action-derived Euler rows to RHS of frozen GE19 action-density equations using the same -E convention as Q sources and -2*Y conventions, without any fitted term.",
+    "spatial_constraint_row_zero_at_H3_H4": "Action-level Y metric and shift second directional rows vanish around background X=0; do not mistake independent GE06 shift constraint for a Y shift source.",
+    "control_existing_source": "Frozen GE19 Y source has scalar-only physical divergence, missing aether and a^3; preserve original implementation and log discrepancy."
+  },
+  "routing": {
+    "COMMON_GLOBAL_NORMALIZATION_AND_Y_ROW_DICTIONARY_DERIVED": "All pinned-source, exact action, EH control, all-row Y variation, sign, and no-fitted-param checks pass. Freeze a new versioned analytic Y dictionary; never silently alter historical results or run Z21.",
+    "ACTION_NORMALIZATION_OR_VARIATION_UNRESOLVED": "Any action anchor, equality or sign cannot be proved from pinned sources; freeze specific failed identity and do not add source terms."
+  },
+  "thresholds": "Exact symbolic equalities only. No observational or numerical science thresholds are changed.",
+  "stop_boundary": {
+    "no_existing_history_relabel": true,
+    "no_patch_historical_Ge19_sources": true,
+    "no_fitted_coefficients": true,
+    "no_numerical_H3_H4_Z21_solve": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true,
+    "full_all_sector_H4_Noether_identity_still_required": true
+  }
+}
