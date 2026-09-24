@@ -1,0 +1,49 @@
+name: GE19 H3F Corrected Y Local Runner Static
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h3f_corrected_y_z20_science_reclosure.sh'
+      - '.github/workflows/ge19-h3f-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact H3F local source and science runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h3f_corrected_y_z20_science_reclosure.sh)" = "8633cf4167ee17ef41b277e3a4ba2cbd56cf05a6"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_parent_core.py)" = "7e1da10ae8d79b6269b306f5483783de0fd3fd30"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_z20_science_reclosure.py)" = "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0"
+          test "$(git rev-parse HEAD:ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json)" = "6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e"
+          bash -n ge19/run_local_h3f_corrected_y_z20_science_reclosure.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("ge19/run_local_h3f_corrected_y_z20_science_reclosure.sh").read_text()
+          for needle in (
+            "GE19_H3F_LOCK_PASS",
+            "GE19_H3F_LOCAL_PREEXECUTION_AUDIT_PASS",
+            "GE19_H3F_FROZEN_PARENTS_PASS",
+            "GE19_H3F_NEW_Z20_SCIENCE_PASS",
+            "GE19_H3F_NEW_Z20_SCIENCE_FAIL",
+            "GE19_H3F_IMPLEMENTATION_OR_EXECUTION_FAIL",
+            "python3 -m ge19.h3f_corrected_y_z20_science_reclosure",
+            "ge19_h4_stagee_y_source_rows_LOCAL.json",
+            "ge19_repair22_on_shell_parent_z20_certification.npz",
+            "sha256sum",
+            "git diff --cached --quiet",
+            "source .venv/bin/activate",
+            "FAILED_GATES",
+            "Z21_LICENSED",
+          ):
+            assert needle in s,needle
+          assert "repair22_on_shell_parent_z20_certification.py --" not in s
+          assert "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --" not in s
+          print("GE19_H3F_LOCAL_RUNNER_STATIC_PASS")
+          PY
