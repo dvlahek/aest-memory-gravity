@@ -1,0 +1,66 @@
+name: GE19 H4F3b Corrected Actual Six Source Preexecution
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3b_actual_corrected_six_piece_source.py'
+      - 'ge19/h4f3b_predata_actual_corrected_six_piece_source.json'
+      - '.github/workflows/ge19-h4f3b-actual-six-source-preexecution.yml'
+
+jobs:
+  preexecution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install original source generator dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit actual corrected source adapter with NO parent science run
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3b_predata_actual_corrected_six_piece_source.json)" = "c3362f5360c2a9951d77060027c82830c031c145"
+          test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
+          test "$(git rev-parse HEAD:ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py)" = "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+          test "$(git rev-parse HEAD:ge19/h4f2g_action_completed_six_piece_source_ledger.py)" = "d9778da0bb6cc52a15015238810c79978527ffc5"
+          test "$(git rev-parse HEAD:ge19/h4f2h_physical_time_source_ward_bridge.py)" = "65ce1e68a2f77e063c4bb8848d770abb4baeeebf"
+          python3 -m py_compile ge19/h4f3b_actual_corrected_six_piece_source.py
+          python3 -m ge19.h4f3b_actual_corrected_six_piece_source --help > /tmp/h4f3b_help.txt
+          python3 - <<'PY'
+          import ast,inspect,json
+          from pathlib import Path
+          from ge19 import h4f3b_actual_corrected_six_piece_source as s
+          from ge19 import h4f2g_action_completed_six_piece_source_ledger as ledger
+          from ge19 import h4f2h_physical_time_source_ward_bridge as clock
+          from ge19 import repair37_cancellation_safe_fd8_h4_z21_reclosure as frozen
+          p=json.load(open('ge19/h4f3b_predata_actual_corrected_six_piece_source.json'))
+          assert p["classification"]=="GE19_H4F3B_PREDATA_ACTUAL_CORRECTED_SIX_PIECE_PHYSICAL_SOURCE"
+          assert p["stops"]["no_new_Z21_solve"] and p["stops"]["full_Noether_not_claimed"]
+          assert p["frozen"]["H3F_NPZ_SHA256"]==s.REQUIRED["h3fn"][1]
+          assert p["frozen"]["H3G_NPZ_SHA256"]==s.REQUIRED["h3gn"][1]
+          assert p["frozen"]["Z11_NPZ_SHA256"]==s.REQUIRED["z11"][1]
+          assert p["frozen"]["Repair26_R1_trace_SHA256"]==s.TRACE_SHA
+          assert p["cohorts"]["Nx_Y"]==s.SOURCE_NX_Y==1024
+          assert p["cohorts"]["Nx_Q"]==s.SOURCE_NX_Q==128
+          assert p["cohorts"]["Nq_R1"]==s.BOUNDARY_N==2048
+          assert len(ledger.PIECES)==6
+          assert set(clock.SCHEMES)==set(ledger.PIECES)
+          assert s.code_lock() and all(q["exact"] for q in s.code_lock().values())
+          source=Path("ge19/h4f3b_actual_corrected_six_piece_source.py").read_text()
+          assert "old.build_source_config(" not in source
+          assert "ledger.assemble_six(" in source
+          assert "clock.physical_six_piece_ward(" in source
+          assert "old.reconstruct_m2_source(" in source
+          assert "old.r24.full_history_boundary(" in source
+          assert "old.r24.X20_modes(" in source
+          assert "old.R32B_NPZ_SHA" in source
+          assert "old.R32C_JSON_SHA" in source
+          assert "full_all_sector_H4_Noether_derived" in source
+          assert "Z21_certified" in source
+          assert tuple(inspect.signature(frozen.q_cross_direct).parameters)[0]=="qdirect"
+          assert tuple(inspect.signature(frozen.reconstruct_m2_source).parameters)[0]=="ge05"
+          assert len(s.REQUIRED)==8
+          print("GE19_H4F3B_ACTUAL_CORRECTED_SIX_SOURCE_PREEXECUTION_PASS")
+          PY
