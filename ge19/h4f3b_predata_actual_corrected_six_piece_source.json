@@ -1,0 +1,89 @@
+{
+  "classification": "GE19_H4F3B_PREDATA_ACTUAL_CORRECTED_SIX_PIECE_PHYSICAL_SOURCE",
+  "status": "PREDATA_ONLY_NO_REAL_SOURCE_EXECUTION",
+  "parent": "GE19_H4F3_PREDATA_INTEGRATED_CORRECTED_PARENT_WARD",
+  "purpose": "Assemble six genuine signed H4 GE19 RHS source families from the exact H3F corrected-Y Z20, H3G corrected-Y q20, certified Repair32B Z11 and original on-shell H1 on one physical x=ln(a), H(x) background. Build Stage E complete Y u+phi from action; use original frozen GE06/GE07/Lambda cross, GE05 factor-two M1 and first-order Repair26 R1 M2. Compute correct H*FD8/FD4 source Ward and retain it as diagnostic only. NO full source+operator+Euler parent Noether or Z21 state solve.",
+  "frozen": {
+    "H3F_JSON_SHA256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3F_NPZ_SHA256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3G_JSON_SHA256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+    "H3G_NPZ_SHA256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "R13_NPZ_SHA256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "Z11_NPZ_SHA256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+    "Z11_Certification_JSON_SHA256": "037314effa33c5bfaf51f6f3c72459de43cb486c6ef5e9a94f5b1984a68611b9",
+    "Repair26_R1_trace_SHA256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "GE15_dense_SHA256": "7f57ab676f2a31cf0abf93ff0f8b0f1f2f80bb9a58d7cf1e47e10a158c57c69f",
+    "repair37_operator_source_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "h4f2g_source_ledger_blob": "d9778da0bb6cc52a15015238810c79978527ffc5",
+    "h4f2h_physical_clock_blob": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "StageE_complete_Y_blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f"
+  },
+  "cohorts": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta0": [
+      1,
+      0.5,
+      0.1
+    ],
+    "fourier_modes": "m=0..40 output; old H1,Z11 input modes 3,5,8,10,15,20; corrected Z20 m=1..40",
+    "Nt": [
+      128,
+      64
+    ],
+    "Nx_Y": 1024,
+    "Nx_Q": 128,
+    "Nq_R1": 2048
+  },
+  "science_fixed": {
+    "source_rows": [
+      "N",
+      "L_plus_R",
+      "u",
+      "phi",
+      "T",
+      "rho",
+      "b",
+      "L_minus_R_over2"
+    ],
+    "signed_six_pieces": [
+      "2Q_GE06_cross",
+      "2Q_GE07_cross",
+      "2Q_Lambda_cross",
+      "2DY2_action_complete_Y_u_and_phi",
+      "2M1_GE05_mapped",
+      "2M2_GE05_mapped"
+    ],
+    "H3G_B20": "X20-weighted_z20 exactly; no historical Repair27 q20 as parent",
+    "H4_Y": "real StageE source_h4 u+phi; reject old scalar-only DY2",
+    "GE05_mapping": "-2 exact GE05-to-GE06 mapping no fitted parameter",
+    "R1": "recompute q10 from frozen Repair26 R1 full-history with original Repair24 dynamics; compare its weighted projection with H3G exact saved weighted_z10 on primary and control",
+    "clock": "GE06/GE07/Lambda H*FD8_x; GE05 M1/M2 H*FD4_x; zero Y shift/isotropic/anisotropy",
+    "require_no_interpolation": true,
+    "first_order_bath_reproduction_relative_L2_max": 1e-10,
+    "direct_cross_symmetry_relative_L2_max": 1e-12,
+    "lambda_exact_relative_L2_max": 1e-12,
+    "all_source_families_exact_support": true,
+    "each_piece_real_generator_verified": true,
+    "original_shift_science_threshold_unmodified": 0.000001
+  },
+  "outcomes": {
+    "PARENT_INPUT_FAIL": "Missing/mismatched frozen Z11, corrected H3F/H3G, original H1/background or R1; no physical source assertion.",
+    "ACTUAL_SIX_PIECE_SOURCE_PASS_FULL_WARD_OPEN": "All hash, parent, source row/sign/support, R1 and time derivative gates pass; freeze source arrays and separately implement operator-plus-parent Noether evaluation, never claim H4/Z21 science certification.",
+    "ACTUAL_SOURCE_SCIENCE_FAIL": "Valid frozen input/action, source algebra or reproduction gate fails; freeze exact failure with no post hoc parameter tuning.",
+    "IMPLEMENTATION_FAIL": "Import, runtime, memory or source generator setup failure; no science claim."
+  },
+  "stops": {
+    "never_call_old_Repair37_build_source_config": true,
+    "no_historical_scalar_only_Y": true,
+    "no_old_Repair27_weighted_z20": true,
+    "no_changes_to_frozen_Repair37": true,
+    "no_old_results_overwritten": true,
+    "no_new_Z21_solve": true,
+    "no_lensing": true,
+    "full_Noether_not_claimed": true
+  }
+}
