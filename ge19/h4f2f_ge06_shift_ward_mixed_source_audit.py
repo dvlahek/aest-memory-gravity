@@ -149,8 +149,8 @@ def actual_ge06_and_mixed_shift():
           "original_Q_cross_half_gradient_matches_polarization":
             iszero(physical_mixed-Qbil),
           "mixed_direction_symmetry":iszero(physical_mixed-reverse),
-          "original_minus_two_source_equals_negative_physical_mixed":
-            iszero(-2*Qbil+physical_mixed),
+          "original_minus_two_source_equals_negative_full_eta_eps2_mixed":
+            iszero(-2*Qbil+2*physical_mixed),
           "directional_quadratic_zero_origin":
             iszero(expr.xreplace({d:0 for d in dir0})),
         }
