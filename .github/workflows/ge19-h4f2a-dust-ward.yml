@@ -1,0 +1,49 @@
+name: GE19 H4F2a Dust Offshell Ward
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f2a_dust_offshell_ward.py'
+      - '.github/workflows/ge19-h4f2a-dust-ward.yml'
+
+jobs:
+  exact-dust:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Exact source-bound off-shell dust transformation proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f2a_dust_offshell_ward.py)" = "ea347bb1631901efd11929127ca5b485a99dd062"
+          python3 -m py_compile ge19/h4f2a_dust_offshell_ward.py
+          python3 -m ge19.h4f2a_dust_offshell_ward \
+            --json-out results/ge19_h4f2a_dust_offshell_ward.json \
+            > results/ge19_h4f2a_dust_offshell_ward_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f2a_dust_offshell_ward.json"))
+          assert d["classification"]=="GE19_H4F2A_DUST_OFFSHELL_WARD_DERIVED"
+          assert d["all_subset_gates_pass"]
+          assert all(x["exact"] for x in d["frozen_blobs"].values())
+          assert all(d["GE07_action_bindings"].values())
+          assert all(d["dust_offshell_spatial_covariance"].values())
+          assert not d["full_mixed_H4_source_Noether_derived"]
+          assert not d["Z21_certified"]
+          print("GE19_H4F2A_DUST_OFFSHELL_WARD_PASS")
+          PY
+          sha256sum results/ge19_h4f2a_dust_offshell_ward.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f2a_dust_offshell_ward
+          path: |
+            results/ge19_h4f2a_dust_offshell_ward.json
+            results/ge19_h4f2a_dust_offshell_ward_FULL.log
+          retention-days: 90
