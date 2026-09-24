@@ -1,0 +1,55 @@
+name: GE19 H4 Stage B Y-Sector Source-Row Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4_structural_stage_b_y_variational_row_predata.json'
+      - 'ge19/h4_structural_stage_b_y_variational_row_audit.py'
+      - '.github/workflows/ge19-h4-stageb-y-source-row-audit.yml'
+
+jobs:
+  y-row-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Check locked Y-action and source-row audit scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_b_y_variational_row_predata.json)" = "bb325a7b77be1b87b8d53c9f1462db479e36903d"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_b_y_variational_row_audit.py)" = "a3a0973e973f552fabb40a3dff9dd612d47ed01a"
+          python3 -m py_compile ge19/h4_structural_stage_b_y_variational_row_audit.py
+          python3 ge19/h4_structural_stage_b_y_variational_row_audit.py \
+            --json-out results/ge19_h4_stageb_y_variational_row_audit.json \
+            > results/ge19_h4_stageb_y_variational_row_audit_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4_stageb_y_variational_row_audit.json"))
+          assert d["classification"]=="GE19_H4_STAGEB_Y_AETHER_SOURCE_ROW_COVERAGE_GAP_CONFIRMED"
+          assert d["all_analytic_and_coverage_checks_pass"] is True
+          assert all(d["action_variational_rows"]["checks"].values())
+          assert all(d["frozen_explicit_source_coverage"].values())
+          assert all(x["exact"] for x in d["frozen_blob_controls"].values())
+          assert d["full_H4_Noether_identity_derived"] is False
+          assert d["Z21_window_local_particular_certified"] is False
+          assert d["routing"]["science_H4_reclosure_licensed"] is False
+          assert d["existing_certifications_relabelled"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4_STAGEB_Y_VARIATIONAL_SOURCE_ROW_AUDIT_PASS")
+          PY
+          sha256sum results/ge19_h4_stageb_y_variational_row_audit.json
+          wc -c results/ge19_h4_stageb_y_variational_row_audit.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4_stageb_y_source_row_audit
+          path: |
+            results/ge19_h4_stageb_y_variational_row_audit.json
+            results/ge19_h4_stageb_y_variational_row_audit_FULL.log
+          retention-days: 90
