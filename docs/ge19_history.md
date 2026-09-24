@@ -2166,3 +2166,93 @@ Y-sector PASS is not such a proof.
 No science target relaxation, observational tuning,
 finite physical eta or lensing is licensed.
 Window-local particular Z21 remains NOT CERTIFIED.
+
+
+---
+
+## Latest checkpoint — Stage E valid Y rows; H3F corrected Z20 preregistered (2026-09-24)
+
+This is the newest canonical continuation point. Historical
+repair classifications and earlier analytic stages are
+preserved, not relabelled.
+
+**Stage D local reproduction:** valid analytic PASS,
+local JSON/FULL SHA-256
+`2d900249d1e030a9b11b2b3d3e4b65ada8cbfb39a119b40ac0aba3ce10380d11`
+(4876 bytes each); outer runner SHA-256
+`2bc7bd4521874a616aa0bb64c59d85d3ada73866407075bec463d145b88a2ab0`
+(6728 bytes).
+Freeze:
+`docs/ge19_h4_staged_local_analytic_reproduction_freeze.md`.
+
+**Stage E new Y-only source implementation:** valid
+`GE19_H4_STAGEE_Y_SOURCE_ROW_DICTIONARY_IMPLEMENTATION_PASS`.
+Preregistration:
+`ge19/h4_stagee_predata_versioned_y_source_rows.json`,
+blob `e5ff7d12e963fa7487a1dff42ce06053f4b8d82e`.
+New standalone source:
+`ge19/h4_stagee_versioned_y_source_rows.py`,
+blob `282166ea5840d7fba4dbc328d40d7687afa6fa0f`.
+Deterministic test:
+`ge19/h4_stagee_versioned_y_source_selftest.py`,
+blob `05bbbb5d2dba2193adcbf468efc81eda6fb71ce6`.
+
+First CI run `35995106055` was an import-path
+PREEXECUTION FAIL, with no test result; frozen in
+`docs/ge19_h4_stagee_first_ci_import_failure_freeze.md`.
+Changing ONLY the Python invocation to `python3 -m`
+produced valid CI run `35995241998`,
+job `107618483762`, terminal marker
+`GE19_H4_STAGEE_VERSIONED_Y_ROWS_PASS`.
+JSON SHA-256
+`c3ff4cc18dc8c7a69ba661a68ea3de987818f1b9c1db3275b08f2976c385896e`
+(3371 bytes).
+Freeze:
+`docs/ge19_h4_stagee_versioned_y_rows_valid_freeze.md`.
+
+The standalone implementation generates all six main
+and two constraint Y-only RHS rows, nonzero only for
+aether u and scalar phi. It uses exact Stage D raw
+GR-anchored Y coefficients and the common projected
+real-space `|g|g` flux at H3 and
+`2|g10|g11` at H4, including zero-set continuity.
+All `beta0={1,0.5,0.1}` source, shape, source-sign,
+tangent, old-scalar-comparator, flux projection and
+invalid-input tests pass. Neither frozen Repair07 nor
+Repair37 was edited.
+
+**Optional local source-only check:**
+`ge19/run_local_h4_stagee_y_source_rows.sh`.
+Dedicated static runner audit `35995568675` PASS.
+Runner freeze:
+`docs/ge19_h4_stagee_local_runner_lock.md`.
+This does not execute a parent or H4 solver.
+
+**Next corrected science parent H3F is preregistered only:**
+`ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json`,
+blob `6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e`.
+Dedicated prelock run `35995943887` PASS.
+Full contract and next steps:
+`docs/ge19_h3f_corrected_y_parent_predata_lock.md`.
+
+H3F must replace, not add to, the old scalar-only Y
+source with the complete Stage E aether+scalar rows.
+It keeps unchanged background, non-Y sources, on-shell
+H1, beta/C/m grid and **original** active-shift
+1e-6 / matched-order 2.5 science gates.
+It keeps Repair18's *boundary projection algorithm*
+but must recompute source-aware numerical p0,
+not impose the old p0 from the different Y source.
+
+H3F has **not** been implemented or run.
+A valid new Z20 parent will require new dependent
+q20 reconstruction with the unchanged normalized
+bath equation and cancellation-free R1 history,
+then complete all-sector H4 source/Noether compatibility
+before any corrected Z21 science run.
+
+Old Repair22/27/32 certifications remain valid
+only for their original equations. Repair37 remains
+historical science FAIL; Repair38--44 remain
+diagnostic-only. Full H4 Noether certificate is
+still open. Z21 is NOT CERTIFIED. Lensing is blocked.
