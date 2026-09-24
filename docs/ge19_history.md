@@ -1588,3 +1588,49 @@ the direct source targets; Repair42 shows that partial direct target
 corrections violate the active shift threshold through an early-time
 constraint-row sensitivity. Window-local particular Z21 remains NOT
 CERTIFIED. Lensing remains blocked.**
+
+
+---
+
+## Repair43 — GE06 main-versus-constraint stage-source split
+
+Classification:
+`GE19_REPAIR43_QGE06_MAIN_CONSTRAINT_STAGE_SPLIT_COMPLETE`.
+
+Preregistered route:
+`QGE06_CONSTRAINT_ROW_FIELD_CLOSER_TO_FULL`.
+
+Valid freeze commit:
+`91446ddb1987e834200204cb6d8c4f8c4008a5be`.
+
+Frozen JSON/FULL SHA-256:
+`559ae65ffc5d21433799e4e33aa6d91237a9aa41b9799463971bc45dabecae44`.
+
+Frozen NPZ SHA-256:
+`d5c8c02c7f8272dc390ce9e4d2374a35b2ce1b14da5b60e69dc8366499bfe71c`.
+
+Frozen runner SHA-256:
+`640c9f31959d4e5290a26c64e0dee2ec982866d942135e5261d3828ecc0afc13`.
+
+All implementation gates pass. Frozen Repair42 baseline and both direct
+Q_GE06-only variants reproduce exactly in Z21 and active shift metric.
+
+Repair43 finds that modifying the two GE06 constraint source rows together
+is closer to the full corrected GE06 active shift field than modifying the
+six GE06 main rows alone for both direct382 and direct763. The active Linf
+values for constraint-family-only are `4.720762493838458e-4` and
+`1.340570409265403e-4`; the original target remains `1e-6`.
+
+The registered early-time m=8 hotspot is controlled by a tiny
+direct-minus-PCHIP GE06 shift-constraint row0 source displacement relative to
+the frozen local backward-error denominator. However Repair43 changed both
+constraint rows together. The anisotropy constraint row1 is used in local
+algebraic elimination, whereas row0 is an independent shift constraint
+check, so a follow-up must split the two rows before assigning an error
+mechanism.
+
+Next licensed step: Repair44 diagnostic-only Q_GE06 shift-row-versus-
+anisotropy-row source-stage split, with exact Repair43 constraint-family
+reproduction and unchanged projected p0, operator, active mask and target.
+
+Z21 remains NOT CERTIFIED; lensing remains blocked.
