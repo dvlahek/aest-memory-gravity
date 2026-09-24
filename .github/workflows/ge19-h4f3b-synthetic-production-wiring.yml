@@ -23,7 +23,7 @@ jobs:
           set -euo pipefail
           mkdir -p results
           test "$(git rev-parse HEAD:ge19/h4f3b_predata_synthetic_production_wiring.json)" = "7121c2fa7ca2502dbf66923a2522fb2340003ee3"
-          test "$(git rev-parse HEAD:ge19/h4f3b_synthetic_production_wiring_selftest.py)" = "3b74108dadb1273e435cc687ffd7a124ab67bab0"
+          test "$(git rev-parse HEAD:ge19/h4f3b_synthetic_production_wiring_selftest.py)" = "2daf44fa2377495eed69a7272727478426a585ad"
           test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
           python3 -m py_compile ge19/h4f3b_synthetic_production_wiring_selftest.py
           if ! python3 -m ge19.h4f3b_synthetic_production_wiring_selftest \
