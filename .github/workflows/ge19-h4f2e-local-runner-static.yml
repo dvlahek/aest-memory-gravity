@@ -1,0 +1,55 @@
+name: GE19 H4F2e Isolated Local Runner Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4f2e_dust_m2_lambda_shift_action.sh'
+      - '.github/workflows/ge19-h4f2e-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit locked source-only H4F2e local runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4f2e_dust_m2_lambda_shift_action.sh)" = "951a51bcaacb082b581323d8190220a1b7fa7599"
+          test "$(git rev-parse HEAD:ge19/h4f2e_dust_m2_lambda_shift_action_audit.py)" = "7dab9b996fc97ca9a291eb90166babec1abfba23"
+          test "$(git rev-parse HEAD:ge19/h4f2e_predata_dust_m2_lambda_shift_action.json)" = "a48ea8b15bf1c1141d9407c7400f416171f4b22b"
+          test "$(git rev-parse HEAD:docs/ge19_h4f2e_dust_m2_lambda_shift_valid_freeze.md)" = "4323fc1dd5b71353a6ac418108953f473137363b"
+          bash -n ge19/run_local_h4f2e_dust_m2_lambda_shift_action.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("ge19/run_local_h4f2e_dust_m2_lambda_shift_action.sh").read_text()
+          for marker in (
+            "GE19_H4F2E_LOCAL_LOCK_PASS",
+            "GE19_H4F2E_LOCAL_PREEXECUTION_PASS",
+            "GE19_H4F2E_GENERATOR_OUTPUT_ISOLATED_PASS",
+            "GE19_H4F2E_LOCAL_ACTION_SUBIDENTITY_PASS",
+            "GE19_H4F2E_LOCAL_SOURCE_OR_EXECUTION_FAIL",
+            "python3 -m ge19.h4f2e_dust_m2_lambda_shift_action_audit",
+            "mktemp -d",
+            'cd "$TMP"',
+            'export PYTHONPATH="$ROOT"',
+            'mkdir -p "$TMP/results"',
+            'rm -rf "$TMP"',
+            "full_six_piece_H4_source_parent_Noether_derived",
+            "Z21_certified",
+            "sha256sum",
+            "git diff --cached --quiet",
+          ):
+            assert marker in s,marker
+          forbidden=(
+            "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --",
+            "rm -rf \"$ROOT/results\"",
+            "rm -f results/ge19_repair37",
+          )
+          for term in forbidden:
+            assert term not in s,term
+          print("GE19_H4F2E_LOCAL_RUNNER_STATIC_PASS")
+          PY
