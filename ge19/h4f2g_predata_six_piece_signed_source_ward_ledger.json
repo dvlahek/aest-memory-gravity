@@ -1,0 +1,113 @@
+{
+  "classification": "GE19_H4F2G_PREDATA_ACTION_COMPLETED_SIX_PIECE_SOURCE_WARD_LEDGER",
+  "purpose": "Implement and audit a separately versioned, signed six-piece GE19 H4 source-row ledger using actual frozen GE06/GE07/Lambda, complete Stage E NL0C Y u+phi, GE05 M1 and M2 source conventions. Construct the explicit Fourier shift/isotropic/anisotropy Ward-source coefficient and preserve all parent/linear-operator terms as distinct unresolved inputs. This source-assembly gate is NOT a full Noether identity and does NOT solve Z21.",
+  "frozen": {
+    "H4F2_original_predata_blob": "8097a4770ae8aed74cb4dd0721c1c9bd6907533c",
+    "H4F2b_signed_ward_freeze_blob": "98693317485149898830eebd0f335db12024e6dc",
+    "H4F2d_Y_M1_freeze_blob": "647d3a8cf207fbf18fef7e0cbdb23c9bfbfc5de8",
+    "H4F2e_GE07_M2_Lambda_freeze_blob": "79c81ebffeca490b9dad74d812005086daa04c32",
+    "H4F2f_GE06_freeze_blob": "3ea436c1f535d9477847bb690c7b5fc7652951d2",
+    "StageE_Y_module_blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "Repair37_historical_source_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "Repair07_operator_blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "H3F_JSON_sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3F_NPZ_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3G_JSON_sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+    "H3G_NPZ_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "Repair32B_Z11_NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327"
+  },
+  "immutable_row_order": [
+    "N",
+    "L_plus_R",
+    "u",
+    "phi",
+    "T",
+    "rho",
+    "b",
+    "L_minus_R_over2"
+  ],
+  "immutable_source_pieces": [
+    {
+      "name": "2Q_GE06_cross",
+      "nonzero_rows": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        7
+      ],
+      "RHS": "-2 fft_low(frozen GE06 direct half mixed bilinear Q)"
+    },
+    {
+      "name": "2Q_GE07_cross",
+      "nonzero_rows": [
+        0,
+        1,
+        4,
+        5,
+        6,
+        7
+      ],
+      "RHS": "-2 fft_low(frozen GE07 direct half mixed bilinear Q)"
+    },
+    {
+      "name": "2Q_Lambda_cross",
+      "nonzero_rows": [
+        0,
+        1
+      ],
+      "RHS": "frozen direct Lambda mixed full-source coefficient; independent shift and anisotropy zero"
+    },
+    {
+      "name": "2DY2_action_complete_Y_u_and_phi",
+      "nonzero_rows": [
+        2,
+        3
+      ],
+      "RHS": "new Stage E source_h4(a,Q,u10,phi10_x,u11,phi11_x,...), Fourier fft/nx, not frozen scalar-only Repair37 dy2_real"
+    },
+    {
+      "name": "2M1_GE05_mapped",
+      "nonzero_rows": [
+        2,
+        3
+      ],
+      "RHS": "original m1_mapped_fourier using B20=X20-weighted_z20 from H3G, exact raw GE05 to GE06 factor 2"
+    },
+    {
+      "name": "2M2_GE05_mapped",
+      "nonzero_rows": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        7
+      ],
+      "RHS": "original reconstruct_m2_source from exact frozen first-order bath q10 nodes, GE05 to GE06 factor 2 and negative RHS"
+    }
+  ],
+  "source_ward": "D_S21(t,k)=d_t S_b21 + (a(t)/3)*i*k*(S_iso21+2*S_aniso21); physical epsilon second derivative and eta first derivative; no fitted source-scale or post-hoc shift correction.",
+  "exact_conditional_ward": "0=P00_10_11 - d_x B_L21 - d_t L_b21 + D_S21; P includes E_i00*F_i21,x+2*E_i10*F_i11,x+2*E_i11*F_i10,x and the E00/E10/E11 parts of B21. This source-only stage evaluates D_S21 algebraically, NOT P nor D_L.",
+  "source_only_gates": [
+    "All six and only six source components are present in fixed GE19 row order and original fft/nx convention.",
+    "Synthetic deterministic arrays preserve the unchanged GE06, GE07, Lambda, M1 and M2 input source arrays bitwise and sum without additional weighting.",
+    "Actual Stage E source_h4 is called on shared synthetic H1/Z11 field/time/grid representation and populates BOTH Y u and phi RHS rows with common a^3 convention; all other Y rows exactly zero.",
+    "Reject an attempted scalar-only Y source, duplicate old DY2 term, missing M2 anisotropy row, missing GE07 shift or wrong Fourier amplitude.",
+    "Exact signed Ward-source projection reconstructs sum of six per-piece contributions; Y and M1 Ward-source entries are exactly zero because their three metric/constraint source rows vanish. Lambda shift zero but Lambda isotropic source is generally NONZERO, so Lambda Ward-source is not silently dropped.",
+    "The formal parent plus linear-operator residual is preserved in output as NOT EVALUATED and full Ward/Noether certification is false.",
+    "The original H4F2 predata's per-node statement for M1 is superseded only in implementation interpretation by the frozen H4F2d proof: the actual M1 source uses B20=X20-weighted_z20; full off-shell Noether still retains bath node Euler equations."
+  ],
+  "next_if_pass": "Freeze source-only six-piece ledger and independently preregister actual corrected-parent common-grid plus complete parent/operator Ward residual audit; do not launch Z21.",
+  "stop": {
+    "no_parent_numerical_sampling": true,
+    "no_full_Noether_claim": true,
+    "no_Z21_solve": true,
+    "no_relabel_Repair37": true,
+    "no_modify_frozen_GE06_GE07_GE05_Repair37": true,
+    "no_relaxed_active_shift_target_1e_minus6": true,
+    "lensing_blocked": true
+  },
+  "status": "PREDATA_ONLY_ACTIONS_SOURCE_LEDGER_NOT_YET_TESTED"
+}
