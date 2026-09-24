@@ -1,0 +1,56 @@
+name: GE19 H3G Corrected Y q20 Preexecution
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h3g_predata_corrected_y_q20_reconstruction.json'
+      - 'ge19/h3g_corrected_y_q20_core.py'
+      - 'ge19/h3g_corrected_y_q20_reconstruction.py'
+      - '.github/workflows/ge19-h3g-corrected-y-preexecution.yml'
+
+jobs:
+  preexecution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact numerical and symbolic source dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit corrected-Y q20 parent and invariant physical helpers without solving q20
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h3g_predata_corrected_y_q20_reconstruction.json)" = "09fc1bd7fc06459d90fc6f6ba37a84adba757d37"
+          test "$(git rev-parse HEAD:ge19/h3g_corrected_y_q20_core.py)" = "688920e840a0a13bc85a6f416c2573cf0472eaa3"
+          test "$(git rev-parse HEAD:ge19/h3g_corrected_y_q20_reconstruction.py)" = "de929ae025e3ce58e60e6d229682cf885e7b1007"
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          test "$(git rev-parse HEAD:ge19/repair27_cancellation_free_parent_q20_reconstruction.py)" = "adbab56e67f765ab5e2b37980abae42312a55b44"
+          test "$(git rev-parse HEAD:ge19/h3f_corrected_y_z20_science_reclosure.py)" = "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0"
+          test "$(git rev-parse HEAD:docs/ge19_h3f_corrected_y_z20_valid_local_science_result_freeze.md)" = "e69fd766a36c219ecf46aa7bbf547a38c244f482"
+          python3 -m py_compile ge19/h3g_corrected_y_q20_core.py ge19/h3g_corrected_y_q20_reconstruction.py
+          python3 -m ge19.h3g_corrected_y_q20_core --help >/tmp/h3g_core_help.txt
+          python3 -m ge19.h3g_corrected_y_q20_reconstruction --help >/tmp/h3g_wrapper_help.txt
+          python3 - <<'PY'
+          import json
+          import ge19.h3g_corrected_y_q20_core as core
+          import ge19.h3g_corrected_y_q20_reconstruction as wrapper
+          p=json.load(open("ge19/h3g_predata_corrected_y_q20_reconstruction.json"))
+          assert p["classification"]=="GE19_H3G_PREDATA_CORRECTED_Y_Q20_RECONSTRUCTION"
+          assert p["frozen_parents"]["H3F_JSON_sha256"]==wrapper.H3F_JSON_SHA
+          assert p["frozen_parents"]["H3F_NPZ_sha256"]==wrapper.H3F_NPZ_SHA
+          assert p["frozen_parents"]["Repair26_R1_trace_sha256"]==wrapper.R26_R1_SHA
+          assert p["inherited_unchanged_gates"]["q20_Nq1024_vs_Nq2048_weighted_z20_relative_L2_max"]==core.QUAD_MAX==1e-2
+          assert p["inherited_unchanged_gates"]["q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max"]==core.TIME_MAX==5e-3
+          assert p["inherited_unchanged_gates"]["G2_Nx256_vs_Nx512_lowmode_relative_L2_max"]==core.SPATIAL_MAX==1e-10
+          assert p["cohorts"]["Nq_primary"]==core.NQ_PRIMARY==2048
+          assert p["cohorts"]["Nt_primary"]==core.NT_PRIMARY==128
+          assert p["single_scientific_parent_change"]["GE05_normalized_bath_equations_unchanged"] is True
+          assert p["stop_boundary"]["new_full_H4_Noether_remains_required"] is True
+          assert p["stop_boundary"]["Z21_not_certified"] is True
+          wrapper.audit_unchanged_physics()
+          assert core.H3F_JSON_SHA==wrapper.H3F_JSON_SHA
+          assert core.H3F_NPZ_SHA==wrapper.H3F_NPZ_SHA
+          print("GE19_H3G_CORRECTED_Y_Q20_PREEXECUTION_AUDIT_PASS")
+          PY
