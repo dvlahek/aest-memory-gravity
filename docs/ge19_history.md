@@ -2694,3 +2694,86 @@ new H4/Z21 science run requires its own
 predata/implementation lock.
 
 **Z21 NOT CERTIFIED. Lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F2e actual dust/M2/Lambda shift action PASS (2026-09-24)
+
+This supersedes only the NEXT-task wording of the preceding
+H4F2a--d checkpoint. All earlier results, including historical
+Repair37 science FAIL and Repair38--44 diagnostics, remain
+immutable. Corrected-Y H3F Z20 and H3G q20 are still certified
+within their preregistered limited scopes.
+
+**H4F2a--d remain valid restricted analytic/source results,
+but the full six-piece H4F2 Noether identity is not yet proved.**
+
+H4F2e preregistration:
+`ge19/h4f2e_predata_dust_m2_lambda_shift_action.json`,
+blob `a48ea8b15bf1c1141d9407c7400f416171f4b22b`.
+
+First H4F2e CI run `36027249827` failed before
+source/physics results because deterministic test
+time axis `(5,1,1)` could not broadcast with
+node/space `(3,1,256)`.
+Immutable failure freeze:
+`docs/ge19_h4f2e_first_ci_test_grid_implementation_failure_freeze.md`,
+blob `e7bc1859ca0e509dc16e32d983dc6264fd2b781d`.
+The only corrective implementation change was
+time-axis placement `tt=np.arange(nt)[None,:,None]`;
+no action/source coefficient, science target,
+frozen parent or gate changed.
+
+**Valid H4F2e CI PASS:** classification
+`GE19_H4F2E_SHIFT_ACTION_SUBIDENTITY_PASS`,
+run `36027647449`, job `107728145216`;
+JSON SHA-256
+`32b0fbc9cddd55d51b6380e6ad36c1da39229c8820974a00eb2837ca7bcf6dd2`
+(3688 bytes).
+Implementation:
+`ge19/h4f2e_dust_m2_lambda_shift_action_audit.py`,
+blob `7dab9b996fc97ca9a291eb90166babec1abfba23`.
+Valid freeze:
+`docs/ge19_h4f2e_shift_action_subidentity_valid_freeze.md`,
+blob `79c81ebffeca490b9dad74d812005086daa04c32`.
+
+This exact action-level subset establishes:
+- GE07 dust independent shift Euler row
+  `E_b,dust=-2 L R^2 varrho W T_x`,
+  with frozen mixed H4 direct-vs-polarization
+  and original RHS sign exactly verified;
+- frozen GE05 M2 first-order bath
+  `E_b,mem^(2)=-a^3 q_j,t q_j,x`
+  per node; after the exact GE05-to-GE06
+  factor two and RHS minus sign,
+  `S_b,M2=+2a^3 sum_j(q_j,t q_j,x)`
+  before `fft_low`. The actual frozen
+  `f_c2["b"]` and Fourier low-mode
+  implementation passed a deterministic
+  three-node finite test;
+- Lambda direct shift source vanishes
+  identically from the frozen
+  `-6 rho_lambda N L R^2` action.
+
+This H4F2e PASS is **not** an aggregate
+six-piece H4 Ward source/parent proof.
+GE06 and GE07 actual full source rows,
+the GE05 M2 anisotropy/bath parent
+equations and complete background/H1/Z11/
+corrected H3F/H3G parent residuals still
+need to be instantiated in the signed
+H4F2b formula on one consistent action/time
+representation. Do not infer termwise
+cancellation from the Y/M1 flux subsets.
+
+**NEXT:** exact remaining GE06 independent
+shift/anisotropy and all-sector source/
+parent Euler ledger, followed by a separately
+prelocked common corrected-parent/time
+structural evaluation if and only if the
+full mixed action identity is proven.
+
+Original active-shift `1e-6`
+science target remains unchanged.
+Z21 NOT CERTIFIED; lensing blocked.
