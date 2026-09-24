@@ -1988,3 +1988,86 @@ Repair37 remains immutable historical science FAIL;
 Repair38--44 remain diagnostic localizations.
 Window-local particular Z21 remains NOT CERTIFIED.
 Lensing remains blocked.
+
+
+---
+
+## Current structural restart checkpoint — Stage C local PASS and Stage D common Y action (2026-09-24)
+
+This is the newest canonical restart point. Earlier Stage B/C entries are
+retained as immutable history and superseded here only for the NEXT task.
+
+**Stage C local analytic reproduction: PASS**
+
+Frozen user-provided local JSON and FULL are byte-identical, both 4759 bytes
+with SHA-256
+`76f6af0ec5f765c2cf6cf9f33a6cb35d3bd0b8dbfbdec18832955cd8cf5ccb55`,
+identical to the successful CI result from run `35982602472`.
+
+The outer local runner is 5512 bytes, SHA-256
+`11f2621eb33e676de247cacd98999f431f2275c2a34c72fa555401b7ea3299b5`.
+The local marker is `GE19_H4_STAGEC_LOCAL_ANALYTIC_PASS`.
+Local provenance and claim boundary:
+`docs/ge19_h4_stagec_local_analytic_reproduction_freeze.md`.
+
+**Stage D common GR-anchored action normalization: PASS**
+
+Classification:
+`GE19_H4_STAGED_COMMON_GR_NORMALIZATION_AND_Y_ROWS_DERIVED`.
+
+Successful dedicated GitHub Actions run `35984187949`,
+job `107582874421`, JSON SHA-256
+`2d900249d1e030a9b11b2b3d3e4b65ada8cbfb39a119b40ac0aba3ce10380d11`.
+Result:
+`docs/ge19_h4_staged_common_y_action_rows_valid_freeze.md`.
+
+Exact action comparison: the frozen full NL1C6 AeST action minus the
+GE06 memory-off analytic AeST action is exactly
+`-N L R^2 (2-KB) J(Y)`. The canonical GR ADM kinetic
+normalization matches; the only spherical-versus-plane GR
+difference is the expected `+2 N L` unit-sphere curvature
+term. The frozen NL0C covariant J action has the same
+`1/(16 pi Gtilde)` Einstein-Hilbert prefactor. Thus the
+relative NL0C/GE06 raw Y action factor is **1**; the
+previously open common global normalization is now resolved.
+
+With `kappa=2(2-KB)/[(1+beta)a0]`,
+`g=Q u10+phi10_x/a`, the complete **Y-only** raw
+H3 GE19 source RHS rows are
+
+`S_phi,Y20=-2 a^3 (kappa/a) partial_x(|g|g)`,
+`S_u,Y20=+2 a^3 Q kappa |g|g`.
+
+The H4 eta-tangent rows on the unchanged background Q are
+
+`S_phi,Y21=-4 a^3 (kappa/a) partial_x(|g10|g11)`,
+`S_u,Y21=+4 a^3 Q kappa |g10|g11`.
+
+The Y metric/shift source rows vanish at this order.
+This is a versioned action-derived Y-sector dictionary,
+**not** a patched historical H3/H4 calculation.
+
+The frozen H3/H4 implementations insert scalar-only physical
+Y2/DY2 terms without the raw action-density `a^3`
+factor and no Y aether row. Therefore old
+Repair22 Z20 and dependent Repair27 q20 must not be
+promoted to the corrected full variational theory
+without a new preregistered parent reclosure.
+Repair32B/32C Z11 remains a certified result for
+its original, linear-order equation; its compatibility
+with the separately versioned Y-completed parent chain
+must be explicitly checked rather than silently assumed.
+
+**NEXT:** write and lock a separate complete-Y-source module
+implementing precisely the action-derived scalar+aether
+H3/H4 rows (including zero-set and factor-of-two checks)
+without touching old source files. Then preregister
+the minimum required parent reclosure and a separate
+all-sector H4 Noether/source compatibility test.
+Do not restart isolated Repair37 source patches.
+
+Repair37 remains the immutable historical science FAIL;
+Repair38--Repair44 remain diagnostic-only.
+Full all-sector H4 Noether identity is still unproved.
+Window-local particular Z21 remains NOT CERTIFIED;
+lensing remains blocked.
