@@ -1,0 +1,127 @@
+{
+  "classification": "GE19_REPAIR43_PREDATA_QGE06_MAIN_CONSTRAINT_STAGE_SPLIT",
+  "created_after_Repair42_valid_diagnostic": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Isolate the early-window normalized shift spike in valid Repair42 by splitting only the frozen Repair41 direct Q_GE06 stage-source correction into its six-row main-source and two-row constraint-source contributions at the original Nt128 factor-1 Radau stages. Preserve all other frozen Repair37 inputs, including the total-source PCHIP baseline, projected p0 and active mask.",
+  "frozen_Repair42": {
+    "classification": "GE19_REPAIR42_DIRECT_TARGET_H4_PROPAGATION_DIAGNOSTIC_COMPLETE",
+    "route": "DIRECT_TARGET_CORRECTION_ABOVE_SCIENCE_TARGET",
+    "JSON_sha256": "4a211581a77c1ad00e14cc398ca7a19b12642f3f3e35b416314d6721f5f81e25",
+    "NPZ_sha256": "a60515f3d92bbd388fd2fadae6cf2dd07f3ee68e8690b07632bbe5091e9013c5",
+    "FULL_sha256": "4a211581a77c1ad00e14cc398ca7a19b12642f3f3e35b416314d6721f5f81e25",
+    "outer_runner_sha256": "855067c5f733374d98a97e5013c0f23ea1cfbcb1f62494a596beab9768cbcf9c",
+    "freeze_commit": "9a7fd6262832a44ca7d0d2cb73c322b856dcf514",
+    "relabelled": false
+  },
+  "frozen_Repair41": {
+    "JSON_sha256": "1b18fede26b021e077ffe5c8b6b7ff0dc727b4defaab48e63491c86d868d1320",
+    "NPZ_sha256": "6bfb87ea21d55e2a1d2b16aee9bc8d7246111f91a064a78b74d2ed946ec2ba45",
+    "route": "DIRECT_TARGET_REFERENCE_RESOLVED",
+    "relabelled": false
+  },
+  "frozen_Repair37": {
+    "JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f",
+    "relabelled": false
+  },
+  "controls": {
+    "baseline": "Exact frozen Repair37 total H4 source with Repair07 PCHIP at Nt128 factor-1 Radau stages",
+    "projected_p0": "Exact frozen Repair37 projected p0, never recomputed",
+    "H4_operator": "Exact frozen Repair07 GE06/GE07 plus Repair11 Lambda canonical operator",
+    "source_target": "Only 2Q_GE06_cross, not M1 or other H4 pieces",
+    "target_correction": "Repair41 direct382/direct763 target minus the saved Repair41 frozen PCHIP target at the same factor-1 stage",
+    "Nt": 128,
+    "Radau_substeps": 1,
+    "frozen_active_count": 23850,
+    "frozen_shift_target": 0.000001,
+    "threshold_relaxed": false
+  },
+  "variants": [
+    "PCHIP_BASELINE",
+    "DIRECT382_Q_GE06_MAIN_ONLY",
+    "DIRECT382_Q_GE06_CONSTRAINT_ONLY",
+    "DIRECT382_Q_GE06_BOTH",
+    "DIRECT763_Q_GE06_MAIN_ONLY",
+    "DIRECT763_Q_GE06_CONSTRAINT_ONLY",
+    "DIRECT763_Q_GE06_BOTH"
+  ],
+  "correction_definition": {
+    "MAIN_ONLY": "Add direct-minus-PCHIP GE06 correction to six main source rows only; retain frozen PCHIP total constraint source.",
+    "CONSTRAINT_ONLY": "Add direct-minus-PCHIP GE06 correction to two constraint source rows only; retain frozen PCHIP total main source.",
+    "BOTH": "Add both GE06 main and constraint corrections, exactly reproducing frozen Repair42 DIRECT382_Q_GE06_ONLY or DIRECT763_Q_GE06_ONLY.",
+    "x0": "Retain exact frozen PCHIP source and projected p0.",
+    "source_interpolation_of_direct_values": false,
+    "stage_lookup": "Exact Repair41 saved factor-1 stage coordinate lookup within existing 1e-13 absolute coordinate tolerance"
+  },
+  "preregistered_hotspot": {
+    "tag": "C_max",
+    "beta_index": 0,
+    "beta0": 1,
+    "mode": 8,
+    "time_index": 3,
+    "ln_a": -0.8989528773447014,
+    "target_source": "GE06 first constraint row",
+    "purpose": "Report the absolute constraint-source displacement divided by frozen Repair37 actual shift backward-error scale at the already identified Repair42 hotspot. This is not a new active-mask or threshold rule."
+  },
+  "implementation_gates": {
+    "frozen_parent_hashes_and_routes_exact": true,
+    "generated_stage_coordinates_vs_Repair41_abs_max": 1e-13,
+    "saved_PCHIP_target_vs_Repair37_target_relative_L2_max": 1e-12,
+    "PCHIP_Z21_vs_Repair42_baseline_relative_L2_max": 1e-11,
+    "PCHIP_shift_metric_vs_Repair42_baseline_relative_L2_max": 1e-10,
+    "DIRECT382_Q_GE06_BOTH_Z21_vs_Repair42_Q_GE06_ONLY_relative_L2_max": 1e-11,
+    "DIRECT382_Q_GE06_BOTH_shift_metric_vs_Repair42_Q_GE06_ONLY_relative_L2_max": 1e-10,
+    "DIRECT763_Q_GE06_BOTH_Z21_vs_Repair42_Q_GE06_ONLY_relative_L2_max": 1e-11,
+    "DIRECT763_Q_GE06_BOTH_shift_metric_vs_Repair42_Q_GE06_ONLY_relative_L2_max": 1e-10,
+    "projected_p0_exact": true,
+    "active_count_exact": 23850,
+    "all_outputs_finite": true
+  },
+  "diagnostic_quantities": {
+    "per_variant": [
+      "active_shift_Linf",
+      "active_shift_RMS",
+      "active_shift_median",
+      "active_absolute_shift_residual_max",
+      "active_shift_scale_min",
+      "canonical_linear_residual_max"
+    ],
+    "full_field_attribution": "For each direct resolution, separately compute RMS of the active shift-metric field difference between MAIN_ONLY and frozen Repair42 Q_GE06_ONLY and between CONSTRAINT_ONLY and frozen Repair42 Q_GE06_ONLY. Whichever is closer in RMS explains more of the full normalized-shift field under the one-row-family intervention, without presuming metric additivity.",
+    "frozen_hotspot": [
+      "shift_metric",
+      "absolute_shift_residual",
+      "backward_error_scale",
+      "GE06_main_delta_L2",
+      "GE06_constraint_delta_row0_abs",
+      "GE06_constraint_delta_row0_abs_over_frozen_shift_scale"
+    ],
+    "per_resolution": "Preserve full fields and report all beta and C cases; no threshold-based sample exclusion beyond the original frozen active mask."
+  },
+  "diagnostic_routes": {
+    "QGE06_CONSTRAINT_ROW_FIELD_CLOSER_TO_FULL": "All implementation gates pass and CONSTRAINT_ONLY has strictly smaller active-field difference RMS to the frozen Repair42 Q_GE06_ONLY result than MAIN_ONLY for both Nt382 and Nt763.",
+    "QGE06_MAIN_ROW_FIELD_CLOSER_TO_FULL": "All implementation gates pass and MAIN_ONLY is strictly closer to the frozen Repair42 Q_GE06_ONLY active field than CONSTRAINT_ONLY for both resolutions.",
+    "QGE06_MIXED_ROW_SENSITIVITY": "All implementation gates pass but the two resolutions do not agree on the closer single-row-family intervention, or ties occur.",
+    "IMPLEMENTATION_FAIL": "Any frozen parent, stage binding, baseline/full reproduction, projected p0, active mask or finiteness gate fails."
+  },
+  "next_step_rule": {
+    "if_constraint": "Freeze result and localize fine-parent versus coarse-total H4 source-constraint/Noether compatibility, including local normalization at the registered hotspot; do not add unrelated source patches.",
+    "if_main": "Freeze result and localize the GE06 main-source stage correction, propagated-state/constraint transfer and parent-time resolution.",
+    "if_mixed": "Freeze result and localize row-family interaction without claiming one physical component is erroneous."
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair38_relabelled": false,
+    "Repair39_relabelled": false,
+    "Repair40_relabelled": false,
+    "Repair41_relabelled": false,
+    "Repair42_relabelled": false,
+    "Z21_certification_forbidden": true,
+    "no_H4_science_reclosure": true,
+    "no_threshold_relaxation": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
