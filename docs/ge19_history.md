@@ -2058,6 +2058,15 @@ its original, linear-order equation; its compatibility
 with the separately versioned Y-completed parent chain
 must be explicitly checked rather than silently assumed.
 
+**Stage D lightweight local reproduction runner (static PASS):**
+`ge19/run_local_h4_staged_common_y_action_rows.sh`,
+locked by
+`docs/ge19_h4_staged_local_runner_lock.md`.
+Dedicated static runner audit `35984559448` PASS.
+The runner checks exact frozen source blobs and symbolic
+claims and writes separate `_LOCAL` JSON/FULL files,
+without invoking any H3/H4/Z21 state solver.
+
 **NEXT:** write and lock a separate complete-Y-source module
 implementing precisely the action-derived scalar+aether
 H3/H4 rows (including zero-set and factor-of-two checks)
