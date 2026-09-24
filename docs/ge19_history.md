@@ -2256,3 +2256,106 @@ only for their original equations. Repair37 remains
 historical science FAIL; Repair38--44 remain
 diagnostic-only. Full H4 Noether certificate is
 still open. Z21 is NOT CERTIFIED. Lensing is blocked.
+
+
+---
+
+## Latest checkpoint — local Stage E PASS; H3F source and Z20 science runner ready (2026-09-24)
+
+This entry supersedes only the NEXT-task wording of older checkpoints.
+No historical GE19 classification or numerical threshold is relabelled.
+
+**Stage E local source reproduction: PASS (user-supplied terminal output).**
+
+The user ran
+`ge19/run_local_h4_stagee_y_source_rows.sh` and reported
+`GE19_H4_STAGEE_LOCAL_LOCK_PASS`,
+`GE19_H4_STAGEE_LOCAL_PREEXECUTION_PASS`,
+`GE19_H4_STAGEE_LOCAL_SOURCE_ROWS_PASS`,
+`EXIT=0`.
+Local JSON/FULL: 3371 bytes each, both SHA-256
+`c3ff4cc18dc8c7a69ba661a68ea3de987818f1b9c1db3275b08f2976c385896e`,
+identical to successful Stage E CI run `35995241998`.
+All three beta-case, exact frozen blob, zero-set,
+source-row and numerical tangent gates report PASS.
+The outer runner log was not attached as bytes; no
+independent outer log SHA is claimed.
+Freeze:
+`docs/ge19_h4_stagee_local_source_reproduction_freeze.md`.
+
+**New H3F source adapter: valid CI PASS.**
+
+`ge19/h3f_corrected_y_source_adapter.py`,
+blob `395294868191111b9b01201315cd2e6a30e47578`.
+Dedicated CI run `35997209177`,
+job `107624869369`, PASS. JSON SHA-256
+`9f905b09ce4ba688410fe16e917e16724ec3b39cdb8af492a332a224a669bb9d`.
+Freeze:
+`docs/ge19_h3f_complete_y_source_adapter_valid_freeze.md`.
+
+The adapter verifies unchanged GE06+GE07+Lambda
+non-Y source and removes the complete historical
+scalar-only Y contribution before injecting both
+action-derived Stage E raw Y u/phi rows with the
+fixed 2/3-projected common flux. It does not
+modify old modules or reclose Z20 by itself.
+
+**First full H3F science implementation: statically ready,
+NOT LOCALLY EXECUTED.**
+
+- on-shell H1/Z20 core:
+  `ge19/h3f_corrected_y_parent_core.py`,
+  blob `7e1da10ae8d79b6269b306f5483783de0fd3fd30`;
+- science certification:
+  `ge19/h3f_corrected_y_z20_science_reclosure.py`,
+  blob `31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0`;
+- existing immutable preregistration:
+  `ge19/h3f_predata_action_completed_y_z20_parent_reclosure.json`,
+  blob `6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e`;
+- implementation lock:
+  `docs/ge19_h3f_corrected_y_implementation_lock.md`;
+- dedicated preexecution CI `35997860156`, PASS.
+
+The science pipeline recomputes on-shell H1 at
+Nt128/Nt64, rebuilds the source with new Y u/phi
+rows and original analytic non-Y pieces, uses
+the **original Repair18 p0 projection algorithm**
+but recomputes numerical p0 from the new source,
+and applies every original H3 active shift 1e-6,
+matched order >=2.5, time/source-spatial,
+boundary, linear and near-null gate.
+
+A mandatory Y-disabled control replays the same
+new parent core with historical Y restored and
+must reproduce the old certified Repair22
+Z20 and p0 arrays to <=1e-11 relative L2.
+Old Repair18 p0 numbers are otherwise report-only
+for the source-corrected run.
+
+**Locked new local science runner:**
+
+`ge19/run_local_h3f_corrected_y_z20_science_reclosure.sh`.
+
+Static runner audit `35998084151` PASS.
+Runner lock:
+`docs/ge19_h3f_local_science_runner_lock.md`.
+
+NEXT: run this exact local H3F science runner and
+preserve its result as PASS, SCIENCE_FAIL or
+IMPLEMENTATION_FAIL without conflation.
+This is the first actual numerical recomputation
+of a corrected-Y Z20 parent, not another old
+GE06 shift-row source patch.
+
+Even if H3F succeeds, old Repair27 q20 does NOT
+automatically transfer to the changed Z20.
+Recompute the dependent q20 with cancellation-free
+R1 history and independently controlled time,
+space and quadrature. A full all-sector H4
+source/Noether compatibility test remains
+required before any new Z21 science reclosure.
+
+Historical Repair22/27/32 results remain valid
+for their original equations; Repair37 science
+FAIL and Repair38--44 diagnostics remain immutable.
+Z21 is NOT CERTIFIED; lensing is blocked.
