@@ -1,0 +1,109 @@
+name: GE19 Repair43 GE06 source-row split prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/repair43_predata_qge06_main_constraint_stage_split.json'
+      - 'ge19/repair43_qge06_main_constraint_stage_split.py'
+      - '.github/workflows/ge19-repair43-prelock-audit.yml'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit frozen Repair43 GE06 main/constraint diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git rev-parse HEAD:ge19/repair43_predata_qge06_main_constraint_stage_split.json)" = "b2161c074012c096fba8790fa377c69fd548a234"
+          test "$(git rev-parse HEAD:ge19/repair43_qge06_main_constraint_stage_split.py)" = "50769723c1ff5abce1548a15d41353fb295e932c"
+          test "$(git rev-parse HEAD:ge19/repair42_direct_target_h4_propagation_diagnostic.py)" = "8576118fec60dd6ac1593459da9354d424d04fd5"
+          test "$(git rev-parse HEAD:docs/ge19_repair42_valid_direct_target_above_threshold_constraint_localization_freeze.md)" = "e3b89cc656ca5dade9a555aa21ae0ba65817af46"
+
+          python3 -m py_compile ge19/repair43_qge06_main_constraint_stage_split.py
+          python3 ge19/repair43_qge06_main_constraint_stage_split.py --help >/tmp/r43_help.txt
+          grep -q -- "--results-dir" /tmp/r43_help.txt
+          grep -q -- "--json-out" /tmp/r43_help.txt
+          grep -q -- "--npz-out" /tmp/r43_help.txt
+
+          python3 - <<'PY'
+          import inspect,json,numpy as np
+          import ge19.repair43_qge06_main_constraint_stage_split as r43
+          import ge19.repair42_direct_target_h4_propagation_diagnostic as r42
+
+          p=json.load(open("ge19/repair43_predata_qge06_main_constraint_stage_split.json"))
+          assert p["classification"]=="GE19_REPAIR43_PREDATA_QGE06_MAIN_CONSTRAINT_STAGE_SPLIT"
+          assert p["diagnostic_only"] is True
+          assert p["uses_observational_data"] is False
+          assert p["finite_physical_eta"] is False
+          assert p["frozen_Repair42"]["route"]=="DIRECT_TARGET_CORRECTION_ABOVE_SCIENCE_TARGET"
+          assert p["controls"]["source_target"]=="Only 2Q_GE06_cross, not M1 or other H4 pieces"
+          assert p["controls"]["Nt"]==128
+          assert p["controls"]["Radau_substeps"]==1
+          assert p["controls"]["frozen_active_count"]==23850
+          assert p["controls"]["frozen_shift_target"]==1e-6
+          assert p["controls"]["threshold_relaxed"] is False
+          assert p["correction_definition"]["source_interpolation_of_direct_values"] is False
+          assert p["preregistered_hotspot"]["mode"]==8
+          assert p["preregistered_hotspot"]["time_index"]==3
+          assert p["stop_boundary"]["Z21_certification_forbidden"] is True
+
+          assert r43.R42_JSON_SHA=="4a211581a77c1ad00e14cc398ca7a19b12642f3f3e35b416314d6721f5f81e25"
+          assert r43.R42_NPZ_SHA=="a60515f3d92bbd388fd2fadae6cf2dd07f3ee68e8690b07632bbe5091e9013c5"
+          assert r43.ACTIVE_COUNT==23850
+          assert r43.SCIENCE_TARGET_REPORT_ONLY==1e-6
+          assert r43.STAGE_X_MAX==1e-13
+          assert r43.PCHIP_TARGET_REPRO_MAX==1e-12
+          assert r43.STATE_REPRO_MAX==1e-11
+          assert r43.METRIC_REPRO_MAX==1e-10
+          assert len(r43.VARIANTS)==7
+
+          src=open("ge19/repair43_qge06_main_constraint_stage_split.py").read()
+          for forbidden in (
+              "q_cross_direct(",
+              "m1_mapped_fourier(",
+              "build_source_config(",
+              "construct_q20_direct(",
+              "dy2_real(",
+          ):
+              assert forbidden not in src,forbidden
+
+          sf=inspect.getsource(r43.source_functions)
+          assert 'r42.source_functions(' in sf
+          assert '"PCHIP_BASELINE"' in sf
+          assert 'r42.saved_stage_pair(r41npz,tag,r42.Q6,resolution,jm)' in sf
+          assert 'delta_main=dm-pm' in sf
+          assert 'delta_con=dc-pc' in sf
+          assert 'r42.stage_locator' in sf
+          assert 'row_family in ("MAIN_ONLY","BOTH")' in sf
+          assert 'row_family in ("CONSTRAINT_ONLY","BOTH")' in sf
+          assert 'PchipInterpolator' not in sf
+          assert 'Akima' not in sf
+
+          rv=inspect.getsource(r43.run_variant)
+          assert 'r38.radau2_integrate_substepped' in rv
+          assert 'rhsfun,confun,1' in rv
+          assert 'r38.shift_trace_from_canonical' in rv
+          assert 'shift_trace_from_canonical' in rv
+
+          main=inspect.getsource(r43.main)
+          assert 'r42.pchip_target_reproduction' in main
+          assert 'PCHIP_baseline_Z21_relative_L2_le_1e11' in main
+          assert 'DIRECT382_Q_GE06_BOTH_shift_relative_L2_le_1e10' in main
+          assert 'DIRECT763_Q_GE06_BOTH_shift_relative_L2_le_1e10' in main
+          assert 'QGE06_CONSTRAINT_ROW_FIELD_CLOSER_TO_FULL' in main
+          assert 'QGE06_MAIN_ROW_FIELD_CLOSER_TO_FULL' in main
+          assert 'QGE06_MIXED_ROW_SENSITIVITY' in main
+          assert '"Z21_window_local_particular_certified":False' in main
+          assert '"science_H4_Z21_reclosure_performed":False' in main
+          assert '"lensing_licensed":False' in main
+
+          print("GE19_REPAIR43_PRELOCK_PASS")
+          PY
