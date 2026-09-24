@@ -38,7 +38,13 @@ jobs:
           assert all(d["full_unreduced_coframe_jet_spatial_ward"].values())
           assert all(d["frozen_action_and_source_implementation_bindings"].values())
           assert all(all(x.values()) for x in d["exact_independent_shift_local_mixed_action_partials"].values())
-          assert all(all(x.values()) for x in d["source_only_frozen_generator_numeric"].values())
+          assert all(
+              all(v is True for k,v in group.items()
+                  if not k.endswith("_relative_L2"))
+              and all(float(v)<=1e-9 for k,v in group.items()
+                      if k.endswith("_relative_L2"))
+              for group in d["source_only_frozen_generator_numeric"].values()
+          )
           assert d["full_six_piece_H4_source_parent_Noether_derived"] is False
           assert d["H4_Z21_solve_performed"] is False
           assert d["Z21_certified"] is False
