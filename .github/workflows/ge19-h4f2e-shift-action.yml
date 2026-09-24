@@ -1,0 +1,54 @@
+name: GE19 H4F2e Dust M2 Lambda Shift Action
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f2e_predata_dust_m2_lambda_shift_action.json'
+      - 'ge19/h4f2e_dust_m2_lambda_shift_action_audit.py'
+      - '.github/workflows/ge19-h4f2e-shift-action.yml'
+
+jobs:
+  action-shift:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact source-generator dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Audit frozen GE07 GE05 M2 and Lambda H4 shift coefficients
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f2e_predata_dust_m2_lambda_shift_action.json)" = "a48ea8b15bf1c1141d9407c7400f416171f4b22b"
+          test "$(git rev-parse HEAD:ge19/h4f2e_dust_m2_lambda_shift_action_audit.py)" = "0c6aa6539b8a1a2d18b9ba09e87e5fe578c691e5"
+          python3 -m py_compile ge19/h4f2e_dust_m2_lambda_shift_action_audit.py
+          python3 -m ge19.h4f2e_dust_m2_lambda_shift_action_audit \
+            --json-out results/ge19_h4f2e_dust_m2_lambda_shift_action.json \
+            > results/ge19_h4f2e_dust_m2_lambda_shift_action_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f2e_dust_m2_lambda_shift_action.json"))
+          assert d["classification"]=="GE19_H4F2E_SHIFT_ACTION_SUBIDENTITY_PASS"
+          assert d["all_subset_gates_pass"] is True
+          assert all(x["exact"] for x in d["frozen_blobs"].values())
+          assert all(d["exact_source_action_bindings"].values())
+          assert all(d["GE07_mixed_shift_polarization"].values())
+          assert d["deterministic_frozen_GE05_M2_shift"]["gates_pass"] is True
+          assert d["full_six_piece_H4_source_parent_Noether_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F2E_SHIFT_ACTION_SUBIDENTITY_PASS")
+          PY
+          sha256sum results/ge19_h4f2e_dust_m2_lambda_shift_action.json
+          wc -c results/ge19_h4f2e_dust_m2_lambda_shift_action.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f2e_dust_m2_lambda_shift_action
+          path: |
+            results/ge19_h4f2e_dust_m2_lambda_shift_action.json
+            results/ge19_h4f2e_dust_m2_lambda_shift_action_FULL.log
+          retention-days: 90
