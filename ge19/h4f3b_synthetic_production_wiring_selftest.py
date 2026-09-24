@@ -60,10 +60,8 @@ def run_fixture():
     H=0.71+0.11*np.exp(-x)
     Q=1.1e-4+1.8e-5*np.sin(np.arange(nt)*0.21)
     bg={"x":x,"a":a,"H":H,"Q_action":Q}
-    t=np.arange(nt)[None,:,None]
+    t=np.arange(nt)[None,None,:]
     fm=np.arange(6)[:,None,None]
-    h1=(1.2e-4*(fm+1)/6*np.exp(1j*(0.13*t+fm*0.17))
-        *np.ones((1,1,nt),complex))
     # state: six positive Fourier modes x six GE19 fields x Nt
     field=np.arange(6)[None,:,None]
     h1=1.6e-4*np.exp(1j*(0.13*t+fm*0.17+field*0.23))
@@ -80,7 +78,7 @@ def run_fixture():
     z10=np.zeros((2,6,nt),complex)
     for i in range(2):
         z10[i]=1e-5*(i+1)*np.exp(
-            1j*(0.13*t[0,:,0][None,:]+0.07*fm[:,0,0][:,None])
+            1j*(0.13*t[0,0,:][None,:]+0.07*fm[:,0,0][:,None])
         )
     v10=0.1*z10
     weighted=np.einsum("b,bmt->mt",weights,z10,optimize=True)
