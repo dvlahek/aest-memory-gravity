@@ -26,9 +26,12 @@ jobs:
           test "$(git rev-parse HEAD:ge19/h4f3b_synthetic_production_wiring_selftest.py)" = "3b74108dadb1273e435cc687ffd7a124ab67bab0"
           test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
           python3 -m py_compile ge19/h4f3b_synthetic_production_wiring_selftest.py
-          python3 -m ge19.h4f3b_synthetic_production_wiring_selftest \
+          if ! python3 -m ge19.h4f3b_synthetic_production_wiring_selftest \
             --json-out results/ge19_h4f3b_synthetic_production_wiring.json \
-            > results/ge19_h4f3b_synthetic_production_wiring_FULL.log
+            > results/ge19_h4f3b_synthetic_production_wiring_FULL.log; then
+            cat results/ge19_h4f3b_synthetic_production_wiring_FULL.log
+            exit 3
+          fi
           python3 - <<'PY'
           import json
           d=json.load(open("results/ge19_h4f3b_synthetic_production_wiring.json"))
