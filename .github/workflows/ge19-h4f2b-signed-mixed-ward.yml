@@ -1,0 +1,49 @@
+name: GE19 H4F2b Exact Mixed Ward Template
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f2b_signed_mixed_ward_template.py'
+      - '.github/workflows/ge19-h4f2b-signed-mixed-ward.yml'
+
+jobs:
+  formal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Derive signed epsilon2 eta coefficient and exact GE19 row mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f2b_signed_mixed_ward_template.py)" = "ab783ffe8242d8ff455647df8664a074f725ee81"
+          python3 -m py_compile ge19/h4f2b_signed_mixed_ward_template.py
+          python3 -m ge19.h4f2b_signed_mixed_ward_template \
+            --json-out results/ge19_h4f2b_signed_mixed_ward_template.json \
+            > results/ge19_h4f2b_signed_mixed_ward_template_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f2b_signed_mixed_ward_template.json"))
+          assert d["classification"]=="GE19_H4F2B_SIGNED_MIXED_WARD_TEMPLATE_DERIVED_FULL_SOURCE_OPEN"
+          assert d["all_restricted_analytic_gates_pass"] is True
+          assert all(z["exact"] for z in d["frozen_blobs"].values())
+          assert all(d["symbolic"]["tests"].values())
+          assert d["symbolic"]["full_H4_Noether_derived"] is False
+          assert d["full_all_sector_H4_source_Noether_derived"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F2B_SIGNED_MIXED_WARD_TEMPLATE_PASS")
+          PY
+          sha256sum results/ge19_h4f2b_signed_mixed_ward_template.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f2b_signed_mixed_ward_template
+          path: |
+            results/ge19_h4f2b_signed_mixed_ward_template.json
+            results/ge19_h4f2b_signed_mixed_ward_template_FULL.log
+          retention-days: 90
