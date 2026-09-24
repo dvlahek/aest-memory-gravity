@@ -2777,3 +2777,23 @@ full mixed action identity is proven.
 Original active-shift `1e-6`
 science target remains unchanged.
 Z21 NOT CERTIFIED; lensing blocked.
+
+
+**H4F2e local source-only reproduction path locked (no local execution yet).**
+Runner:
+`ge19/run_local_h4f2e_dust_m2_lambda_shift_action.sh`,
+blob `951a51bcaacb082b581323d8190220a1b7fa7599`.
+Dedicated static audit run `36028343263`,
+job `107730493210`, PASS.
+Lock/instructions:
+`docs/ge19_h4f2e_local_shift_action_runner_lock.md`,
+blob `323daba75e37fde0f0f243d5fbdf669e12e63d7c`.
+The runner executes GE05/GE07 module-level
+generators from an isolated temporary working
+directory so they do not overwrite historical
+project `results/` files; it creates only
+new H4F2e `_LOCAL` outputs. It performs NO
+corrected-parent/H4 state solve. A local
+PASS would reproduce only the H4F2e action
+subset, not the full H4F2 certificate.
+
