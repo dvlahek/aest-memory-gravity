@@ -1,0 +1,82 @@
+{
+  "classification": "GE19_H4F2_PREDATA_COMPLETE_MIXED_H4_WARD_SOURCE_PARENT_DICTIONARY",
+  "purpose": "Derive the complete signed scalar-longitudinal mixed H4 spatial diffeomorphism/Noether identity and six-piece H4 RHS source-plus-parent-residual dictionary from the same frozen covariant NL0B+NL0C+Einstein+GE06+GE07+Lambda action, with certified corrected-Y H3F/H3G Z20/q20 parents. This is ANALYTIC ONLY; no numerical Z21 propagation or selective constraint-source patch.",
+  "frozen_parents": {
+    "H3F_classification": "GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED",
+    "H3F_JSON_sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3F_NPZ_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3G_classification": "GE19_H3G_CORRECTED_Y_Q20_RECONSTRUCTION_PASS",
+    "H3G_JSON_sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+    "H3G_uploaded_NPZ_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "H3G_uploaded_NPZ_bytes": 3550825,
+    "H3G_NPZ_independent_audit_blob": "01046254c9cfef2aba4fa285e1b42a2eba73820a",
+    "Repair26_R1_first_order_bath_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "Repair32B_reduced_Z11_NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+    "Repair32C_Z11_valid_freeze_blob": "341e6e10de1ced067c69bd28ab6569817b0eb7ab",
+    "StageE_Y_source_module_blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "StageD_Y_action_normalization_freeze_blob": "7d140a608d91a39106c34565cd50e4aa729ec30b",
+    "H4F1_valid_reduced_bath_Ward_freeze_blob": "5aa99f10383a253e934c0c2833230fa714c3ef1d",
+    "H4F1_exact_result_json_sha256": "105797e68ebb50a2b9b9cbdb78434f48a9d6f0c387bfc9fd1bbff86b7af7ef8c",
+    "StageA_H4_source_row_ledger_blob": "44d4f01a05aba26926d6a8e13a2b7aac995258d5",
+    "H4_structural_stop_gate_blob": "249193f946e98b13fb5fa4175e997ab721d891c4"
+  },
+  "fixed_source_dictionary": {
+    "row_order": [
+      "lapse_N",
+      "isotropic_L_plus_R",
+      "aether_u",
+      "scalar_phi",
+      "dust_potential_T",
+      "dust_density_rho",
+      "independent_shift_b",
+      "anisotropy_L_minus_half_R"
+    ],
+    "six_pieces": [
+      "2Q_GE06_cross",
+      "2Q_GE07_cross",
+      "2Q_Lambda_cross",
+      "2DY2_action_complete_Y_u_and_phi",
+      "2M1_GE05_mapped",
+      "2M2_GE05_mapped"
+    ],
+    "Y_mixed_source": "Use exactly frozen Stage E Y source_h4 at common H1/Z11 grid. Both aether and scalar raw RHS rows are nonzero and carry the common a^3 density factor; Y metric and independent constraint rows are zero at this order.",
+    "GE05_mapping": "GE05 raw memory residual mapped into GE06 raw convention by EXACT factor 2 established Repair32A, including M1 and M2. No fitted scale.",
+    "corrected_second_order_parents": "Use certified H3F Z20 and H3G q20, not old Repair22/Repair27 fields; full bath q20 node states are recomputable from locked H3G core, not replaced by a weighted projection inside M1 where per-node states are required.",
+    "first_order_eta_parent": "The historical reduced Z11 from Repair32B/32C is a separately certified first-order eta tangent; reconstruct/check its compatibility with the corrected H1/common time grid without relabeling or modifying the historical artifact.",
+    "no_source_row_intervention": true
+  },
+  "analytic_proof_obligations": [
+    "Derive diffeomorphism transformations from the same unreduced longitudinal coframe before L=R, with bath U=q s transformation proven in H4F1 and dust density/multiplier transformation independently checked from frozen GE07 covariant action.",
+    "Derive exact off-shell signed continuum spatial Ward identity including Einstein, GE06 analytic AeST, NL0C nonanalytic Y, GE07 dust, GE05 NL0B node bath, Lambda and any auxiliary constraints/multipliers and boundary terms.",
+    "Project Euler rows exactly to original GE19 main and independent constraint positions, using E_L=(E_isotropic+2 E_anisotropy)/3 and the exact GE05-to-GE06 residual factor 2.",
+    "Expand the full Ward identity in physical epsilon through second order and in eta to its mixed H4 tangent, including D(abs(g)g)[h]=2abs(g)h at zero gradient.",
+    "Provide a signed coefficient of each of the six source pieces in the independent shift and all other constrained rows and explicitly retain every background, H1, Z11, corrected H3F Z20, H3G q20, dust and GE05 bath parent-equation residual.",
+    "Prove any formal zero identity only under explicitly stated on-shell conditions and regularity/boundary assumptions; never infer identity from a numerically small shift residual.",
+    "Show which Ward terms are total derivatives, which are parent residuals and which are independent source constraints; source representation and FD4/FD8 discretization are separate later gates."
+  ],
+  "planned_common_grid_structural_followup": {
+    "permitted_only_after_full_analytic_identity": true,
+    "require_same_H1_Z11_H3F_Z20_H3G_q20_parent_time_representation": true,
+    "retain_original_source_derivative_conventions_until_independently_audited": true,
+    "registered_hotspot": "C_max beta0=1.0 m=8 Nt128 index=3 early window, plus full original active window",
+    "retain_original_active_shift_target": 0.000001,
+    "compare_complex_absolute_residual_and_original_local_backward_scale": true,
+    "no_Z21_solve_during_structural_audit": true
+  },
+  "outcomes": {
+    "ACTION_AND_COMPLETE_H4_MIXED_WARD_DERIVED": "Every frozen-source/gauge-action/row-normalization/nonanalytic/parent-residual identity gate passes; freeze exact signed result and separately preregister common-representation H4 structural source evaluation, not a Z21 science PASS.",
+    "ACTION_OR_H4_IDENTITY_INCONSISTENT": "An independently derived action-level remainder remains nonzero after exact parent/boundary terms. Freeze the explicit formula; do not relabel older results or tune a source.",
+    "H4_IDENTITY_UNRESOLVED": "Some dust, bath, gauge, nonanalytic zero-set, parent or boundary identity cannot be proven from frozen sources. Freeze the specific missing proof and do not run science H4."
+  },
+  "stops": {
+    "old_Repair37_science_FAIL_immutable": true,
+    "old_Repair38_44_diagnostic_only": true,
+    "old_Repair22_27_original_equation_certifications_immutable": true,
+    "no_fitted_constraint_source": true,
+    "no_posthoc_hotspot_exclusion": true,
+    "no_relaxed_1e_minus6": true,
+    "no_numerical_Z21_solve": true,
+    "no_lensing_or_observations": true
+  },
+  "current_status": "PREDATA_ONLY_FULL_ALL_SECTOR_MIXED_H4_IDENTITY_NOT_YET_DERIVED"
+}
