@@ -20,7 +20,7 @@ from ge19 import repair37_cancellation_safe_fd8_h4_z21_reclosure as r37
 
 ROOT=Path(__file__).resolve().parents[1]
 BLOBS={
- "ge19/h4f2e_predata_dust_m2_lambda_shift_action.json":"H4F2E_PRE_BLOB",
+ "ge19/h4f2e_predata_dust_m2_lambda_shift_action.json":"a48ea8b15bf1c1141d9407c7400f416171f4b22b",
  "ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json":"8097a4770ae8aed74cb4dd0721c1c9bd6907533c",
  "ge07/pressureless_matter_directional_source_generator.py":"cde8da77a80799cef00fc7c09c3633310fc9e3d4",
  "ge05/memory_directional_source_generator.py":"40837d77f89028da30c28899e2d0530a4401844e",
@@ -128,6 +128,7 @@ def exact_action():
     geo["GE07_original_negative_two_bilinear_sign"]=exact(
         -mixed-(-2*polarization/2)
     )
+    geo["GE07_mixed_shift_nonzero_formal"]=not exact(mixed)
     return source_bindings,geo,{
         "GE07_shift_Euler":"-2 L R^2 varrho W T_x",
         "GE07_mixed_H4_RHS":"-d_eta d_epsilon^2 E_b,GE07|0 = -2 Q_bilinear,GE07",
@@ -196,8 +197,7 @@ def main():
     passed=bool(
         all(x["exact"] for x in blobs.values())
         and all(bind.values())
-        and geo["GE07_raw_mixed_shift_deta_deps2_matches_c2_polarization"]
-        and geo["GE07_original_negative_two_bilinear_sign"]
+        and all(geo.values())
         and deterministic["gates_pass"]
     )
     d={
