@@ -2359,3 +2359,121 @@ Historical Repair22/27/32 results remain valid
 for their original equations; Repair37 science
 FAIL and Repair38--44 diagnostics remain immutable.
 Z21 is NOT CERTIFIED; lensing is blocked.
+
+
+---
+
+## Latest checkpoint — H3F corrected-Y Z20 SCIENCE PASS; H3G corrected q20 runner ready (2026-09-24)
+
+This is the canonical continuation point. It supersedes
+only the NEXT step wording of earlier checkpoints;
+historical classifications, sources and science gates
+remain immutable.
+
+**H3F independently valid local science result:**
+`GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED`;
+runner marker `GE19_H3F_NEW_Z20_SCIENCE_PASS`;
+all preregistered science gates true, zero failed gates.
+Freeze:
+`docs/ge19_h3f_corrected_y_z20_valid_local_science_result_freeze.md`,
+blob `e69fd766a36c219ecf46aa7bbf547a38c244f482`.
+
+Exact user-uploaded local result SHA-256:
+
+- JSON, 414800 bytes:
+  `0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b`;
+- FULL log, 414800 bytes, byte-identical to JSON:
+  `0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b`;
+- NPZ, 14181793 bytes:
+  `90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542`;
+- outer runner log, 9844 bytes:
+  `c38599aba33efdee9106f7f6ce198701201da543f43a6ade72dbe7d798be4bf2`.
+
+Independent local file checks found 62 finite
+NPZ arrays. The mandatory Y-disabled control
+reproduced original frozen Repair22 Z20 and
+projected p0 at relative L2 0.0 each. Stage E
+complete Y u+phi replaced the old scalar-only
+Y term; original non-Y source and frozen
+operator were not modified. The new source-aware
+boundary projected p0 reproduces to 0.0 and
+the old p0 difference is report-only
+`3.473886544805647e-16`.
+
+New H3F science metrics:
+
+- source Nx1024/2048 relative L2 `1.396725754522341e-12`;
+- Nt64/128 state relative L2 `1.5208749234474405e-05`;
+- active Nt128 shift Linf `8.067171756100188e-07` against **unchanged** `1e-6`;
+- matched active Linf and L2 orders
+  `3.2357755676907107` and
+  `3.1225511608309504` against `>=2.5`;
+- near-null absolute residual/Sref
+  `9.599035641086836e-15`.
+
+Original all-row cancellation-prone shift
+metrics are retained report-only, not confused
+with the preregistered active/near-null
+backward-error certification. This is
+a separately versioned, low-mode, window-local
+particular H3/Z20 result, not full GR
+or observational certification.
+
+**Next parent H3G: separately preregistered
+corrected-Y normalized q20 reconstruction.**
+
+- preregistration:
+  `ge19/h3g_predata_corrected_y_q20_reconstruction.json`,
+  blob `09fc1bd7fc06459d90fc6f6ba37a84adba757d37`;
+- new core:
+  `ge19/h3g_corrected_y_q20_core.py`,
+  blob `688920e840a0a13bc85a6f416c2573cf0472eaa3`;
+- R1/provenance wrapper:
+  `ge19/h3g_corrected_y_q20_reconstruction.py`,
+  blob `de929ae025e3ce58e60e6d229682cf885e7b1007`;
+- H3G static preexecution `36013702448`, PASS:
+  original Repair24 **all numerical physics helpers
+  AST-identical**, all Repair27 constants/gates
+  unchanged;
+- new local runner:
+  `ge19/run_local_h3g_corrected_y_q20_reconstruction.sh`,
+  blob `bc46078cbbbce46f5955faa7d0e8037e19905a4b`;
+- dedicated runner static CI `36014109845`,
+  PASS `GE19_H3G_LOCAL_RUNNER_STATIC_PASS`;
+- exact first-run instructions and provenance:
+  `docs/ge19_h3g_local_q20_runner_lock.md`,
+  blob `5faf30fd197c0ff23bcb731fcb90c322ffe19d94`.
+
+H3G changes **only** the Z20 parent relative
+to old Repair27: frozen Repair22 Z20 ->
+new certified H3F action-completed-Y Z20.
+The original Repair26 cancellation-free
+R1 full-history bath trace, normalized
+GE05 bath equations, q20 zero-particular
+boundary and all time/space/quadrature
+science thresholds remain fixed.
+Historical Repair27 weighted q20 is
+optional report-only comparator, NEVER
+the new parent.
+
+**H3G has not been numerically executed.
+The first H3G local science run is NEXT.**
+Freeze the first valid H3G science result
+as PASS/FAIL or any implementation FAIL
+separately.
+
+A valid new H3G q20 parent will still
+require a complete, independent, all-sector
+H4 source/Noether compatibility certificate
+on one corrected parent/time representation,
+then a separately preregistered H4/Z21
+science reclosure. The Stage E Y-only
+row dictionary does not itself establish
+full H4 compatibility.
+
+Old Repair22/27/32 certifications remain
+valid only for their original implementations.
+Repair37 historical science FAIL and
+Repair38--44 diagnostics are not relabelled.
+**Z21 remains NOT CERTIFIED and lensing
+remains blocked.**
