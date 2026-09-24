@@ -1,0 +1,83 @@
+{
+  "H3F_H3G_actual_binary_interface_pass": true,
+  "H4_Z21_solve_performed": false,
+  "Z11": {
+    "hash_exact": null,
+    "provided": false,
+    "shapes_ok": null,
+    "shared_x_control": null,
+    "shared_x_primary": null
+  },
+  "Z21_certified": false,
+  "all_six_actual_H4_source_families_assembled": false,
+  "all_three_parent_input_gate_pass": false,
+  "cases": {
+    "C_max": {
+      "B20_identity_exact": true,
+      "B20_identity_max_abs_defect": 0.0,
+      "all_finite": true,
+      "shapes_ok": true,
+      "weighted_q20_initial_exact_zero": true
+    },
+    "C_min": {
+      "B20_identity_exact": true,
+      "B20_identity_max_abs_defect": 0.0,
+      "all_finite": true,
+      "shapes_ok": true,
+      "weighted_q20_initial_exact_zero": true
+    },
+    "C_star": {
+      "B20_identity_exact": true,
+      "B20_identity_max_abs_defect": 0.0,
+      "all_finite": true,
+      "shapes_ok": true,
+      "weighted_q20_initial_exact_zero": true
+    }
+  },
+  "claim_boundary": "Exact binary grid, B20 and stored-parent interface only; the all-sector Ward operator/source/parent identity is not evaluated.",
+  "classification": "GE19_H4F3A_H3F_H3G_BINARY_INTERFACE_PASS_Z11_REQUIRED",
+  "frozen_parent_inputs": {
+    "H3F_JSON": {
+      "bytes": 414800,
+      "exact": true,
+      "expected_sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+      "observed_sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b"
+    },
+    "H3F_NPZ": {
+      "bytes": 14181793,
+      "exact": true,
+      "expected_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+      "observed_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542"
+    },
+    "H3G_JSON": {
+      "bytes": 9796,
+      "exact": true,
+      "expected_sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+      "observed_sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4"
+    },
+    "H3G_NPZ": {
+      "bytes": 3550825,
+      "exact": true,
+      "expected_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+      "observed_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452"
+    }
+  },
+  "full_operator_and_signed_parent_Noether_evaluated": false,
+  "lensing_licensed": false,
+  "shared_time_grid": {
+    "control": {
+      "exact_shared_x": true,
+      "max_abs_delta": 0.0,
+      "nt": 64,
+      "x_end": -0.1823215567939546,
+      "x_start": -0.916290731874155
+    },
+    "primary": {
+      "exact_shared_x": true,
+      "max_abs_delta": 0.0,
+      "nt": 128,
+      "x_end": -0.1823215567939546,
+      "x_start": -0.916290731874155
+    }
+  }
+}
