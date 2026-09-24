@@ -1,0 +1,111 @@
+{
+  "classification": "GE19_H3G_PREDATA_CORRECTED_Y_Q20_RECONSTRUCTION",
+  "created_after_valid_h3f_science_result_freeze": true,
+  "purpose": "Recompute the separately versioned low-mode window-local particular normalized bath q20 on the new H3F action-completed-Y Z20 parent. Change ONLY the second-order Z20 parent relative to frozen Repair27; retain certified Repair26 R1 full-history first-order bath, unchanged Repair24/27 normalized GE05 bath equations, boundary, numerical integrations, controls and thresholds.",
+  "frozen_parents": {
+    "H3F_classification": "GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED",
+    "H3F_JSON_sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3F_NPZ_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3F_original_prereg_blob": "6ae1dd8c27ee1f94d85831cd5ae7b5ec21e3794e",
+    "H3F_source_adapter_blob": "395294868191111b9b01201315cd2e6a30e47578",
+    "H3F_science_impl_blob": "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0",
+    "historical_Repair22_JSON_sha256": "7d53b2458183c6b2cc326acdded70b2c3ce1fab959d8456e56d3b4f1f86ef374",
+    "historical_Repair22_NPZ_sha256": "3020e0d040f902ab2609e05705f4508d9919665b1344fa0e641644ea8fc41a16",
+    "historical_Repair27_result_JSON_sha256": "99a2183e7088c7492f624cae2d294612380714c1d81aa7ff49cc4fcd1c62c74b",
+    "historical_Repair27_result_NPZ_sha256": "2b1566d402e4c9e8daee8e5c7084b3da7735442b4fb604d51489b708662fd9c0",
+    "Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "Repair26_R1_trace_bytes": 26643162,
+    "Repair26_JSON_sha256": "80ba0b5927217be000991c82b4afb5f39b5e0ff369bc9b630a88ec11dabdedb6",
+    "Repair24_frozen_q20_core_blob": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "Repair27_frozen_wrapper_blob": "adbab56e67f765ab5e2b37980abae42312a55b44",
+    "Repair13_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3"
+  },
+  "single_scientific_parent_change": {
+    "from": "historical certified Repair22 Z20",
+    "to": "H3F separately certified action-completed Y aether+scalar Z20",
+    "H1_from_same_h3f_parent": true,
+    "frozen_Repair26_R1_parent_unchanged": true,
+    "GE05_normalized_bath_equations_unchanged": true,
+    "full_history_first_order_boundary_unchanged": true,
+    "original_second_order_zero_particular_boundary_unchanged": true,
+    "no_fitted_parameter_or_source_amplitude": true,
+    "no_old_Repair27_q20_reuse_as_new_parent": true
+  },
+  "physics": {
+    "normalized_state": "z_j = omega_j q_j / sqrt(w_j)",
+    "equation": "G1[Z20_H3F,z20_H3G] + G2[(Z10,z10),(Z10,z10)] = 0",
+    "boundary": "z20(a0)=0 and dz20/dxi(a0)=0, with Repair26 R1 full-history first-order bath initial data unchanged",
+    "projection": "weighted_z20=sum_j w_j z20_j",
+    "metric_forcing": "X20=Q_action*u20 + (ik/a)*phi20 from H3F certified Z20; all G2 GE05 normalized c2 and z10 unaffected"
+  },
+  "cohorts": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta0": [
+      1,
+      0.5,
+      0.1
+    ],
+    "modes": "1..40",
+    "H1_input_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "Nt_primary": 128,
+    "Nt_control": 64,
+    "Nx_primary": 512,
+    "Nx_control": 256,
+    "Nq_primary": 2048,
+    "Nq_control": 1024,
+    "a0": 0.4
+  },
+  "inherited_unchanged_gates": {
+    "H3F_Z20_certified": true,
+    "Repair26_R1_first_order_bath_parent_certified": true,
+    "Repair23_bridge_PASS": true,
+    "H1_X10_initial_abs_or_rel_max": 1e-10,
+    "G2_Nx256_vs_Nx512_lowmode_relative_L2_max": 1e-10,
+    "q20_Nq1024_vs_Nq2048_weighted_z20_relative_L2_max": 0.01,
+    "q20_Nt64_vs_Nt128_weighted_z20_relative_L2_max": 0.005,
+    "z10_Nt64_vs_Nt128_weighted_z10_relative_L2_max": 0.005,
+    "full_history_exact_R1_a0_bracket": true,
+    "a0_partial_step_target_abs_mismatch_max": 1e-15,
+    "normalized_c2_sqrtw_symbol_absent": true,
+    "interval_propagator_selftest_max": 1e-12,
+    "all_outputs_finite_and_cases_complete": true,
+    "all_original_grids_and_parameters_unchanged": true
+  },
+  "implementation_controls": {
+    "old_Repair24_physics_helper_function_AST_exact": true,
+    "standalone_H3F_Z20_input_SHA_and_classification_exact": true,
+    "independent_Repair22_original_hash_check_report_only": true,
+    "old_Repair27_weighted_z20_optional_report_only_comparator": true,
+    "old_Repair27_comparator_difference_no_required_sign_or_magnitude": true,
+    "H3G_standalone_result_never_overwrites_Repair27": true,
+    "science_run_only_after_static_and_parent_preexecution_lock": true
+  },
+  "outcomes": {
+    "H3G_CORRECTED_Y_Q20_CERTIFIED": "All implementation/provenance, R1, H3F Z20, normalization, initial bridge, spatial, quadrature, time, finite and completeness science gates pass. Certifies ONLY the corrected-Y window-local particular normalized bath weighted q20 projection.",
+    "H3G_CORRECTED_Y_Q20_SCIENCE_FAIL": "All implementation and source provenance verified but at least one unchanged q20 science gate fails. Freeze first valid scientific result and localize failed gate.",
+    "IMPLEMENTATION_FAIL": "Missing/incorrect frozen parent, changed helper physics AST, invalid normalized convention or runtime/adapter failure. No science claim."
+  },
+  "stop_boundary": {
+    "old_Repair27_stays_its_original_science_PASS": true,
+    "old_Repair24_stays_its_original_science_FAIL": true,
+    "old_Repair37_stays_science_FAIL": true,
+    "no_hidden_threshold_changes": true,
+    "no_observations": true,
+    "no_finite_eta": true,
+    "new_full_H4_Noether_remains_required": true,
+    "Z21_not_certified": true,
+    "lensing_blocked": true
+  },
+  "execution_status": "PREDATA_ONLY_NO_H3G_Q20_RUN"
+}
