@@ -2895,3 +2895,88 @@ source-only Actions run.
 Original active shift `1e-6` target
 is unchanged. **Z21 NOT CERTIFIED.
 Lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F2g signed six-piece source ledger PASS, full Noether still open (2026-09-24)
+
+The user requested continuation through GitHub Actions while
+away from the local machine. No new local execution was required.
+
+All previously frozen H3F corrected-Y Z20 and H3G corrected-Y q20
+science certifications remain immutable. H4F2a--f action/source
+subsets remain independently valid. The original Repair37 H4/Z21
+science FAIL and Repair38--44 diagnostic results are not relabelled.
+
+**H4F2g is a valid signed six-piece source-only PASS.**
+
+Preregistration:
+`ge19/h4f2g_predata_six_piece_signed_source_ward_ledger.json`,
+blob `70bee663a0f529a734b586dbc8b9f6e90bc8ed9f`.
+
+New, separately versioned source assembler:
+`ge19/h4f2g_action_completed_six_piece_source_ledger.py`,
+blob `d9778da0bb6cc52a15015238810c79978527ffc5`.
+
+Selftest:
+`ge19/h4f2g_six_piece_source_ledger_selftest.py`,
+blob `eb33a29e4be5975cef65b5ea62ac94b79d51114d`.
+
+Dedicated successful GitHub Actions run `36049303037`,
+job `107800548909`, terminal marker
+`GE19_H4F2G_SIX_PIECE_SIGNED_SOURCE_LEDGER_PASS`,
+artifact ID `10830265260`.
+The 8172-byte JSON SHA-256 is
+`34151f1e886477f1a08546d9a493ee9e418a8890d72c006d9f7e26583176596d`.
+
+Full result freeze:
+`docs/ge19_h4f2g_signed_six_piece_source_ledger_valid_freeze.md`,
+blob `9bb8d66ee6f04ec893b6523a9ce8a44c9c0867b8`.
+
+For beta0={1,0.5,0.1}, the new source-only
+assembler retains exact GE19 eight-row ordering,
+five external source families and generates
+the sixth from **actual frozen Stage E Y source_h4**
+with BOTH u and phi rows, replacing the old
+Repair37 scalar-only DY2. The actual frozen
+M1 source generator is also exercised.
+The GE06, GE07, Lambda and M2 numerical
+arrays in this particular unit test are
+deterministic synthetic controls, not
+certified corrected-parent source evaluations.
+
+The signed source Ward projection is
+`D_S21=d_t S_b21+(a/3)d_x(S_iso21+2S_aniso21)`.
+The test verifies exact zero Y/M1 metric
+constraint projections, nonzero Lambda
+isotropic/ward contribution despite
+zero direct Lambda shift, preservation of
+GE07 shift and M2 anisotropy, correct
+six-piece summation and deterministic
+negative input controls.
+
+A source-only `D_S21` is **NOT**
+the complete H4 Noether identity.
+No corrected-parent fields were sampled,
+and neither the linear-operator Ward
+remainder nor the signed background/H1/Z11/
+H3F Z20/H3G q20/dust/bath Euler residual
+was evaluated. The historical frozen
+Repair37 source builder still has the
+old scalar-only Y term and old parent
+arrays, so cannot be relabelled.
+
+**NEXT:** separately preregister and
+execute the complete signed continuum/
+discrete source-plus-operator/parent
+Ward-residual evaluation with one
+common corrected H3F/H3G/H1/Z11
+representation. Existing FD8 GE06/GE07
+and FD4 GE05 temporal sources must
+be audited together before any H4
+science solve. The original active-shift
+`1e-6` target remains unchanged.
+
+**Full H4 Noether NOT CERTIFIED.
+Z21 NOT CERTIFIED. Lensing blocked.**
