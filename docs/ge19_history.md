@@ -1873,3 +1873,52 @@ The restricted Ward primitive audit passed, but the full
 all-sector H4 Noether coefficient remains UNPROVED;
 a complete integrated H4 source/constraint compatibility
 check remains blocked pending this source dictionary.
+
+
+---
+
+## H4 structural Stage B — Y-sector variational source-row coverage gap (2026-09-24)
+
+The frozen NL0C action-versus-GE19 source-row audit is valid:
+
+`GE19_H4_STAGEB_Y_AETHER_SOURCE_ROW_COVERAGE_GAP_CONFIRMED`.
+
+Verified GitHub Actions run `35980659010`, job `107571474311`, conclusion success.
+Frozen JSON SHA-256:
+`6f20168f0fff685d697ce5a981754513a5c8733067c22ffbbf55f2e904c1ac46`.
+Artifact ID `10799504910`.
+
+Freeze and complete claim boundary:
+`docs/ge19_h4_stageb_y_aether_row_gap_valid_freeze.md`.
+
+The action-derived second directional NL0C aether source and its
+eta-tangent are generically nonzero, but the frozen H3 `Y2` and H4
+`DY2` insertions populate only scalar main row3; GE06's analytic
+generator explicitly excludes the nonanalytic Y sector.
+The discrepancy is an explicit action-to-implementation source-row
+coverage finding, not a complete H4 Noether proof or a valid
+numerical correction.
+
+**Important additional open question:** the raw longitudinal
+action-density Euler rows and the existing GE19 physical-space
+`y2_source` have not yet been shown to use the same volume,
+global action and perturbative normalization. Do not insert the
+raw symbolic expression into GE19 or change the solver until
+these conventions are audited independently.
+
+The earlier Repair22 Z20 / Repair32B--32C reduced Z11
+certifications remain immutable as tests of their preregistered
+implemented equations. Their promotion to certifications of the
+complete variational NL0C theory is suspended pending a separately
+versioned all-row dictionary and new appropriate parent reclosure.
+Repair37 remains immutable science FAIL. Repair38--Repair44
+remain diagnostics. Window-local particular Z21 is NOT CERTIFIED.
+Lensing remains blocked.
+
+**Next:** independently audit raw NL0C Y action-density Euler row
+normalization against the exact GE06/GE19 raw equation and the
+physical-space `y2_source` conventions. This is a small symbolic
+audit (GitHub CI and optionally local) with no large local
+H4/Z21 solver. After the resulting mapping is frozen,
+version the full variational source dictionary and only then
+determine which parent/reclosure gates must be rerun.
