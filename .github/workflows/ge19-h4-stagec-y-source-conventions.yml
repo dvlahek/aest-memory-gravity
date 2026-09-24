@@ -1,0 +1,56 @@
+name: GE19 H4 Stage C Y Raw-to-GE19 Convention Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4_structural_stage_c_predata_y_raw_ge19_conventions.json'
+      - 'ge19/h4_structural_stage_c_y_raw_ge19_convention_audit.py'
+      - '.github/workflows/ge19-h4-stagec-y-source-conventions.yml'
+
+jobs:
+  analytic-convention:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Frozen source and exact Y normalization gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_c_predata_y_raw_ge19_conventions.json)" = "cc43754e92eef83d025475a9c5f893aa6dd81ce4"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_c_y_raw_ge19_convention_audit.py)" = "80e79006613f6067926adf39995fa08bffe51534"
+          python3 -m py_compile ge19/h4_structural_stage_c_y_raw_ge19_convention_audit.py
+          python3 ge19/h4_structural_stage_c_y_raw_ge19_convention_audit.py \
+            --json-out results/ge19_h4_stagec_y_raw_ge19_convention_audit.json \
+            > results/ge19_h4_stagec_y_raw_ge19_convention_audit_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4_stagec_y_raw_ge19_convention_audit.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4_STAGEC_RAW_Y_VOLUME_FACTOR_ESTABLISHED_GLOBAL_NORMALIZATION_OPEN"
+          assert d["all_subset_gates_pass"] is True
+          assert all(v["exact"] for v in d["frozen_blob_controls"].values())
+          assert all(d["symbolic_action_to_physical_source"]["checks"].values())
+          assert all(d["frozen_GE19_implementation_conventions"].values())
+          assert d["symbolic_action_to_physical_source"]["geometric_volume_ratio_raw_EL2_to_code_2Y2"]=="a^3"
+          assert d["global_action_prefactor_independently_proven"] is False
+          assert d["complete_Y_source_dictionary_licensed"] is False
+          assert d["Z21_window_local_particular_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4_STAGEC_Y_RAW_GE19_CONVENTION_AUDIT_PASS")
+          PY
+          sha256sum results/ge19_h4_stagec_y_raw_ge19_convention_audit.json
+          wc -c results/ge19_h4_stagec_y_raw_ge19_convention_audit.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4_stagec_y_raw_ge19_convention_audit
+          path: |
+            results/ge19_h4_stagec_y_raw_ge19_convention_audit.json
+            results/ge19_h4_stagec_y_raw_ge19_convention_audit_FULL.log
+          retention-days: 90
