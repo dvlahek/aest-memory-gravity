@@ -58,7 +58,7 @@
     "Y_SOURCE_ROW_COVERAGE_COMPLETE": "Both aether and scalar Y source contributions are explicitly or exactly equivalently accounted for in the frozen GE19 source convention."
   },
   "stop_boundary": {
-    "no_fitted_source": false,
+    "no_fitted_source": true,
     "no_fitted_source_used": true,
     "no_new_solver": true,
     "no_Repair37_relabel": true,
