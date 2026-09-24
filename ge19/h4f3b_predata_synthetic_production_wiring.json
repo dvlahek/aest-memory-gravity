@@ -1,0 +1,67 @@
+{
+  "classification": "GE19_H4F3B_PREDATA_SYNTHETIC_PRODUCTION_WIRING_AUDIT",
+  "purpose": "Execute actual frozen H4F3b source adapter, Stage E Y action-derived real-space flux, H4F2g six-piece source ledger, frozen physical H*FD8/H*FD4 H4F2h Ward bridge and actual old r7 reduced Fourier field reconstruction on deterministic manufactured H1/Z11/B20 and first-order q10. Replace ONLY externally expensive frozen raw GE06/GE07/Lambda cross and R1 M2 source evaluators with explicit shape-correct manufactured fixtures. This is a code wiring/integration audit, never an actual corrected-parent source or H4 science test.",
+  "frozen_code_blobs": {
+    "ge19/h4f3b_actual_corrected_six_piece_source.py": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "ge19/h4f3b_predata_actual_corrected_six_piece_source.json": "c3362f5360c2a9951d77060027c82830c031c145",
+    "ge19/h4f2g_action_completed_six_piece_source_ledger.py": "d9778da0bb6cc52a15015238810c79978527ffc5",
+    "ge19/h4f2h_physical_time_source_ward_bridge.py": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "ge19/h4_stagee_versioned_y_source_rows.py": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25"
+  },
+  "manufactured_fixture": {
+    "Nt": 16,
+    "GE06_GE07_M2_Nx": 128,
+    "Y_Nx": 1024,
+    "low_modes": "0..40",
+    "cohorts_beta0": [
+      1,
+      0.5,
+      0.1
+    ],
+    "source_geometry": "same positive smooth H(x), a=exp(x), Q_action with original small first-order deterministic complex H1/Z11 coefficients",
+    "patched_evaluators": [
+      "q_cross_direct",
+      "lambda_cross_direct",
+      "reconstruct_m2_source"
+    ],
+    "actual_unpatched_evaluators": [
+      "r7.reduced_state_real",
+      "r7.reconstruct_positive_modes",
+      "m1_mapped_fourier",
+      "StageE.source_h4",
+      "H4F2g.assemble_six",
+      "H4F2h.physical_six_piece_ward"
+    ]
+  },
+  "gates": {
+    "identical_frozen_source_blobs": true,
+    "all_three_beta_complete": true,
+    "exact_eight_row_41_mode_six_piece_output": true,
+    "actual_complete_Y_both_u_and_phi": true,
+    "exact_zero_Y_metric_constraint_support": true,
+    "GE06_GE07_Lambda_M2_manufactured_support_valid": true,
+    "actual_M1_from_B20_preserved": true,
+    "exact_six_piece_sum": true,
+    "exact_six_piece_physical_Ward_family_sum": true,
+    "R1_q10_projection_control_exact": true,
+    "negative_wrong_R1_q10_projection_detected": true,
+    "wrong_shared_time_grid_rejected": true,
+    "all_outputs_finite": true,
+    "no_historical_files_modified": true
+  },
+  "outcomes": {
+    "SYNTHETIC_PRODUCTION_WIRING_PASS": "The concrete H4F3b assembly pipeline executes with manufactured externally expensive source fixtures and real frozen Stage E, source ledger, M1, Fourier reconstruction and physical-clock adapters. Actual parent provenance/source action, canonical operator/parent Euler Ward and Z21 remain untested.",
+    "IMPLEMENTATION_FAIL": "Freeze precise import, row/shape, clock, source summation or negative control failure without scientific inference."
+  },
+  "stop": {
+    "synthetic_fixture_not_corrected_parent": true,
+    "Z11_original_missing_from_available_binary_set": true,
+    "original_Repair32C_Z11_certification_unchanged": true,
+    "actual_six_source_H4F3b_not_performed": true,
+    "full_operator_plus_parent_Ward_not_performed": true,
+    "Z21_not_certified": true,
+    "no_lensing": true
+  }
+}
