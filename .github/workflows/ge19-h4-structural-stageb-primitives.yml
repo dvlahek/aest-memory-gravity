@@ -24,6 +24,7 @@ jobs:
           test "$(git rev-parse HEAD:ge19/h4_structural_stage_b_predata_action_noether_identity.json)" = "11123763b2f5bf06ac6f704acffdea0b4eb34f1d"
           test "$(git rev-parse HEAD:ge19/h4_structural_stage_b_geometric_ward_primitives.py)" = "5695cf064dcc32bf4385687cbe6052521f2e36b4"
           test "$(git rev-parse HEAD:docs/ge19_h4_structural_stage_a_source_row_ledger.md)" = "44d4f01a05aba26926d6a8e13a2b7aac995258d5"
+          mkdir -p results
           python3 -m py_compile ge19/h4_structural_stage_b_geometric_ward_primitives.py
           python3 ge19/h4_structural_stage_b_geometric_ward_primitives.py \
             --json-out results/ge19_h4_stageb_geometric_ward_primitives.json \
