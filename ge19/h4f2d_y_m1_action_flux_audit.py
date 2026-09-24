@@ -20,7 +20,7 @@ BLOBS={
  "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py":"45d203a092f9ac71cc612b15df5f0c0c630f5898",
  "docs/ge19_repair32a_ge06_ge05_raw_residual_normalization_dictionary_result_freeze.md":"6c5b7f830cbae95209eda0e8c8663c6620ab7071",
  "docs/ge19_h4_staged_common_y_action_rows_valid_freeze.md":"7d140a608d91a39106c34565cd50e4aa729ec30b",
- "docs/ge19_h4f2c_complete_action_spatial_ward_valid_freeze.md":"H4F2C_FREEZE_BLOB",
+ "docs/ge19_h4f2c_complete_action_spatial_ward_valid_freeze.md":"831367d223c8081f49d87210841bd0b7ba3dfaa6",
 }
 def blob_gates():
     result={}
