@@ -2477,3 +2477,107 @@ Repair37 historical science FAIL and
 Repair38--44 diagnostics are not relabelled.
 **Z21 remains NOT CERTIFIED and lensing
 remains blocked.**
+
+
+---
+
+## Latest checkpoint — H3G uploaded NPZ independently verified; H4F1 Ward PASS; H4F2 full-source prelock (2026-09-24)
+
+This is the newest continuation point. Prior Repair22/27/32
+certifications, Repair37 SCIENCE_FAIL and Repair38--44
+diagnostics remain immutable. No old output, physical
+coefficient, hotspot mask or 1e-6 science threshold
+has been changed.
+
+**H3F corrected-Y Z20:** previously certified
+`GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED`, with
+JSON SHA-256
+`0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b`
+and NPZ SHA-256
+`90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542`.
+Existing H3F valid freeze unchanged.
+
+**H3G corrected-Y normalized q20:** first local run
+`GE19_H3G_CORRECTED_Y_Q20_RECONSTRUCTION_PASS`,
+all 13 frozen gates true, original Repair26 R1 trace
+and full normalized GE05 bath equations unchanged.
+H3G JSON SHA-256
+`9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4`.
+Original result freeze:
+`docs/ge19_h3g_corrected_y_q20_valid_local_science_result_freeze.md`
+(blob `e5b273a16a131be324162d3e66cf799e4ac543c3`).
+At first freeze, H3G NPZ was not uploaded; that
+historical limitation is retained in the original
+freeze, but is now **closed by an append-only audit**.
+
+**Independent H3G NPZ upload check:**
+
+`docs/ge19_h3g_independent_uploaded_npz_audit_addendum.md`,
+blob `01046254c9cfef2aba4fa285e1b42a2eba73820a`.
+
+The subsequently uploaded NPZ is exactly 3550825
+bytes, SHA-256
+`9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452`,
+identical to the first local runner. It has 30
+numeric arrays, all finite. All 27 saved
+per-(C,beta) Z20/X20/B20 norm values exactly
+match the uploaded JSON (max relative defect 0.0).
+All three weighted-z20 primary initial slices
+are exactly zero; primary/time-control shapes
+are (3,40,128)/(3,40,64). This independently
+validates the stored result, **not** an
+independent second numerical q20 propagation.
+
+**H4F1 reduced covariant bath spatial Ward: analytic PASS.**
+
+Classification:
+`GE19_H4F1_LONGITUDINAL_BATH_WARD_COVARIANCE_DERIVED`.
+Frozen result:
+`docs/ge19_h4f1_longitudinal_bath_ward_valid_freeze.md`,
+blob `5aa99f10383a253e934c0c2833230fa714c3ef1d`.
+Dedicated GitHub run `36017517915`, job
+`107693741610`, conclusion success, JSON SHA-256
+`105797e68ebb50a2b9b9cbdb78434f48a9d6f0c387bfc9fd1bbff86b7af7ef8c`.
+
+The frozen NL0B `U_j=q_j s` covector, NL1C3B
+coframe and actual GE05 per-node action imply
+`delta q=xi*q_x` for spatial relabeling xi(t,x).
+Exact symbolic gates verify U_t/U_x covector,
+aether A^t/A^x vector, A(q) and X_phi scalar,
+orthogonality A.U=0, and
+`delta L_mem=partial_x(xi L_mem)`.
+This establishes the reduced bath transformation
+assumption left open in the restricted Stage B
+Ward primitives; it **does not** derive the
+mixed H4 full-source Noether coefficient or
+certify a numerical constraint residual.
+
+**H4F2 complete signed mixed-Ward/source-parent proof: PREREGISTERED ONLY.**
+
+Frozen predata:
+`ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json`,
+blob `8097a4770ae8aed74cb4dd0721c1c9bd6907533c`.
+Dedicated prelock `36017953067`, job
+`107695217272`, PASS
+`GE19_H4F2_COMPLETE_MIXED_WARD_PREDATA_PRELOCK_PASS`.
+
+H4F2 must derive the **full off-shell and mixed H4
+spatial Ward identity** with signed six-piece source
+rows and every background/H1/Z11/corrected H3F
+Z20/corrected H3G q20/dust/bath parent residual.
+It must retain the Stage E complete Y u+phi
+mixed eta-tangent source and exact GE05-to-GE06
+factor-two conversion. It must separately
+establish the GE07 dust density/multiplier gauge
+transformation and the action boundary terms.
+There is NO H4F2 analytic certificate yet.
+
+Only after the exact H4F2 identity is independently
+proved may a separately preregistered **common
+corrected-parent/time** structural source evaluation
+test the registered early-window shift hotspot and
+original active window. That structural test is
+separate from a subsequent H4/Z21 science solve.
+
+**Window-local particular Z21 is NOT CERTIFIED;
+lensing and observational predictions remain blocked.**
