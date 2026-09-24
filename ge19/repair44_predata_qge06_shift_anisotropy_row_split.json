@@ -1,0 +1,138 @@
+{
+  "classification": "GE19_REPAIR44_PREDATA_QGE06_SHIFT_ANISOTROPY_ROW_SPLIT",
+  "created_after_Repair43_valid_diagnostic": true,
+  "diagnostic_only": true,
+  "uses_observational_data": false,
+  "finite_physical_eta": false,
+  "purpose": "Separate the two GE06 constraint-source rows changed together in valid Repair43: the independent shift-constraint source row0 and the anisotropy source row1 used in canonical algebraic elimination. Reproduce frozen Repair43 constraint-family variants, quantify full-active-field and preregistered early-window hotspot responses, and test the operator-predicted row0-only Z21 invariance before any H4 science reclosure.",
+  "frozen_Repair43": {
+    "classification": "GE19_REPAIR43_QGE06_MAIN_CONSTRAINT_STAGE_SPLIT_COMPLETE",
+    "route": "QGE06_CONSTRAINT_ROW_FIELD_CLOSER_TO_FULL",
+    "JSON_sha256": "559ae65ffc5d21433799e4e33aa6d91237a9aa41b9799463971bc45dabecae44",
+    "NPZ_sha256": "d5c8c02c7f8272dc390ce9e4d2374a35b2ce1b14da5b60e69dc8366499bfe71c",
+    "FULL_sha256": "559ae65ffc5d21433799e4e33aa6d91237a9aa41b9799463971bc45dabecae44",
+    "outer_runner_sha256": "640c9f31959d4e5290a26c64e0dee2ec982866d942135e5261d3828ecc0afc13",
+    "freeze_commit": "91446ddb1987e834200204cb6d8c4f8c4008a5be",
+    "freeze_blob": "2d3daec4c6f52d9d53071ee04fd8834825c2ce10",
+    "relabelled": false
+  },
+  "frozen_Repair41": {
+    "JSON_sha256": "1b18fede26b021e077ffe5c8b6b7ff0dc727b4defaab48e63491c86d868d1320",
+    "NPZ_sha256": "6bfb87ea21d55e2a1d2b16aee9bc8d7246111f91a064a78b74d2ed946ec2ba45",
+    "route": "DIRECT_TARGET_REFERENCE_RESOLVED",
+    "relabelled": false
+  },
+  "frozen_Repair37": {
+    "JSON_sha256": "da8f2f00c22c866ec3f82381d23f69bf036e630fe2a29c5c44657984b760f61a",
+    "NPZ_sha256": "572d8937c1d742b10da66e34cc076377c1b2feb20b8f72eb25c3eaf31a59829f",
+    "relabelled": false
+  },
+  "operator_structure": {
+    "source_order": "six main rows followed by shift constraint source index 6 and anisotropy source index 7",
+    "source_shift_row0": "Independent checked shift constraint row Cmat[10]+Cmat[11]. Not used in canonical operator evolution or algebraic elimination.",
+    "source_anisotropy_row1": "Used in the algebraic elimination through Rr[5,7]=1 in Repair07 canonical operator.",
+    "prediction": "Shift-row0-only direct source correction must leave all reconstructed Z21 states exactly unchanged versus frozen Repair37 PCHIP baseline. Its shift residual may change due only to its right-hand side, while its backward-error denominator is recomputed from the unchanged row contributions and changed source.",
+    "no_operator_modification": true
+  },
+  "unchanged_contract": {
+    "frozen_Repair37_PCHIP_total_source": true,
+    "frozen_Repair37_projected_p0": true,
+    "frozen_Repair37_active_mask": true,
+    "frozen_active_count": 23850,
+    "Nt": 128,
+    "Radau_substeps": 1,
+    "source_target": "2Q_GE06_cross constraint source rows only",
+    "direct_values": "Exact frozen Repair41 saved direct382/direct763 stage values; no interpolation of direct values",
+    "non_target_and_GE06_main": "Frozen Repair37 PCHIP total source, unchanged",
+    "science_shift_target_report_only": 0.000001,
+    "threshold_relaxed": false,
+    "observational_tuning": false
+  },
+  "variants": [
+    "PCHIP_BASELINE",
+    "DIRECT382_Q_GE06_SHIFT_ROW0_ONLY",
+    "DIRECT382_Q_GE06_ANISOTROPY_ROW1_ONLY",
+    "DIRECT382_Q_GE06_BOTH_CONSTRAINT_ROWS",
+    "DIRECT763_Q_GE06_SHIFT_ROW0_ONLY",
+    "DIRECT763_Q_GE06_ANISOTROPY_ROW1_ONLY",
+    "DIRECT763_Q_GE06_BOTH_CONSTRAINT_ROWS"
+  ],
+  "correction_definition": {
+    "shift_row0": "Repair41 direct GE06 constraint row0 at each factor-1 stage minus its frozen standalone PCHIP GE06 row0. Keep GE06 row1 and all main rows frozen.",
+    "anisotropy_row1": "Repair41 direct GE06 constraint row1 at each stage minus its frozen standalone PCHIP GE06 row1. Keep GE06 row0 and all main rows frozen.",
+    "both": "Sum both constraint row corrections, exactly reproducing Repair43 direct382/direct763 CONSTRAINT_ONLY.",
+    "initial_x0": "Retain frozen PCHIP source and frozen projected p0.",
+    "direct_target_source_interpolation": false
+  },
+  "implementation_gates": {
+    "parent_hashes_and_routes_exact": true,
+    "generated_factor1_stage_coordinates_vs_Repair41_abs_max": 1e-13,
+    "Repair41_saved_PCHIP_vs_Repair37_target_relative_L2_max": 1e-12,
+    "baseline_Z21_vs_Repair43_relative_L2_max": 1e-11,
+    "baseline_shift_metric_vs_Repair43_relative_L2_max": 1e-10,
+    "both_constraint_rows_Z21_vs_Repair43_constraint_only_relative_L2_max": 1e-11,
+    "both_constraint_rows_shift_metric_vs_Repair43_constraint_only_relative_L2_max": 1e-10,
+    "shift_row0_only_Z21_equal_baseline_exact": true,
+    "projected_p0_equal_frozen_exact": true,
+    "frozen_active_count_exact": 23850,
+    "all_outputs_finite": true
+  },
+  "preregistered_hotspot": {
+    "tag": "C_max",
+    "beta_index": 0,
+    "beta0": 1,
+    "mode": 8,
+    "time_index": 3,
+    "ln_a": -0.8989528773447014,
+    "report": [
+      "source_delta_row0_complex",
+      "source_delta_row1_complex",
+      "shift_metric",
+      "complex_shift_residual",
+      "absolute_shift_residual",
+      "backward_error_scale",
+      "row0_source_delta_abs_over_frozen_shift_scale",
+      "row1_source_delta_abs_over_frozen_shift_scale"
+    ],
+    "no_change_to_active_mask": true
+  },
+  "diagnostic_quantities": {
+    "per_variant": [
+      "active_shift_Linf",
+      "active_shift_RMS",
+      "active_shift_median",
+      "active_absolute_shift_residual_max",
+      "active_shift_scale_min",
+      "canonical_Radau_and_algebraic_linear_residual_max"
+    ],
+    "full_active_field_closeness": "RMS difference between each single-row intervention shift-metric field and frozen Repair43 full two-constraint-row shift-metric field. Determine closer row per direct resolution without dominance percentage threshold.",
+    "state_controls": "Row0-only must reproduce frozen baseline Z21 exactly. Report anisotropy-row1-only Z21 response relative L2 and absolute norm.",
+    "norm_controls": "Store actual absolute shift residual and actual backward-error denominator per active sample rather than inferring normalized metric solely from source magnitude."
+  },
+  "diagnostic_routes": {
+    "QGE06_SHIFT_ROW0_FIELD_CLOSER_TO_FULL": "All implementation gates pass and row0-only is strictly closer to full two-constraint-row shift field on both direct382 and direct763.",
+    "QGE06_ANISOTROPY_ROW1_FIELD_CLOSER_TO_FULL": "All implementation gates pass and row1-only is strictly closer on both direct382 and direct763.",
+    "QGE06_MIXED_CONSTRAINT_ROW_SENSITIVITY": "All implementation gates pass but resolutions disagree or a tie occurs.",
+    "IMPLEMENTATION_FAIL": "Any frozen parent/reproduction/stage binding, exact row0-only Z21 invariance, p0, active mask or finiteness gate fails."
+  },
+  "next_step_rule": {
+    "if_row0": "Freeze diagnostic. Test source-constraint compatibility at the registered early-time m8 hotspot using consistent full-source/fine-parent data and the exact Noether/shift relation, without modifying science thresholds or fitting row0 to the desired residual.",
+    "if_row1": "Freeze diagnostic. Trace the anisotropy-source insertion through frozen WY/WR canonical elimination and corresponding independent shift row.",
+    "if_mixed": "Freeze diagnostic. Trace both constraint rows jointly and test their algebraic/Noether compatibility; do not declare either erroneous."
+  },
+  "stop_boundary": {
+    "Repair37_relabelled": false,
+    "Repair38_relabelled": false,
+    "Repair39_relabelled": false,
+    "Repair40_relabelled": false,
+    "Repair41_relabelled": false,
+    "Repair42_relabelled": false,
+    "Repair43_relabelled": false,
+    "no_H4_science_reclosure": true,
+    "Z21_certification_forbidden": true,
+    "no_threshold_relaxation": true,
+    "no_finite_eta": true,
+    "no_observational_data": true,
+    "no_lensing_claim": true
+  }
+}
