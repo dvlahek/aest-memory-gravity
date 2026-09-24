@@ -1,0 +1,64 @@
+{
+  "classification": "GE19_H4F2H_PREDATA_PHYSICAL_CLOCK_DISCRETE_WARD_BRIDGE",
+  "date": "2026-09-24",
+  "purpose": "Freeze and audit the GE19 H4F2g source-only Ward time coordinate before any full corrected-parent source/operator/Noether evaluation. With x=ln(a), require physical d_t=H(x)d_x using unchanged Repair37 FD8 for the GE06/GE07/Lambda source family and unchanged Repair07 FD4 for the GE05 memory source family. Compare source-only D_S with exact manufactured functions and expose mixed-derivative representation; no physical parent sampling or H4/Z21 solve.",
+  "frozen": {
+    "H4F2g_prereg_blob": "70bee663a0f529a734b586dbc8b9f6e90bc8ed9f",
+    "H4F2g_six_piece_module_blob": "d9778da0bb6cc52a15015238810c79978527ffc5",
+    "H4F2g_valid_result_freeze_blob": "9bb8d66ee6f04ec893b6523a9ce8a44c9c0867b8",
+    "H4F2b_signed_mixed_Ward_freeze_blob": "98693317485149898830eebd0f335db12024e6dc",
+    "Repair37_FD8_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "Repair07_FD4_blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "H3F_certified_JSON_SHA256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3G_certified_JSON_SHA256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4"
+  },
+  "exact_geometry": {
+    "GE19_time_coordinate": "x=ln(a) (not physical t)",
+    "background_H": "H=(1/a) da/dt, frozen positive GE19 background",
+    "physical_derivative": "d_t S_b=H(x)*d_x S_b",
+    "signed_source_Ward": "D_S21=H(x)*d_x S_b21 + i*k*a(x)/3*(S_iso21+2*S_aniso21)",
+    "legacy_H4F2g_derivative": "np.gradient(S_b,time) is only physically meaningful if time is physical t; feeding x=ln(a) without H is forbidden",
+    "FD8_R37": "frozen ninth-point degree-eight-exact derivative matrix on uniform x grid, original GE06/GE07/Lambda H4 path",
+    "FD4_R07": "frozen five-point fourth-order derivative matrix on uniform x grid, original GE05 memory H4 path",
+    "separate_family_derivatives": "Retain FD8 for nonmemory GE06+GE07+Lambda, FD4 for GE05 M2 when reproducing historical per-piece source; do not silently form FD8 derivative of FD4-created M2 or pass a mixed source into a single derivative without a registered compatibility test"
+  },
+  "tests": {
+    "blob_locks_exact": true,
+    "formal_chain_rule_exact": true,
+    "strict_uniform_increasing_x_and_positive_H": true,
+    "FD8_manufactured_physical_Ward_relative_L2_max": 1e-9,
+    "FD4_manufactured_physical_Ward_relative_L2_max": 0.00002,
+    "FD8_full_mode_shape": "8 x Nt x 41",
+    "Nt_cases": [
+      64,
+      128
+    ],
+    "all_three_registered_beta_cohorts_as_no_parameter_change": [
+      1,
+      0.5,
+      0.1
+    ],
+    "wrong_clock_negative_control": "H4F2g old d/dx result at supplied x must differ measurably from manufactured physical d/dt when nonconstant H != 1",
+    "linearity": "Correct physical Ward of sum equals sum of same-scheme piece Wards; no termwise zero claim",
+    "zero_constraint_Y_M1": "M1 and Y have zero shift, isotropic and anisotropy in fixed source dictionary and exactly zero source-Ward projection",
+    "FD8_vs_FD4_difference_reported": "Do not claim equality at finite Nt for nonlinear synthetic shift traces; record max relative difference and do not use it as fitted correction",
+    "no_real_parent_data": true,
+    "no_full_H4_Noether": true,
+    "no_H4_Z21_solve": true
+  },
+  "outcomes": {
+    "PHYSICAL_CLOCK_DISCRETE_WARD_BRIDGE_PASS": "Pin full 8-row source Ward clock/FD semantics and manufactured accuracy only; freeze corrected standalone helper and preregister full common-parent/source/operator/parent-residual test separately.",
+    "PHYSICAL_CLOCK_DISCRETE_WARD_BRIDGE_FAIL": "Freeze exact clock, derivative, source-sign or projection defect; do not change old H4F2g PASS classification or run H4 science."
+  },
+  "stops": {
+    "old_Repair37_fail_immutable": true,
+    "H4F2g_source_only_PASS_immutable": true,
+    "no_modify_frozen_source_or_operator": true,
+    "no_actions_claim_to_hold_local_parent_artifacts": true,
+    "no_full_Noether_claim": true,
+    "no_threshold_relaxation_1e_minus6": true,
+    "no_Z21": true,
+    "no_lensing": true
+  },
+  "status": "PREDATA_ONLY_NOT_TESTED"
+}
