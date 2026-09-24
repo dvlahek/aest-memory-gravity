@@ -1,0 +1,47 @@
+name: GE19 H4 Stage C Local Runner Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4_stagec_y_raw_ge19_convention_audit.sh'
+      - '.github/workflows/ge19-h4-stagec-local-runner-static.yml'
+
+jobs:
+  static-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify immutable local analytic runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4_stagec_y_raw_ge19_convention_audit.sh)" = "775499da90e28bb427fe9ce403b8a08cb8695552"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_c_predata_y_raw_ge19_conventions.json)" = "cc43754e92eef83d025475a9c5f893aa6dd81ce4"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_c_y_raw_ge19_convention_audit.py)" = "80e79006613f6067926adf39995fa08bffe51534"
+          test "$(git rev-parse HEAD:docs/ge19_h4_stagec_y_raw_ge19_conventions_valid_freeze.md)" = "a22a762148cb30f4d52c494f9df377c4613941d1"
+          bash -n ge19/run_local_h4_stagec_y_raw_ge19_convention_audit.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path("ge19/run_local_h4_stagec_y_raw_ge19_convention_audit.sh").read_text()
+          for needle in (
+              "GE19_H4_STAGEC_LOCAL_LOCK_PASS",
+              "GE19_H4_STAGEC_LOCAL_PREEXECUTION_PASS",
+              "GE19_H4_STAGEC_LOCAL_ANALYTIC_PASS",
+              "GE19_H4_STAGEC_LOCAL_ANALYTIC_FAIL",
+              "source .venv/bin/activate",
+              "python3 ge19/h4_structural_stage_c_y_raw_ge19_convention_audit.py",
+              "H4_STAGEC_RAW_Y_VOLUME_FACTOR_ESTABLISHED_GLOBAL_NORMALIZATION_OPEN",
+              "global_action_prefactor_independently_proven",
+              "complete_Y_source_dictionary_licensed",
+              "Z21_window_local_particular_certified",
+              "git diff --quiet --",
+              "exit 3",
+          ):
+              assert needle in src,needle
+          assert "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --" not in src
+          assert "repair44_qge06_shift_anisotropy_row_split.py --" not in src
+          print("GE19_H4_STAGEC_LOCAL_RUNNER_STATIC_PASS")
+          PY
