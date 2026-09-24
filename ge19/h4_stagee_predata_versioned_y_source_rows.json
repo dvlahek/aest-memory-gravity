@@ -1,0 +1,94 @@
+{
+  "classification": "GE19_H4_STAGEE_PREDATA_VERSIONED_COMPLETE_Y_SOURCE_ROWS",
+  "created_after_valid_StageD_local_reproduction": true,
+  "diagnostic_kind": "standalone versioned numerical representation of already derived Y-only action RHS; no H3/H4 solve",
+  "frozen_parents": {
+    "StageD_classification": "GE19_H4_STAGED_COMMON_GR_NORMALIZATION_AND_Y_ROWS_DERIVED",
+    "StageD_JSON_and_local_FULL_SHA256": "2d900249d1e030a9b11b2b3d3e4b65ada8cbfb39a119b40ac0aba3ce10380d11",
+    "StageD_local_runner_SHA256": "2bc7bd4521874a616aa0bb64c59d85d3ada73866407075bec463d145b88a2ab0",
+    "StageD_local_freeze_blob": "cb41f5633caaebf87924f464d509747ca7a7c4dc",
+    "StageD_valid_analytic_freeze_blob": "7d140a608d91a39106c34565cd50e4aa729ec30b",
+    "StageD_implementation_blob": "162357ce845a93982b46aef7d839a7171964b47e",
+    "frozen_H3_source_blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "frozen_H4_source_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+  },
+  "inputs": {
+    "a": "positive finite background scale factor a(t), one value per time row",
+    "Q": "finite frozen background Q_action(t), same time grid as a",
+    "u10_phi10_dx": "real first-order aether rapidity and comoving scalar spatial derivative arrays [nt,nx]",
+    "u11_phi11_dx": "optional eta-tangent arrays [nt,nx] for H4",
+    "KB": "frozen dimensionless KB from existing model",
+    "a0": "frozen positive A0_MPC_INV in same units as Q and kfund, no fresh unit conversion",
+    "beta": "one of preregistered 1.0, 0.5, 0.1, no outcome-based selection",
+    "kfund": "fixed positive comoving fundamental Fourier wave number",
+    "grid": "periodic real-space pseudo-spectral; same time and spatial array shape for all inputs"
+  },
+  "exact_frozen_equations": {
+    "kappa": "2*(2-KB)/((1+beta)*a0)",
+    "g10": "Q*u10+phi10_dx/a",
+    "g11": "Q*u11+phi11_dx/a",
+    "h3_flux": "abs(g10)*g10",
+    "h4_flux": "2*abs(g10)*g11, continuous at g10=0",
+    "h3_aether_RHS": "2*a**3*Q*kappa*h3_flux",
+    "h3_scalar_RHS": "-2*a**3*(kappa/a)*dx(h3_flux)",
+    "h4_aether_RHS": "2*a**3*Q*kappa*h4_flux",
+    "h4_scalar_RHS": "-2*a**3*(kappa/a)*dx(h4_flux)",
+    "all_other_main_rows": "identically zero for Y-only source",
+    "both_constraint_rows": "identically zero for Y-only source",
+    "source_order": [
+      "N",
+      "L_plus_R",
+      "u",
+      "phi",
+      "T",
+      "rho",
+      "b",
+      "L_minus_R_over2"
+    ],
+    "source_sign": "These expressions are RHS sources in original L Z=-E convention, not Euler residuals"
+  },
+  "frozen_numerical_representation": {
+    "method": "real-space |g|g, then Fourier transform once, then 2/3 flux projection, then the same projected flux for aether and spectral scalar derivative",
+    "fft_normalization": "numpy fft/ifft internal normalization; no extra 1/nx for real-space reconstruction",
+    "two_thirds_mask": "abs(FFTFREQ(nx)*nx) <= nx/3 + 1e-12, including Nyquist handling by same rule as frozen Repair07 mask23",
+    "retained_modes": "no new m cut beyond this standard flux mask; downstream existing m<=40 projection remains separate",
+    "same_projected_flux_for_both_rows": true,
+    "derivative": "multiply 1j*kfund*mode on filtered flux then inverse FFT; return real physical fields",
+    "no_new_interpolation": true,
+    "time_derivative_required": false
+  },
+  "implementation_tests": {
+    "all_inputs_shape_finite_and_positive": "reject mismatched [nt,nx], nonfinite a,Q,fields, or nonpositive a/a0/kfund",
+    "beta_cases_exact": [
+      1,
+      0.5,
+      0.1
+    ],
+    "row_order_and_zero_rows": "six main rows and two constraint rows; only u and phi may be nonzero",
+    "source_sign_and_volume": "match exact Stage D H3/H4 formulas with a^3 at every time node",
+    "zero_set": "g10 identically zero => H4 source exactly zero for any finite g11",
+    "eta_tangent": "H4 equals symmetric eta finite difference of standalone H3 source at preregistered eps=1e-5 to relative L2 <= 1e-4, with absolute tolerance 1e-8 of test field scale",
+    "aether_scalar_flux": "same projected flux gives exact discrete relation before scalar divergence",
+    "H3_vs_frozen_scalar": "for m below 2/3 cutoff, new scalar H3 = a**3 times the existing frozen reduced H3 Y source, within 1e-12 relative L2 on deterministic fields",
+    "H4_vs_frozen_scalar": "for m below 2/3 cutoff, new scalar H4 = a**3 times the frozen Repair37 DY2 scalar contribution, within 1e-12 relative L2 on deterministic fields",
+    "action_directional": "independently check representative +/- branch action derivatives in Stage D; no empirical parameter fitting",
+    "test_provenance": "JSON with exact source blobs, deterministic fields and all gate outcomes; dedicated CI and optional lightweight local runner"
+  },
+  "outcomes": {
+    "Y_SOURCE_ROW_DICTIONARY_IMPLEMENTATION_PASS": "All source gates pass; freeze standalone versioned Y-only source module and test results, then preregister corrected H3 parent reclosure and appropriate dependent parent controls.",
+    "Y_SOURCE_ROW_IMPLEMENTATION_FAIL": "Any exact input/row/zero-set/tangent/legacy-scalar comparator gate fails; preserve failure and version fixes separately."
+  },
+  "stop_boundary": {
+    "legacy_Repair07_Repair37_not_modified": true,
+    "old_Repair22_27_32_not_relabelled": true,
+    "old_Repair37_science_FAIL_immutable": true,
+    "Repair38_44_diagnostic_only": true,
+    "no_parent_Z20_q20_Z11_reintegration_in_StageE": true,
+    "no_H4_Z21_solve": true,
+    "no_full_H4_Noether_claim": true,
+    "no_finite_physical_eta": true,
+    "no_observational_data": true,
+    "no_lensing": true,
+    "science_target_1e_minus6_unchanged": true
+  }
+}
