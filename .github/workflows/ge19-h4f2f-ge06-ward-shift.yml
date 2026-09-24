@@ -23,7 +23,7 @@ jobs:
           set -euo pipefail
           mkdir -p results
           test "$(git rev-parse HEAD:ge19/h4f2f_predata_ge06_shift_ward_mixed_source.json)" = "551294c5763b086919c9f27076a922c29ca953e5"
-          test "$(git rev-parse HEAD:ge19/h4f2f_ge06_shift_ward_mixed_source_audit.py)" = "851edb2c393c531732c97b8dcaa24c36bc63882d"
+          test "$(git rev-parse HEAD:ge19/h4f2f_ge06_shift_ward_mixed_source_audit.py)" = "f9a673af77405e14fda893daef382d38c4bb6b70"
           python3 -m py_compile ge19/h4f2f_ge06_shift_ward_mixed_source_audit.py
           python3 -m ge19.h4f2f_ge06_shift_ward_mixed_source_audit \
             --json-out results/ge19_h4f2f_ge06_shift_ward_mixed_source.json \
