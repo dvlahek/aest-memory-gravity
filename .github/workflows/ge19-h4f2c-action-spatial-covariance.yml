@@ -1,0 +1,53 @@
+name: GE19 H4F2c Reduced Full Action Spatial Covariance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f2c_complete_reduced_action_spatial_covariance.py'
+      - '.github/workflows/ge19-h4f2c-action-spatial-covariance.yml'
+
+jobs:
+  action-density:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Audit seven reduced action-density sectors and one-sided Y
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f2c_complete_reduced_action_spatial_covariance.py)" = "998e871c2398262c28442d0054b869d6ebdacfb4"
+          test "$(git rev-parse HEAD:ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json)" = "8097a4770ae8aed74cb4dd0721c1c9bd6907533c"
+          python3 -m py_compile ge19/h4f2c_complete_reduced_action_spatial_covariance.py
+          python3 -m ge19.h4f2c_complete_reduced_action_spatial_covariance \
+            --json-out results/ge19_h4f2c_complete_reduced_action_spatial_covariance.json \
+            > results/ge19_h4f2c_complete_reduced_action_spatial_covariance_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f2c_complete_reduced_action_spatial_covariance.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F2C_COMPLETE_REDUCED_ACTION_COVARIANCE_DERIVED_SIX_SOURCE_OPEN"
+          assert d["all_restricted_gates_pass"] is True
+          assert all(x["exact"] for x in d["frozen_blobs"].values())
+          assert all(d["actual_action_bindings"].values())
+          assert all(d["all_sector_reduced_action_covariance"]["checks"].values())
+          assert d["full_six_piece_H4_source_parent_dictionary_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F2C_COMPLETE_REDUCED_ACTION_COVARIANCE_PASS")
+          PY
+          sha256sum results/ge19_h4f2c_complete_reduced_action_spatial_covariance.json
+          wc -c results/ge19_h4f2c_complete_reduced_action_spatial_covariance.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f2c_complete_reduced_action_spatial_covariance
+          path: |
+            results/ge19_h4f2c_complete_reduced_action_spatial_covariance.json
+            results/ge19_h4f2c_complete_reduced_action_spatial_covariance_FULL.log
+          retention-days: 90
