@@ -1738,3 +1738,87 @@ without relabeling earlier results.
 This checkpoint is the canonical answer to 'where did we stop?'
 for the next conversation. The old Repair43 'next Repair44' line is
 historical and is superseded by this checkpoint.
+
+
+---
+
+## Current structural checkpoint — 2026-09-24, after Repair44 and Stage A/B primitives
+
+The post-Repair44 *numerical patch loop is closed*. This entry
+supersedes the older historical "next Repair44" lines and the earlier
+post-Repair44 restart checkpoint for the NEXT task.
+
+**Valid Repair44 frozen diagnostic**
+
+`GE19_REPAIR44_QGE06_SHIFT_ANISOTROPY_ROW_SPLIT_COMPLETE`,
+route `QGE06_SHIFT_ROW0_FIELD_CLOSER_TO_FULL`.
+
+Frozen result:
+`docs/ge19_repair44_valid_shift_row0_localization_freeze.md`.
+
+JSON/FULL SHA-256:
+`4f59f9a1aac21b267a00f75c5d5f0a0f791cfc20a4825f78b433729a4c50d435`.
+
+NPZ SHA-256:
+`951694b7d83cdef312b766945b1f8a9844d1d6dd3a875929c5befc834c87f051`.
+
+Shift row0-only keeps Z21 exactly identical to baseline at both direct
+resolutions. The hotspot complex shift residual changes by exactly
+minus the injected shift source; this is a selective mixed-source
+operator identity, **not** a native fine-grid H4 physics failure.
+
+**Stage A full H4 source-row ledger COMPLETE**
+
+`docs/ge19_h4_structural_stage_a_source_row_ledger.md`.
+
+All six H4 pieces and eight source rows are mapped to frozen generator
+functions and residual conventions. GE05 M1 has zero constraint
+source, but GE05 M2 has a genuine shift/anisotropy source.
+
+An independent exact action-derived check shows that the GE05
+second directional FLRW shift variation is `-a^3 dqt dqx`
+before the frozen `-2` H4 mapping. This proves M2 shift
+contributes and cannot be silently omitted in full-source
+compatibility analysis.
+
+**Stage B reduced spatial-Ward PRIMITIVES COMPLETE**
+
+`docs/ge19_h4_structural_stage_b_reduced_ward_primitives_freeze.md`.
+
+Successful GitHub analytic run:
+`35979279801`, head
+`35343dddaf7d8ceae889fd6c344e772f26f18a7f`.
+
+Frozen JSON SHA-256:
+`53feb4cad6da7d86edfe2dc1eeecbc932c26d81063951e1a9e52bf1db676da44`.
+
+Ten reduced geometric/AeST/dust/per-node-memory building blocks
+passed exact spatial transformation checks. The formal Ward
+integration-by-parts signs, isotropic/anisotropy-to-longitudinal row
+projection and exact GE05 memory shift variation also pass.
+
+This is **NOT** a full covariant bath/Y2 or mixed H4 Noether
+certificate. No H4/Z21 solve has been performed in this structural
+audit.
+
+**Frozen next analytic contract**
+
+`ge19/h4_structural_stage_b_predata_action_noether_identity.json`.
+
+NEXT: derive the complete reduced spatial-diffeomorphism Ward
+identity from the frozen all-sector action before imposing
+`L=R`. Validate the true NL0B bath-vector/projector
+transformation, Y2 zero-set/boundary terms, and extract the
+signed mixed H4 source/parent-residual coefficient.
+Only after that proof is independently frozen may the
+common-representation full-source numerical compatibility
+test be preregistered. Do not introduce an isolated source
+patch or relax the `1e-6` science target.
+
+**Canonical status:** Repair22 Z20, Repair27 q20 and Repair32B/32C
+reduced Z11 remain certified. Repair37 remains the immutable H4
+science FAIL. Repair38--Repair44 are immutable diagnostic
+localizations. Source-row ledger and restricted Ward primitives
+are verified; the full H4 Noether source identity remains
+UNPROVED. Window-local particular Z21 remains NOT CERTIFIED.
+Lensing remains blocked.
