@@ -1,0 +1,71 @@
+name: GE19 H4F2h Physical Clock and Discrete Source Ward
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f2h_predata_physical_clock_discrete_ward_bridge.json'
+      - 'ge19/h4f2h_physical_time_source_ward_bridge.py'
+      - 'ge19/h4f2h_physical_time_source_ward_selftest.py'
+      - '.github/workflows/ge19-h4f2h-physical-clock-ward.yml'
+
+jobs:
+  physical-clock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install fixed symbolic and matrix dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Verify exact historical blob locks and test manufactured H*FD8/FD4 Ward
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f2h_predata_physical_clock_discrete_ward_bridge.json)" = "dc5b29219d25c89d18b1bc37a7ce116f3818e349"
+          test "$(git rev-parse HEAD:ge19/h4f2h_physical_time_source_ward_bridge.py)" = "65ce1e68a2f77e063c4bb8848d770abb4baeeebf"
+          test "$(git rev-parse HEAD:ge19/h4f2h_physical_time_source_ward_selftest.py)" = "248dc1e815d345b56ff51d065327773518a9a0ae"
+          test "$(git rev-parse HEAD:ge19/h4f2g_action_completed_six_piece_source_ledger.py)" = "d9778da0bb6cc52a15015238810c79978527ffc5"
+          test "$(git rev-parse HEAD:ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py)" = "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+          python3 -m py_compile \
+            ge19/h4f2h_physical_time_source_ward_bridge.py \
+            ge19/h4f2h_physical_time_source_ward_selftest.py
+          set +e
+          python3 -m ge19.h4f2h_physical_time_source_ward_selftest \
+            --json-out results/ge19_h4f2h_physical_time_source_ward.json \
+            >results/ge19_h4f2h_physical_time_source_ward_FULL.log 2>&1
+          rc=$?
+          set -e
+          if [ "$rc" -ne 0 ]; then
+            tail -n 100 results/ge19_h4f2h_physical_time_source_ward_FULL.log
+            exit "$rc"
+          fi
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f2h_physical_time_source_ward.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F2H_PHYSICAL_CLOCK_DISCRETE_SOURCE_WARD_BRIDGE_PASS"
+          assert d["all_gates_pass"] is True
+          assert d["physical_chain_rule_exact"] is True
+          assert all(x["exact"] for x in d["frozen_blobs"].values())
+          assert len(d["cases"])==6
+          assert all(c["pass"] for c in d["cases"])
+          assert all(d["invalid_inputs_rejected"].values())
+          assert d["real_corrected_parent_arrays_loaded"] is False
+          assert d["full_all_sector_H4_Noether_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4F2H_PHYSICAL_CLOCK_DISCRETE_SOURCE_WARD_PASS")
+          PY
+          sha256sum results/ge19_h4f2h_physical_time_source_ward.json
+          wc -c results/ge19_h4f2h_physical_time_source_ward.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f2h_physical_clock_discrete_source_ward
+          path: |
+            results/ge19_h4f2h_physical_time_source_ward.json
+            results/ge19_h4f2h_physical_time_source_ward_FULL.log
+          retention-days: 90
