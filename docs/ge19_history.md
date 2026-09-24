@@ -1690,3 +1690,51 @@ source is inconsistent, revise the physical derivation separately and
 preserve all historical artifacts.
 
 Window-local particular Z21 remains NOT CERTIFIED. Lensing remains blocked.
+
+
+---
+
+## Current restart checkpoint — 2026-09-24, post-Repair44
+
+**What is certified:** Repair22 Z20, Repair27 q20 and Repair32B/32C
+reduced Z11. H4 was licensed for testing, but its window-local particular
+Z21 is NOT CERTIFIED. Lensing remains blocked.
+
+**What remains immutable:** Repair37 is the last valid H4 science FAIL;
+Repair38--Repair44 are diagnostics, not science PASS results.
+
+**Last completed diagnostic:** Repair44
+`GE19_REPAIR44_QGE06_SHIFT_ANISOTROPY_ROW_SPLIT_COMPLETE`,
+route `QGE06_SHIFT_ROW0_FIELD_CLOSER_TO_FULL`.
+All implementation gates passed. Repair43 PCHIP baseline and the two
+full GE06 constraint-family interventions reproduce exactly. Changing
+only independent GE06 shift source row0 leaves Z21 exactly unchanged,
+and the registered hotspot shift residual changes by precisely minus
+the injected source delta. This localizes a selective mixed-
+representation intervention; it is NOT proof that native fine-grid
+GE06 or the complete H4 equations are inconsistent.
+
+Frozen Repair44 artifacts and exact bytes:
+`docs/ge19_repair44_valid_shift_row0_localization_freeze.md`.
+
+**Do not continue with another isolated GE06 row/interpolator patch.**
+
+Structural stop-gate and the required next task:
+`docs/ge19_h4_source_constraint_noether_structural_stop_gate.md`.
+
+Proceed by deriving the full H4 source/constraint Noether identity and
+term-by-term row dictionary from the same frozen covariant action,
+including GE06, GE07, Lambda, DY2, M1 and M2 and the on-shell
+parent-equation terms. Test it on one common parent/time
+representation, with an independent local early-time m8 check and the
+original active mask/1e-6 science target unchanged.
+
+If full-source structural compatibility passes, separately
+preregister one integrated H4/Z21 science reclosure with independent
+time control. If it fails, localize the failed derivation or
+parent-equation relation and version the theoretical correction
+without relabeling earlier results.
+
+This checkpoint is the canonical answer to 'where did we stop?'
+for the next conversation. The old Repair43 'next Repair44' line is
+historical and is superseded by this checkpoint.
