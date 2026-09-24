@@ -1,0 +1,46 @@
+name: GE19 H4 Stage D Local Runner Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4_staged_common_y_action_rows.sh'
+      - '.github/workflows/ge19-h4-staged-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen Stage D local analytic runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4_staged_common_y_action_rows.sh)" = "cdf98460d84ee45f0f55b546c93230ee8066d46b"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_d_predata_global_y_normalization.json)" = "764d064c76d44bc597ab6c4f96044ba2a90433a5"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_d_common_action_y_rows.py)" = "162357ce845a93982b46aef7d839a7171964b47e"
+          test "$(git rev-parse HEAD:docs/ge19_h4_staged_common_y_action_rows_valid_freeze.md)" = "7d140a608d91a39106c34565cd50e4aa729ec30b"
+          bash -n ge19/run_local_h4_staged_common_y_action_rows.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("ge19/run_local_h4_staged_common_y_action_rows.sh").read_text()
+          for marker in (
+              "GE19_H4_STAGED_LOCAL_LOCK_PASS",
+              "GE19_H4_STAGED_LOCAL_PREEXECUTION_PASS",
+              "GE19_H4_STAGED_LOCAL_ANALYTIC_PASS",
+              "GE19_H4_STAGED_LOCAL_ANALYTIC_FAIL",
+              "source .venv/bin/activate",
+              "git diff --cached --quiet",
+              "python3 ge19/h4_structural_stage_d_common_action_y_rows.py",
+              "GE19_H4_STAGED_COMMON_GR_NORMALIZATION_AND_Y_ROWS_DERIVED",
+              "relative_Y_sector_action_prefactor_in_GE06_raw_units",
+              "full_H4_Noether_identity_derived",
+              "window_local_particular_Z21_certified",
+              "exit 3",
+          ):
+              assert marker in s,marker
+          assert "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --" not in s
+          print("GE19_H4_STAGED_LOCAL_RUNNER_STATIC_PASS")
+          PY
