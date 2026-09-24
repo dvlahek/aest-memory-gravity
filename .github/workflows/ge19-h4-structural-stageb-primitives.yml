@@ -1,0 +1,57 @@
+name: GE19 H4 Structural Stage B Ward Primitives
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4_structural_stage_b_predata_action_noether_identity.json'
+      - 'ge19/h4_structural_stage_b_geometric_ward_primitives.py'
+      - '.github/workflows/ge19-h4-structural-stageb-primitives.yml'
+
+jobs:
+  analytic-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Frozen analytical scope and source bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_b_predata_action_noether_identity.json)" = "11123763b2f5bf06ac6f704acffdea0b4eb34f1d"
+          test "$(git rev-parse HEAD:ge19/h4_structural_stage_b_geometric_ward_primitives.py)" = "5695cf064dcc32bf4385687cbe6052521f2e36b4"
+          test "$(git rev-parse HEAD:docs/ge19_h4_structural_stage_a_source_row_ledger.md)" = "44d4f01a05aba26926d6a8e13a2b7aac995258d5"
+          python3 -m py_compile ge19/h4_structural_stage_b_geometric_ward_primitives.py
+          python3 ge19/h4_structural_stage_b_geometric_ward_primitives.py \
+            --json-out results/ge19_h4_stageb_geometric_ward_primitives.json \
+            > results/ge19_h4_stageb_geometric_ward_primitives_FULL.log
+          python3 - <<'PY'
+          import json
+          path="results/ge19_h4_stageb_geometric_ward_primitives.json"
+          d=json.load(open(path))
+          assert d["classification"]=="GE19_H4_STAGEB_GEOMETRIC_WARD_PRIMITIVES_COMPLETE"
+          assert d["all_subset_gates_pass"] is True
+          assert d["analytic_audit_only"] is True
+          assert d["full_H4_Noether_certificate"] is False
+          assert d["mixed_H4_source_Noether_coefficient_derived"] is False
+          assert d["Z21_window_local_particular_certified"] is False
+          assert d["lensing_licensed"] is False
+          assert len(d["reduced_diffeomorphism_checks"])==12
+          assert all(d["reduced_diffeomorphism_checks"].values())
+          assert all(v["exact"] for v in d["frozen_action_source_blob_controls"].values())
+          assert d["GE05_memory_shift_variation"]["second_directional_shift_coefficient_exact"] is True
+          assert d["next_route"]=="DERIVE_FULL_H4_ACTION_WARD_COEFFICIENT_AND_PARENT_RESIDUAL_DICTIONARY"
+          print("GE19_H4_STAGEB_REDUCED_WARD_PRIMITIVES_AUDIT_PASS")
+          PY
+          sha256sum results/ge19_h4_stageb_geometric_ward_primitives.json
+          wc -c results/ge19_h4_stageb_geometric_ward_primitives.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ge19_h4_stageb_reduced_ward_primitives
+          path: |
+            results/ge19_h4_stageb_geometric_ward_primitives.json
+            results/ge19_h4_stageb_geometric_ward_primitives_FULL.log
+          retention-days: 90
