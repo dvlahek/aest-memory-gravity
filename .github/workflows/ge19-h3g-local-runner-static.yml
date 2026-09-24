@@ -1,0 +1,57 @@
+name: GE19 H3G Corrected Y q20 Local Runner Static
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h3g_corrected_y_q20_reconstruction.sh'
+      - '.github/workflows/ge19-h3g-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify locked new q20 local runner without running q20
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h3g_corrected_y_q20_reconstruction.sh)" = "bc46078cbbbce46f5955faa7d0e8037e19905a4b"
+          test "$(git rev-parse HEAD:ge19/h3g_predata_corrected_y_q20_reconstruction.json)" = "09fc1bd7fc06459d90fc6f6ba37a84adba757d37"
+          test "$(git rev-parse HEAD:ge19/h3g_corrected_y_q20_core.py)" = "688920e840a0a13bc85a6f416c2573cf0472eaa3"
+          test "$(git rev-parse HEAD:ge19/h3g_corrected_y_q20_reconstruction.py)" = "de929ae025e3ce58e60e6d229682cf885e7b1007"
+          test "$(git rev-parse HEAD:docs/ge19_h3g_corrected_y_q20_implementation_lock.md)" = "beae8d8a49eaedab58e3bc1e67a45fe7f7174bf6"
+          bash -n ge19/run_local_h3g_corrected_y_q20_reconstruction.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("ge19/run_local_h3g_corrected_y_q20_reconstruction.sh").read_text()
+          for marker in (
+            "GE19_H3G_LOCK_PASS",
+            "GE19_H3G_LOCAL_PREEXECUTION_AUDIT_PASS",
+            "GE19_H3G_H3F_FROZEN_PARENT_PASS",
+            "GE19_H3G_REPAIR26_R1_PARENT_PASS",
+            "GE19_H3G_CORRECTED_Y_Q20_SCIENCE_PASS",
+            "GE19_H3G_CORRECTED_Y_Q20_SCIENCE_FAIL",
+            "GE19_H3G_IMPLEMENTATION_OR_EXECUTION_FAIL",
+            "h3g.audit_unchanged_physics()",
+            "h3g.verify_h3f_parent(Path",
+            "ge19_h3f_corrected_y_z20_science_reclosure.json",
+            "ge19_h3f_corrected_y_z20_science_reclosure.npz",
+            "ge19_repair13_self_consistent_reduced_background_h1_reclosure.json",
+            "frozen_repair26_repair27",
+            "gh run download 35721220889",
+            "python3 -m ge19.h3g_corrected_y_q20_reconstruction",
+            "Z21_LICENSED",
+            "OLD_REPAIR27_REPORT_ONLY",
+            "FAILED_GATES",
+            "sha256sum",
+          ):
+            assert marker in s,marker
+          assert "rm -f results/ge19_repair27" not in s
+          assert "rm -f results/ge19_repair22" not in s
+          assert "GE19_H3G_H3F_FROZEN_PARENT_PASS" in s
+          assert "beae8d8a49eaedab58e3bc1e67a45fe7f7174bf6" in s
+          print("GE19_H3G_LOCAL_RUNNER_STATIC_PASS")
+          PY
