@@ -2581,3 +2581,116 @@ separate from a subsequent H4/Z21 science solve.
 
 **Window-local particular Z21 is NOT CERTIFIED;
 lensing and observational predictions remain blocked.**
+
+
+---
+
+## Latest checkpoint — H4F2a–d partial Ward proofs; full six-piece source still open (2026-09-24)
+
+This is the latest canonical restart point. It supersedes
+only the NEXT-task wording of older history. Prior
+Repair37 science FAIL and Repair38--44 diagnostics
+remain immutable. The original 1e-6 active-shift
+science threshold has not changed.
+
+The corrected-Y H3F Z20 and H3G normalized q20
+parents are separately certified within their
+frozen scopes. H3G uploaded NPZ 3550825 bytes,
+SHA-256
+`9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452`
+has 30 finite arrays and 27 exact JSON norm
+comparisons (append-only audit already frozen).
+
+The full H4F2 preregistration remains
+`ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json`,
+blob `8097a4770ae8aed74cb4dd0721c1c9bd6907533c`,
+prelock run `36017953067` PASS. **That full
+six-piece analytic contract has NOT passed.**
+
+**H4F2a: GE07 dust off-shell covariance PASS.**
+Run `36019565065`, JSON SHA-256
+`3154412e7e1e337d7efe2797498b56b58b0438c1c6fcd6c03c2629a591437259`.
+Freeze:
+`docs/ge19_h4f2a_dust_offshell_ward_valid_freeze.md`,
+blob `ca21c65ce2da8d760aa12018aefd849b3b67adf9`.
+Dust varrho is a spatial scalar multiplier,
+not weight-one density; the entire GE07
+Lagrangian is a density **off shell**.
+
+**H4F2b: exact signed mixed Ward template PASS.**
+Run `36019774035`, JSON SHA-256
+`7168fa81eeceab720d6fdb4e9d3e5ad1d4682fadcfac310ef147a72d182f7ebc`.
+Freeze:
+`docs/ge19_h4f2b_signed_mixed_ward_template_valid_freeze.md`,
+blob `98693317485149898830eebd0f335db12024e6dc`.
+Exact `d_eta d_epsilon^2` coefficient
+retains background/H1/Z11 Euler residual
+products and the independent shift/anisotropy
+row. The formal all-sector identity is
+`W21=Sigma_i[E_i00 F_i21,x+
+2 E_i10 F_i11,x+2 E_i11 F_i10,x]
+-d_x B21-d_t E_b21=0`,
+with the B21 and row-source sign explicitly
+given in the frozen result. Actual six
+source coefficients are still unbound.
+
+**H4F2c: complete reduced action spatial covariance PASS.**
+Run `36025455158`, JSON SHA-256
+`3fbee288b3cbd062b5b0a255712266f07b332a093c3bf47ef7a1455856bd121a`.
+Freeze:
+`docs/ge19_h4f2c_complete_action_spatial_ward_valid_freeze.md`,
+blob `831367d223c8081f49d87210841bd0b7ba3dfaa6`.
+Actual-action source bindings and exact
+symbolic tests establish spatial density
+covariance separately for GE06 Einstein
+ADM/plane-curvature, analytic AeST, NL0C
+Y (both strict-sign branches), GE07 dust,
+per-node NL0B GE05 bath and Lambda.
+Together with H4F2b this supplies the
+formal **reduced action-level** off-shell
+spatial Ward identity. This does not
+instantiate real mixed H4 source arrays.
+
+**H4F2d: exact action-flux subidentity Y and M1 PASS.**
+Preregistration
+`ge19/h4f2d_predata_y_m1_flux_compatibility.json`,
+blob `902310e1e623cf65c3bdd5c5ecb199263558a39c`.
+Run `36026024031`, JSON SHA-256
+`132e8589c1793bf5591beb2c638fe0d5cefb83713df561e4586d011dedec15c6`.
+Freeze:
+`docs/ge19_h4f2d_y_m1_action_flux_valid_freeze.md`,
+blob `647d3a8cf207fbf18fef7e0cbdb23c9bfbfc5de8`.
+The frozen Stage E Y and mapped GE05 M1
+actual source rows satisfy
+`d_x S_u+a Q S_phi=0`.
+All three beta cohorts and Fourier-source
+sign/row controls passed. The implemented
+M1 depends on `B20=X20-weighted_z20`,
+so H3G's certified weighted q20 projection
+is sufficient for that implemented source.
+This does not remove the need to retain
+per-node bath Euler equations in the full
+off-shell Noether identity.
+
+**NEXT:** instantiate the remaining actual
+GE06, GE07, Lambda and GE05 M2 mixed
+H4 source rows under the frozen action,
+together with the full signed
+background/H1/Z11/corrected H3F Z20/
+H3G q20/bath/dust parent-residual ledger.
+Verify their aggregate mixed Ward
+coefficient and independently establish
+which parent equations, boundary terms
+and row normalizations yield its on-shell
+source condition. M2 has genuine shift
+and anisotropy rows; do not infer
+termwise Ward cancellation from Y/M1.
+
+Only after a separately frozen **full
+six-piece H4F2 analytic identity PASS**
+may the common corrected-parent/time
+structural source audit run. A subsequent
+new H4/Z21 science run requires its own
+predata/implementation lock.
+
+**Z21 NOT CERTIFIED. Lensing blocked.**
