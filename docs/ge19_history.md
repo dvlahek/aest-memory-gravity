@@ -1822,3 +1822,54 @@ localizations. Source-row ledger and restricted Ward primitives
 are verified; the full H4 Noether source identity remains
 UNPROVED. Window-local particular Z21 remains NOT CERTIFIED.
 Lensing remains blocked.
+
+
+---
+
+## Current structural checkpoint — NL0C Y variational source-row gap, 2026-09-24
+
+**New frozen analytic result:**
+`GE19_H4_STAGEB_Y_AETHER_SOURCE_ROW_COVERAGE_GAP_CONFIRMED`.
+Successful GitHub Action:
+`35980659010`, job `107571474311`.
+
+Frozen JSON SHA-256:
+`6f20168f0fff685d697ce5a981754513a5c8733067c22ffbbf55f2e904c1ac46`.
+
+Valid freeze:
+`docs/ge19_h4_stageb_y_aether_row_gap_valid_freeze.md`.
+
+The independent symbolic variation of the already frozen NL0C
+`Y^(3/2)` action gives a nonzero **aether rapidity** Euler
+source at H3 and a nonzero eta-tangent of that row at H4, for
+generic first-order physical scalar gradient `g=Q u1+phi1_x/a`.
+The frozen GE19 H3 `Y2` and H4 `DY2` builders explicitly
+insert the nonanalytic Y source only into scalar main row3,
+not aether main row2. GE06's analytic generator explicitly
+excludes Y. This is a documented explicit action-to-source
+coverage gap, **not** an interpolation or step-size failure.
+
+Action-density second directional aether row:
+`E_u^(20,Y)=-6*(2-KB)*c_beta*a^3*Q*Abs(g)*g`,
+`c_beta=2/[3(1+beta)*a0]`.
+
+The eta-tangent row is
+`E_u^(21,Y)=-12*(2-KB)*c_beta*a^3*Q*Abs(g10)*g11`.
+
+The historical results remain immutable: Repair37 science FAIL,
+Repair38--Repair44 diagnostics, Repair22/27 and Repair32B/32C
+certifications **for their preregistered implemented equations**.
+The physical completeness of the H3/H4 source has NOT been
+established for the full frozen NL0C variational action.
+
+**Next licensed analytic step:** audit the raw action-density
+versus volume-normalized GE19 scalar/aether Y source
+conventions, including the H3/H4 factor-two mapping, and
+produce a separately versioned complete variational Y
+source dictionary. Do NOT inject a source into frozen
+Repair37, relabel past results or attempt lensing.
+
+The restricted Ward primitive audit passed, but the full
+all-sector H4 Noether coefficient remains UNPROVED;
+a complete integrated H4 source/constraint compatibility
+check remains blocked pending this source dictionary.
