@@ -1,0 +1,47 @@
+{
+  "classification": "GE19_H4F2E_PREDATA_DUST_MEMORY_M2_LAMBDA_SHIFT_ACTION_ROWS",
+  "parent_contract": "GE19_H4F2_PREDATA_COMPLETE_MIXED_H4_WARD_SOURCE_PARENT_DICTIONARY",
+  "scope": "Exact source-action proof and deterministic source-row cross-check for the independent H4 shift row of GE07 mixed dust, GE05 M2 first-order bath and Lambda. This subset must not be interpreted as a complete all-sector H4 Ward/parent residual proof or science Z21 result.",
+  "frozen_parent_blobs": {
+    "ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json": "8097a4770ae8aed74cb4dd0721c1c9bd6907533c",
+    "ge07/pressureless_matter_directional_source_generator.py": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "ge19/repair14_self_consistent_reduced_h3_z20_particular.py": "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de",
+    "docs/ge19_h4f2a_dust_offshell_ward_valid_freeze.md": "ca21c65ce2da8d760aa12018aefd849b3b67adf9",
+    "docs/ge19_h4f2d_y_m1_action_flux_valid_freeze.md": "647d3a8cf207fbf18fef7e0cbdb23c9bfbfc5de8",
+    "docs/ge19_h4_structural_stage_a_source_row_ledger.md": "44d4f01a05aba26926d6a8e13a2b7aac995258d5"
+  },
+  "frozen_rows": {
+    "GE07": "E_b,dust= -2 L R^2 varrho W T_x; mixed H4 coefficient d_eta d_epsilon^2 E_b for epsilon*(Z10+eta Z11). This is raw source-action Euler, and original source maps by the frozen -2*fft_low convention for q_cross_direct's bilinear.",
+    "GE05": "Per node E_b,mem= -(L R^2/2)[A(q) cosh(u) q_x+(omega q-sqrt(w)X_phi)sqrt(w)sinh(u) phi_x]. At first-order FLRW direction, d_epsilon^2 E_b|0 = -a^3 dq_t dq_x. H4 M2 GE06 mapped RHS = -2 E_b,mem,coefficient summed over nodes then fft_low.",
+    "Lambda": "L_lambda=-6 rho_lambda N L R^2 has no b or b_x; its shift Euler and mixed H4 shift source vanish identically.",
+    "Y_and_M1": "Independent shift and anisotropy rows zero at H4 for these two source subsets, as already Stage E/H4F2d frozen; do not infer total independent shift zero."
+  },
+  "gates": {
+    "all_frozen_blobs_exact": true,
+    "GE07_frozen_action_and_shift_partial_exact": true,
+    "GE07_exact_mixed_direct_vs_polarization": true,
+    "GE07_mixed_source_sign_and_nonzero_control": true,
+    "GE05_frozen_action_and_shift_partial_exact": true,
+    "GE05_exact_first_order_eps2_shift_formula": true,
+    "GE05_frozen_f_c2_b_exact": true,
+    "GE05_mapped_M2_shift_sign_factor_two_exact": true,
+    "GE05_deterministic_fourier_lowmode_comparator_relative_L2_max": 1e-12,
+    "Lambda_exact_zero_shift": true,
+    "no_new_parent_or_Z21_solve": true
+  },
+  "outcomes": {
+    "GE19_H4F2E_SHIFT_ACTION_SUBIDENTITY_PASS": "All source-action symbolic, frozen generator, GE05 factor-two, GE07 directional and deterministic Fourier gates pass. Freeze subset only; complete GE06/GE07/M2 all-row mixed H4 Noether with corrected parent residuals remains open.",
+    "GE19_H4F2E_SHIFT_ACTION_SUBIDENTITY_FAIL": "Freeze exact failed gate or action/source mismatch; do not change old source file, tune a scale, relax target or solve Z21."
+  },
+  "stop": {
+    "historical_Repair37_FAIL_immutable": true,
+    "old_Repair38_to_44_diagnostic_only": true,
+    "full_H4_Noether_claim_forbidden": true,
+    "common_corrected_H3F_H3G_grid_not_evaluated": true,
+    "active_shift_science_target_1e_minus6_unchanged": true,
+    "Z21_not_certified": true,
+    "lensing_blocked": true
+  }
+}
