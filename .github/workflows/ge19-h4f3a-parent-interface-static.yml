@@ -1,0 +1,53 @@
+name: GE19 H4F3a Actual Parent Interface Static Lock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3a_actual_parent_array_interface_audit.py'
+      - 'results/ge19_h4f3a_actual_parent_array_interface.json'
+      - '.github/workflows/ge19-h4f3a-parent-interface-static.yml'
+
+jobs:
+  attestation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install binary parent auditor dependency
+        run: python3 -m pip install numpy
+      - name: Validate source and exact locally verified binary attestation only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3_predata_integrated_corrected_parent_ward.json)" = "3e17163cb6f52f3a78c41e6f37f83ef682359162"
+          test "$(git rev-parse HEAD:ge19/h4f3a_actual_parent_array_interface_audit.py)" = "0b4fb3ca120f54fef3b53aab452511d374062b68"
+          test "$(git rev-parse HEAD:results/ge19_h4f3a_actual_parent_array_interface.json)" = "0e7fa9969e9c46490bf81b0073b4d4fcfcb41ae1"
+          python3 -m py_compile ge19/h4f3a_actual_parent_array_interface_audit.py
+          python3 -m ge19.h4f3a_actual_parent_array_interface_audit --help > /tmp/h4f3a_help.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.load(open("ge19/h4f3_predata_integrated_corrected_parent_ward.json"))
+          r=json.load(open("results/ge19_h4f3a_actual_parent_array_interface.json"))
+          code=Path("ge19/h4f3a_actual_parent_array_interface_audit.py").read_text()
+          assert p["classification"]=="GE19_H4F3_PREDATA_INTEGRATED_CORRECTED_PARENT_WARD"
+          for key in ("H3F_JSON","H3F_NPZ","H3G_JSON","H3G_NPZ"):
+              assert r["frozen_parent_inputs"][key]["exact"] is True
+              assert r["frozen_parent_inputs"][key]["expected_sha256"]==p["parent_hashes"][key]
+          assert r["classification"]=="GE19_H4F3A_H3F_H3G_BINARY_INTERFACE_PASS_Z11_REQUIRED"
+          assert r["H3F_H3G_actual_binary_interface_pass"] is True
+          assert r["all_three_parent_input_gate_pass"] is False
+          assert r["Z11"]["provided"] is False
+          assert all(z["exact_shared_x"] and z["max_abs_delta"]==0 for z in r["shared_time_grid"].values())
+          assert all(z["all_finite"] and z["shapes_ok"] and z["B20_identity_exact"] and z["weighted_q20_initial_exact_zero"]
+                     for z in r["cases"].values())
+          assert r["all_six_actual_H4_source_families_assembled"] is False
+          assert r["full_operator_and_signed_parent_Noether_evaluated"] is False
+          assert r["H4_Z21_solve_performed"] is False
+          assert r["Z21_certified"] is False
+          assert "--z11-npz" in code
+          assert p["parent_hashes"]["Z11_NPZ"] in code
+          print("GE19_H4F3A_REAL_PARENT_ATTESTATION_STATIC_PASS")
+          PY
