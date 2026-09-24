@@ -1,0 +1,34 @@
+{
+  "classification": "GE19_H4F3_PREDATA_INTEGRATED_CORRECTED_PARENT_WARD",
+  "status": "PREDATA_ONLY",
+  "parent_hashes": {
+    "H3F_JSON": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3F_NPZ": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3G_JSON": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+    "H3G_NPZ": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "Z11_NPZ": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327"
+  },
+  "source_parent_code": {
+    "six_piece_module": "d9778da0bb6cc52a15015238810c79978527ffc5",
+    "physical_clock_bridge": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "Y_module": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "Repair37_FD8": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "Repair07_FD4": "e34d28a2062c748f48bc82fa928844b02631de25"
+  },
+  "obligations": [
+    "Use one exact H1/Z11/corrected H3F Z20/H3G q20 parent time and physical H(x), x=ln(a).",
+    "Recompute actual six H4 source families; use Stage E both Y u and phi rows, no historical scalar-only DY2.",
+    "Derive and evaluate independent linear-operator Ward and all signed background/H1/Z11/Z20/q20/dust/per-node bath Euler residual and boundary terms.",
+    "Use H*FD8 for GE06/GE07/Lambda and H*FD4 for GE05, with registered discrete consistency check; never pass ln(a) to uncorrected np.gradient.",
+    "Do not use source-only Ward smallness or synthetic controls as complete Noether proof.",
+    "Preserve original C/beta/m cohorts, Nt128/Nt64, registered shift hotspot and unchanged 1e-6 shift science target."
+  ],
+  "execution": "Actions symbolic/prelock possible; real H3F/H3G local binary inputs are not currently available in GitHub Actions. Actual parent audit requires exact files.",
+  "success_boundary": "A separate actual full source+operator+parent Ward PASS can license preregistration of one Z21 science solve; it cannot certify Z21 itself.",
+  "stop": {
+    "no_full_Ward_claim_from_prelock": true,
+    "no_Z21_solve": true,
+    "no_lensing": true,
+    "no_old_result_relabel": true
+  }
+}
