@@ -3117,3 +3117,103 @@ Retain the original active shift target `1e-6`.
 
 No full H4 Noether PASS or H4/Z21 science solve exists.
 **Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3b real corrected six-source adapter preexecution PASS, local science pending (2026-09-24)
+
+H4F3a established that the **actual** certified H3F/H3G
+binary parents share exactly the same Nt128 and Nt64
+x=ln(a) grids and that
+`B20_linear=X20-weighted_z20` holds elementwise
+with maximum absolute discrepancy 0.0. H4F3a's
+three-parent input gate remains incomplete
+because the exact historical certified
+Repair32B Z11 NPZ was not present among the
+current conversation's mounted files.
+The original Repair32B/32C Z11 science
+classification itself is unchanged.
+
+**The first actual H4F3b corrected six-piece
+source implementation is now preregistered
+and statically audited, but NOT numerically
+executed.**
+
+- preregistration:
+  `ge19/h4f3b_predata_actual_corrected_six_piece_source.json`,
+  blob `c3362f5360c2a9951d77060027c82830c031c145`;
+- source-only implementation:
+  `ge19/h4f3b_actual_corrected_six_piece_source.py`,
+  blob `0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c`;
+- exact local runner:
+  `ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh`,
+  blob `ef0fd6656add30cec667dda0d7bc9a435c3a2562`;
+- first-run lock:
+  `docs/ge19_h4f3b_corrected_actual_six_source_implementation_lock.md`.
+
+Dedicated preexecution workflow
+`36057797491`, job `107829030982`,
+conclusion PASS
+`GE19_H4F3B_ACTUAL_CORRECTED_SIX_SOURCE_PREEXECUTION_PASS`.
+Dedicated static local-runner workflow
+`36058048497`, job `107829870394`,
+conclusion PASS
+`GE19_H4F3B_LOCAL_RUNNER_STATIC_PASS`.
+
+Both CI executions compile/import and inspect
+frozen input/source/clock/no-Z21 contracts.
+**Neither consumes the user's real H3F/H3G/Z11
+binary data or evaluates an actual H4 source.**
+
+The new code must compute actual source rows on
+one certified H1/Z11/corrected H3F Z20/
+corrected H3G q20 parent/time grid:
+
+`2Q_GE06_cross`,
+`2Q_GE07_cross`,
+`2Q_Lambda_cross`,
+`2DY2_action_complete_Y_u_and_phi`,
+`2M1_GE05_mapped`,
+`2M2_GE05_mapped`.
+
+It reuses the original frozen Q and M2
+action evaluators without invoking the
+historical Repair37 source-builder or
+Z21 solver; reconstructs q10 from the
+exact Repair26 R1 bath trace and checks
+its weighted projection against the
+certified H3G q10; uses H3G's corrected
+weighted q20 and a recomputed Nt64
+B20; replaces scalar-only old DY2 with
+actual Stage E aether+scalar Y rows.
+The physically clocked signed source
+projection uses H4F2h's separate
+H*FD8 and H*FD4 schemes.
+
+**NEXT ONE ACTUAL RUN:** on the user's
+original local scientific setup, use
+the locked H4F3b runner (exact command
+in its implementation lock). It must
+fail closed if frozen Z11 NPZ or any
+corrected parent or Repair26 R1 hash
+is missing or differs. Freeze the
+first valid actual six-source PASS/FAIL
+without fitting or lowering gates.
+
+A source-only PASS will not certify
+full H4F3: the independent canonical
+linear-operator Ward residual,
+background/H1/Z11/corrected Z20/q20/
+dust/per-node bath Euler residuals
+and boundary contributions must still
+be evaluated consistently on that
+same representation.
+
+The original active H4 shift target
+`1e-6` and matched temporal order
+`>=2.5` remain unchanged.
+Historical Repair37 SCIENCE_FAIL and
+Repair38--44 diagnostics remain immutable.
+**Full H4 Noether NOT CERTIFIED;
+Z21 NOT CERTIFIED; lensing blocked.**
