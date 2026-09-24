@@ -1,0 +1,55 @@
+{
+  "classification": "GE19_H4F2F_PREDATA_GE06_LONGITUDINAL_SHIFT_WARD_AND_MIXED_SOURCE",
+  "scope": "Action-bound exact GE06 Einstein+analytic AeST spatial coframe covariance with explicit independent shift Euler partial b_f and b_x; exact mixed physical eps2-eta1 GE06 shift-source partials against frozen second-directional polarization. Source-only, no corrected-parent H4 or Z21 state propagation.",
+  "parents": {
+    "ge19/h4f2_predata_complete_mixed_h4_ward_parent_dictionary.json": "8097a4770ae8aed74cb4dd0721c1c9bd6907533c",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "docs/ge19_h4f2b_signed_mixed_ward_template_valid_freeze.md": "98693317485149898830eebd0f335db12024e6dc",
+    "docs/ge19_h4f2e_shift_action_subidentity_valid_freeze.md": "79c81ebffeca490b9dad74d812005086daa04c32"
+  },
+  "exact_proof": {
+    "coframe": "theta0=Ndt, theta1=L(dx+b dt)",
+    "spatial_relabeling": "delta N=xi N_x; delta L=xi L_x+L xi_x; delta R=xi R_x; delta b=xi_t+xi b_x-b xi_x; delta u=xi u_x; delta phi=xi phi_x",
+    "jet_transformations": "Differentiate the transformation to get delta Lt,Lx,Rt,Rx,bx,ut,ux,pt,px,Nx including xi_t,xi_x,xi_tx,xi_xx; do not assume frozen kL,kR,E,Qinv,Xinv scalars in advance.",
+    "invariants": [
+      "kL",
+      "kR",
+      "sigma",
+      "Qinv",
+      "Xinv",
+      "E",
+      "Nx/(N L)",
+      "Rx/L"
+    ],
+    "density": "GE06 Einstein ADM kinetic plus plane curvature and analytic AeST action must transform as d_x(xi L_GE06) under arbitrary xi(t,x), off shell; no unit-sphere term."
+  },
+  "source_gates": {
+    "frozen_ge06_action_lag_identical": true,
+    "frozen_ge06_b_f_and_b_x_action_partials_identical": true,
+    "GE06_b_f_and_b_x_mixed_eta_eps2_direct_vs_polarization_exact": true,
+    "GE06_b_f_and_b_x_mixed_reversed_direction_exact": true,
+    "original_mixed_Q_source_minus_two_and_fft_nx_bound": true,
+    "full_independent_shift_requires_b_f_minus_dx_b_x": true,
+    "no_posthoc_source_scale": true
+  },
+  "numeric_controls": {
+    "synthetic_source_only": true,
+    "all_grid_samples_finite": true,
+    "no_parent_solver": true
+  },
+  "outcomes": {
+    "GE19_H4F2F_GE06_SPATIAL_WARD_SHIFT_SOURCE_SUBSET_PASS": "Exact coframe-invariant/density identities and original GE06 independent shift mixed partials pass, including b_x derivative and original -2 Q bilinear; freeze subset only.",
+    "GE19_H4F2F_IMPLEMENTATION_FAIL": "Any frozen input or script run fails before exact source gates; freeze implementation failure.",
+    "GE19_H4F2F_ACTION_SOURCE_FAIL": "Frozen inputs valid but an exact GE06 action/shift/source Ward gate fails; freeze explicit unmatched formula."
+  },
+  "stop": {
+    "full_six_piece_H4_Noether_not_yet_derived": true,
+    "no_H3F_H3G_common_time_sampling": true,
+    "no_Z21_solve": true,
+    "original_active_shift_1e_minus6_unchanged": true,
+    "lensing_blocked": true
+  },
+  "status": "PREDATA_ONLY_NOT_EXECUTED"
+}
