@@ -1922,3 +1922,69 @@ audit (GitHub CI and optionally local) with no large local
 H4/Z21 solver. After the resulting mapping is frozen,
 version the full variational source dictionary and only then
 determine which parent/reclosure gates must be rerun.
+
+
+---
+
+## Current restart checkpoint — Stage C Y action/source conventions (2026-09-24)
+
+The post-Repair44 one-row numerical patch loop remains **closed**.
+The newest structural findings supersede the earlier "next
+full H4 Noether audit" paragraph as the immediate implementation
+priority, without changing that full proof obligation.
+
+**Stage B action-derived Y aether row gap:**
+`GE19_H4_STAGEB_Y_AETHER_SOURCE_ROW_COVERAGE_GAP_CONFIRMED`,
+GitHub run `35980659010`, frozen JSON SHA-256
+`6f20168f0fff685d697ce5a981754513a5c8733067c22ffbbf55f2e904c1ac46`.
+Freeze:
+`docs/ge19_h4_stageb_y_aether_row_gap_valid_freeze.md`.
+The frozen NL0C Y action has a nonzero H3/H4 aether rapidity
+source, but the existing H3/H4 Y2/DY2 builders explicitly
+populate only scalar main row3.
+
+**Stage C exact geometric source convention:**
+`GE19_H4_STAGEC_RAW_Y_VOLUME_FACTOR_ESTABLISHED_GLOBAL_NORMALIZATION_OPEN`.
+GitHub analytic run `35982602472`, frozen JSON SHA-256
+`76f6af0ec5f765c2cf6cf9f33a6cb35d3bd0b8dbfbdec18832955cd8cf5ccb55`.
+Freeze:
+`docs/ge19_h4_stagec_y_raw_ge19_conventions_valid_freeze.md`.
+
+The exact raw reduced Y-sector scalar Euler second-directional
+coefficient is `2*a^3*y2_code`, because the source code's
+`y2_source` is a physical-space divergence while frozen GE06
+assembles raw action-density Euler rows without an `a^-3`
+conversion. The same geometric volume relation applies
+to the Y eta-tangent source. The conditional same-volume
+aether Y2 row is `-Q*kappa*|g|g`, with
+`kappa=2(2-K_B)/[(1+beta)a0]` and
+`g=Q*u10+phi10_x/a`. It is **not** yet licensed as a
+numeric source correction because the full sector global
+action normalization and integrated source dictionary
+still require an independently versioned proof.
+
+**Lightweight local verification is now available:**
+`ge19/run_local_h4_stagec_y_raw_ge19_convention_audit.sh`.
+Runner lock:
+`docs/ge19_h4_stagec_local_analytic_runner_lock.md`.
+Dedicated static runner audit: run `35982909486`, PASS.
+It runs only the already verified symbolic audit and writes
+`results/ge19_h4_stagec_y_raw_ge19_convention_audit_LOCAL.json`,
+not an expensive H3/H4/Z21 solve.
+
+**Next analytic action:** bind the exact relative NL0C
+Y-sector versus GE06 GR+AeST action prefactor and any
+Euler-row division convention from the unchanged frozen
+full action. If that succeeds, preregister a separate
+fully variational Y aether+scalar source dictionary and
+appropriate parent reclosure. If it cannot be proven,
+freeze a structural unresolved outcome; never fit to the
+Repair37 shift residual.
+
+Historical Repair22/27/32 certifications remain immutable
+for their originally tested equations. They do not
+silently certify an action-completed H3/H4 equation.
+Repair37 remains immutable historical science FAIL;
+Repair38--44 remain diagnostic localizations.
+Window-local particular Z21 remains NOT CERTIFIED.
+Lensing remains blocked.
