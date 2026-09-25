@@ -4073,3 +4073,49 @@ are unchanged.
 **H4F3d7 physical decomposition NOT YET EXECUTED;
 full actual H4 Noether NOT CERTIFIED; Z21 NOT CERTIFIED;
 lensing blocked.**
+
+---
+
+## Latest checkpoint — H4F3d8 restricted independent nonbath symbolic PASS; physical parent arrays open (2026-09-25)
+
+A distinct, **restricted** independent nonbath analytic compiler was
+preregistered as
+`ge19/h4f3d8_predata_independent_nonbath_euler_and_boundary.json`
+(blob `007bec20e450dd67263d32a33476dcb8a5c33996`).
+Its source-bound final code
+`ge19/h4f3d8_independent_nonbath_euler_and_boundary.py`
+(blob `861cd5a81c17380a727777a4e1ff08cd7e857522`)
+and exact-pinned CI workflow (blob
+`3e477da1801e78695acad291bddcbf9020bbcc2c`)
+passed [Actions 36151870934](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36151870934),
+job `108126857772`, terminal marker
+`GE19_H4F3D8_INDEPENDENT_RESTRICTED_COMPILER_PASS_ACTUAL_OPEN`.
+Successful JSON SHA-256
+`d9f30c9632d06dd8412ef36e1a2f4ee43d7cbe7922c6d780d3376b5d0f6220fd`;
+artifact ID `10871858033`.
+
+Freeze:
+`docs/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler_valid_freeze.md`,
+blob `b51117333d652edf8826b085bf65bbd39776fdb2`.
+
+Independent exact checks derive the eight-field mixed
+`E00*F21_chi+2 E10*F11_chi+2 E11*F10_chi` parent
+and `B_lower=L21*EL00+2L10*EL11+2L11*EL10
+-b21*Eb00-2b10*Eb11-2b11*Eb10` from the original
+action product. Frozen GE07 dust current/Euler and
+Lambda metric Euler/first-order terms pass independent
+symbolic gates; original GE06 action jet dictionary is
+source-bound and NL0C Y zero-set one-sided limits pass.
+The first d8 run `36151698788` was an
+implementation `NameError` in the static GE06 text
+binding; this was fixed without changing source/action
+parents, and only the subsequent CI run is PASS.
+
+**Scope stop:** restricted symbolic/compiler PASS only.
+No actual GE06/Y/background/first-order nonbath Euler
+arrays or exact complete physical boundary evaluated;
+original R1 physical H4F3d7 not yet executed;
+full physical FD4/FD8 structural error budget NOT YET
+PREREGISTERED/VALIDATED for full H4 gate. Do not equate
+the H4F3d8 compiler with actual all-sector Noether.
+No Z21, no lensing, no old Repair37 result change.
