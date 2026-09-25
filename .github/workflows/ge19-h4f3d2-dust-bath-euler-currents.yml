@@ -1,0 +1,57 @@
+name: GE19 H4F3d2 Dust Bath Parent Euler Currents
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d2_predata_dust_bath_parent_euler_currents.json'
+      - 'ge19/h4f3d2_dust_bath_parent_euler_currents.py'
+      - '.github/workflows/ge19-h4f3d2-dust-bath-euler-currents.yml'
+
+jobs:
+  exact-parent:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact symbolic dependencies
+        run: python3 -m pip install numpy sympy
+      - name: Derive pinned action Euler currents and mixed Ward parent products
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d2_predata_dust_bath_parent_euler_currents.json)" = "6e9f83fc7f245bfedb82db53afd96ab2ba8616db"
+          test "$(git rev-parse HEAD:ge19/h4f3d2_dust_bath_parent_euler_currents.py)" = "42b2405759402195ffb371056d9e48b70dcded71"
+          python3 -m py_compile ge19/h4f3d2_dust_bath_parent_euler_currents.py
+          python3 -m ge19.h4f3d2_dust_bath_parent_euler_currents \
+            --json-out results/ge19_h4f3d2_dust_bath_parent_euler_currents.json \
+            > results/ge19_h4f3d2_dust_bath_parent_euler_currents_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f3d2_dust_bath_parent_euler_currents.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F3D2_DUST_BATH_PARENT_EULER_CURRENT_COMPILER_PASS"
+          assert d["all_restricted_gates_pass"] is True
+          assert all(v["exact"] for v in d["frozen_git_blobs"].values())
+          assert all(d["dust_exact_symbolic_gates"].values())
+          assert all(d["bath_exact_symbolic_gates"].values())
+          assert all(d["signed_mixed_parent_coefficient_gates"].values())
+          assert d["manufactured_all_gates_pass"] is True
+          assert d["full_H4_Noether_structural_PASS"] is False
+          assert d["complete_all_sector_parent_Euler_residuals_evaluated"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3D2_DUST_BATH_PARENT_EULER_COMPILER_PASS")
+          PY
+          sha256sum results/ge19_h4f3d2_dust_bath_parent_euler_currents.json
+          wc -c results/ge19_h4f3d2_dust_bath_parent_euler_currents.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d2_dust_bath_parent_euler_currents
+          path: |
+            results/ge19_h4f3d2_dust_bath_parent_euler_currents.json
+            results/ge19_h4f3d2_dust_bath_parent_euler_currents_FULL.log
+          retention-days: 90
