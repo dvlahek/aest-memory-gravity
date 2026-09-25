@@ -1,0 +1,65 @@
+name: GE19 H4F3d6 Physical Local Runner Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4f3d6_actual_normalized_bath_parent_ward.sh'
+      - '.github/workflows/ge19-h4f3d6-local-runner-static.yml'
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify immutable real-source input hashes and isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d6_actual_normalized_bath_parent_ward.sh)" = "3690147a766f276309d628fba9f436df3941deae"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_predata_actual_normalized_bath_parent_ward.json)" = "d283086a6ae95efd184db570d6c2f9a8aa32ac7c"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
+          test "$(git rev-parse HEAD:docs/ge19_h4f3d6_bath_convolution_compiler_valid_freeze.md)" = "5695cc61be84098787af2cec8585f7daea6ced38"
+          bash -n ge19/run_local_h4f3d6_actual_normalized_bath_parent_ward.sh
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("ge19/run_local_h4f3d6_actual_normalized_bath_parent_ward.sh").read_text()
+          for required in (
+            "GE19_H4F3D6_LOCAL_LOCK_PASS",
+            "GE19_H4F3D6_LOCAL_PREEXECUTION_PASS",
+            "GE19_H4F3D6_H4F3B_SOURCE_INPUT_PASS",
+            "GE19_H4F3D6_REPAIR26_R1_INPUT_PASS",
+            "GE19_H4F3D6_ACTUAL_CORRECTED_PARENT_INPUT_PASS",
+            "GE19_H4F3D6_ACTUAL_BATH_SUBSET_PASS_FULL_NOETHER_OPEN",
+            "GE19_H4F3D6_ACTUAL_BATH_SUBSET_FAIL",
+            "GE19_H4F3D6_IMPLEMENTATION_OR_INPUT_FAIL",
+            "source .venv/bin/activate",
+            "mktemp -d",
+            'cd "$TMP"',
+            'export PYTHONPATH="$ROOT"',
+            "s.frozen_inputs(rd,trace)",
+            'd6.sha256(js)==d6.SOURCE_JSON_SHA',
+            'd6.sha256(npz)==d6.SOURCE_NPZ_SHA',
+            "ge19_repair32b_factor2_corrected_reduced_h2_z11_reconstruction",
+            "python3 -m ge19.h4f3d6_actual_normalized_bath_parent_ward",
+            "--source-json",
+            "--source-npz",
+            "FULL_NOETHER_CERTIFIED",
+            "Z21_CERTIFIED",
+          ):
+            # Original Z11 is referenced by frozen_inputs, and explicitly
+            # displayed as Z11 to avoid inventing a replacement file.
+            if required.startswith("ge19_repair32b_"):
+                assert 'paths["z11"]' in s
+            else:
+                assert required in s,required
+          for forbidden in (
+            "repair37_cancellation_safe_fd8_h4_z21_reclosure.py --",
+            'rm -rf "$ROOT/results"',
+            "rm -f results/ge19_h4f3b_actual_corrected_six_piece_source",
+          ):
+            assert forbidden not in s,forbidden
+          print("GE19_H4F3D6_PHYSICAL_LOCAL_RUNNER_STATIC_PASS")
+          PY
