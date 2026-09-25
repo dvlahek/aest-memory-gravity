@@ -1,0 +1,97 @@
+{
+  "classification": "GE19_H4F3D7_PREDATA_PHYSICAL_BATH_FD4_VERSUS_FROZEN_R1_INTERVAL_ODE",
+  "purpose": "Independently decompose the report-only near-unit physical normalized bath Euler residual from the valid actual H4F3d6 SUBSET into frozen step-linear interval-H physical-clock mismatch and sampled current FD4 derivative defect. No changes to physical GE05 action, Repair24/26 R1 ODE, H3F/H3G, GE19 six-piece source, old science targets or Noether coefficient.",
+  "frozen_actual_inputs": {
+    "H4F3D6_classification": "GE19_H4F3D6_ACTUAL_BATH_PARENT_WARD_SUBSET_PASS_FULL_OPEN",
+    "H4F3D6_JSON_SHA256": "4607edde17c6820c85f32c0bbd774d5a58148eb01bfd0c81ce592e8c1b907791",
+    "H4F3D6_NPZ_SHA256": "17b50c6ee584b2a8886f7114a90ea9396a127172dd9e02976b0e6275fe2fedc0",
+    "H4F3D6_valid_local_freeze_blob": "a78dee66657a1c9fddb952d29a1084a9f48ce3ea",
+    "H4F3D6_physical_implementation_blob": "0419145499f5f44e06ba0c96f779c2a604e84ce7",
+    "original_Repair24_ODE_and_stepper_blob": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "original_Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "H4F3B_actual_six_source_JSON_sha256": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1",
+    "H4F3B_actual_six_source_NPZ_sha256": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b",
+    "H3F_Z20_NPZ_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3G_q20_NPZ_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452"
+  },
+  "physical_clock_and_ODE": {
+    "original_time_variable": "s=t/tau, with h=H*tau and each frozen step_linear_nd subinterval using h_mid=geometric_mean(H_i,H_i+1)*tau",
+    "original_stepper_equation": "d z/ds=v; d v/ds=-3 h_mid v-r^2(z-X), with X linearly sampled per interval, unchanged",
+    "GE05_action_current": "J=a^3 v/tau",
+    "action_normalized_Euler": "R_FD4=H FD4_x(J)+a^3 (r/tau)^2 (z-X), x=ln(a)",
+    "left_right_one_sided_ODE_current_derivative": "J_t,side=3 H_i a_i^3 v_i/tau + a_i^3[-3 h_mid,side v_i-r^2(z_i-X_i)]/tau^2",
+    "ODE_current_Euler_side": "R_ODE,side=J_t,side+a_i^3(r/tau)^2(z_i-X_i)=3 a_i^3 (H_i-h_mid,side/tau) v_i/tau",
+    "FD4_minus_exact_side": "R_FD4-R_ODE,side=H_i FD4_x(J)-J_t,side",
+    "boundary_nodes": "At first and final grid nodes use only their available adjacent interval. For interior nodes report BOTH one-sided original intervals; do not average or secretly choose the smaller defect.",
+    "relative_scales": "Report original H4F3d6 natural norm ||kinetic||+||potential||, plus each independent component in absolute L2. Do not normalize by an outcome-selected denominator."
+  },
+  "cohorts": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "Nt": [
+      128,
+      64
+    ],
+    "beta": "bath parent is beta-independent; its 3 beta H4F3d6 entries are duplicated views, not 18 independent bath trajectories",
+    "positive_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "Nq": 2048,
+    "phase_bins_dimensionless_omega_delta_t": [
+      0,
+      0.25,
+      0.5,
+      1,
+      "inf"
+    ],
+    "phase_bin_assignment": "For interval i use omega_j * (x_i+1-x_i)/geometric_mean(H_i,H_i+1). Preset bins <0.25, [0.25,0.5), [0.5,1), >=1. Report per-frequency bin/endpoint/interior and all nodes; no exclusions.",
+    "natural_time_grids": "Exact original H4F3b Nt128/Nt64 x arrays with no interpolation of one source term only."
+  },
+  "registered_gates": {
+    "all_frozen_code_and_physical_input_hashes_exact": true,
+    "R1_weighted_z10_H3G_reproduction_relative_L2_max": 1e-10,
+    "frozen_Repair24_stepper_function_AST_exact": true,
+    "analytic_GE05_action_current_and_frozen_step_ODE_identity_exact": true,
+    "R_FD4_equals_R_ODE_side_plus_FD4_minus_exact_side_numerically": true,
+    "mixed_current_identity_decomposition_relative_natural_max": 1e-11,
+    "both_one_sided_interior_interval_derivatives_reported": true,
+    "all_original_3C_2Nt_cases_and_2048_nodes_complete": true,
+    "original_report_only_H4F3D6_Euler_absolute_norm_reproduction_relative_max": 1e-10,
+    "all_calculated_arrays_finite": true,
+    "predeclared_phase_bins_no_posthoc_node_exclusion": true,
+    "no_FD4_or_R1_ODE_modified": true,
+    "no_new_physical_on_shell_smallness_threshold": true,
+    "no_full_all_sector_Noether_or_Z21_claim": true
+  },
+  "outcomes": {
+    "FD4_INTERVAL_ODE_DISCREPANCY_DECOMPOSED": "All exact physics/provenance/decomposition gates pass. Freeze independently measured FD4 defect and one-sided interval-H mismatch for the original physical data. The ratio may remain near unity: not a physical on-shell PASS and not a full H4 Noether certificate.",
+    "FROZEN_PARENT_OR_DISCRETIZATION_UNRESOLVED": "One or more exact identity or input gates fails or near-unit residual cannot be reconstructed. Freeze precise failure without source coefficient or clock fitting.",
+    "IMPLEMENTATION_FAIL": "Missing/or changed certified source, parent, R1 or stepper; mismatched arrays or nonfinite arithmetic; no physics inference."
+  },
+  "independent_remaining_work": {
+    "all_nonbath_parent_boundary_and_operator": "Proceed with separate signed action-level derivation of GE06/GE07/Lambda/Y and corrected H1/Z11/H3F/H3G lower-parent Euler and boundary terms on the real H4F3b grids. H4F3d7's FD4 diagnostic is not a substitute.",
+    "full_H4_structural_error_budget": "Derive/preregister original FD4/FD8 physical structural error budget before any full all-sector Ward gate.",
+    "Z21": "Only a separately valid full all-sector Noether structural PASS licenses the independently preregistered H4/Z21 science attempt. The active shift <=1e-6 and matched time-order >=2.5 stay unchanged."
+  },
+  "prohibitions": [
+    "no_import_module_level_historical_generators_that_write_old_results",
+    "no_new_q20_or_R1_ODE",
+    "no_patching_shift_constraint",
+    "no_relabel_Repair37_science_FAIL",
+    "no_fitted_clock",
+    "no_fitted_structural_tolerance",
+    "no_unregistered_fast_node_exclusion",
+    "no_use_of_manufactured_as_physical_parent",
+    "no_Z21_solve",
+    "no_lensing"
+  ],
+  "status": "PREDATA_ONLY_NO_PHYSICAL_DIAG_RUN"
+}
