@@ -1,0 +1,33 @@
+{
+  "classification": "GE19_H4F3D10R1_PREDATA_FULL_NYQUIST_LOSSLESS_FOURIER_ARCHIVE_IMPLEMENTATION_REPAIR_ONLY",
+  "date": "2026-09-25",
+  "original_d10_outcome": "GE19_H4F3D10_ACTUAL_PARENT_INTERFACE_UNRESOLVED remains immutable. Do not retrospectively relabel six original false case gates.",
+  "frozen_original_artifacts_sha256": {
+    "json": "df4240b40aa7f3b787e36dd0fd87212c6dcb746b35278f6cb36fc1083aa4ea21",
+    "npz": "1b9ff8e421f2b9241cd0ffbc65967ecc4f5efc8afc43d5747ae1216f5d944fab",
+    "full": "df4240b40aa7f3b787e36dd0fd87212c6dcb746b35278f6cb36fc1083aa4ea21",
+    "runner": "14410be4b9c2139a8561a9e116ff23a64d8e76c4472a4204d8fc7ad814946648"
+  },
+  "frozen_original_code_git_blobs": {
+    "ge19/h4f3d10_predata_actual_nonbath_first_order_known_boundary.json": "7aafe872f32057ab46ed99650b3df1803050077e",
+    "ge19/h4f3d10_actual_nonbath_first_order_known_boundary.py": "c570546caa301ec6899b4e669b663726fd4fdc2f",
+    "ge19/h4f3d10_nonbath_first_order_local_partials.py": "4c3968d7186e27f15b10992198d7bccedf207bfb",
+    "ge19/h4f3d10_known_parent_boundary_assembly.py": "d3a43a0ebbd78e03f2313592bdb1455977cb1d1c",
+    "ge19/h4f3d10_physical_main.py": "1eec8381ba107a02ba3dc41bfd18fcc7e12d224e",
+    "ge19/run_local_h4f3d10_actual_nonbath_first_order_known_boundary.sh": "4c873192001a1fd8f3652a9e47ec13c11d999199"
+  },
+  "repair_contract": {
+    "physics": "Keep original H3F H1/Repair32B Z11 and exact GE06/GE07/Lambda first-order Euler, original FD4/FD8, Nx128 spectral chi, all eight fields, unchanged first-order P_known/B_known/W_known and all six cohorts.",
+    "archive": "Retain every original m=0..40 complex output array bitwise; for each real Nx128 array additionally save positive rFFT bins m=41..64 in an explicitly separate high-band key. Reconstruct original real arrays from concatenated m0..40 and m41..64 with irfft n=128. Never discard or zero high-band bins. Preserve Nyquist m64 real coefficient.",
+    "archive_gate": "Original preregistered archive-only inverse-transform relative tolerance 1e-12 applied to LOSSLESS complete original Fourier archive. Do not apply low-pass m0..40 reconstruction to unprojected near-zero Euler rows.",
+    "audit": "Verify original D10 output NPZ low-band arrays are exactly reproduced for same keys, original JSON/NPZ SHA and all frozen physics hashes PASS, and every high-band array is finite. Report high-band L2 and fraction per field and known parent, boundary and Ward; no physical smallness gate.",
+    "no_change": "Do not change original H4F3d10 outputs/results, actual source, background, 2048 bath nodes, phase bins, FD4/FD8, any original science thresholds, or observed-data tuning."
+  },
+  "stop": {
+    "original_d10_not_relabelled": true,
+    "full_h4_noether_not_certified": true,
+    "unknown_E00_F21_and_L21_boundary_kept": true,
+    "Z21_not_certified": true,
+    "lensing_blocked": true
+  }
+}
