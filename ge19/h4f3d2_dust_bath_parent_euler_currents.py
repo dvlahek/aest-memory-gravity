@@ -254,14 +254,6 @@ def manufactured(dust,bath):
           "varrho":-0.009,"Tt":0.023,"Tx":0.033,"r":0.024,
           "pt":0.035,"px":-0.016,"qt":0.047,"qx":-0.013,"q":0.019}
         a=.79;r0=.18;Q=.12;om=1.23;sw=.36
-        data={sp.Symbol("a",positive=True,real=True):a,
-              sp.Symbol("r0",positive=True,real=True):r0,
-              sp.Symbol("Q",positive=True,real=True):Q}
-        for key in var_order:
-            sym=next((s for s in sub.values()
-                      if s.has(eps) and next(iter(s.free_symbols-{eps}),None)
-                      and key in str(s)),None)
-            # Explicit directional-symbol naming avoids any order ambiguity.
         vals={"dN":synthetic["N"],"dL":synthetic["L"],
               "dR":synthetic["R"],"db":synthetic["b"],
               "drho":synthetic["varrho"],"dTt":synthetic["Tt"],
@@ -289,6 +281,7 @@ def manufactured(dust,bath):
             fd=(plus-minus)/(2*h)
             expected=number(derivative)
             rows.append({"sector":name,"Euler_or_current":str(item)[:70],
+                "nonzero_first_order":bool(abs(expected)>1e-10),
                 "finite_directional_relative":_relative(fd,expected),
                 "finite_directional_abs":float(abs(fd-expected))})
     return rows
@@ -306,8 +299,9 @@ def main():
     bgate,bf,bp=bath_analytic(frozen_bath)
     mgate,formal=signed_parent_coefficient()
     sample=manufactured(dp,bp)
-    finite=bool(all(v["finite_directional_relative"]<=1e-6
-                    and v["finite_directional_abs"]<=1e-8
+    finite=bool(all(v["finite_directional_abs"]<=1e-8
+                    and (not v["nonzero_first_order"]
+                         or v["finite_directional_relative"]<=1e-6)
                     for v in sample))
     ok=bool(all(v["exact"] for v in pins.values())
             and all(dgate.values()) and all(bgate.values())
