@@ -163,6 +163,10 @@ def manufactured(nt):
     C0=(.02*(1+ix+jx)/27+.03j*np.cos(ix+2*jx))/ (1+ix+jx)
     C1=.1*C0+(.007+.003j)*(ix+1)/(jx+3)
     C2=.08*C0+(.009-.002j)*(jx+1)/(ix+5)
+    # Original pS is pL+pR: keep this frozen canonical momentum
+    # identity true also in the manufactured nonphysical Cmat fixture.
+    for mat in (C0,C1,C2):
+        mat[0]=mat[14]+mat[15]
     C=np.stack([C0+xq*C1+xq*xq*C2 for xq in x])
     j=np.arange(10)
     w0=(.05+.001j)*(j+1)/(j+3)
@@ -198,6 +202,7 @@ def manufactured(nt):
       "negative_omit_Cmat_time_derivative_relative_L2":_rel(omit_Cdot,op_exact),
       "negative_wrong_isotropic_only_relative_L2":_rel(wrong_iso,op_exact),
       "all_outputs_finite":bool(np.isfinite(vals["operator_ward"]).all()),
+      "original_pS_equals_pL_plus_pR_exact":bool(np.array_equal(vals["original_pS_minus_pL_pR"],np.zeros(nt,complex)) or np.max(np.abs(vals["original_pS_minus_pL_pR"]))<=1e-15),
       "source_parent_not_claimed":bool(vals["source_ward_not_evaluated"] and vals["all_parent_Euler_residuals_not_evaluated"]),
     }
     res["pass"]=bool(
@@ -210,7 +215,8 @@ def manufactured(nt):
            "negative_omit_Cmat_time_derivative_relative_L2",
            "negative_wrong_isotropic_only_relative_L2"
         ))>1e-4
-        and res["all_outputs_finite"] and res["source_parent_not_claimed"]
+        and res["all_outputs_finite"] and res["original_pS_equals_pL_plus_pR_exact"]
+        and res["source_parent_not_claimed"]
     )
     return res
 
