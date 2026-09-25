@@ -4119,3 +4119,59 @@ full physical FD4/FD8 structural error budget NOT YET
 PREREGISTERED/VALIDATED for full H4 gate. Do not equate
 the H4F3d8 compiler with actual all-sector Noether.
 No Z21, no lensing, no old Repair37 result change.
+
+---
+
+## Latest checkpoint — H4F3d9 exact original FD4/FD8 stencil constants PASS; physical numeric budget open (2026-09-25)
+
+The original FD4/FD8 source-based numerical error-budget
+preregistration is
+`ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json`
+(blob `98e6fd8835fdbe3bd169d062431eefe80a3e9232`).
+A distinct versioned single-SHA provenance amendment
+`ge19/h4f3d9_predata_amendment01_correct_d7_git_blob.json`
+(blob `34cea0c62ef2dc962bc43ef93b2fbbd70b9c2180`)
+corrects only a copied H4F3d7 source blob typo in the
+immutable original preregistration. The initial CI
+`36152370247` correctly STOPPED on that mismatch before
+doing any stencil derivation. Nine original source SHA
+checks established that no other pin differed.
+
+The final independent rational AST-only compiler
+`ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py`
+(blob `03864a08110e341038056dd4cefd5842d4a5eb1e`)
+and dedicated CI workflow (blob
+`d708be67bf9a6bc139c83951160cc36939c4f9a2`)
+passed [Actions 36152551838](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36152551838),
+job `108129154468`, terminal marker
+`GE19_H4F3D9_ORIGINAL_STENCIL_CONSTANTS_PASS_PHYSICAL_BUDGET_OPEN`.
+JSON SHA-256 `27ba90ea35b074f6036aff7a41fbc4e27c4a2ead2291daf806f8bdc2e3d40461`,
+artifact ID `10871484108`.
+
+Freeze:
+`docs/ge19_h4f3d9_original_fd4_fd8_stencil_budget_compiler_valid_freeze.md`,
+blob `e77d5d19125ed03a4d15bd71a4eb9d21695f07f4`.
+
+The exact ORIGINAL 5-point FD4 and 9-point FD8
+boundary/interior rational weights and polynomial moment
+constraints pass for every row, producing exact conditional
+`K_(p,i)=sum_j|c_ij||j-i|^(p+1)/(p+1)!`
+Taylor constants. The source-only symbolic compiler does
+not import historical result-writing modules or replace the
+original production matrices. The full physical error-budget
+formulas are preregistered, but independent actual physical
+`M5/M9` derivative/regularity envelopes, piecewise original
+R1 and Y zero-gradient regularity and operation-level
+roundoff bound are UNAVAILABLE. Consequently NO full
+numerical all-sector H4 tolerance is certified or chosen.
+The near-unit GE05 sampled Euler cannot be hidden
+inside a fitted tolerance.
+
+**Current state:** physical H4F3d7 local runner STATIC PASS;
+actual original H4F3d7 measurement OPEN; restricted
+H4F3d8 nonbath symbolic PASS; H4F3d9 exact stencil
+constants PASS, physical error budget OPEN; full H4
+physical Noether NOT CERTIFIED; Z21 NOT CERTIFIED;
+lensing blocked. Preserve historical Repair37 SCIENCE_FAIL,
+Repair38–44 diagnostics, original shift 1e-6 and
+temporal-order >=2.5 gates.
