@@ -1,0 +1,54 @@
+name: GE19 H4F3d3 Physical Eta-Rescaled Bath Ward Parent
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d3_predata_eta_regularized_bath_ward_parent.json'
+      - 'ge19/h4f3d3_eta_regularized_bath_ward_parent.py'
+      - '.github/workflows/ge19-h4f3d3-eta-bath-ward.yml'
+
+jobs:
+  exact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Derive physical sqrt-eta Ward and compare unrescaled negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d3_predata_eta_regularized_bath_ward_parent.json)" = "ff7720381ddd09c7c073e106b2f35065ac3d1d6f"
+          test "$(git rev-parse HEAD:ge19/h4f3d3_eta_regularized_bath_ward_parent.py)" = "fb340b957c31e34d35f1ebd9404a53b59d29c102"
+          python3 -m py_compile ge19/h4f3d3_eta_regularized_bath_ward_parent.py
+          python3 -m ge19.h4f3d3_eta_regularized_bath_ward_parent \
+            --json-out results/ge19_h4f3d3_eta_regularized_bath_ward_parent.json \
+            > results/ge19_h4f3d3_eta_regularized_bath_ward_parent_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f3d3_eta_regularized_bath_ward_parent.json"))
+          assert d["classification"]=="GE19_H4F3D3_ETA_REGULARIZED_BATH_WARD_PARENT_DERIVED"
+          assert d["all_analytic_gates_pass"] is True
+          assert all(x["exact"] for x in d["source_blobs"].values())
+          assert all(d["frozen_action_and_previous_gap_bindings"].values())
+          assert all(d["physical_action_and_Euler_chain_rule"].values())
+          assert all(d["signed_mixed_regularized_Ward_gates"].values())
+          assert d["full_H4_all_sector_Noether_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3D3_ETA_REGULARIZED_BATH_WARD_PARENT_PASS")
+          PY
+          sha256sum results/ge19_h4f3d3_eta_regularized_bath_ward_parent.json
+          wc -c results/ge19_h4f3d3_eta_regularized_bath_ward_parent.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d3_eta_regularized_bath_ward_parent
+          path: |
+            results/ge19_h4f3d3_eta_regularized_bath_ward_parent.json
+            results/ge19_h4f3d3_eta_regularized_bath_ward_parent_FULL.log
+          retention-days: 90
