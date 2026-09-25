@@ -1,0 +1,70 @@
+name: GE19 H4F3d11 Original Action Background E00 Static Regression r1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d11_*'
+      - 'ge19/run_local_h4f3d11*'
+      - '.github/workflows/ge19-h4f3d11-background-e00-static-r1.yml'
+
+jobs:
+  original-action-background:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact frozen action symbolic dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Independently compile genuine frozen GE06/GE07 FLRW action partials and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d11_predata_actual_original_action_background_e00.json)" = "deb4b35e6a147b48fe93d6c99d798572650000ac"
+          test "$(git rev-parse HEAD:ge19/h4f3d11_source_bound_original_background_partials.py)" = "1f085efec4ea64b42822ddeaac566f532d9dccf1"
+          test "$(git rev-parse HEAD:ge06/analytic_aest_directional_source_generator.py)" = "a7afe0035054a9dca55d74a6497c081422114b4c"
+          test "$(git rev-parse HEAD:ge07/pressureless_matter_directional_source_generator.py)" = "cde8da77a80799cef00fc7c09c3633310fc9e3d4"
+          test "$(git rev-parse HEAD:ge19/repair13_self_consistent_reduced_background_h1_reclosure.py)" = "362d63d03d7b850fceae393f535353ded79aeea7"
+          test "$(git rev-parse HEAD:.github/workflows/ge19-h4f3d11-background-e00-static.yml)" = "4c0d3977959d1ba6de682d906147c9dc0d23acdf"
+          python3 - <<'PY'
+          import ast,contextlib,importlib.util,io,json,os,tempfile
+          from pathlib import Path
+          import numpy as np
+          root=Path.cwd()
+          pre=json.loads((root/"ge19/h4f3d11_predata_actual_original_action_background_e00.json").read_text())
+          assert pre["preregistered_machine_only_controls"]["source_vs_explicit_numeric_closed_forms_rtol"]==1e-12
+          assert any("No assuming E_i00=0" in item for item in pre["forbidden"])
+          code=root/"ge19/h4f3d11_source_bound_original_background_partials.py"
+          ast.parse(code.read_text(),filename=str(code))
+          spec=importlib.util.spec_from_file_location("d11_source",code)
+          source=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(source)
+          def historical(name,path):
+              spec=importlib.util.spec_from_file_location(name,path)
+              m=importlib.util.module_from_spec(spec)
+              with contextlib.redirect_stdout(io.StringIO()):
+                  spec.loader.exec_module(m)
+              return m
+          with tempfile.TemporaryDirectory() as tmp:
+              os.chdir(tmp)
+              mod6=historical("d11_orig_ge06",root/"ge06/analytic_aest_directional_source_generator.py")
+              mod7=historical("d11_orig_ge07",root/"ge07/pressureless_matter_directional_source_generator.py")
+              compiled=source.compile_exact_source(mod6,mod7)
+              assert all(compiled[-1].values())
+              class R:
+                  KB=.0665;CV=2.0-.0665;K2=9500.0;Q0=1e-4;Z0=1e-17
+                  C_VALUES={"C_star":2.568543329983919e-9}
+              a=np.array([.4,.55,.7,.83],float)
+              bg={"a":a,"H":np.array([.00012,.0001,.000082,.00007]),
+                  "Z_action":np.array([.05,.1,.25,.55]),
+                  "rho_lambda_action":np.full(4,1e-10)}
+              ga,du,diag=source.physical_partials(compiled,bg,"C_star",R)
+              assert diag["numeric_source_vs_exact_symbolic_closed_all_partials_max_relative"]<=1e-12
+              assert all(x.shape==(4,) and np.isfinite(x).all() for x in list(ga.values())+list(du.values()))
+              assert np.linalg.norm(ga["b_x"])>0
+              assert np.linalg.norm(ga["phi_t"])>0
+              assert np.array_equal(du["rho_f"],np.zeros(4))
+              assert np.array_equal(du["T_t"],-du["N_f"])
+          print("GE19_H4F3D11_SOURCE_BOUND_BACKGROUND_COMPILER_STATIC_PASS_ACTUAL_OPEN")
+          PY
