@@ -1,0 +1,164 @@
+{
+  "classification": "GE19_H4F3D10R1_ACTUAL_ORIGINAL_PARENT_LOSSLESS_NONBATH_KNOWN_BOUNDARY_DIAGNOSTIC_PASS_FULL_NOETHER_OPEN",
+  "date": "2026-09-25",
+  "original_r1_physical_classification": "GE19_H4F3D10R1_LOSSLESS_ARCHIVE_KNOWN_NONBATH_DIAGNOSTIC_PASS_FULL_OPEN",
+  "scope": "Independent uploaded-bytes integrity, exact original D10 NPZ bitwise comparison, complete 128-point Fourier archive and actual full-real signed first-order known nonbath parent/boundary recomposition on six frozen original C/Nt cohorts, original dual FD4/FD8.",
+  "original_d10_failure_remains_immutable": true,
+  "uploaded_exact_outputs": {
+    "json": {
+      "filename": "ge19_h4f3d10r1_lossless_fourier_known_boundary.json",
+      "sha256": "69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2",
+      "bytes": 157110
+    },
+    "npz": {
+      "filename": "ge19_h4f3d10r1_lossless_fourier_known_boundary.npz",
+      "sha256": "85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b",
+      "bytes": 35716618
+    },
+    "full_log": {
+      "filename": "ge19_h4f3d10r1_lossless_fourier_known_boundary_FULL.log",
+      "sha256": "69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2",
+      "bytes": 157110
+    },
+    "runner_log": {
+      "filename": "ge19_H4F3D10R1_LOCAL_runner.log",
+      "sha256": "28af41e2d3f5aff7d4d5c504c1c23d9d1565e6ae83432e253bea8e37c88879d4",
+      "bytes": 2358
+    },
+    "full_log_byte_identical_to_json": true,
+    "local_runner_printed_sha_and_lengths_match_uploaded_bytes": true
+  },
+  "locked_original_d10": {
+    "json_sha256": "df4240b40aa7f3b787e36dd0fd87212c6dcb746b35278f6cb36fc1083aa4ea21",
+    "npz_sha256": "1b9ff8e421f2b9241cd0ffbc65967ecc4f5efc8afc43d5747ae1216f5d944fab",
+    "json_npz_independently_available_sha_matches": true,
+    "original_classification": "GE19_H4F3D10_ACTUAL_PARENT_INTERFACE_UNRESOLVED",
+    "original_six_cases_all_archive_pass_false": true,
+    "original_low_npz_array_count": 530,
+    "original_low_npz_all_arrays_bitwise_equal_to_r1_same_keys": true
+  },
+  "registered_code": {
+    "d10r1_predata_blob": "418859847f108b31cf66ac71c998cc604ca35c31",
+    "r1_lossless_assembler_blob": "d4f67adc2c9267cd3e4fd0e6dd1358c2c97a8545",
+    "r1_physical_main_blob": "659ba72aafedc6f62d519f5fe09e47736074e90a",
+    "r1_runner_blob": "4bc186f7f6185198fc53cc6e072a221214ed81ad",
+    "d10_original_assembler_blob": "d3a43a0ebbd78e03f2313592bdb1455977cb1d1c",
+    "d10_original_physical_main_blob": "1eec8381ba107a02ba3dc41bfd18fcc7e12d224e",
+    "synthetic_static_regression": "https://github.com/dvlahek/aest-memory-gravity/actions/runs/36169632733",
+    "physical_parent_code_git_blob_hashes_all_reported_exact": true,
+    "original_H3F_H3G_R13_Z11_Repair26_and_bath_input_byte_locks_all_local_runner_pass": true,
+    "underlying_raw_H3F_H3G_R13_Z11_Repair26_bath_not_all_reuploaded_in_this_turn": true
+  },
+  "independently_recomputed_npz": {
+    "total_arrays": 1058,
+    "original_low_and_clock_arrays": 530,
+    "added_complex_high_mode_m41_to_m64_arrays": 528,
+    "original_clock_arrays": 2,
+    "all_1058_arrays_numeric_finite": true,
+    "all_528_high_band_array_shapes": {
+      "Nt128": [
+        128,
+        24
+      ],
+      "Nt64": [
+        64,
+        24
+      ]
+    },
+    "original_low_array_shapes": {
+      "Nt128": [
+        128,
+        41
+      ],
+      "Nt64": [
+        64,
+        41
+      ]
+    },
+    "every_original_low_mode_array_bitwise_equal_original_d10": true,
+    "max_actual_parent_sum_full_real_relative_over_12_scheme_cohorts": 4.163e-16,
+    "max_actual_lower_boundary_full_real_relative_over_12_scheme_cohorts": 3.769e-16,
+    "actual_full_real_signed_known_ward_identity_max_relative_over_12_scheme_cohorts": 0,
+    "max_individual_full_real_8_field_parent_reassembly_relative_over_96": 4.565e-16,
+    "max_reported_36_P_B_W_L2_norm_vs_independent_full_reconstruction_relative": 2.062e-16,
+    "max_reported_192_first_order_E10_E11_field_L2_vs_reconstruction_relative": 3.004e-16,
+    "prereg_original_lossless_archive_relative_tolerance": 1e-12,
+    "largest_reported_physical_lossless_inverse_reconstruction_relative": 2.8428133461119143e-16,
+    "max_original_low_mode_parent_boundary_spatial_assembly_relative": 2.6490057104221805e-16,
+    "all_six_original_C_Nt_and_both_original_FD4_FD8_saved": true,
+    "high_band_fraction_warning": "A relative high-mode fraction of a near-zero field can be large even for tiny absolute energy. Re-FFT of numerically reconstructed near-zero high bands is not a bitwise test against unavailable original pre-FFT real arrays. Driver compares to original real arrays before archive; independent audit validates low-bitwise, high-band finiteness, shapes, full-real product and report norms."
+  },
+  "cases": [
+    {
+      "C": "C_min",
+      "Nt": 128,
+      "max_archive_rel": 2.788170249277713e-16,
+      "FD4_known_P_L2": 0.0000028601379944532727,
+      "FD8_known_P_L2": 0.000002860137542668352,
+      "FD4_known_B_L2": 7.780332052205952e-29
+    },
+    {
+      "C": "C_star",
+      "Nt": 128,
+      "max_archive_rel": 2.8428133461119143e-16,
+      "FD4_known_P_L2": 0.0000028592044750951497,
+      "FD8_known_P_L2": 0.0000028592040234690076,
+      "FD4_known_B_L2": 7.778362623153392e-29
+    },
+    {
+      "C": "C_max",
+      "Nt": 128,
+      "max_archive_rel": 2.7710587253390355e-16,
+      "FD4_known_P_L2": 0.000002858013983807906,
+      "FD8_known_P_L2": 0.0000028580135323452294,
+      "FD4_known_B_L2": 7.775847723605782e-29
+    },
+    {
+      "C": "C_min",
+      "Nt": 64,
+      "max_archive_rel": 2.757268787370439e-16,
+      "FD4_known_P_L2": 0.000002054125326842157,
+      "FD8_known_P_L2": 0.000002054119100251542,
+      "FD4_known_B_L2": 4.629233869158486e-28
+    },
+    {
+      "C": "C_star",
+      "Nt": 64,
+      "max_archive_rel": 2.78206815067897e-16,
+      "FD4_known_P_L2": 0.000002053453505986659,
+      "FD8_known_P_L2": 0.0000020534472821979434,
+      "FD4_known_B_L2": 4.628068078610453e-28
+    },
+    {
+      "C": "C_max",
+      "Nt": 64,
+      "max_archive_rel": 2.769473406975242e-16,
+      "FD4_known_P_L2": 0.000002052596752064871,
+      "FD8_known_P_L2": 0.0000020525905316906233,
+      "FD4_known_B_L2": 4.626581116351561e-28
+    }
+  ],
+  "physical_interpretation": {
+    "primary_C_star_FD4_u_parent_L2": 0.000002858772,
+    "primary_C_star_FD4_phi_parent_L2": 7.441612e-10,
+    "primary_C_star_FD4_total_parent_L2": 0.0000028592044750951497,
+    "primary_C_star_FD4_u_part_norm_over_total": 0.9998488,
+    "primary_C_star_FD4_known_B_L2": 7.778362623153392e-29,
+    "claim_limit": "These are unnormalized report-only known first-order nonbath source and known lower-boundary norms, not a physical all-sector Ward residual or a bound on as-yet uncomputed Z21-dependent background boundary.",
+    "FD4_vs_FD8_same_grid_known_W_relative_primary_approx": 3.225e-7,
+    "FD4_vs_FD8_same_grid_known_W_relative_control_approx": 0.000006319,
+    "FD4_FD8_full_physical_error_bound_not_certified": true
+  },
+  "unresolved_exact_terms": {
+    "background_parent": "sum_i E_i00 * F_i21,chi",
+    "background_action_boundary": "L21*E_L00-b21*E_b00",
+    "full_Ward": "original six-source, operator, actual bath/interface, full nonbath GE06/GE07/Lambda/Y and full action boundaries integrated on original active window",
+    "full_Ward_certified": false,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "original_Repair37_SCIENCE_FAIL_immutable": true,
+    "original_active_shift_1e_minus6_unchanged": true,
+    "original_temporal_order_min_2p5_unchanged": true
+  },
+  "next_route": "PREREG_INDEPENDENT_ACTUAL_BACKGROUND_E00_AND_F21_DEPENDENT_FULL_NONBATH_BOUNDARY_WITH_ORIGINAL_FROZEN_ACTION_NO_SOURCE_TUNING"
+}
