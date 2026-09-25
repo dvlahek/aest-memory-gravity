@@ -19,7 +19,7 @@ import sympy as sp
 ROOT=Path(__file__).resolve().parents[1]
 PINS={
  "ge19/h4f3d4_predata_complete_eta_regularized_mixed_ward_ledger.json":
-   "PREDATA_BLOB",
+   "cc921c4086d914274738a29f2b7b5c6961ab56b0",
  "ge19/h4f3d3_predata_eta_regularized_bath_ward_parent.json":
    "ff7720381ddd09c7c073e106b2f35065ac3d1d6f",
  "ge19/h4f3d3_eta_regularized_bath_ward_parent.py":
