@@ -1,0 +1,53 @@
+name: GE19 H4F3d4 Full Formal Eta-Rescaled Mixed Ward Ledger
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d4_predata_complete_eta_regularized_mixed_ward_ledger.json'
+      - 'ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py'
+      - '.github/workflows/ge19-h4f3d4-full-formal-ward.yml'
+
+jobs:
+  symbolic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact symbolic dependency
+        run: python3 -m pip install sympy
+      - name: Prove signed off-shell mixed Ward and source/operator/bath-parent decomposition
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d4_predata_complete_eta_regularized_mixed_ward_ledger.json)" = "cc921c4086d914274738a29f2b7b5c6961ab56b0"
+          test "$(git rev-parse HEAD:ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py)" = "87d8be9ec44ecb099feecbaf59a904bd989da2fb"
+          python3 -m py_compile ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py
+          python3 -m ge19.h4f3d4_complete_eta_regularized_mixed_ward_ledger \
+            --json-out results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger.json \
+            > results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger.json"))
+          assert d["classification"]=="GE19_H4F3D4_FULL_FORMAL_ETA_WARD_LEDGER_PASS_ACTUAL_GRID_OPEN"
+          assert d["all_formal_gates_pass"] is True
+          assert all(x["exact"] for x in d["frozen_blobs"].values())
+          assert all(d["action_and_actual_implementation_bindings"].values())
+          assert all(d["exact_signed_full_formal_ward_gates"].values())
+          assert d["actual_H4F3b_corrected_parent_arrays_loaded"] is False
+          assert d["full_physical_H4F3d_structural_PASS"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3D4_FULL_FORMAL_ETA_WARD_LEDGER_PASS")
+          PY
+          sha256sum results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger.json
+          wc -c results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger
+          path: |
+            results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger.json
+            results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger_FULL.log
+          retention-days: 90
