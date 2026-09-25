@@ -1,0 +1,101 @@
+{
+  "classification": "GE19_H4F3D11_PREDATA_ORIGINAL_ACTION_SOURCE_BOUND_ACTUAL_BACKGROUND_E00_ALL_EIGHT_FIELDS",
+  "date": "2026-09-25",
+  "task": "Compute exact-source-bound GE06/GE07/Lambda/Y-zero-gradient homogeneous background Euler E_i00 on the same frozen Repair13 C_min/C_star/C_max x Nt128/Nt64 physical grids. Save both original FD4 and FD8 physical-time numerical Euler divergences, exact scalar/dust currents and nonzero GE06 shift background momentum. Do not assume E00=0 based on background Friedmann alone.",
+  "immutability": {
+    "branch": "physics-first-gravitational-elasticity",
+    "parent_result": "GE19_H4F3D10R1_ACTUAL_ORIGINAL_PARENT_LOSSLESS_NONBATH_KNOWN_BOUNDARY_DIAGNOSTIC_PASS_FULL_NOETHER_OPEN",
+    "original_d10_unresolved_must_remain": true,
+    "original_d10r1_json_sha256": "69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2",
+    "original_d10r1_npz_sha256": "85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b",
+    "original_d10r1_audit_git_blob": "2921f79dbb0ce99200418bfba924b699ff8cd67f",
+    "source_git_blobs": {
+      "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+      "ge07/pressureless_matter_directional_source_generator.py": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+      "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+      "ge19/repair11_lambda_inclusive_reduced_h1_reclosure.py": "dbfa43ae11dbd3cfeeb1994a30237e9374dbb3e7",
+      "ge19/repair13_self_consistent_reduced_background_h1_reclosure.py": "362d63d03d7b850fceae393f535353ded79aeea7",
+      "ge19/h4f3d8_independent_nonbath_euler_and_boundary.py": "861cd5a81c17380a727777a4e1ff08cd7e857522",
+      "ge19/h4f3b_actual_corrected_six_piece_source.py": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+      "ge19/h4f3d10_actual_nonbath_first_order_known_boundary.py": "c570546caa301ec6899b4e669b663726fd4fdc2f",
+      "ge19/h4f3d10r1_lossless_fourier_physical_main.py": "659ba72aafedc6f62d519f5fe09e47736074e90a",
+      "ge19/h4f3d10r1_actual_physical_lossless_archive_independent_audit.json": "2921f79dbb0ce99200418bfba924b699ff8cd67f"
+    }
+  },
+  "strict_physical_definition": {
+    "eight_nonbath_fields": [
+      "N",
+      "L",
+      "R",
+      "b",
+      "u",
+      "phi",
+      "T",
+      "rho"
+    ],
+    "original_GE06_action": "Exact frozen GE06 plane-symmetric GR+AeST local partial_map, evaluated at N=1,L=R=a,b=u=0,Lt=Rt=a*H,pt=Q0+Z0*Z_action, all spatial gradients and other time jets=0. Use symbolic stable Z substitution PRIOR to numerical lambdification, not cancellation-prone floating Q-Q0.",
+    "original_GE07_action": "Exact frozen GE07 L_d=NLR^2*rho*(W^2-V^2-1) evaluated at rho=3*C/a^3,Tt=1,Tx=0. Background J_Tt=2*a^3*rho=6*C and rho constraint=0; do not introduce rho multiplier to E_rho.",
+    "original_Lambda": "Exact -6*rho_lambda_action*N*L*R^2 with rho_lambda_action from same Repair13 parent, even if its grid variation is numerically nonzero. Exact background EN=-6*rho_lambda*a^3, EL=-6*rho_lambda*a^2, ER=-12*rho_lambda*a^2.",
+    "original_NL0C_Y": "Y background derivative at X0=0 from frozen d8 restricted zero-gradient symbolic gate is zero. Mixed nonlinear Y2/DY2 and actual GE05 bath are not evaluated in this stage.",
+    "GE06_background_source_partials": [
+      "N_f",
+      "N_x",
+      "L_f",
+      "L_t",
+      "L_x",
+      "R_f",
+      "R_t",
+      "R_x",
+      "b_f",
+      "b_x",
+      "u_f",
+      "u_t",
+      "u_x",
+      "phi_t",
+      "phi_x"
+    ],
+    "time_schemes": [
+      "original H*FD4_xi",
+      "original H*FD8_xi"
+    ],
+    "spatial_homogeneous_derivative": "Analytically partial_chi of background action coefficients vanishes; retain nonzero original background b_x momentum p_bx00 as a physical archive array. Do not numerically convert xi=ln(a) to chi.",
+    "freeze_formula": "EN=GE06_Nf00+GE07_Nf00+Lambda_Nf00; EL=GE06_Lf00-H*FDxi GE06_Lt00+GE07_Lf00+Lambda_Lf00; ER analogous; Eb=GE06_bf00+GE07_bf00; Eu=GE06_uf00-H*FDxi GE06_ut00; Ephi=-H*FDxi GE06_phi_t00; ET=-H*FDxi GE07_T_t00; Erho=GE07_rho_f00.",
+    "source_bound_closed_forms": "Audit all frozen GE06 partial_map on homogeneous background against independently derived N_f=6*a*adot^2+2*a^3*(K-Q*KQ), L_f=-2*adot^2+2*a^2*K, R_f=2*L_f, L_t=-4*a*adot, R_t=-8*a*adot, b_x=4*a^2*adot, phi_t=2*a^3*KQ, remaining local partials 0, with K=2*K2*Z0^2*(exp(Z^2)-1), KQ=4*K2*Z0*Z*exp(Z^2), Q=Q0+Z0*Z. Compare source GE07 exact partial_map to its independent exact homogeneous expressions.",
+    "exact_background_identity": "EN/(6*a^3)=H^2-(Q*KQ-K)/3-C/a^3-rho_lambda. Scalar conservation a^3*KQ=frozen I0. Do not impose EL=0 when rho_lambda grid derivatives have not been independently bounded."
+  },
+  "preregistered_machine_only_controls": {
+    "source_symbolic_formula_equivalence": "Exact sympy identity equality required for each frozen GE06/GE07 action local partial. No relative acceptance of an incorrect action.",
+    "source_vs_explicit_numeric_closed_forms_rtol": 1e-12,
+    "source_vs_explicit_numeric_closed_forms_atol": 0,
+    "note": "The 1e-12 comparison is ONLY numeric evaluation consistency between already symbolically proven identical original-action partials. It is not an Euler on-shell, H4 Ward or temporal convergence tolerance.",
+    "original_source_time_schemes_separate": true,
+    "complete_six_case_finite_true": true,
+    "exact_homogeneous_zero_chi_symbolically_proven": true,
+    "original_ge06_bx00_saved_nonzero": true,
+    "archive_result_overwrite_prohibited": true,
+    "old_d10r1_low_modes_unchanged": true
+  },
+  "report_only_physical_controls": [
+    "Per sector and eight-field original E_i00 arrays full Nt grid for each C and FD4 and FD8. Retain nonzero values and signs.",
+    "Raw stable K,KQ,Q,Z, rho_dust,rho_lambda and b_x0/phi_t0/T_t0 momenta.",
+    "EN Friedmann relative natural scale and absolute L2; EL and ER absolute and natural-scale relative L2; Eu,Ephi,ET,Eb,Erho absolute L2 and first vs independent scalar/dust analytic charge.",
+    "Original FD4 versus FD8 same-grid differences, separate Nt128 and Nt64, with no fitted or new science threshold.",
+    "Frozen Lambda span/derivative diagnostic to reveal time-dependent interpolated rho_lambda if present; never assume constant without checking.",
+    "Absolute and source-natural relative EN/EL/ER and raw time-current divergence contributions; do not call numerical derivative residual an exact covariant on-shell proof."
+  ],
+  "forbidden": [
+    "No source/parameter fitting, no changing original action or Repair13 background.",
+    "No omission of any eight Euler fields or local shift momentum.",
+    "No assuming E_i00=0 and deleting E_i00 F_i21.",
+    "No truncating source parent or setting unknown F21/L21/b21 to zero.",
+    "No GE05 bath status upgrade from d7r1.",
+    "No full H4 Ward, Z21 or lensing certification.",
+    "No fitted FD4/FD8 error threshold, original Repair37 SCIENCE_FAIL immutable."
+  ],
+  "output_classifications": {
+    "source_compiler_static_pass": "GE19_H4F3D11_SOURCE_BOUND_BACKGROUND_COMPILER_STATIC_PASS_ACTUAL_OPEN",
+    "actual_e00_diagnostic_pass": "GE19_H4F3D11_ACTUAL_BACKGROUND_E00_ARRAYS_DIAGNOSTIC_PASS_ONSHELL_OPEN",
+    "actual_e00_source_mismatch": "GE19_H4F3D11_ACTUAL_SOURCE_OR_PARENT_INCONSISTENT",
+    "implementation_fail": "GE19_H4F3D11_IMPLEMENTATION_FAIL"
+  }
+}
