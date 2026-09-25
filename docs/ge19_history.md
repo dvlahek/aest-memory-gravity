@@ -4011,3 +4011,5 @@ Required physical files are the ORIGINAL hash-locked actual H4F3b JSON/NPZ (SHA 
 **NEXT (two independent workstreams):** (1) run exact H4F3d7 physical diagnostic on the original hash-verified local files in an ISOLATED temporary CWD, with absolute input/output paths and no historical output overwrite, freeze physical result separately; (2) independently derive/evaluate all signed NONBATH background/H1/Z11/H3F/H3G/dust/metric/aether/scalar parent Euler plus action boundary terms and original canonical operator on same H4F3b Nt128/Nt64 grids. Derive/preregister the complete FD4/FD8 structural truncation budget BEFORE the first full integrated actual-grid H4F3d Noether gate. Source-only Ward magnitude is report-only.
 
 **Full actual all-sector H4 structural Noether PASS NOT PRODUCED. Z21 NOT CERTIFIED. Lensing blocked.**
+
+New-chat transfer document: `docs/ge19_new_chat_handoff_2026_09_25.md`. This standalone handoff includes verified H4F3d7 CI results, exact original physical input hashes, the pending physical d7 diagnostic and independent nonbath full-Ward steps.
