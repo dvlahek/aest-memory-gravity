@@ -1,0 +1,60 @@
+name: GE19 H4F3d6 Actual Bath Ward Compiler
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d6_predata_actual_normalized_bath_parent_ward.json'
+      - 'ge19/h4f3d6_actual_normalized_bath_parent_ward.py'
+      - '.github/workflows/ge19-h4f3d6-bath-parent-ward.yml'
+
+jobs:
+  manufactured-compiler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install numerical dependencies
+        run: python3 -m pip install numpy
+      - name: Verify frozen code and signed real-space convolution at Nt64/128
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d6_predata_actual_normalized_bath_parent_ward.json)" = "d283086a6ae95efd184db570d6c2f9a8aa32ac7c"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
+          python3 -m py_compile ge19/h4f3d6_actual_normalized_bath_parent_ward.py
+          python3 -m ge19.h4f3d6_actual_normalized_bath_parent_ward \
+            --manufactured \
+            --json-out results/ge19_h4f3d6_manufactured_bath_ward.json \
+            > results/ge19_h4f3d6_manufactured_bath_ward_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f3d6_manufactured_bath_ward.json"))
+          assert d["classification"]=="GE19_H4F3D6_BATH_CONVOLUTION_COMPILER_PASS_ACTUAL_OPEN"
+          assert d["all_manufactured_gates_pass"] is True
+          assert all(p["exact"] for p in d["frozen_blobs"].values())
+          assert len(d["manufactured_cases"])==2
+          assert sorted(c["Nt"] for c in d["manufactured_cases"])==[64,128]
+          for c in d["manufactured_cases"]:
+              assert c["pass"]
+              assert c["real_space_FFT_vs_exact_signed_convolution_relative_L2"]<=1e-12
+              assert c["FD4_current_manufactured_relative_L2"]<=1e-9
+              assert c["negative_wrong_spatial_gradient_relative_defect"]>=.001
+              assert c["actual_physical_parent_loaded"] is False
+          assert d["actual_physical_parent_loaded"] is False
+          assert d["full_all_sector_H4_Noether_certified"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3D6_BATH_CONVOLUTION_COMPILER_PASS_ACTUAL_OPEN")
+          PY
+          sha256sum results/ge19_h4f3d6_manufactured_bath_ward.json
+          wc -c results/ge19_h4f3d6_manufactured_bath_ward.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d6_manufactured_bath_ward
+          path: |
+            results/ge19_h4f3d6_manufactured_bath_ward.json
+            results/ge19_h4f3d6_manufactured_bath_ward_FULL.log
+          retention-days: 90
