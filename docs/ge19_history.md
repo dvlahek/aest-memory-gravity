@@ -3888,3 +3888,76 @@ attempt. It is not itself a Z21 certificate.
 
 **Full physical all-sector H4 Noether NOT CERTIFIED;
 Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3d6 actual local bath-parent Ward subset PASS; physical Euler residual open (2026-09-25)
+
+This is the latest canonical GE19 restart point. The earlier
+H4F3d6 history entry's NEXT=run local physical bath subset is
+completed by the **first valid local physical run**. Every
+historical Repair22/27/32, corrected H3F/H3G and H4F3b
+result and Repair37 SCIENCE_FAIL / Repair38--44 diagnosis
+stays frozen; no numerical target or source coefficient
+is edited.
+
+**Result:** `GE19_H4F3D6_ACTUAL_BATH_PARENT_WARD_SUBSET_PASS_FULL_OPEN`.
+User supplied the original JSON, NPZ, JSON-identical FULL log
+and outer runner log. Independent direct hash/array audit:
+
+- JSON 17572 bytes SHA-256
+  `4607edde17c6820c85f32c0bbd774d5a58148eb01bfd0c81ce592e8c1b907791`;
+- NPZ 1315867 bytes SHA-256
+  `17b50c6ee584b2a8886f7114a90ea9396a127172dd9e02976b0e6275fe2fedc0`;
+- FULL log 17572 bytes, byte-identical to JSON, same SHA-256;
+- outer runner log 3297 bytes SHA-256
+  `74aef76c0d92b41a0e318fa1baeadbf2ecc45274b805e4e4ade16dc351fd3437`.
+
+The 32 NPZ fields are all finite; primary source/bath fields
+are (128,41) and controls (64,41). All 18 cases, all 6
+preregistered **subset** gates, original H4F3b source,
+H3F/H3G/Z11/R13/Repair26 R1 input hashes and unchanged
+common x grids pass. The original R1 weighted z10 is
+reproduced at relative L2 0.0.
+All 18 W_bath/W_source/W_source+bath maxima reproduce
+**exactly** from the saved NPZ (maximum discrepancy 0.0).
+
+Immutable full freeze:
+
+`docs/ge19_h4f3d6_valid_local_actual_bath_parent_ward_subset_freeze.md`,
+blob `a78dee66657a1c9fddb952d29a1084a9f48ce3ea`.
+
+**Important physical numerical open issue:** The actual
+normalized first-order GE05 bath Euler
+`R_z10=H FD4_x(a^3 v10/tau)+a^3 omega^2(z10-X10)`
+has natural-scale relative L2 `0.9985018...0.9993412`
+(report only) on Nt128/Nt64. The source+bath Ward has
+no zero gate and reaches `3.659645217615514e-12`
+(Nt64). H4F3d6 does NOT show the saved R1 bath is
+numerically on shell under this FD4 Euler discretization.
+The ratio also does not by itself prove an action-level
+physics failure: the frozen R1 interval integrator and
+sampled FD4 current derivative may differ substantially
+for unresolved high-frequency bath nodes or a clock/
+normalization defect. Preserve the numbers and
+independently separate these alternatives before
+asserting a bath on-shell approximation. Do not replace
+frozen equations, fit the source or relax a gate.
+
+**NEXT analytic/structural work:** Derive and evaluate
+the remaining signed nonbath homogeneous/H1/Z11/H3F
+parent Euler and action-boundary terms, then combine
+with the already frozen H4F3d1 canonical operator,
+genuine H4F3b six-piece source and this actual bath
+contribution on the same physical grids. In parallel,
+separately preregister an original R1 continuous
+interval-ODE versus FD4 physical-current discrepancy
+audit to classify the observed bath Euler report-only
+ratio. Derive and prelock the full FD4/FD8 structural
+error budget **before** any numerical full-Ward test.
+
+A full all-sector H4 Noether PASS has NOT occurred.
+The original active shift `1e-6` and matched order
+`>=2.5` remain unchanged. Z21 NOT CERTIFIED;
+lensing blocked.
