@@ -1,0 +1,56 @@
+{
+  "classification": "GE19_H4F3D1_PREDATA_FROZEN_CANONICAL_OPERATOR_WARD_COMPILER",
+  "parent": "GE19_H4F3D_PREDATA_OPERATOR_PLUS_ALL_PARENT_WARD_ON_ACTUAL_SIX_SOURCE",
+  "purpose": "Derive and separately implement the signed independent linear-operator Ward projection from the frozen, non-gauge-fixed GE06+GE07 canonical local row dictionary before attempting any full H4F3d corrected-parent test. Test exact symbolic iso/aniso/shift/source projections and numerical FD4 product differentiation, without asserting source-only Ward zero or full H4 Noether.",
+  "frozen_blobs": {
+    "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/h4f2b_signed_mixed_ward_template.py": "ab783ffe8242d8ff455647df8664a074f725ee81",
+    "ge19/h4f2h_physical_time_source_ward_bridge.py": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "docs/ge19_h4f3b_actual_corrected_six_source_valid_local_freeze.md": "578768817615807260afc2d7baaa24d2c4928858"
+  },
+  "operator_contract": {
+    "frozen_state": "w=(N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot) with Cmat shape [16,10], original source rows 6+2",
+    "frozen_Cmat_rows": {
+      "0": "pS=pL+pR",
+      "4": "lapse",
+      "5": "dust rho",
+      "6": "nonderivative isotropic E_L+E_R",
+      "10": "GE06 shift",
+      "11": "GE07 shift",
+      "12": "GE06 nonderivative anisotropy",
+      "13": "GE07 nonderivative anisotropy",
+      "14": "pL=GE06 L_t",
+      "15": "pR=GE06 R_t"
+    },
+    "full_E_L": "[(Cmat[6]+2*(Cmat[12]+Cmat[13]))/3]@w - d_t(Cmat[14]@w)",
+    "full_E_shift": "(Cmat[10]+Cmat[11])@w",
+    "physical_time": "d_t=H(x) FD4_x on the same uniform x=ln(a) grid, including d_x(Cmat(x) w(x)) PRODUCT differentiation",
+    "ward_operator": "-d_t E_shift - (a/3) ik (E_iso+2 E_aniso) = -d_t E_shift-ik a E_L",
+    "ward_source": "d_t S_shift+(a/3)ik(S_iso+2S_aniso) from H4F3b with separate frozen FD8/FD4 family schemes",
+    "full_ward_condition": "W_op + W_source + complete signed parent Euler/boundary terms = 0; do not set W_op or W_source individually to zero",
+    "spatial": "ik=1j*kfund*m, preserve modes 0..40 and original m1..40 science mask",
+    "source_sign": "E21=L21-S21, no new action normalization or coefficient fit"
+  },
+  "gates": [
+    "Exact symbolic reconstruction of E_L and E_R from isotropic/anisotropy Euler rows including pL/pR physical time derivative.",
+    "Exact extraction of independent GE06+GE07 shift rows and frozen original Cmat row semantics.",
+    "Exact signed W_operator + W_source = W_total after substituting E=L-S, without assuming parent terms vanish.",
+    "Original 5-point FD4(x) verified exact for manufactured degree<=4 complex polynomials incl boundaries and H(x)*D_x physical clock.",
+    "Realized canonical operator Ward matches independent manufactured analytic polynomial product derivative, including Cmat time dependence, with preregistered relative L2 <=1e-10 and absolute <=1e-10.",
+    "Negative controls fail if momentum d_t pL omitted, if d_t Cmat is omitted, or if wrong isotropic-only E_L is used.",
+    "No H4F3b source-only magnitude used for a gate, no actual H3F/H3G binaries claimed, no q20 rerun, no H4 Z21 solve."
+  ],
+  "outcomes": {
+    "H4F3D1_CANONICAL_OPERATOR_WARD_COMPILER_PASS": "The source-bound canonical row/sign and product derivative operator evaluator passes exact symbolic and manufactured numerical tests. It is a necessary H4F3d implementation gate, not the full H4F3d structural PASS.",
+    "H4F3D1_OPERATOR_ROW_OR_DISCRETIZATION_FAIL": "Freeze exact failed bound source/row/sign/FD4/negative-control gate and version corrected test without altering history."
+  },
+  "next": "Obtain exact H4F3b actual source NPZ plus H1/Z11/H3F/H3G/R1 and perform separately preregistered full source+operator+signed parent Euler and boundary H4F3d structural audit, with independently derived truncation tolerance.",
+  "stop": {
+    "no_full_H4_Noether_claim": true,
+    "no_Z21_solve": true,
+    "no_old_repair37_relabel": true,
+    "active_shift_target_1e_minus6_unchanged": true,
+    "no_lensing": true
+  }
+}
