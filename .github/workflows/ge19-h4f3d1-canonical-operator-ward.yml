@@ -1,0 +1,60 @@
+name: GE19 H4F3d1 Frozen Canonical Operator Ward
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d1_predata_frozen_canonical_operator_ward.json'
+      - 'ge19/h4f3d1_frozen_canonical_operator_ward.py'
+      - '.github/workflows/ge19-h4f3d1-canonical-operator-ward.yml'
+
+jobs:
+  operator-ward:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install original canonical dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Execute exact canonical row and FD4 operator Ward manufactured audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d1_predata_frozen_canonical_operator_ward.json)" = "4577de495692ecbe4c07d1156ffab2abfc99e96d"
+          test "$(git rev-parse HEAD:ge19/h4f3d1_frozen_canonical_operator_ward.py)" = "60786ac14c9478801c5df9ccf458ead9a34ac827"
+          test "$(git rev-parse HEAD:ge19/repair07_window_retarded_reduced_h3_z20_particular.py)" = "e34d28a2062c748f48bc82fa928844b02631de25"
+          python3 -m py_compile ge19/h4f3d1_frozen_canonical_operator_ward.py
+          python3 -m ge19.h4f3d1_frozen_canonical_operator_ward \
+            --json-out results/ge19_h4f3d1_canonical_operator_ward.json \
+            > results/ge19_h4f3d1_canonical_operator_ward_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f3d1_canonical_operator_ward.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F3D1_CANONICAL_OPERATOR_WARD_COMPILER_PASS"
+          assert d["all_compiler_gates_pass"] is True
+          assert all(z["exact"] for z in d["frozen_git_blobs"].values())
+          assert all(d["bound_original_Cmat_and_Ge19_row_semantics"].values())
+          assert all(d["exact_symbolic_projection_and_source_signs"].values())
+          assert len(d["manufactured_FD4_product_cases"])==2
+          assert all(z["pass"] and z["original_pS_equals_pL_plus_pR_exact"] for z in d["manufactured_FD4_product_cases"])
+          assert d["actual_H4F3b_source_npz_loaded"] is False
+          assert d["actual_H3F_H3G_Z11_parents_loaded"] is False
+          assert d["full_linear_operator_plus_all_parent_Noether_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4F3D1_CANONICAL_OPERATOR_WARD_COMPILER_PASS")
+          PY
+          sha256sum results/ge19_h4f3d1_canonical_operator_ward.json
+          wc -c results/ge19_h4f3d1_canonical_operator_ward.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d1_canonical_operator_ward
+          path: |
+            results/ge19_h4f3d1_canonical_operator_ward.json
+            results/ge19_h4f3d1_canonical_operator_ward_FULL.log
+          retention-days: 90
