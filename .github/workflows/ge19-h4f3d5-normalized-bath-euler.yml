@@ -1,0 +1,56 @@
+name: GE19 H4F3d5 Normalized Bath Euler Compiler
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d5_predata_normalized_bath_parent_residual_compiler.json'
+      - 'ge19/h4f3d5_normalized_bath_parent_residual_compiler.py'
+      - '.github/workflows/ge19-h4f3d5-normalized-bath-euler.yml'
+
+jobs:
+  exact-manufactured:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic and manufactured test dependencies
+        run: python3 -m pip install numpy sympy
+      - name: Check source locks and run normalized bath Euler compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d5_predata_normalized_bath_parent_residual_compiler.json)" = "6b7519b48ace8900c8a2879f13c70db3524b366e"
+          test "$(git rev-parse HEAD:ge19/h4f3d5_normalized_bath_parent_residual_compiler.py)" = "62cbd02902ccb514c535213ff9801a9abcd46ffb"
+          python3 -m py_compile ge19/h4f3d5_normalized_bath_parent_residual_compiler.py
+          python3 -m ge19.h4f3d5_normalized_bath_parent_residual_compiler \
+            --json-out results/ge19_h4f3d5_normalized_bath_parent_residual_compiler.json \
+            > results/ge19_h4f3d5_normalized_bath_parent_residual_compiler_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f3d5_normalized_bath_parent_residual_compiler.json"))
+          assert d["classification"]=="GE19_H4F3D5_NORMALIZED_BATH_PARENT_RESIDUAL_COMPILER_PASS"
+          assert d["all_restricted_analytic_and_manufactured_gates_pass"] is True
+          assert all(x["exact"] for x in d["frozen_source_blobs"].values())
+          assert all(d["actual_frozen_action_bindings"].values())
+          assert all(d["exact_normalization_and_sign_gates"].values())
+          assert len(d["manufactured_Nt64_Nt128"])==2
+          assert all(all(c["gates"].values()) for c in d["manufactured_Nt64_Nt128"])
+          assert d["actual_corrected_parent_arrays_loaded"] is False
+          assert d["all_sector_actual_physical_Ward_derived"] is False
+          assert d["H4_Z21_solve_performed"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3D5_NORMALIZED_BATH_EULER_COMPILER_PASS")
+          PY
+          sha256sum results/ge19_h4f3d5_normalized_bath_parent_residual_compiler.json
+          wc -c results/ge19_h4f3d5_normalized_bath_parent_residual_compiler.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d5_normalized_bath_euler_compiler
+          path: |
+            results/ge19_h4f3d5_normalized_bath_parent_residual_compiler.json
+            results/ge19_h4f3d5_normalized_bath_parent_residual_compiler_FULL.log
+          retention-days: 90
