@@ -3642,3 +3642,84 @@ or the hash-locked full audit is executed locally.
 
 **Full H4 Noether structural PASS NOT YET PRODUCED;
 Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3d4 complete formal eta Ward PASS; actual-grid all-parent H4F3d open (2026-09-25)
+
+This supersedes only outdated NEXT-step text. All historical original-equation
+Repair22/27/32 results, corrected-Y H3F Z20/H3G q20 certifications,
+Repair37 H4/Z21 SCIENCE_FAIL, Repair38--44 diagnostics and frozen
+active-shift <=1e-6 / matched-order >=2.5 science thresholds remain
+immutable.
+
+**Actual corrected six-piece H4 source H4F3b: local PHYSICAL source-only PASS.**
+All 18 C/beta/Nt cohorts and the exact original certified Z11 were
+used in the user's local execution, with 146 finite NPZ fields and
+exact source=six-piece sum. Frozen result:
+`docs/ge19_h4f3b_actual_corrected_six_source_valid_local_freeze.md`,
+JSON SHA-256
+`1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1`,
+NPZ SHA-256
+`787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b`.
+Its source-only Ward is report-only and must NOT be independently
+required to vanish.
+
+**H4F3d1 canonical original-operator Ward: PASS.**
+Run `36102755011`; retains full Cmat product derivative and the
+original independent shift and L Euler row semantics.
+
+**H4F3d2 dust/bath original-action Euler currents: PASS.**
+Run `36103744644`; freezes signed dust rho/T and per-node bath
+currents/parent coefficients before physical eta regularization.
+
+**H4F3d3 physical eta-regularized bath Ward parent: PASS.**
+Run `36105927210`, frozen in
+`docs/ge19_h4f3d3_eta_regularized_bath_ward_valid_freeze.md`.
+For the actual frozen `U_j=sqrt(eta)q_j`, the GE06 raw mixed
+bath parent coefficient is exactly
+`+4 sum_j E_qj10,GE05 * q_j10,x`.
+It does not introduce a direct `q20` parent product in the
+physical mixed coefficient. The exact first-order bath residual must
+still be evaluated on the actual parent grid and must not be silently
+dropped as zero.
+
+**NEW H4F3d4 FULL FORMAL signed eta-corrected Ward ledger: PASS.**
+Successful dedicated GitHub Actions run `36106532215`, job
+`107980223264`, classification
+`GE19_H4F3D4_FULL_FORMAL_ETA_WARD_LEDGER_PASS_ACTUAL_GRID_OPEN`.
+Frozen result:
+`docs/ge19_h4f3d4_complete_formal_eta_ward_valid_freeze.md`,
+blob `e237626532a24bad792e5f892d4b2127fdc51e6f`.
+Result JSON SHA-256
+`d6fd4f79910b552238756eb9015e6a7956a8fa0892cb2a46a9bd9e2e7c8d5694`.
+The complete *formal off-shell* signed mixed identity is
+`W_operator + W_six_source + W_all_parent = 0`, including
+all nonbath background/H1/Z11 Euler terms, action boundary terms,
+correct physical bath `+4 E_q10 q10,x`, original canonical GE19
+operator row projection and all six physical-clock source families.
+This is an exact symbolic/source-binding result, NOT actual physical-grid
+all-parent Noether certification and NOT a Z21 solve.
+
+**NEXT decisive structural obligation under existing H4F3d predata:**
+implement and preregister an *independent actual-grid* evaluation of
+all Euler parent residual and action boundary arrays on the SAME
+certified H1/Z11/H3F Z20/H3G q20/Repair26 R1 Nt128/Nt64 grids as
+actual H4F3b six-source NPZ, with original Cmat operator FD4 and
+separate source-family FD8/FD4 derivatives. Its independent numerical
+Ward structural tolerance must be derived/frozen from the formal
+identity and truncation errors BEFORE inspecting the physical residual.
+Only an integrated full structural PASS permits a separately preregistered
+new H4/Z21 science solver attempt; it is not itself a science PASS.
+
+**Execution blocker:** the exact original certified Repair32B Z11
+binary and user's actual local H4F3b NPZ are not automatically in
+GitHub Actions checkout. A manufactured Z11 or synthetic source must
+not be substituted for a PHYSICAL structural PASS. The exact locked
+actual-source and parent inputs must be made accessible to the same
+execution environment, or the completed full structural script must
+be run locally with those hash-verified inputs.
+
+**Full physical H4 Noether structural PASS NOT YET PRODUCED.
+Z21 NOT CERTIFIED; lensing blocked.**
