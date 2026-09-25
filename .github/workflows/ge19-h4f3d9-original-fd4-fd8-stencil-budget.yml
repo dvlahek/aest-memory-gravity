@@ -1,0 +1,65 @@
+name: GE19 H4F3d9 Original FD4 FD8 Stencil Budget Compiler
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json'
+      - 'ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py'
+      - '.github/workflows/ge19-h4f3d9-original-fd4-fd8-stencil-budget.yml'
+
+jobs:
+  source-bound-exact-stencils:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Original FD4 FD8 exact rational moments and conditional Taylor constants
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json)" = "98e6fd8835fdbe3bd169d062431eefe80a3e9232"
+          test "$(git rev-parse HEAD:ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py)" = "15045454c35bd3d1fc9f4014ece5cd7736e5b1c7"
+          python3 -m py_compile ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py
+          mkdir -p results
+          python3 -B -m ge19.h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler \
+            --json-out results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler.json \
+            > results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F3D9_EXACT_FD4_FD8_STENCIL_CONSTANTS_PASS_PHYSICAL_BUDGET_OPEN"
+          assert d["all_stencil_compiler_gates_pass"] is True
+          assert all(v["exact"] for v in d["frozen_source_blobs"].values())
+          assert all(d["original_operator_and_source_scheme_binding"].values())
+          for p,rows in ((4,5),(8,9)):
+            a=d[f"FD{p}_exact_original_stencil"]
+            assert a["original_row_count"]==rows
+            assert a["all_moment_and_positive_remainder_gates"] is True
+            for row in a["distinct_original_rows"]:
+              assert row["degree_p_polynomial_exact"] is True
+              assert len(row["moments_degree_0_to_p_exact"])==p+1
+              assert row["moments_degree_0_to_p_exact"]==[
+                "1" if j==1 else "0" for j in range(p+1)]
+          for key in ("physical_M5_M9_envelopes_certified",
+                      "piecewise_R1_differentiability_bound_certified",
+                      "Y_zero_set_C9_regularization_bound_certified",
+                      "roundoff_propagation_bound_certified",
+                      "full_physical_FD4_FD8_structural_budget_complete",
+                      "actual_H4F3b_or_H4F3d6_physical_arrays_loaded",
+                      "full_H4_Noether_certified","Z21_certified","lensing_licensed"):
+            assert d[key] is False,key
+          print("GE19_H4F3D9_ORIGINAL_STENCIL_CONSTANTS_PASS_PHYSICAL_BUDGET_OPEN")
+          PY
+          sha256sum results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler.json
+          wc -c results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d9_original_fd4_fd8_stencil_budget_compiler
+          path: |
+            results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler.json
+            results/ge19_h4f3d9_exact_fd4_fd8_stencil_budget_compiler_FULL.log
+          retention-days: 90
