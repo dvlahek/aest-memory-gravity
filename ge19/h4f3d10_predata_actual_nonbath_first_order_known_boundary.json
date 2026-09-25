@@ -25,5 +25,6 @@
   "signed_known_ward": "known_parent-partial_chi(known_boundary)",
   "unresolved_exact_terms": "sum_i E_i00 F_i21,chi-partial_chi(L21 E_L00-b21 E_b00); genuine Z21 dependent background/action boundary. Preserve, not zero by assumption.",
   "registered_checks": "Exact SHA of every frozen code/physical parent; six C/Nt cases; all 8 fields; original GE06 stable-Z and GE07 first directional action coefficients; exact Lambda derivatives; both FD4 and FD8 physical-time Euler divergences; spectral chi, Nx128 exact m<=40 product; save complex E10/E11 and known signed parent/boundary by field and cohort; no physical smallness gate.",
+  "archive_only_fft_comparison_relative_tolerance": 1e-12,
   "status": "PREDATA_ONLY_ACTUAL_PHYSICAL_OPEN_FULL_NOETHER_Z21_LENSING_BLOCKED"
 }
