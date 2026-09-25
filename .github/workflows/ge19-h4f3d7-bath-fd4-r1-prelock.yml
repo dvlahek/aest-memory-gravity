@@ -1,0 +1,43 @@
+name: GE19 H4F3d7 Bath FD4 Versus Original R1 ODE Prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json'
+      - '.github/workflows/ge19-h4f3d7-bath-fd4-r1-prelock.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lock first original-R1/FD4 diagnostic and immutable parents
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json)" = "ccf3185b4f790d9d6068f80beb39a442b186158c"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          test "$(git rev-parse HEAD:docs/ge19_h4f3d6_valid_local_actual_bath_parent_ward_subset_freeze.md)" = "a78dee66657a1c9fddb952d29a1084a9f48ce3ea"
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json"))
+          assert p["classification"]=="GE19_H4F3D7_PREDATA_PHYSICAL_BATH_FD4_VERSUS_FROZEN_R1_INTERVAL_ODE"
+          assert p["frozen_actual_inputs"]["H4F3D6_JSON_SHA256"]=="4607edde17c6820c85f32c0bbd774d5a58148eb01bfd0c81ce592e8c1b907791"
+          assert p["frozen_actual_inputs"]["H4F3D6_NPZ_SHA256"]=="17b50c6ee584b2a8886f7114a90ea9396a127172dd9e02976b0e6275fe2fedc0"
+          assert p["frozen_actual_inputs"]["original_Repair24_ODE_and_stepper_blob"]=="fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          assert p["cohorts"]["Nt"]==[128,64]
+          assert p["cohorts"]["positive_modes"]==[3,5,8,10,15,20]
+          assert p["cohorts"]["Nq"]==2048
+          assert p["registered_gates"]["no_new_physical_on_shell_smallness_threshold"] is True
+          assert p["registered_gates"]["both_one_sided_interior_interval_derivatives_reported"] is True
+          assert p["registered_gates"]["original_report_only_H4F3D6_Euler_absolute_norm_reproduction_relative_max"]==1e-10
+          assert p["independent_remaining_work"]["Z21"].startswith("Only a separately valid full")
+          assert p["status"]=="PREDATA_ONLY_NO_PHYSICAL_DIAG_RUN"
+          assert "no_fitted_clock" in p["prohibitions"]
+          assert "no_unregistered_fast_node_exclusion" in p["prohibitions"]
+          print("GE19_H4F3D7_BATH_FD4_R1_PREDATA_PRELOCK_PASS")
+          PY
