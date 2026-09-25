@@ -1,0 +1,57 @@
+{
+  "classification": "GE19_H4F3C_PREDATA_REAL_FROZEN_Q_LAMBDA_MANUFACTURED_RUNTIME",
+  "purpose": "Exercise genuine frozen GE06 and GE07 mixed Q generators and frozen Lambda mixed source on deterministic smooth manufactured H1/Z11 directions, without certified Z11 binary and without stubbing any of those three generators. Closes H4F3b synthetic fixture coverage gap before the actual corrected-parent source run.",
+  "frozen_source_blobs": {
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair14_self_consistent_reduced_h3_z20_particular.py": "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge07/pressureless_matter_directional_source_generator.py": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+    "ge19/h4f3b_actual_corrected_six_piece_source.py": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "docs/ge19_h4f3b_synthetic_production_wiring_valid_freeze.md": "564211a52941976015dfec81e30618d3aacb5d3f"
+  },
+  "manufactured_input_contract": {
+    "Nt": [
+      16,
+      32
+    ],
+    "Nx": 128,
+    "C": "C_star",
+    "H": "positive smooth deterministic, x=ln(a)",
+    "a": "exp(x), x uniform on [ln(0.42),ln(0.83)]",
+    "Z_action": "positive finite manufactured (no on-shell assumption)",
+    "rho_lambda_action": "positive constant manufactured",
+    "perturbations": "two independent complex Fourier H1 and Z11 direction arrays [6 modes,6 fields,Nt] and physical H1dot and Z11dot [6 modes,4 fields,Nt]; no reuse of actual certified parent arrays",
+    "beta": "not required for GE06/GE07/Lambda cross",
+    "target_modes": "positive m=0..40 via unchanged fft_low",
+    "generators": "r7.load_frozen_generator GE06/GE07 into disposable working directory, r7.build_stable_ge06_generator_v2 and r37.build_direct_bilinear_generators; r37.q_cross_direct and r37.lambda_cross_direct unchanged"
+  },
+  "gates": {
+    "exact_blob_pins": true,
+    "all_symbolic_GE06_GE07_polarization_identities_true": true,
+    "all_genuine_evaluator_outputs_finite": true,
+    "all_GE06_and_GE07_main_constraint_shapes_true": true,
+    "swap_symmetry_relative_L2_max": 1e-12,
+    "lambda_direct_expanded_relative_L2_max": 1e-12,
+    "lambda_swapped_relative_L2_max": 1e-12,
+    "lambda_constraint_rows_exact_zero": true,
+    "nonzero_GE06_and_GE07_mixed_direct_source": true,
+    "nonzero_Lambda_main_source": true,
+    "all_Nt_cases_complete": true,
+    "no_old_result_files_overwritten": true
+  },
+  "outcomes": {
+    "GENERATOR_MANUFACTURED_RUNTIME_PASS": "Genuine frozen nonlinear mixed Q and Lambda generators run with exact symmetrization and expected shapes on both deterministic manufactured grids, with no parent-science claim. Retain missing real Z11 input gate.",
+    "GENERATOR_MANUFACTURED_RUNTIME_FAIL": "Freeze the failed numerical/symbolic test and do not infer physical-source or Z21 result.",
+    "IMPLEMENTATION_FAIL": "Missing exact pinned source, import/runtime failure or invalid manufactured background; no science inference."
+  },
+  "stop": {
+    "certified_H3F_H3G_Z11_parent_consumed": false,
+    "H4F3b_actual_six_source_executed": false,
+    "complete_all_sector_H4_Noether_derived": false,
+    "H4_Z21_solved": false,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "active_shift_threshold_1e_minus6_unchanged": true
+  }
+}
