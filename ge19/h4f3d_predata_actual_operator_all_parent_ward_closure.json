@@ -1,0 +1,95 @@
+{
+  "classification": "GE19_H4F3D_PREDATA_OPERATOR_PLUS_ALL_PARENT_WARD_ON_ACTUAL_SIX_SOURCE",
+  "scope": "One integrated structural H4 Ward/Noether audit on the exact verified H4F3B real corrected six-piece source, its original certified H1/Z11/H3F Z20/H3G q20 and Repair26 R1 bath; separately derive/evaluate unchanged GE19 canonical linear-operator Ward plus all signed background/H1/Z11/Z20/q20/dust/bath Euler residual and boundary terms on one common x=ln(a) representation. This is not an H4/Z21 state solve or a source correction.",
+  "frozen_actual_source": {
+    "classification": "GE19_H4F3B_ACTUAL_CORRECTED_SIX_SOURCE_PASS_FULL_WARD_OPEN",
+    "JSON_sha256": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1",
+    "JSON_bytes": 17898,
+    "NPZ_sha256": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b",
+    "NPZ_bytes": 30913364,
+    "FULL_log_sha256": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1",
+    "independent_binary_audit": "146 numeric fields all finite; all 18 C/beta/Nt cases 8 by Nt by 41; sum of actual six pieces exactly equals saved source.",
+    "freeze_file": "docs/ge19_h4f3b_actual_corrected_six_source_valid_local_freeze.md"
+  },
+  "frozen_physical_parents": {
+    "H3F_Z20_JSON_sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b",
+    "H3F_Z20_NPZ_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "H3G_q20_JSON_sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4",
+    "H3G_q20_NPZ_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "Repair32B_Z11_NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+    "Repair32C_Z11_certification_JSON_sha256": "037314effa33c5bfaf51f6f3c72459de43cb486c6ef5e9a94f5b1984a68611b9",
+    "Repair13_background_NPZ_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd2361405a6f8",
+    "Repair26_R1_trace_bytes": 26643162
+  },
+  "frozen_code_blobs": {
+    "H4F3_orig_predata": "3e17163cb6f52f3a78c41e6f37f83ef682359162",
+    "H4F3B_source_predata": "c3362f5360c2a9951d77060027c82830c031c145",
+    "H4F3B_source_code": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "H4F2B_signed_mixed_Ward": "ab783ffe8242d8ff455647df8664a074f725ee81",
+    "H4F2H_physical_clock": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "Repair07_canonical_linear_operator": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "Repair37_fd8_and_source_evaluators": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "H4F3C_actual_unmocked_generator_integration": "be3b1d29f3f3a6110883ede801c99d121a2755ee"
+  },
+  "cohorts": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "beta": [
+      1,
+      0.5,
+      0.1
+    ],
+    "Nt": [
+      128,
+      64
+    ],
+    "modes": "0..40; evaluate original active mask on physical m=1..40",
+    "registered_hotspot": {
+      "C": "C_max",
+      "beta": 1,
+      "m": 8,
+      "Nt": 128,
+      "index": 3
+    },
+    "common_grid": "exact saved H4F3B x_primary/x_control and all original parent arrays, no reinterpolation of one source piece alone"
+  },
+  "analytic_terms_required": [
+    "GE19 signed mixed spatial Ward W21 with physical epsilon^2 eta derivative (no factorial rescaling): sum of E00*F21,x + 2E10*F11,x + 2E11*F10,x - d_x B21 - d_t E_b21.",
+    "Exact row projection E_L=(E_iso+2 E_anisotropy)/3 and separate independent lapse, shift and anisotropy constraints in frozen GE19 operator.",
+    "Signed actual six-piece source Ward from H4F3B, with frozen H*FD8 on GE06/GE07/Lambda/Y and H*FD4 on GE05 M1/M2; source Ward alone is not zero or a standalone gate.",
+    "Independent GE19 canonical linear-operator Ward calculated from the same unchanged GE06/GE07/Lambda operator and its actual coefficient/background/time convention. Prove any trial Z21 cancellation analytically before using a manufactured H4 field as a diagnostic.",
+    "Explicit signed Euler residuals for frozen homogeneous background, on-shell H1, certified Z11, corrected H3F Z20, corrected H3G normalized-bath q20, GE07 T/rho and per-node GE05 bath, retaining the actual off-shell boundary terms.",
+    "Each parent residual evaluated on exactly the same Nt128/Nt64 x=ln(a) grid as H4F3B source and independently reported before summing.",
+    "Complete per-piece and all-sector actual Ward equality, including complex absolute defect and original local backward-error scale at registered m8 hotspot and full original active window; never normalize by a selectively altered RHS."
+  ],
+  "execution_contract": {
+    "first_gate": "Versioned analytic operator+parent coefficient derivation and per-sector Euler source signs, frozen before evaluating physical H4F3B arrays.",
+    "second_gate": "One integrated full actual-source+linear-operator+all-parent+boundary Ward test on same physical grids and 18 cohorts, with source-only Ward never required to vanish.",
+    "no_fake_certification": "Unproven analytic term or unavailable frozen parent is classification H4F3D_UNRESOLVED, not a numerical science PASS.",
+    "discrete_time": "Original H*FD8/H*FD4 source sector scheme and original FD4 canonical linear operator must remain separate unless a proved common discretization operator is preregistered.",
+    "numerical_tolerance": "Structural Ward tolerance must be justified and preregistered from the derived identity and the FD8/FD4 truncation error on Nt128/Nt64 before the first full-gate numerical execution; no a posteriori fit to a hotspot.",
+    "H4_Z21_solver_executed": false,
+    "next_if_structural_PASS": "Separate science Z21 preregistration on certified corrected parents with unchanged active-shift <=1e-6 and matched L_inf/L2 temporal order >=2.5."
+  },
+  "outcomes": {
+    "FULL_ALL_SECTOR_H4_WARD_STRUCTURAL_PASS": "Exact analytic signed operator/source/parent identity and all registered actual-grid physical structural gates pass; licenses a separately preregistered Z21 science attempt, not certification.",
+    "FULL_ALL_SECTOR_H4_WARD_STRUCTURAL_FAIL": "All inputs and analytic identity valid but a registered physical structural gate fails; freeze exact per-sector complex defect and parent contributions, do not patch a single shift source.",
+    "H4F3D_UNRESOLVED": "Incomplete analytic operator/parent residual or unavailable certified inputs; freeze precise missing term, make no physical identity claim.",
+    "IMPLEMENTATION_FAIL": "Code/provenance/source array/parent hash/boundary or execution fault; no physical science inference."
+  },
+  "stop": {
+    "no_source_Ward_zero_gate": true,
+    "no_posthoc_target_or_mask": true,
+    "original_active_shift_target_1e_minus6_unchanged": true,
+    "original_temporal_order_min_2p5_unchanged": true,
+    "no_Z21_solve": true,
+    "no_lensing": true,
+    "historical_Repair37_science_FAIL_immutable": true,
+    "historical_Repair38_to_44_diagnostic_only": true
+  },
+  "status": "PREDATA_ONLY_FULL_H4_OPERATOR_PARENT_IDENTITY_NOT_YET_DERIVED_OR_RUN"
+}
