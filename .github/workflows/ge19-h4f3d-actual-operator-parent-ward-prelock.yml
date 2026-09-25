@@ -1,0 +1,42 @@
+name: GE19 H4F3d Actual Operator All-Parent Ward Prelock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json'
+      - '.github/workflows/ge19-h4f3d-actual-operator-parent-ward-prelock.yml'
+
+jobs:
+  prelock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check actual six-source inputs, signed operator/parent identity and no-Z21 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json)" = "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51"
+          test "$(git rev-parse HEAD:docs/ge19_h4f3b_actual_corrected_six_source_valid_local_freeze.md)" = "578768817615807260afc2d7baaa24d2c4928858"
+          test "$(git rev-parse HEAD:docs/ge19_h4f3c_genuine_mixed_generators_manufactured_valid_freeze.md)" = "a9f929203a072dae66d50d8781f64440e2ede184"
+          test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
+          test "$(git rev-parse HEAD:ge19/repair07_window_retarded_reduced_h3_z20_particular.py)" = "e34d28a2062c748f48bc82fa928844b02631de25"
+          test "$(git rev-parse HEAD:ge19/h4f2h_physical_time_source_ward_bridge.py)" = "65ce1e68a2f77e063c4bb8848d770abb4baeeebf"
+          python3 - <<'PY'
+          import json
+          p=json.load(open("ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json"))
+          assert p["classification"]=="GE19_H4F3D_PREDATA_OPERATOR_PLUS_ALL_PARENT_WARD_ON_ACTUAL_SIX_SOURCE"
+          assert p["frozen_actual_source"]["classification"]=="GE19_H4F3B_ACTUAL_CORRECTED_SIX_SOURCE_PASS_FULL_WARD_OPEN"
+          assert p["frozen_actual_source"]["NPZ_sha256"]=="787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b"
+          assert p["frozen_physical_parents"]["Repair32B_Z11_NPZ_sha256"]=="5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327"
+          assert p["cohorts"]["Nt"]==[128,64]
+          assert p["cohorts"]["registered_hotspot"]=={"C":"C_max","beta":1,"m":8,"Nt":128,"index":3}
+          assert p["execution_contract"]["H4_Z21_solver_executed"] is False
+          assert p["stop"]["no_source_Ward_zero_gate"] is True
+          assert p["stop"]["original_active_shift_target_1e_minus6_unchanged"] is True
+          assert p["stop"]["no_Z21_solve"] is True
+          assert p["status"]=="PREDATA_ONLY_FULL_H4_OPERATOR_PARENT_IDENTITY_NOT_YET_DERIVED_OR_RUN"
+          print("GE19_H4F3D_OPERATOR_ALL_PARENT_WARD_PREDATA_PRELOCK_PASS")
+          PY
