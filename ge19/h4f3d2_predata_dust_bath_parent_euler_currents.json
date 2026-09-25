@@ -20,7 +20,7 @@
     "dust_constraint": "E_rho=N L R^2 [W^2-(Tx/L)^2-1]",
     "bath_current": "Jt_q=N L R^2 A(q) A^t/2, Jx_q=N L R^2 A(q) A^x/2",
     "bath_local": "partial L/partial q=-N L R^2 omega(omega q-sqrt(w)Xphi)/2",
-    "FLRW_first_dust": "E_rho10=2 a^3 rho0 (dTt-dN); Jt_T10=2 a^3 rho0(dL/a+2dR/a+drho/rho0+dTt-dN); Jx_T10=-2 a^3 rho0 db-2 a rho0 dTx",
+    "FLRW_first_dust": "E_rho10=2 a^3 (dTt-dN); Jt_T10=2 a^3 rho0(dL/a+2dR/a+drho/rho0+dTt-dN); Jx_T10=-2 a^3 rho0 db-2 a rho0 dTx",
     "FLRW_first_bath": "Jt_q10=a^3 dqt/2; Jx_q10=0; partial L/partial q|10=-a^3 omega(omega dq-sqrt(w)(Q du+dpx/a))/2",
     "parent_ward": "For each scalar dust T,rho and each bath scalar q_j: E_i00 F_i21,x +2 E_i10 F_i11,x+2 E_i11 F_i10,x, sum over bath nodes. E_T00=0 only after frozen homogeneous dust continuity, E_rho00=0 on frozen normalization, E_q00=0 at q=0,Xphi=0."
   },
@@ -47,5 +47,13 @@
     "no_change_original_shift_1e_minus6": true,
     "no_change_matched_order_2p5": true
   },
-  "status": "PREDATA_ONLY"
+  "status": "PREDATA_ONLY",
+  "pre_execution_correction": {
+    "earlier_prereg_commit": "7cb9e644a307fc4c7fbbbebc418da697233eb566",
+    "original_blob": "287cae3b27d08762b1fa3fb849e4c91455e7b6d8",
+    "reason": "The rho multiplier Euler derivative E_rho = dL/d rho is independent of rho. The original prereg E_rho10 erroneously multiplied its linearized coefficient by rho0. Corrected BEFORE implementation/CI/science data; no gate, source file or numeric result existed for the earlier version.",
+    "old_formula": "E_rho10=2 a^3 rho0 (dTt-dN)",
+    "corrected_formula": "E_rho10=2 a^3 (dTt-dN)",
+    "no_posthoc_data_use": true
+  }
 }
