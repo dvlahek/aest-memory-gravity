@@ -1,0 +1,162 @@
+{
+  "classification": "GE19_H4F3D7R1_ACTUAL_PHYSICAL_DIAGNOSTIC_DECOMPOSITION_PASS_FULL_NOETHER_OPEN",
+  "date": "2026-09-25",
+  "original_python_classification": "GE19_H4F3D7_FD4_INTERVAL_ODE_DISCREPANCY_DECOMPOSED",
+  "method": "Retrospective independent integrity, shape, L2-bin closure and provenance audit of the original user-local physical H4F3d7r1 run. Does not introduce or post-register a science threshold.",
+  "immutable_inputs": {
+    "original_d7_git_blob": "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8",
+    "versioned_single_expression_physical_module_git_blob": "e4cb9d6638b427368647a29b86ccf5445b43d7a2",
+    "versioned_runner_git_blob": "6bdee189cf795a04e4d1b19822af6ed778b5af46",
+    "original_d7_predata_git_blob": "ccf3185b4f790d9d6068f80beb39a442b186158c",
+    "repair_predata_git_blob": "f404c1b910e9dbcb342fbc4d3403fb83108697f7",
+    "physical_runner_head": "e9987882493feee2461c43c969b4624cff3ba4eb"
+  },
+  "physical_artifacts": {
+    "json": {
+      "filename": "ge19_h4f3d7r1_physical_r1_fd4_vs_interval_ode.json",
+      "sha256": "031229d570d29ae9c4ea0ab8e25222d94e9cda4520c991cd203e9d7b97e01dc9",
+      "bytes": 35579
+    },
+    "npz": {
+      "filename": "ge19_h4f3d7r1_physical_r1_fd4_vs_interval_ode.npz",
+      "sha256": "4f011c96c2c11165df6332eafc459c5d2c5e7bc5164a436bde3d1563696f0e13",
+      "bytes": 147857
+    },
+    "full_log": {
+      "filename": "ge19_h4f3d7r1_physical_r1_fd4_vs_interval_ode_FULL.log",
+      "sha256": "031229d570d29ae9c4ea0ab8e25222d94e9cda4520c991cd203e9d7b97e01dc9",
+      "bytes": 35579
+    },
+    "runner_log": {
+      "filename": "ge19_H4F3D7R1_LOCAL_runner.log",
+      "sha256": "39b1809b22c817ae25cb81ffaa7f52d7f2e2d537a86c90346515405a5d5b997f",
+      "bytes": 4376
+    },
+    "full_log_byte_identical_to_json": true,
+    "runner_printed_json_npz_full_sha256_matches_uploaded_bytes": true
+  },
+  "original_physical_input_sha256_from_local_locked_runner": {
+    "six_source_json": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1",
+    "six_source_npz": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b",
+    "bath_parent_d6_json": "4607edde17c6820c85f32c0bbd774d5a58148eb01bfd0c81ce592e8c1b907791",
+    "bath_parent_d6_npz": "17b50c6ee584b2a8886f7114a90ea9396a127172dd9e02976b0e6275fe2fedc0",
+    "repair26_r1_trace": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+  },
+  "independent_checks": {
+    "local_preflight_hashes_and_original_parent_checks_logged_pass": true,
+    "six_unique_original_C_by_Nt_cases": true,
+    "case_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "time_grid_sizes": [
+      64,
+      128
+    ],
+    "n_original_r1_frequency_nodes_each": 2048,
+    "n_positive_modes_each": 6,
+    "beta_duplicates_not_independent_bath_trajectories": true,
+    "all_case_unchanged_pre_registered_diagnostic_gates_pass": true,
+    "original_r1_weighted_z10_relative_norm_reproduction_all_six": 0,
+    "original_d6_absolute_norm_reproduction_all_six": 0,
+    "npz_exact_expected_arrays": 44,
+    "npz_all_numeric_arrays_finite": true,
+    "full_npz_key_set_and_shapes_match_all_six": true,
+    "independent_npz_vs_json_five_global_norms_each_pass_at_rtol": 1e-12,
+    "all_four_preregistered_phase_counts_sum_to_2048_times_Nt_minus_one": true,
+    "every_original_interval_ODE_and_fd4_defect_phase_bin_squared_norm_reconstructs_global_norm": true,
+    "maximum_reported_algebraic_identity_relative_natural": 2.289808148773898e-16,
+    "original_left_and_right_interval_sides_retained": true,
+    "no_nodes_or_modes_discarded": true,
+    "no_new_bath_on_shell_smallness_gate": true
+  },
+  "six_physical_cases": [
+    {
+      "C": "C_min",
+      "Nt": 128,
+      "FD4_L2": 0.00009532128838249343,
+      "FD4_relative_original_natural_report_only": 0.9985018009839012,
+      "interval_ODE_left_L2": 2.2437179024765838e-11,
+      "interval_ODE_right_L2": 2.2052526877758007e-11,
+      "FD4_derivative_defect_left_L2": 0.00009532127483977681,
+      "phase_ge_1_count": 2527,
+      "all_node_interval_count": 260096,
+      "phase_ge_1_fraction_defect_left_L2_squared": 0.9999999999996356
+    },
+    {
+      "C": "C_star",
+      "Nt": 128,
+      "FD4_L2": 0.00009684778205175287,
+      "FD4_relative_original_natural_report_only": 0.998639635826373,
+      "interval_ODE_left_L2": 2.2413784906860675e-11,
+      "interval_ODE_right_L2": 2.2016801920542272e-11,
+      "FD4_derivative_defect_left_L2": 0.00009684776850305503,
+      "phase_ge_1_count": 2527,
+      "all_node_interval_count": 260096,
+      "phase_ge_1_fraction_defect_left_L2_squared": 0.9999999999996467
+    },
+    {
+      "C": "C_max",
+      "Nt": 128,
+      "FD4_L2": 0.00009269917659808491,
+      "FD4_relative_original_natural_report_only": 0.9985854643935035,
+      "interval_ODE_left_L2": 2.242389483774484e-11,
+      "interval_ODE_right_L2": 2.203665926734086e-11,
+      "FD4_derivative_defect_left_L2": 0.00009269916165242799,
+      "phase_ge_1_count": 2527,
+      "all_node_interval_count": 260096,
+      "phase_ge_1_fraction_defect_left_L2_squared": 0.9999999999996148
+    },
+    {
+      "C": "C_min",
+      "Nt": 64,
+      "FD4_L2": 0.0000672402239803381,
+      "FD4_relative_original_natural_report_only": 0.9989990588947104,
+      "interval_ODE_left_L2": 3.207639590374972e-11,
+      "interval_ODE_right_L2": 3.096433024176667e-11,
+      "FD4_derivative_defect_left_L2": 0.00006724014217146567,
+      "phase_ge_1_count": 1789,
+      "all_node_interval_count": 129024,
+      "phase_ge_1_fraction_defect_left_L2_squared": 0.999999999999405
+    },
+    {
+      "C": "C_star",
+      "Nt": 64,
+      "FD4_L2": 0.0000662707424941582,
+      "FD4_relative_original_natural_report_only": 0.9993411932629498,
+      "interval_ODE_left_L2": 3.212391747383499e-11,
+      "interval_ODE_right_L2": 3.099945867002618e-11,
+      "FD4_derivative_defect_left_L2": 0.00006627065478684397,
+      "phase_ge_1_count": 1789,
+      "all_node_interval_count": 129024,
+      "phase_ge_1_fraction_defect_left_L2_squared": 0.9999999999993873
+    },
+    {
+      "C": "C_max",
+      "Nt": 64,
+      "FD4_L2": 0.00006584600693053042,
+      "FD4_relative_original_natural_report_only": 0.9988721370575273,
+      "interval_ODE_left_L2": 3.221939211067709e-11,
+      "interval_ODE_right_L2": 3.108027718767501e-11,
+      "FD4_derivative_defect_left_L2": 0.00006584591321413206,
+      "phase_ge_1_count": 1789,
+      "all_node_interval_count": 129024,
+      "phase_ge_1_fraction_defect_left_L2_squared": 0.9999999999993796
+    }
+  ],
+  "interpretation": "The large sampled FD4 GE05 bath residual is quantitatively accounted for by the sampled derivative defect concentrated at the original phi>=1 node-intervals; original frozen R1 interval-ODE side residuals are several million times smaller. This is a diagnostic decomposition, not independent reproduction of all original raw parent arrays or full-action off-shell/on-shell physical Ward.",
+  "evidence_limitations": {
+    "original_raw_H3F_H3G_Z11_R1_and_six_source_parent_NPZs_not_in_this_user_upload": true,
+    "original_underlying_2048_by_6_by_Nt_complex_state_arrays_not_in_saved_d7r1_NPZ": true,
+    "only_aggregate_mode_time_L2_and_phase_bin_norms_independently_recomputed": true,
+    "cannot_rederive_original_ODE_from_original_raw_parent_fields_using_these_four_artifacts_alone": true,
+    "no_physical_bath_on_shell_claim": true,
+    "no_independent_all_sector_full_Noether_claim": true,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "original_Repair37_science_fail_immutable": true
+  },
+  "next_route": "FREEZE_PHYSICAL_D7R1_DIAGNOSTIC_AND_EVALUATE_ACTUAL_NONBATH_PARENT_EULER_BOUNDARY_AND_FULL_ALL_SECTOR_WARD_WITH_FROZEN_SOURCE",
+  "commit_uploaded_binary_files_to_git": false
+}
