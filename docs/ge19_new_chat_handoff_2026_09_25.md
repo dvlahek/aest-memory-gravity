@@ -39,3 +39,42 @@ Other valid recent CI: H4F3d5 normalized Euler [36126850777](https://github.com/
 ## Operating rules
 
 Use Croatian for conversational work and the user's problem-first academic style (simple, precise, avoid inflated claims). New code/prereg/result documents should be versioned, action-locked and preserved in GitHub; do not edit historical Repair07/22/27/32/37--44 or relabel their outcomes. Read/check exact GitHub files, source blobs and CI logs; `success` is not automatically a physical science PASS—inspect marker, classification and claim boundary. Use local CPU for hash-locked actual physical binary runs only when necessary. No background promises. Update `docs/ge19_history.md` after confirmed results, freezing artifacts and code hashes. Do not proceed to new Z21 until full actual H4 Noether passes.
+
+## Post-handoff actual D10 archive outcome and versioned D10r1 (2026-09-25)
+
+Original physical H4F3d7r1 diagnostic was independently hash-audited
+PASS as an FD4-versus-original interval-ODE **decomposition only**.
+H4F3d10 restricted eight-field actual H1/Z11 nonbath Euler
+and signed known L/b boundary were subsequently run on all six
+original C/Nt cohorts. Original H4F3d10 original-parent/code locks
+PASS, all 530 original NPZ arrays finite, but its archived
+`m0..40` inverse-FFT check on unprojected near-zero
+Euler rows fails in every case (max relative 0.395–0.472):
+original classification **UNRESOLVED**; do not relabel.
+Independent low-mode known parent/boundary/ward internal
+identities close around `1e-16`. The unsaved high
+`m41..64` band of near-zero `E_rho10/E_T11` accounts
+for the archive projection mismatch. Original D10 JSON
+SHA256 `df4240b40aa7f3b787e36dd0fd87212c6dcb746b35278f6cb36fc1083aa4ea21`,
+NPZ `1b9ff8e421f2b9241cd0ffbc65967ecc4f5efc8afc43d5747ae1216f5d944fab`.
+Manifest `ge19/h4f3d10_original_physical_archive_projection_failure_independent_audit.json`.
+
+New preregistered H4F3d10r1 **implementation-only**
+lossless Fourier archive retains original low
+`m0..40` arrays BITWISE and explicitly saves
+all `m41..64` positive bins; full-Nyquist inverse
+reconstruction retains the original `1e-12`
+archive-only threshold. Dedicated CI
+[36169632733](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36169632733)
+is STATIC PASS; actual local r1 physical run is OPEN.
+New runner:
+`bash ge19/run_local_h4f3d10r1_lossless_fourier_archive_repair.sh`.
+Details, exact blobs, SHA evidence and stop conditions:
+`docs/ge19_h4f3d10_original_physical_archive_failure_and_r1_static_freeze.md`
+(blob `154ef2d35c5556c1b9e4d00935d27ac0b7a649a2`).
+Do not interpret small known boundary or nonzero
+`W_known` as full H4 Noether.
+Unknown `E_i00*F_i21,chi`, original
+`L21*E_L00-b21*E_b00`, complete H4 Ward
+and a valid physical FD4/FD8 error bound remain
+unresolved. No certified Z21 or lensing.
