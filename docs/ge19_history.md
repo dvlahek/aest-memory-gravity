@@ -4175,3 +4175,79 @@ physical Noether NOT CERTIFIED; Z21 NOT CERTIFIED;
 lensing blocked. Preserve historical Repair37 SCIENCE_FAIL,
 Repair38–44 diagnostics, original shift 1e-6 and
 temporal-order >=2.5 gates.
+
+---
+
+## Latest checkpoint — H4F3d7r1 one-expression physical output gate implementation repair; STATIC PASS, physical OPEN (2026-09-25)
+
+The user-local ORIGINAL H4F3d7 physical run reached
+`physical_run`'s final `valid` gate and stopped with
+`AttributeError: 'list' object has no attribute 'values'`
+at source lines 422–423. Its uploaded original
+`ge19_h4f3d7_physical_r1_fd4_vs_interval_ode_FULL.log`
+contains the traceback, not a certified JSON/NPZ
+physics result. This is a NEW local implementation failure,
+not a retroactive alteration of original H4F3d7 compiler
+PASS `36148151670` or any physical science verdict.
+
+The original source blob
+`b598a5cc49b3d87827b4758c55d3ce7f3a1198a8`,
+original runner
+`6fe12ef99f9a469da8f5913121d3301df519aae2`
+and frozen H4F3d7 predata
+`ccf3185b4f790d9d6068f80beb39a442b186158c`
+remain immutable. New separate one-expression implementation
+preregistration
+`ge19/h4f3d7r1_predata_physical_output_finite_check_repair.json`
+(blob `f404c1b910e9dbcb342fbc4d3403fb83108697f7`),
+repaired physical implementation
+`ge19/h4f3d7r1_physical_output_finite_check_repair.py`
+(blob `e4cb9d6638b427368647a29b86ccf5445b43d7a2`)
+and versioned isolated local runner
+`ge19/run_local_h4f3d7r1_physical_output_finite_check_repair.sh`
+(blob `6bdee189cf795a04e4d1b19822af6ed778b5af46`)
+do not overwrite the old log or files.
+The ONLY Python source difference is replacing
+a broken `stored.values()` call on a list by
+`all(np.isfinite(arr).all() for arr in outputs.values())`
+inside the final original six-case `valid` gate.
+Original physical equations, both R1 interval sides,
+all 2048 nodes and frequency bins, FD4, all input hashes
+and all threshold values remain unchanged.
+
+Versioned static regression workflow blob
+`f0452ff9667e734bd39d45c692020ebe49e913eb`
+passed [Actions 36153973088](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36153973088),
+job `108133895719`. Terminal marker:
+`GE19_H4F3D7R1_EXACT_SINGLE_FINITE_GATE_REPAIR_STATIC_PASS_PHYSICAL_OPEN`.
+CI checked the exact one-expression old/new diff and the
+actual new AST valid gate with finite, NaN and +/-Inf arrays,
+six-case/pass failures, locked source, isolated bash
+and distinct output paths. The preceding static workflow
+`36153886957` was an implementation-only YAML heredoc
+test-fixture indentation FAIL, corrected without modifying
+the new physics-source blob.
+
+Separate frozen document:
+`docs/ge19_h4f3d7r1_physical_output_finite_repair_static_valid_freeze.md`,
+blob `e1f8aaa72123bebcc35227c4a7560da7eef167d9`.
+
+**NEXT:** execute the versioned local physical runner
+ONLY on exact user-local certified original H4F3b/d6,
+H3F/H3G, Repair32B/32C Z11, Repair13 and Repair26
+R1 bytes; save its *distinct* `ge19_h4f3d7r1_...`
+JSON, NPZ, FULL and runner logs, independently verify
+hashes and all six physical cases, then freeze physical
+decomposition or its precise remaining gate failure.
+The original H4F3d6 near-unit sampled GE05 bath Euler
+remains open until the actual physical FD4/ODE diagnostic.
+H4F3d8 restricted symbolic PASS and H4F3d9 stencil
+constants PASS remain separately frozen; missing actual
+nonbath physical residuals and complete preregistered
+FD4/FD8 physical error bound still block the integrated
+H4 Ward. No new bath-on-shell gate, no Repair37
+SCIENCE_FAIL relabel, original active shift `1e-6`
+and order `>=2.5` unchanged.
+
+**Full actual H4 Noether NOT CERTIFIED;
+Z21 NOT CERTIFIED; lensing blocked.**
