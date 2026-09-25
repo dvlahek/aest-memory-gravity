@@ -1,0 +1,84 @@
+name: GE19 H4F3d10 Nonbath Parent Boundary Static Regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d10_*'
+      - 'ge19/run_local_h4f3d10_actual_nonbath_first_order_known_boundary.sh'
+      - '.github/workflows/ge19-h4f3d10-nonbath-static.yml'
+
+jobs:
+  nonbath-static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install archive regression dependency
+        run: python3 -m pip install numpy
+      - name: Audit exact locked source and dual signed-boundary regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d10_predata_actual_nonbath_first_order_known_boundary.json)" = "7aafe872f32057ab46ed99650b3df1803050077e"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_actual_nonbath_first_order_known_boundary.py)" = "c570546caa301ec6899b4e669b663726fd4fdc2f"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_nonbath_first_order_local_partials.py)" = "4c3968d7186e27f15b10992198d7bccedf207bfb"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_known_parent_boundary_assembly.py)" = "d3a43a0ebbd78e03f2313592bdb1455977cb1d1c"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_physical_main.py)" = "1eec8381ba107a02ba3dc41bfd18fcc7e12d224e"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d10_actual_nonbath_first_order_known_boundary.sh)" = "4c873192001a1fd8f3652a9e47ec13c11d999199"
+          test "$(git rev-parse HEAD:ge19/repair07_window_retarded_reduced_h3_z20_particular.py)" = "e34d28a2062c748f48bc82fa928844b02631de25"
+          test "$(git rev-parse HEAD:ge19/repair13_self_consistent_reduced_background_h1_reclosure.py)" = "362d63d03d7b850fceae393f535353ded79aeea7"
+          test "$(git rev-parse HEAD:ge06/analytic_aest_directional_source_generator.py)" = "a7afe0035054a9dca55d74a6497c081422114b4c"
+          test "$(git rev-parse HEAD:ge07/pressureless_matter_directional_source_generator.py)" = "cde8da77a80799cef00fc7c09c3633310fc9e3d4"
+          bash -n ge19/run_local_h4f3d10_actual_nonbath_first_order_known_boundary.sh
+          python3 - <<'PY'
+          import ast,json,importlib.util
+          from pathlib import Path
+          import numpy as np
+          names=(
+            "ge19/h4f3d10_actual_nonbath_first_order_known_boundary.py",
+            "ge19/h4f3d10_nonbath_first_order_local_partials.py",
+            "ge19/h4f3d10_known_parent_boundary_assembly.py",
+            "ge19/h4f3d10_physical_main.py")
+          for name in names:ast.parse(Path(name).read_text(),filename=name)
+          pre=json.loads(Path("ge19/h4f3d10_predata_actual_nonbath_first_order_known_boundary.json").read_text())
+          assert pre["archive_only_fft_comparison_relative_tolerance"]==1e-12
+          assert "E_i00 F_i21" in pre["unresolved_exact_terms"]
+          assert "L21 E_L00" in pre["unresolved_exact_terms"]
+          runner=Path("ge19/run_local_h4f3d10_actual_nonbath_first_order_known_boundary.sh").read_text()
+          assert 'TMP="$(mktemp -d)"' in runner
+          assert runner.index('cd "$TMP"')<runner.index('python3 -B -m ge19.h4f3d10_physical_main')
+          assert "GE19_H4F3D10_NO_OVERWRITE" in runner
+          assert "GE19_H4F3D10_ACTUAL_KNOWN_NONBATH_DIAGNOSTIC_PASS_FULL_OPEN" in runner
+          assert not Path("results/ge19_h4f3d10_actual_nonbath_first_order_known_boundary.json").exists()
+          spec=importlib.util.spec_from_file_location("d10asm",names[2])
+          asm=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(asm)
+          theta=2*np.pi*np.arange(128)/128
+          t=np.arange(10,dtype=float)[:,None]
+          kfund=0.25
+          def dx(q):
+              m=np.fft.fftfreq(128)*128
+              return np.fft.ifft(1j*kfund*m[None,:]*np.fft.fft(q,axis=1),axis=1).real
+          dx.kfund=kfund
+          F10={n:(.1+i*.01)*np.broadcast_to(np.cos(3*theta)[None,:],(10,128))
+               for i,n in enumerate(asm.FIELDS)}
+          F11={n:(.07+i*.012)*np.broadcast_to(np.sin(5*theta)[None,:],(10,128))
+               for i,n in enumerate(asm.FIELDS)}
+          X10={n:dx(z) for n,z in F10.items()}
+          X11={n:dx(z) for n,z in F11.items()}
+          E10={n:.3*F10[n]+.04*np.sin(7*theta)[None,:] for n in asm.FIELDS}
+          E11={n:.2*F11[n]+.03*np.cos(9*theta)[None,:] for n in asm.FIELDS}
+          terms,P,B,db,W=asm.known_signed(F10,X10,E10,F11,X11,E11,dx)
+          wrong=B+4*(F10["b"]*E11["b"]+F11["b"]*E10["b"])
+          assert np.linalg.norm(B-wrong)>0
+          assert np.linalg.norm(terms["b"])>0
+          arrays,rows,error,passed=asm.evaluate_pair(
+              F10,X10,F11,X11,{"FD4":(E10,E11),"FD8":(E10,E11)},dx)
+          assert passed and error<=1e-12 and len(arrays)>0
+          assert all(np.isfinite(a).all() for a in arrays.values())
+          assert all(np.linalg.norm(asm.recover(arrays[s+"_W_known"])-W)
+                     <=1e-12*max(np.linalg.norm(W),1e-300) for s in ("FD4","FD8"))
+          print("GE19_H4F3D10_STATIC_ASSEMBLY_PASS_ACTUAL_PHYSICAL_OPEN")
+          PY
