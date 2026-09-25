@@ -80,6 +80,8 @@ def normalized_symbolic():
     A3=a**3
     q=sw*z/omega
     qt=sw*v/(omega*tau)
+    q_local,qt_local=sp.symbols("q_local qt_local",real=True)
+    lag_raw=A3*(qt_local**2-(omega*q_local-sw*X)**2)/4
     J=A3*v/tau
     R=H*DJ+A3*omega**2*(z-X)
     E_action=-A3*omega*(omega*q-sw*X)/2-H*sw*DJ/(2*omega)
@@ -92,12 +94,12 @@ def normalized_symbolic():
             sp.simplify(E_action-Eq_expected)==0,
         "GE05_raw_time_current_from_action":
             sp.simplify(
-               sp.diff(A3*(qt**2-(omega*q-sw*X)**2)/4,qt)
+               sp.diff(lag_raw,qt_local).subs(qt_local,qt)
                -A3*qt/2
             )==0,
         "GE05_raw_local_Euler_from_action":
             sp.simplify(
-               sp.diff(A3*(qt**2-(omega*q-sw*X)**2)/4,q)
+               sp.diff(lag_raw,q_local).subs(q_local,q)
                +A3*omega*(omega*q-sw*X)/2
             )==0,
         "GE05_mode_Ward_pair_factor_plus_four":
