@@ -1,0 +1,48 @@
+{
+  "classification": "GE19_H4F3D3_PREDATA_ETA_REGULARIZED_BATH_WARD_PARENT",
+  "purpose": "Derive exact mixed physical epsilon^2 eta bath parent Ward term from the frozen NL0B completed-square physical U=sqrt(eta)q action, including the frozen GE05-to-GE06 factor 2, and repair the FORMAL interpretation of the previous H4F2b/H4F3d2 unrescaled integer-eta parent template without changing any frozen result or H4 source row.",
+  "frozen_sources": {
+    "docs/nl0b_predata_covariant_memory_completion.md": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "docs/ge19_repair32a_ge06_ge05_raw_residual_normalization_dictionary_result_freeze.md": "6c5b7f830cbae95209eda0e8c8663c6620ab7071",
+    "ge19/h4f3d2_dust_bath_parent_euler_currents.py": "42b2405759402195ffb371056d9e48b70dcded71",
+    "ge19/h4f2b_signed_mixed_ward_template.py": "ab783ffe8242d8ff455647df8664a074f725ee81",
+    "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51",
+    "docs/ge19_h4f3d2_dust_bath_parent_euler_currents_valid_freeze.md": "808e3612c177411e65db55c0ceac130b9289bb40"
+  },
+  "exact_source_conventions": {
+    "physical_covariant_memory": "L_mem(U,X;eta)=1/4 sum_j[(D_A U_j)^2-(omega_j U_j-sqrt(eta*w_j)*X)^2], with orthogonality A.U_j=0",
+    "field_redefinition": "U_j=sqrt(eta)*q_j for eta>=0, so L_mem=eta*L_red(q,X), L_red exactly frozen GE05 per-node reduced Lagrangian, plus consistently rescaled auxiliary multiplier if present",
+    "mapping": "GE05 raw bath EL to GE06 raw Euler convention exact common scale 2, established Repair32A; so L_bath_GE06=2*eta*L_red in GE06 raw action units",
+    "bath_scalar_spatial_relabeling": "delta q_j=xi*q_j,x derived by H4F1 from U_j=q_j*s_mu; eta scalar parameter",
+    "regular_first_order_parent": "q_j(eps,eta)=eps[q_j10+eta*q_j11]+eps^2[q_j20+eta*q_j21]/2+... after U_j=sqrt(eta) q_j; at epsilon=0 q_j=0",
+    "bath_raw_euler": "E_qj_red=partial L_red/partial q_j-partial_t J_qj^t-partial_x J_qj^x",
+    "signed_ward_parent": "W_q=2*eta*sum_j E_qj_red*q_j,x in common GE06 action normalization",
+    "physical_mixed_derivative": "partial_eta partial_epsilon^2 W_q|epsilon=eta=0 = 4*sum_j E_qj10_red*q_j10,x; no factor-of-2 ambiguity and no explicit q_j20/q_j11 contribution",
+    "on_shell": "The displayed mixed parent term vanishes if every frozen first-order normalized GE05 oscillator E_qj10_red=0, but must remain in the off-shell identity and in the physical discrete error budget."
+  },
+  "tests": [
+    "Verify exact frozen NL0B sqrt(eta) action and rescaling statement and actual GE05 L_red action binding without module-level output-generation side effects.",
+    "Prove L_mem(U=sqrt(eta)q)=eta L_red(q) exactly for arbitrary field gradients and eta>=0, and show variations E_U=sqrt(eta) E_q_red at eta>0.",
+    "Prove GE06 raw factor-2 mapped parent Ward equals 2 eta E_q_red q_x, with eta frozen as a scalar under diffeomorphisms.",
+    "Compute exact mixed epsilon2 eta1 derivative with nonzero arbitrary q10,q11,q20,q21 and Euler e10,e11,e20,e21; coefficient equals 4 e10 q10_x independent q11,q20 and q21.",
+    "Prove first-order bath Euler source bound to actual frozen GE05 per-node action, zero homogeneous q and X background and correct theta time derivative; no first-order H3G q20 Euler product.",
+    "Add negative controls: omitting explicit eta gives zero mixed parent if q11=e11=0; treating E10/q10 as ordinary eta analytic gives a different coefficient; omitting GE05 factor two halves the coefficient.",
+    "All outputs analytic or manufactured only; no actual corrected parent grids, no Z21 solve, no fitted source/residual threshold."
+  ],
+  "outcomes": {
+    "ETA_REGULARIZED_BATH_WARD_PARENT_DERIVED": "Exact frozen action, q field redefinition, GE05 factor two, mixed coefficient, zero-set and negative controls pass. Freeze term as necessary input to full actual H4F3d Ward; do not call it full Noether PASS.",
+    "ETA_REGULARIZED_BATH_WARD_UNRESOLVED": "Record exact failed proof obligation or source normalization mismatch; no H4 numerical science inference."
+  },
+  "scope_stop": {
+    "no_H4_source_row_edit": true,
+    "no_historical_relabel": true,
+    "no_numerical_H4_Z21_solve": true,
+    "no_full_Noether_claim": true,
+    "no_reuse_old_Repair27_q20_as_new_parent": true,
+    "no_change_original_1e_minus6_threshold": true,
+    "no_lensing": true
+  },
+  "status": "PREDATA_ONLY"
+}
