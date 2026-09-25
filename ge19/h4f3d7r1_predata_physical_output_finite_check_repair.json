@@ -1,0 +1,46 @@
+{
+  "classification": "GE19_H4F3D7R1_PREDATA_PHYSICAL_OUTPUT_FINITE_CHECK_IMPLEMENTATION_REPAIR_ONLY",
+  "date": "2026-09-25",
+  "triggering_failure": "Original locally executed physical H4F3d7 terminated at physical_run final valid gate: AttributeError: 'list' object has no attribute 'values' (old source lines 422-423). User uploaded original failed FULL.log. This is implementation failure; no physical science verdict.",
+  "frozen_parent_script": {
+    "path": "ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py",
+    "git_blob": "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8",
+    "immutable": true
+  },
+  "frozen_parent_predata": {
+    "path": "ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json",
+    "git_blob": "ccf3185b4f790d9d6068f80beb39a442b186158c",
+    "immutable": true
+  },
+  "frozen_parent_runner": {
+    "path": "ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh",
+    "git_blob": "6fe12ef99f9a469da8f5913121d3301df519aae2",
+    "immutable": true
+  },
+  "scope": "One and only one source change: replace erroneous nested list.values final finite check by direct all(np.isfinite(arr).all() for arr in outputs.values()). The original decompositions, input SHA requirements, physical equation, side selection, array outputs, 6-case and preregistered 1e-11/1e-10 gates are byte-identical to the old script. New versioned script/runner and outputs must not overwrite old failed FULL.log or old historical source.",
+  "expected_pure_fix": "valid=bool(len(cases)==6 and all(v['pass'] for v in cases) and all(np.isfinite(arr).all() for arr in outputs.values()))",
+  "exact_source_diff_required": true,
+  "independent_static_tests": [
+    "original frozen Git script blob unchanged",
+    "new script differs from original only in final valid finite-array expression",
+    "strict original parent SHA and Repair24 AST checks unchanged",
+    "all 6 original C x Nt physical cohorts and every output array included",
+    "all finite output arrays pass, NaN and Inf in any array fail independently",
+    "no Python historical generator imports before isolated working directory",
+    "Bash syntax and Python AST pass",
+    "new distinct output filenames refuse overwrite",
+    "no manufactured physical result substitution or new on-shell tolerance"
+  ],
+  "preserved_physical_contract": {
+    "original_H4F3b_H4F3d6_H3F_H3G_Z11_Repair13_Repair26_inputs_sha256_locked": true,
+    "original_2048_nodes_both_interval_sides_fixed_phase_bins": true,
+    "original_active_shift_threshold": 0.000001,
+    "original_matched_temporal_order_min": 2.5,
+    "original_H4F3d7_ODE_FD4_identity_gate": 1e-11,
+    "original_D6_absolute_norm_reproduction_gate": 1e-10,
+    "no_new_on_shell_smallness_gate": true,
+    "no_old_Repair37_reclassification": true,
+    "no_full_H4_Noether_or_Z21_or_lensing_claim": true
+  },
+  "status": "PREDATA_ONLY_IMPLEMENTATION_REPAIR_NOT_TESTED_OR_PHYSICALLY_EXECUTED"
+}
