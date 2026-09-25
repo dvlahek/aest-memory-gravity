@@ -3723,3 +3723,79 @@ be run locally with those hash-verified inputs.
 
 **Full physical H4 Noether structural PASS NOT YET PRODUCED.
 Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3d5 normalized per-node bath Euler compiler PASS; actual-grid all-parent Ward open (2026-09-25)
+
+The originally certified corrected-Y H3F Z20 and H3G q20,
+historical certified Repair32B/32C Z11, actual physical H4F3b
+six-piece source PASS, H4F3c genuine-generator manufactured PASS,
+and H4F3d1--d4 exact analytic/formal Ward results remain immutable.
+Original Repair37 H4/Z21 SCIENCE_FAIL and Repair38--44 diagnostics
+are not relabelled. The original active shift target 1e-6 and
+matched temporal order >=2.5 are unchanged.
+
+**New H4F3d5 normalized bath Euler compiler: valid restricted CI PASS.**
+
+- classification:
+  `GE19_H4F3D5_NORMALIZED_BATH_PARENT_RESIDUAL_COMPILER_PASS`;
+- predata:
+  `ge19/h4f3d5_predata_normalized_bath_parent_residual_compiler.json`,
+  blob `6b7519b48ace8900c8a2879f13c70db3524b366e`;
+- code:
+  `ge19/h4f3d5_normalized_bath_parent_residual_compiler.py`,
+  blob `62cbd02902ccb514c535213ff9801a9abcd46ffb`;
+- dedicated GitHub Actions run `36126850777`,
+  job `108044837991`, success;
+- JSON SHA-256
+  `f7538b77475c0dbcab57f331770a75643216d2d3c5966e41396fded0d7b41df4`,
+  6089 bytes, artifact ID `10860371141`;
+- full frozen record:
+  `docs/ge19_h4f3d5_normalized_bath_euler_valid_freeze.md`.
+
+The original GE05 normalized per-node first-order bath Euler
+residual is
+
+`R_z10=H D_xi(a^3 v/tau)+a^3 omega^2(z-X10)`,
+
+`E_q10,GE05=-sqrt(w)/(2 omega)*R_z10`.
+
+Its signed physical eta-regularized H4 mixed Ward contribution
+is `+4 sum_j E_qj10 q_j10,x`. For individual modes the
+algebraic product is
+`-2(w/omega^2)R_z10(ik)z10`; the Fourier coefficient
+of the physical product still requires real-space convolution.
+
+The exact action normalization/sign and the manufactured
+5-node x 3-mode Nt64/Nt128 FD4, current, kinematics and
+wrong-sign/omitted-H controls all passed. This is
+**manufactured analytical/numerical evidence only**,
+not an actual physical parent residual result.
+
+**NEXT decisive actual H4F3d work:** compile and independently
+evaluate the normalized per-node bath Euler residual and
+every remaining signed background/H1/Z11, corrected-H3F/H3G,
+GE07 dust and action-boundary parent term on the EXACT
+user's H4F3b Nt128/Nt64 physical parent grids.
+Combine with the independently frozen canonical
+`W_operator` and actual signed six-source Ward,
+preserving separate original FD4/FD8 schemes.
+Preregister the full structural error budget from
+the exact signed identity and truncation BEFORE looking
+at the combined physical defect. Only a frozen
+full all-sector actual-grid structural PASS permits
+a new separately preregistered H4/Z21 science attempt.
+
+The exact user-local H4F3b source NPZ and original
+certified Repair32B Z11 NPZ are **not automatically
+available in GitHub Actions checkout**. Do not
+substitute manufactured input or claim a physical
+Noether PASS from Actions without those exact
+hash-verified files. A hash-locked local integrated
+runner is an acceptable alternative once fully
+implemented and preregistered.
+
+**Full physical H4 Noether NOT CERTIFIED;
+Z21 NOT CERTIFIED; lensing blocked.**
