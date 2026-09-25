@@ -46,7 +46,7 @@ def evaluate(old,bg,tag,mod6,mod7,state,dot,Dt,nx=128):
          "R":-12.0*rl*(a*a*N+2.0*a*S)}
     e={n:np.asarray(ga.get(n,0)+dust.get(n,0)+lam.get(n,0),float)
        for n in FIELDS}
-    for k,v in {**f,**fx,**e}.items():
+    for k,v in list(f.items())+list(fx.items())+list(e.items()):
         if v.shape!=N.shape or not np.isfinite(v).all():
             raise RuntimeError("D10 nonfinite actual first-order field or Euler: "+k)
     return f,fx,e
