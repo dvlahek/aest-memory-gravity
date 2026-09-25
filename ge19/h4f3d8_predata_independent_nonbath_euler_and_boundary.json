@@ -1,0 +1,70 @@
+{
+  "classification": "GE19_H4F3D8_PREDATA_INDEPENDENT_NONBATH_EULER_AND_LOWER_BOUNDARY_COMPILER",
+  "date": "2026-09-25",
+  "purpose": "Independently derive the signed mixed epsilon^2 eta nonbath Euler parent and exact lower action boundary from the frozen action, starting with analytic GE07 dust and Lambda. The original GE06 Einstein/aether/scalar jet-Euler dictionary and NL0C Y regularity are source-bound separately. This is a compiler and preregistration step, NOT physical all-sector Euler arrays, full H4 Noether or a structural error budget.",
+  "frozen_git_blobs": {
+    "GE06_action": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "GE07_action": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+    "Lambda_source": "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de",
+    "NL0C_Y_source": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "H4F3d1_operator": "60786ac14c9478801c5df9ccf458ead9a34ac827",
+    "H4F3d2_dust_bath_currents": "42b2405759402195ffb371056d9e48b70dcded71",
+    "H4F3d4_complete_formal_ledger": "87d8be9ec44ecb099feecbaf59a904bd989da2fb",
+    "H4F3d4_predata": "cc921c4086d914274738a29f2b7b5c6961ab56b0",
+    "H4F3d7_original_interval_ODE_diagnostic": "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8",
+    "H4F3d_actual_full_predata": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51"
+  },
+  "independent_derivation": {
+    "nonbath_fields": ["N", "L", "R", "b", "u", "phi", "T", "rho"],
+    "mixed_nonbath_parent": "sum_i[E_i00 F_i21,chi+2 E_i10 F_i11,chi+2 E_i11 F_i10,chi]",
+    "lower_boundary": "L21 E_L00+2L10 E_L11+2L11 E_L10-b21 E_b00-2b10 E_b11-2b11 E_b10",
+    "signed_nonbath_Ward": "W_nonbath=mixed_nonbath_parent-partial_chi(lower_boundary)",
+    "spatial_and_time_notation": "chi is spatial coordinate; xi=ln(a) is TIME grid; partial_t=H FD_xi only for numerical time derivatives, never for spatial boundary partial_chi",
+    "original_total": "W_operator+W_six_source+W_nonbath+W_bath=0",
+    "original_bath_parent": "+4 sum_j E_qj10,GE05 q_j10,chi; retain actual H4F3d6 residual; no direct q20 parent product",
+    "GE06_exact_jet_Euler": {
+      "N": "p_N_f-partial_chi p_N_x",
+      "L": "p_L_f-partial_t p_L_t-partial_chi p_L_x",
+      "R": "p_R_f-partial_t p_R_t-partial_chi p_R_x",
+      "b": "p_b_f-partial_chi p_b_x",
+      "u": "p_u_f-partial_t p_u_t-partial_chi p_u_x",
+      "phi": "-partial_t p_phi_t-partial_chi p_phi_x"
+    },
+    "Lambda_action": "-6 rho_lambda N L R^2",
+    "GE07_action": "N L R^2 rho [((T_t-b T_chi)/N)^2-(T_chi/L)^2-1]",
+    "GE07_E_T": "-partial_t J_T_t-partial_chi J_T_chi",
+    "GE07_E_rho10": "2 a^3 (delta_T_t-delta_N), without a rho0 factor",
+    "NL0C_Y": "J(X) proportional |X|^3; at the frozen FLRW X0=0 its linear Euler row is zero; the action-completed H4 mixed Y source remains nonzero and must not be deleted"
+  },
+  "registered_compiler_gates": [
+    "Pin all frozen action and existing H4F3d sources by exact Git blobs before reading their text.",
+    "Derive the complete mixed nonbath field-Euler product by a second epsilon and first eta derivative, independently from H4F3d4 code; preserve all eight fields and the background E00 term.",
+    "Derive the lower L/shift action boundary directly from the product L E_L-b E_b; prove factor 2 in both cross terms and the negative shift sign, with independent wrong-sign and omitted-parent controls.",
+    "Derive GE07 T/rho currents and first-order FLRW Euler directly from the exact frozen dust action, including the absent rho0 multiplier in E_rho10.",
+    "Derive the exact Lambda metric Euler and first-order FLRW coefficients with no invented Lambda current or shift term.",
+    "Check original GE06 jet-partial Euler dictionary from the frozen analytic action source without importing its module-level generator.",
+    "Check Y first-order zero-set regularity with explicit one-sided limit; do not apply a blanket FD8 Taylor claim to a nonsmooth current.",
+    "Prove that E_i20 and F_i20 do not appear as DIRECT nonbath mixed spatial-parent products; corrected H3F/H3G remain required in the actual six-piece H4 source.",
+    "Produce an algebraic/compiler classification only, with no manufactured physical parent substitution and no source-only Ward-zero gate."
+  ],
+  "separate_numerical_error_budget_obligation": {
+    "status": "NOT_YET_PREREGISTERED_FOR_PHYSICAL_FULL_WARD",
+    "original_operator": "H FD4_xi of COMPLETE frozen Cmat*w products",
+    "original_source_schemes": "H FD8_xi for GE06/GE07/Lambda/Y and H FD4_xi for GE05 M1/M2",
+    "standard_smooth_stencil_bound": "For p=4 or p=8, |D_p f-f'| <= h^p sup|f^(p+1)| sum_j |w_ij| |j-i|^(p+1)/(p+1)! only after independently verifying sufficient smoothness.",
+    "piecewise_R1_exception": "Original Repair24/26 R1 interval H_mid may produce distinct one-sided derivatives. Use physical H4F3d7 endpoint/interior discrepancy and explicit all-node bounds; do not assume global fourth order for bath currents.",
+    "Y_zero_set_exception": "Y derivatives inherit |X| behavior near zero; check actual differentiated row regularity before asserting eighth-order Taylor remainder. The frozen Y metric/shift Ward projection may vanish separately and should be checked from exact rows.",
+    "full_physical_gate": "Do not evaluate combined all-sector residual until an independent, versioned numerical budget with valid per-term constants or conservative proven bounds is frozen before viewing it."
+  },
+  "stop": {
+    "partial_analytic_only": true,
+    "no_actual_nonbath_parent_arrays_yet": true,
+    "no_full_FD4_FD8_threshold_yet": true,
+    "no_full_actual_H4_Noether": true,
+    "no_Z21": true,
+    "no_lensing": true,
+    "no_changes_to_Repair37_or_old_results": true,
+    "active_shift_1e_minus6_unchanged": true,
+    "temporal_order_min_2p5_unchanged": true
+  }
+}
