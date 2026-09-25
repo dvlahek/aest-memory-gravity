@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
-PRE_BLOB="PREDATA_BLOB_TO_PIN"
+PRE_BLOB="d283086a6ae95efd184db570d6c2f9a8aa32ac7c"
 PINNED={
  "ge19/h4f3d6_predata_actual_normalized_bath_parent_ward.json":PRE_BLOB,
  "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json":
@@ -222,7 +222,7 @@ def manufactured(nt):
     test=rel_l2(conv,fft)
     polynomial=fd4(a[None,None,:]**3*v/tau,x)
     exact=H[None,None,:]*amp*(P2-3*P1)
-    current_err=rel_l2(polynomial,exact/H[None,None,:])
+    current_err=rel_l2(polynomial,exact)
     bad=ward_signed_convolution(E,qx*0+1e-3j)
     negative=float(np.linalg.norm(conv-bad)/max(
         np.linalg.norm(conv),np.linalg.norm(bad),TINY))
