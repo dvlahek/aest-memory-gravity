@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD:ge19/h4f3d8_predata_independent_nonbath_euler_and_boundary.json)" = "007bec20e450dd67263d32a33476dcb8a5c33996"
-          test "$(git rev-parse HEAD:ge19/h4f3d8_independent_nonbath_euler_and_boundary.py)" = "42b8fcdbd53113b90d6e5ae3044b15277ab46ccd"
+          test "$(git rev-parse HEAD:ge19/h4f3d8_independent_nonbath_euler_and_boundary.py)" = "861cd5a81c17380a727777a4e1ff08cd7e857522"
           test "$(git rev-parse HEAD:ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py)" = "87d8be9ec44ecb099feecbaf59a904bd989da2fb"
           python3 -m py_compile ge19/h4f3d8_independent_nonbath_euler_and_boundary.py
           mkdir -p results

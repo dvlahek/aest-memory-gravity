@@ -93,7 +93,7 @@ def frozen_action_binding():
         "phi": ("phi_t", "phi_x"),
     }
     jet = all(
-        ('"' + key + '":sp.diff(lag,' + variable + ')') in a
+        ('"' + key + '":sp.diff(lag,' + var + ')') in a
         for key, var in (
             ("N_f", "N"), ("N_x", "Nx"),
             ("L_f", "L"), ("L_t", "Lt"), ("L_x", "Lx"),
