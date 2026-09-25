@@ -1,0 +1,77 @@
+{
+  "classification": "GE19_H4F3D5_PREDATA_NORMALIZED_PER_NODE_BATH_PARENT_RESIDUAL_COMPILER",
+  "licensing_parent": "GE19_H4F3D4_FULL_FORMAL_ETA_WARD_LEDGER_PASS_ACTUAL_GRID_OPEN",
+  "scope": "Independently normalize and discretize the physical first-order GE05 per-node bath Euler residual E_q10 on a frozen common ln(a) grid and bind its signed +4 E_q10 q10,x eta-regularized mixed H4 Ward parent factor. The local physical residual is report-only until a separately preregistered full all-sector FD4/FD8 error budget and exact H4F3b/Z11 parents are accessible. Manufactured polynomial kinematics/FD4 tests may run on Actions but must not be called physical Noether PASS.",
+  "frozen_sources": {
+    "ge19/h4f3d4_predata_complete_eta_regularized_mixed_ward_ledger.json": "cc921c4086d914274738a29f2b7b5c6961ab56b0",
+    "ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py": "87d8be9ec44ecb099feecbaf59a904bd989da2fb",
+    "ge19/h4f3d3_eta_regularized_bath_ward_parent.py": "fb340b957c31e34d35f1ebd9404a53b59d29c102",
+    "ge19/h4f3d2_dust_bath_parent_euler_currents.py": "42b2405759402195ffb371056d9e48b70dcded71",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51"
+  },
+  "action_normalization": {
+    "omega": "r/tau",
+    "z": "omega*q/sqrt(w)",
+    "q": "sqrt(w)*z/omega",
+    "q_t": "sqrt(w)*v/(omega*tau)",
+    "q_x": "sqrt(w)*ik*z/omega",
+    "normalized_residual": "R_z10 = H D4_ln(a)[a^3*v/tau]+a^3*omega^2*(z-X10)",
+    "GE05_E_q10": "-sqrt(w)/(2*omega)*R_z10",
+    "physical_eta_mixed_bath_Ward_parent": "+4 sum_j E_qj10,GE05*q_j10,x",
+    "mode_pair_analytic_only": "-2*w/omega^2*R_z10*ik*z; this is a per-node mode-coefficient product, not the Fourier coefficient of the physical product until real-space convolution is performed",
+    "first_order_kinematics": "v=tau*H*D_ln(a) z; check analytically for manufactured fixture",
+    "zero_set": "quadrature r>0,w>0; no r=0 division"
+  },
+  "manufactured_cases": {
+    "Nt": [
+      64,
+      128
+    ],
+    "nodes": 5,
+    "modes": [
+      3,
+      5,
+      8
+    ],
+    "x": "uniform linspace(log(0.4),0,Nt)",
+    "a": "exp(x)",
+    "H": "positive constant 0.71",
+    "tau": 7,
+    "fixture": "z=e^{-3x}P4(x) times fixed nonzero complex node/mode amplitudes; v=tau*H*z_x; J=a^3*v/tau is degree <=4 polynomial",
+    "X10": "z+H*J_x/(a^3*omega^2) so the exact analytic Euler residual is zero",
+    "gates": {
+      "frozen_blobs_exact": true,
+      "GE05_symbolic_normalization_and_plus_four_exact": true,
+      "FD4_degree4_current_relative_L2_max": 1e-9,
+      "kinematic_manufactured_relative_L2_max": 1e-12,
+      "manufactured_Eq10_relative_L2_over_natural_scale_max": 1e-9,
+      "analytic_mode_pair_identity_relative_L2_max": 1e-12,
+      "negative_omit_H_relative_defect_min": 0.001,
+      "negative_wrong_Euler_sign_relative_defect_min": 0.001,
+      "all_outputs_finite": true
+    }
+  },
+  "physical_followup": {
+    "certified_H3F_Z20_NPZ_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "certified_H3G_q20_NPZ_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "certified_Repair32B_Z11_NPZ_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+    "actual_H4F3b_source_NPZ_sha256": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b",
+    "Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "no_real_parent_substitution": true,
+    "no_numeric_physical_tolerance_in_this_substage": true
+  },
+  "outcomes": {
+    "COMPILER_PASS": "Frozen action/sign/normalization and manufactured FD4/kinematics gates pass. Freeze restricted compiler only; actual q10 parent arrays, all-sector Euler and physical Ward remain open.",
+    "COMPILER_FAIL": "Freeze exact failed symbolic/manufactured/input gate without relabeling physical H4."
+  },
+  "stop": {
+    "no_Z21_state_solve": true,
+    "no_full_actual_physical_Ward_PASS_claim": true,
+    "no_source_fitting": true,
+    "original_active_shift_1e_minus6_unchanged": true,
+    "original_temporal_order_min_2p5_unchanged": true,
+    "lensing_blocked": true
+  }
+}
