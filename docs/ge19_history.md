@@ -3452,7 +3452,7 @@ Preregistration:
 `ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json`,
 blob `f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51`.
 Dedicated prelock workflow
-`360? (see actions workflow ge19-h4f3d-actual-operator-parent-ward-prelock.yml)`
+`36101803617`
 passed at latest commit `b368073cc71cc9d3e291707566a69edf05e5d8a3`.
 
 H4F3d must use the **exact actual H4F3b source NPZ** and the
