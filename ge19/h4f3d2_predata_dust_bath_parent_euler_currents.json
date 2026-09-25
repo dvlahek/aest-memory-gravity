@@ -1,0 +1,51 @@
+{
+  "classification": "GE19_H4F3D2_PREDATA_DUST_BATH_PARENT_EULER_CURRENT_COMPILER",
+  "parent": "GE19_H4F3D_PREDATA_OPERATOR_PLUS_ALL_PARENT_WARD_ON_ACTUAL_SIX_SOURCE",
+  "purpose": "Independently derive exact frozen GE07 dust and NL0B GE05 per-node scalar-longitudinal bath Euler parent currents and first-order FLRW coefficients, then bind their signed mixed H4 Ward parent products to original H4F2b epsilon^2 eta coefficient. Necessary partial input for full H4F3d; NO physical parent array evaluation, Z21 solve, Ward full PASS or fitted tolerance.",
+  "pinned_blobs": {
+    "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51",
+    "ge19/h4f3d1_frozen_canonical_operator_ward.py": "60786ac14c9478801c5df9ccf458ead9a34ac827",
+    "ge19/h4f2b_signed_mixed_ward_template.py": "ab783ffe8242d8ff455647df8664a074f725ee81",
+    "ge07/pressureless_matter_directional_source_generator.py": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "docs/ge19_h4f2a_dust_offshell_ward_valid_freeze.md": "ca21c65ce2da8d760aa12018aefd849b3b67adf9",
+    "docs/ge19_h4f1_longitudinal_bath_ward_valid_freeze.md": "5aa99f10383a253e934c0c2833230fa714c3ef1d",
+    "docs/ge19_h4f3d1_canonical_operator_ward_valid_freeze.md": "605a163fb9fa7e59e9babdbfdc279022b95d038a"
+  },
+  "definitions": {
+    "dust_action": "N L R^2 rho [((Tt-b Tx)/N)^2-(Tx/L)^2-1]",
+    "bath_action": "N L R^2/4 [A(q)^2-(omega q-sqrt(w) Xphi)^2]",
+    "Euler_sign": "E_q=partial L/partial q - physical time derivative of partial L/partial q_t - spatial derivative of partial L/partial q_x; same for dust T",
+    "dust_current": "Jt_T=2 L R^2 rho W, Jx_T=-2 L R^2 rho b W-2 N R^2 rho Tx/L",
+    "dust_constraint": "E_rho=N L R^2 [W^2-(Tx/L)^2-1]",
+    "bath_current": "Jt_q=N L R^2 A(q) A^t/2, Jx_q=N L R^2 A(q) A^x/2",
+    "bath_local": "partial L/partial q=-N L R^2 omega(omega q-sqrt(w)Xphi)/2",
+    "FLRW_first_dust": "E_rho10=2 a^3 rho0 (dTt-dN); Jt_T10=2 a^3 rho0(dL/a+2dR/a+drho/rho0+dTt-dN); Jx_T10=-2 a^3 rho0 db-2 a rho0 dTx",
+    "FLRW_first_bath": "Jt_q10=a^3 dqt/2; Jx_q10=0; partial L/partial q|10=-a^3 omega(omega dq-sqrt(w)(Q du+dpx/a))/2",
+    "parent_ward": "For each scalar dust T,rho and each bath scalar q_j: E_i00 F_i21,x +2 E_i10 F_i11,x+2 E_i11 F_i10,x, sum over bath nodes. E_T00=0 only after frozen homogeneous dust continuity, E_rho00=0 on frozen normalization, E_q00=0 at q=0,Xphi=0."
+  },
+  "gates": [
+    "Each frozen source and H4F3d1/H4F2b blob exactly matches preregistration.",
+    "Independently compute every named dust and bath Euler partial from the frozen action; check E_q and E_T plus correct both time and space current divergences and E_rho exact.",
+    "Check metric shift and spatial derivative action contributions remain outside dust/bath scalar currents; do not rename q scalar as coordinate covector.",
+    "Derive FLRW dust first order currents/constraint and bath first order currents/local Euler for arbitrary dN,dL,dR,du,dphi,dt/dx q.",
+    "Verify E_T00=0 conditional on physical comoving dust a^3 rho0=const; E_rho00 and E_q00 exactly vanish on frozen backgrounds.",
+    "Derive signed physical d_eta d_epsilon^2 parent Ward product for dust T,rho and each q node including factor 2, no fake direct E20 term for eta-independent homogeneous background.",
+    "Run deterministic manufactured first-order perturbations and independently compare exact currents with finite directional derivatives at epsilon=1e-5/2e-5; no fitting physical parent data.",
+    "Do not claim or test full signed H4 source cancellation until other sectors/parent residuals/boundary and actual physical time data are available."
+  ],
+  "outcomes": {
+    "DUST_BATH_PARENT_CURRENT_COMPILER_PASS": "All source-action, FLRW first-order and mixed Ward parent symbolic/manufactured gates pass; freeze as necessary partial parent analytic certificate; full integrated H4F3d remains OPEN.",
+    "PARENT_CURRENT_OR_WARD_COMPILER_FAIL": "Freeze exact failed first-run gate; distinguish frozen-action mismatch from code/test implementation failure; no H4 science inference."
+  },
+  "stop": {
+    "no_actual_parent_arrays_claim": true,
+    "no_source_ward_zero_gate": true,
+    "no_full_H4_Noether_claim": true,
+    "no_Z21_solve": true,
+    "no_lensing": true,
+    "no_change_original_shift_1e_minus6": true,
+    "no_change_matched_order_2p5": true
+  },
+  "status": "PREDATA_ONLY"
+}
