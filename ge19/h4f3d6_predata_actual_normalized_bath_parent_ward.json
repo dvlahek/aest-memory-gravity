@@ -1,0 +1,71 @@
+{
+  "classification": "GE19_H4F3D6_PREDATA_ACTUAL_NORMALIZED_BATH_PARENT_WARD_SUBSET",
+  "objective": "Evaluate only the independently action-derived, eta-regularized GE05 per-node first-order bath Euler parent contribution on the exact original certified H3F/H3G and frozen R1 bath physical Nt128/Nt64 grids. Combine report-only with saved actual H4F3b physical source Ward. Do not claim full all-parent Noether, source-Ward smallness, or Z21.",
+  "frozen": {
+    "full_structural_parent_predata_blob": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51",
+    "d4_formal_signed_ward_blob": "87d8be9ec44ecb099feecbaf59a904bd989da2fb",
+    "d5_normalized_bath_compiler_blob": "62cbd02902ccb514c535213ff9801a9abcd46ffb",
+    "d5_valid_freeze_blob": "a67787dee39576e469a213c20d60fe7692109b39",
+    "genuine_actual_six_source_code_blob": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "original_Repair37_source_and_R1_code_blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "original_Repair24_normalized_bath_core_blob": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "h3f_npz_sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542",
+    "h3g_npz_sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452",
+    "repair32b_z11_npz_sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327",
+    "actual_h4f3b_json_sha256": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1",
+    "actual_h4f3b_npz_sha256": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b",
+    "original_repair26_r1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+  },
+  "mathematical_contract": {
+    "omega": "r/tau",
+    "z": "omega*q/sqrt(w)",
+    "q": "sqrt(w)*z/omega",
+    "q_x_positive": "sqrt(w)*(i*k)*z/omega",
+    "positive_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "X10": "Frozen Repair24 first_order_X_modes on certified H3F H1.",
+    "z10_v10": "Frozen Repair24 evolve_z10, using exact Repair26 R1 per-node full-history first-order boundary, no historical v0.77 fallback.",
+    "normalized_R": "R_z10 = H*FD4_x(a**3*v10/tau)+a**3*omega**2*(z10-X10)",
+    "Euler_raw": "E_q10_GE05=-sqrt(w)/(2*omega)*R_z10",
+    "physical_mixed_Ward": "W_bath=+4*sum_j E_qj10_GE05*q_j10,x",
+    "Fourier_convolution": "Real physical product via BOTH plus and complex-conjugate negative frozen H1 Fourier modes; accumulate all p+q=0..40 exactly before node sum; do not multiply same-mode Fourier coefficients as a replacement for convolution.",
+    "physical_source": "Use exact already frozen actual H4F3b *_source_ward_physical arrays only. Source-only Ward need not vanish, and source+bath is also not required to vanish without nonbath parents/operator/boundary.",
+    "grid": "Exact existing H4F3b x_primary/x_control and independently recomputed frozen background x for C_min/C_star/C_max at Nt128/Nt64; no separate source interpolation.",
+    "report": "Per C,Nt physical W_bath, per beta source+bath report-only complex array, natural bath residual scale, R1 weighted z10 reproduction, exact conjugate convolution symmetry and finite arrays."
+  },
+  "fixed_gates": {
+    "frozen_git_blobs_and_local_files_exact": true,
+    "original_h3f_h3g_z11_r13_and_r1_certifications_exact": true,
+    "original_h4f3b_classification_gates_and_sha_exact": true,
+    "independent_R1_weighted_z10_relative_L2_max": 1e-10,
+    "stored_source_Ward_vs_H4F3b_array_exact": true,
+    "Fourier_convolution_manufactured_real_space_relative_L2_max": 1e-12,
+    "GE05_Euler_current_manufactured_FD4_polynomial_relative_L2_max": 1e-9,
+    "all_3_C_x_2_Nt_cases_and_3_beta_source_views": true,
+    "all_outputs_finite": true,
+    "no_physical_Ward_zero_smallness_gate": true,
+    "no_posthoc_error_budget": true
+  },
+  "outputs": {
+    "subset_PASS": "Verified physical per-node bath Euler/Ward contribution and complete source+bath report-only arrays, no full all-sector Noether certificate.",
+    "subset_UNRESOLVED": "Missing actual frozen inputs, unsupported bath scheme/clock/convolution, or missing analytic parent coefficient: report precise unresolved constraint, no science claim.",
+    "IMPLEMENTATION_FAIL": "Input hash, array shape, helper binding or numerical implementation fault; no physical science claim."
+  },
+  "restrictions": {
+    "previous_Repair37_FAIL_immutable": true,
+    "all_old_results_immutable": true,
+    "no_changed_ge05_ode": true,
+    "no_fitted_source": true,
+    "no_target_1e_minus6_relaxation": true,
+    "full_nonbath_parent_boundary_operator_remaining": true,
+    "no_Z21_solve": true,
+    "no_lensing": true
+  },
+  "execution_status": "PREDATA_ONLY_NOT_RUN"
+}
