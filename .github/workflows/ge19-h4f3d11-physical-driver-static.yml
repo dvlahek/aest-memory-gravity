@@ -1,0 +1,104 @@
+name: GE19 H4F3d11 Physical Driver and Eight-Field Assembly Static Regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d11_*'
+      - 'ge19/run_local_h4f3d11_actual_original_action_background_e00.sh'
+      - '.github/workflows/ge19-h4f3d11-physical-driver-static.yml'
+
+jobs:
+  physical-preflight-static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install original-background assembly test dependency
+        run: python3 -m pip install numpy sympy
+      - name: Check original action provenance, locked runner and signed all-eight E00 synthetic assembly
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d11_predata_actual_original_action_background_e00.json)" = "deb4b35e6a147b48fe93d6c99d798572650000ac"
+          test "$(git rev-parse HEAD:ge19/h4f3d11_source_bound_original_background_partials.py)" = "1f085efec4ea64b42822ddeaac566f532d9dccf1"
+          test "$(git rev-parse HEAD:ge19/h4f3d11_actual_original_action_background_e00.py)" = "b162fad1db2a855917b5f8e29fce10c67d30737f"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d11_actual_original_action_background_e00.sh)" = "8c4f34ad79b347b3810093a1bba0b4129468f7fc"
+          test "$(git rev-parse HEAD:.github/workflows/ge19-h4f3d11-background-e00-static-r1.yml)" = "ad73aeee2979a5436df79fff3693aa04eff94c83"
+          test "$(git rev-parse HEAD:ge19/h4f3d10r1_actual_physical_lossless_archive_independent_audit.json)" = "2921f79dbb0ce99200418bfba924b699ff8cd67f"
+          test "$(git rev-parse HEAD:ge19/h4f3d10r1_lossless_fourier_physical_main.py)" = "659ba72aafedc6f62d519f5fe09e47736074e90a"
+          test "$(git rev-parse HEAD:ge06/analytic_aest_directional_source_generator.py)" = "a7afe0035054a9dca55d74a6497c081422114b4c"
+          test "$(git rev-parse HEAD:ge07/pressureless_matter_directional_source_generator.py)" = "cde8da77a80799cef00fc7c09c3633310fc9e3d4"
+          bash -n ge19/run_local_h4f3d11_actual_original_action_background_e00.sh
+          python3 - <<'PY'
+          import ast,importlib.util,json
+          from pathlib import Path
+          import numpy as np
+          code=Path("ge19/h4f3d11_actual_original_action_background_e00.py")
+          src=code.read_text()
+          tree=ast.parse(src,filename=str(code))
+          pre=json.loads(Path("ge19/h4f3d11_predata_actual_original_action_background_e00.json").read_text())
+          assert len(pre["strict_physical_definition"]["eight_nonbath_fields"])==8
+          assert "source_bound_closed_forms" in pre["strict_physical_definition"]
+          assert "actual_E00_covariant_on_shell_certified" in src
+          assert '"actual_E00_covariant_on_shell_certified":False' in src
+          assert '"actual_E00_F21_parent_product_evaluated":False' in src
+          assert '"actual_L21_EL00_minus_b21_Eb00_evaluated":False' in src
+          assert '"Z21_certified":False' in src
+          assert '("FD4",frozen.old.r7.fd4_matrix(' in src
+          assert '("FD8",frozen.old.fd8_matrix(' in src
+          runner=Path("ge19/run_local_h4f3d11_actual_original_action_background_e00.sh").read_text()
+          assert 'ge19_h4f3d10r1_lossless_fourier_known_boundary.json' in runner
+          assert 'ge19_h4f3d10r1_lossless_fourier_known_boundary.npz' in runner
+          assert 'GE19_H4F3D11_NO_OVERWRITE' in runner
+          assert runner.index('cd "$TMP"')<runner.index('python3 -B -m ge19.h4f3d11_actual_original_action_background_e00')
+          assert 'ge19_h4f3d11_actual_original_action_background_e00.json' in runner
+          spec=importlib.util.spec_from_file_location(
+              "source",Path("ge19/h4f3d11_source_bound_original_background_partials.py"))
+          base=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(base)
+          selected=[node for node in tree.body
+                    if isinstance(node,ast.FunctionDef) and node.name in ("norm","arrays")]
+          assert len(selected)==2
+          class Stub:
+              def physical_partials(self,compiled,bg,tag,r7):
+                  a=bg["a"];h=bg["H"];c=r7.C_VALUES[tag]
+                  z=np.zeros_like(a)
+                  return (
+                     {"N_f":6*a**3*h*h,"N_x":z,"L_f":-2*a*a*h*h,
+                      "L_t":-4*a*a*h,"L_x":z,"R_f":-4*a*a*h*h,
+                      "R_t":-8*a*a*h,"R_x":z,"b_f":z,
+                      "b_x":4*a**3*h,"u_f":z,"u_t":z,"u_x":z,
+                      "phi_t":2*a**3*bg["KQ_action"],"phi_x":z},
+                     {"N_f":-6*c*np.ones_like(a),"L_f":z,"R_f":z,
+                      "b_f":z,"rho_f":z,
+                      "T_t":6*c*np.ones_like(a),"T_x":z},
+                     {"numeric_source_vs_exact_symbolic_closed_all_partials_max_relative":0.0}
+                  )
+          namespace={"np":np,"source":Stub(),"FIELDS":("N","L","R","b","u","phi","T","rho"),"TINY":1e-300}
+          exec(compile(ast.Module(body=selected,type_ignores=[]),str(code),"exec"),namespace)
+          class R:
+              C_VALUES={"C_star":2.568543329983919e-9}
+          n=12
+          x=np.linspace(np.log(.4),np.log(.83),n)
+          a=np.exp(x)
+          bg={"x":x,"a":a,"H":np.linspace(1e-4,7e-5,n),
+              "Z_action":np.full(n,.2),"Q_action":np.full(n,1e-4),
+              "K_action":np.zeros(n),"KQ_action":np.full(n,1e-8),
+              "rho_lambda_action":np.full(n,1e-10),
+              "rho_dust_action":R.C_VALUES["C_star"]/a**3}
+          for scheme,mat in (("FD4",np.eye(n)),("FD8",2*np.eye(n))):
+              archive,diag=namespace["arrays"](bg,"C_star",R,None,mat)
+              assert all(np.asarray(q).shape==(n,) and np.isfinite(q).all()
+                         for q in archive.values())
+              assert all("E00_"+key in archive for key in namespace["FIELDS"])
+              assert np.array_equal(archive["E00_b"],np.zeros(n))
+              assert np.array_equal(archive["E00_u"],np.zeros(n))
+              assert np.array_equal(archive["E00_rho"],np.zeros(n))
+              assert np.linalg.norm(archive["GE06_original_p00_b_x"])>0
+              assert diag["no_E00_on_shell_smallness_gate_applied"]
+              assert diag["no_E00_F21_or_L21_background_term_eliminated"]
+              assert len(diag["original_eight_field_E00_L2_report_only"])==8
+          print("GE19_H4F3D11_PHYSICAL_DRIVER_STATIC_PASS_ACTUAL_BACKGROUND_OPEN")
+          PY
