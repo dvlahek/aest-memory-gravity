@@ -3799,3 +3799,92 @@ implemented and preregistered.
 
 **Full physical H4 Noether NOT CERTIFIED;
 Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3d6 bath-parent compiler Actions PASS; exact physical runner locked (2026-09-25)
+
+This is the newest canonical continuation point. It supersedes only
+the NEXT-task text of earlier checkpoints; every original
+Repair22/27/32 certification, corrected-Y H3F/H3G and actual
+H4F3b source PASS, H4F3d1--d5 analytic/formal results,
+Repair37 H4 SCIENCE_FAIL and Repair38--44 diagnostics remain
+immutable. No original physical source coefficient, near-null
+mask, 1e-6 shift threshold or matched >=2.5 temporal order
+has been changed.
+
+**New H4F3d6 actual-bath-parent SUBSET is preregistered and
+implemented, with manufactured compiler CI PASS.**
+
+- predata:
+  `ge19/h4f3d6_predata_actual_normalized_bath_parent_ward.json`,
+  blob `d283086a6ae95efd184db570d6c2f9a8aa32ac7c`;
+- code:
+  `ge19/h4f3d6_actual_normalized_bath_parent_ward.py`,
+  blob `0419145499f5f44e06ba0c96f779c2a604e84ce7`;
+- compiler CI `36127944207`, job `108048299004`,
+  `success`;
+- classification
+  `GE19_H4F3D6_BATH_CONVOLUTION_COMPILER_PASS_ACTUAL_OPEN`;
+- result JSON SHA-256
+  `db6eb2effc711c2c83ebeff6bbeae5e64c295e160505174d657ec676e2f8ad9f`;
+- compiler freeze
+  `docs/ge19_h4f3d6_bath_convolution_compiler_valid_freeze.md`.
+
+The real GE05 normalized first-order R1 per-node bath Euler is
+`R_z10=H FD4_x(a^3 v10/tau)+a^3 omega^2(z10-X10)`,
+`E_q10=-sqrt(w)/(2omega) R_z10`.
+The signed physical mixed H4 bath parent Ward is
+`+4 sum_j E_qj10 q_j10,x`.
+Original six positive H1 modes and their conjugate negative
+harmonics are convolved to obtain the actual physical
+Fourier coefficients `m=0..40`. Deterministic Nt64/Nt128
+FD4-current and independent real-space FFT/product negative
+controls passed. The original R1 weighted z10 is checked
+against certified H3G on the physical run.
+
+**Locked exact local physical bath-subset runner is ready,
+NOT YET LOCALLY EXECUTED.**
+
+- runner:
+  `ge19/run_local_h4f3d6_actual_normalized_bath_parent_ward.sh`,
+  blob `3690147a766f276309d628fba9f436df3941deae`;
+- dedicated static runner CI `36128447037`, job
+  `108049891704`, success,
+  marker `GE19_H4F3D6_PHYSICAL_LOCAL_RUNNER_STATIC_PASS`;
+- implementation/execution lock:
+  `docs/ge19_h4f3d6_local_physical_bath_runner_lock.md`.
+
+The local runner requires the user's ORIGINAL exact
+H4F3b actual six-source JSON/NPZ, certified H3F/H3G,
+Repair32B Z11 and R13, plus Repair26 R1 full-history
+bath trace. The original source JSON/NPZ hashes are
+`1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1`
+and
+`787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b`.
+The physical input files are **not automatically in
+GitHub Actions checkout**, and manufactured substitutes
+are explicitly prohibited for the physical result.
+Historical generator imports run in a disposable CWD.
+
+H4F3d6 saves its bath-parent Ward and the 18 actual
+`W_source+W_bath` arrays, **report-only**.
+Neither source-only nor source+bath Ward is
+required to vanish. H4F3d6 physical-subset PASS
+is not the complete Noether certificate.
+
+**NEXT:** run the exact local H4F3d6 physical SUBSET,
+freeze its exact PASS/FAIL if valid, then independently
+compile/evaluate all remaining nonbath
+background/H1/Z11 Euler parents and action boundary
+plus frozen canonical operator Ward on the exact
+same physical grids. Preregister the combined full
+structural FD4/FD8 error budget from the signed
+identity BEFORE evaluating the physical all-sector
+Ward residual. Only a valid FULL all-sector structural
+PASS permits a separately preregistered Z21 science
+attempt. It is not itself a Z21 certificate.
+
+**Full physical all-sector H4 Noether NOT CERTIFIED;
+Z21 NOT CERTIFIED; lensing blocked.**
