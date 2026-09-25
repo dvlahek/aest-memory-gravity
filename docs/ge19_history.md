@@ -3983,3 +3983,31 @@ node exclusion was introduced. This prelock is NOT a
 physical H4F3d7 result. Independent nonbath parent and
 canonical operator full-Ward work remains a separate
 necessary component.
+
+
+---
+
+## Latest checkpoint — H4F3d7 frozen R1/FD4 compiler PASS; genuine physical decomposition pending (2026-09-25)
+
+This entry supersedes only older NEXT-action wording. Original Repair22/27/32, certified corrected-Y H3F Z20/H3G q20, actual physical H4F3b six-piece source PASS, H4F3d6 *subset* PASS, and formal H4F3d1--d5 results remain immutable. Historical Repair37 H4 SCIENCE_FAIL and Repair38--44 diagnostics are not relabelled. Original active-shift <=1e-6 and matched temporal orders >=2.5 are unchanged.
+
+**Latest verified GitHub Actions:**
+
+- H4F3d7 preregistration prelock run `36137851501`: SUCCESS.
+- H4F3d7 original R1 ODE versus FD4 *compiler/manufactured* run `36148151670`: SUCCESS, job `108114383440`; terminal marker `GE19_H4F3D7_R1_FD4_COMPILER_PASS_PHYSICAL_OPEN`. Artifact `10869873062`; result JSON 10828 bytes, SHA-256 `6a6fb22b1c25ee0ee66755eb8a82899b3cdf8292c1678e7f4c989922b94ed66d`.
+- Valid result freeze `docs/ge19_h4f3d7_r1_fd4_compiler_valid_freeze.md`, blob `620cec44adce30fbaa8cd25c569872227af3831e`.
+- Prereg `ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json`, blob `ccf3185b4f790d9d6068f80beb39a442b186158c`. Locked code `ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py`, blob `b598a5cc49b3d87827b4758c55d3ce7f3a1198a8`.
+
+The exact component identity on EACH original R1 interval side was derived and manufactured-checked:
+
+`R_FD4 = R_ODE,side + [H_i FD4_x(J)-J_t,side]`,
+with `J=a^3v/tau`, `R_ODE,side=3 a_i^3(H_i-h_mid,side/tau)v_i/tau`. At every interior physical node report BOTH original interval sides; do not select/average favorable sides. Retain all 2048 nodes and preregistered `omega*Delta_t` phase bins (<0.25, [0.25,0.5), [0.5,1), >=1). The original Repair24 stepper, R1 trace and FD4 current remain unchanged.
+
+**Actual physical H4F3d7 run HAS NOT OCCURRED.** The compiler succeeded on deterministic manufactured R1 trajectories only. The first valid physical H4F3d6 subset remains
+`GE19_H4F3D6_ACTUAL_BATH_PARENT_WARD_SUBSET_PASS_FULL_OPEN`; JSON SHA `4607edde17c6820c85f32c0bbd774d5a58148eb01bfd0c81ce592e8c1b907791`, NPZ SHA `17b50c6ee584b2a8886f7114a90ea9396a127172dd9e02976b0e6275fe2fedc0`. Its actual sampled normalized bath Euler natural-scale relative L2 ~0.9985018--0.9993412 is report-only and does **not** establish an on-shell bath. The physical d7 diagnostic must reproduce d6's original absolute FD4 Euler norm to <=1e-10 relative, and separate original interval-H mismatch from sampled FD4 derivative defect.
+
+Required physical files are the ORIGINAL hash-locked actual H4F3b JSON/NPZ (SHA `1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1`, `787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b`), H4F3d6 JSON/NPZ above, H3F/H3G, Repair13, exact certified Repair32B Z11 NPZ `5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327`, and Repair26 R1 trace `608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8`. These physical binaries are available from the user's prior *local* successful execution but are not automatically present in Actions checkout; manufactured data must not replace them.
+
+**NEXT (two independent workstreams):** (1) run exact H4F3d7 physical diagnostic on the original hash-verified local files in an ISOLATED temporary CWD, with absolute input/output paths and no historical output overwrite, freeze physical result separately; (2) independently derive/evaluate all signed NONBATH background/H1/Z11/H3F/H3G/dust/metric/aether/scalar parent Euler plus action boundary terms and original canonical operator on same H4F3b Nt128/Nt64 grids. Derive/preregister the complete FD4/FD8 structural truncation budget BEFORE the first full integrated actual-grid H4F3d Noether gate. Source-only Ward magnitude is report-only.
+
+**Full actual all-sector H4 structural Noether PASS NOT PRODUCED. Z21 NOT CERTIFIED. Lensing blocked.**
