@@ -3474,3 +3474,90 @@ Only after a separately frozen full actual operator+parent Ward
 structural PASS may a new Z21 science solver be preregistered.
 
 **Full H4 Noether NOT CERTIFIED; Z21 NOT CERTIFIED; lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3d1 actual canonical operator Ward compiler PASS; full H4F3d physical Ward OPEN (2026-09-25)
+
+The original certified corrected-Y H3F Z20, H3G q20, historical
+Repair32C Z11 and valid **actual** H4F3b six-source PASS remain
+immutable. H4F3c manufactured genuine-generator Actions PASS and
+H4F2a--h restricted analytic/source-clock PASS remain unchanged.
+Historical Repair37 H4/Z21 SCIENCE_FAIL and Repair38--44 diagnostics
+are not relabelled. All original H4 science thresholds stay fixed.
+
+**New H4F3d1 signed original canonical linear-operator Ward compiler:
+valid analytic/engineering CI PASS.**
+
+- classification:
+  `GE19_H4F3D1_CANONICAL_OPERATOR_WARD_COMPILER_PASS`;
+- preregistration:
+  `ge19/h4f3d1_predata_frozen_canonical_operator_ward.json`,
+  blob `4577de495692ecbe4c07d1156ffab2abfc99e96d`;
+- code:
+  `ge19/h4f3d1_frozen_canonical_operator_ward.py`,
+  blob `60786ac14c9478801c5df9ccf458ead9a34ac827`;
+- dedicated GitHub Actions run `36102755011`,
+  job `107968605067`, conclusion `success`;
+- JSON SHA-256
+  `f87f77dc02ccef3862c539a4e14aa5f67b78a2c68fbb5592fb9df71a979919e6`,
+  4239 bytes, artifact ID `10849404814`;
+- frozen result:
+  `docs/ge19_h4f3d1_canonical_operator_ward_valid_freeze.md`,
+  blob `605a163fb9fa7e59e9babdbfdc279022b95d038a`.
+
+The original frozen unconstrained GE06+GE07 Cmat 16x10
+row semantics fix the **full independent L Euler row**
+as
+
+`E_L=[Cmat[6]+2(Cmat[12]+Cmat[13])]w/3
+        -H FD4_x(Cmat[14]w)`,
+
+and the independent shift Euler row as
+
+`E_b=(Cmat[10]+Cmat[11])w`.
+
+The signed canonical linear-operator Ward is
+
+`W_operator=-H FD4_x(E_b)-ik a E_L`,
+
+NOT an isolated zero/source-smallness condition.
+Critically the FD4 derivative applies to the complete
+`Cmat(x)w(x)` momentum product. The original
+`pS=pL+pR` identity is retained and the
+`E_L=(E_iso+2E_aniso)/3` projection and frozen
+`E=L-S` RHS sign are exact.
+
+Nt64/Nt128 complex manufactured polynomial
+FD4 product tests and negative controls for
+omitting pL momentum, omitting the background
+Cmat time derivative and misusing the isotropic
+row all passed. This **does not** evaluate the
+actual corrected physical Cmat on the actual H4F3b
+parent grid or prove a full mixed H4 Noether identity.
+
+**NEXT physical structural work under already frozen H4F3d predata:**
+instantiate this exact original operator on the
+verified actual common H1/Z11/H3F Z20/H3G q20,
+H4F3b six-source and Repair26 R1 data, AND
+independently derive/evaluate every signed
+background/parent dust/bath Euler residual
+and action boundary contribution. Preserve the
+separate H*FD8/H*FD4 source derivatives and
+original operator FD4. Preregister structural
+tolerance from the signed identity and
+FD truncation before the first integrated
+physical execution. A source-only Ward
+magnitude is report-only, NEVER a gate.
+
+The actual H4F3b NPZ and historical Z11 original
+binary were supplied in the user's previous
+scientific environment but are not automatically
+present on GitHub Actions. No fake
+manufactured parent can replace the
+hash-locked actual physical input.
+
+**Full H4F3d operator+all-parent Noether structural
+PASS has NOT been produced. Z21 NOT CERTIFIED;
+lensing blocked.**
