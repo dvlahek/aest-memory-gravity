@@ -4251,3 +4251,82 @@ and order `>=2.5` unchanged.
 
 **Full actual H4 Noether NOT CERTIFIED;
 Z21 NOT CERTIFIED; lensing blocked.**
+
+---
+
+## Latest checkpoint — original physical H4F3d7r1 FD4-versus-R1 diagnostic PASS, full Noether OPEN (2026-09-25)
+
+The user executed versioned H4F3d7r1 from local locked
+`CODE_HEAD=e9987882493feee2461c43c969b4624cff3ba4eb`
+and uploaded **all four** actual physical outputs:
+JSON `031229d570d29ae9c4ea0ab8e25222d94e9cda4520c991cd203e9d7b97e01dc9`,
+NPZ `4f011c96c2c11165df6332eafc459c5d2c5e7bc5164a436bde3d1563696f0e13`,
+FULL log `031229d570d29ae9c4ea0ab8e25222d94e9cda4520c991cd203e9d7b97e01dc9`,
+runner log `39b1809b22c817ae25cb81ffaa7f52d7f2e2d537a86c90346515405a5d5b997f`.
+Original local runner reports
+`GE19_H4F3D7R1_PHYSICAL_DECOMPOSITION_PASS_FULL_NOETHER_OPEN`
+with all original physical parent/trace SHA, exact
+Repair24 stepper and six original `C_min,C_star,C_max`
+by `Nt=128,64` gates PASS. Its JSON classification
+is `GE19_H4F3D7_FD4_INTERVAL_ODE_DISCREPANCY_DECOMPOSED`.
+
+Independent uploaded artifact audit checked exact
+SHA/length cross-match, FULL=JSON byte-for-byte,
+all **44** exact NPZ arrays/finite/shapes/x, the five
+saved NPZ-vs-JSON global L2 norms in each of six
+cases, and complete four-bin norm/count reconstruction
+over **all original 2048 R1 nodes, six modes, both
+sides and all original node-intervals**.
+Maximum normalized algebraic identity discrepancy:
+`2.289808148773898e-16`. Original R1 weighted
+Z10 and D6 sampled bath Euler absolute-norm
+reproduction: exactly zero in every case.
+No actual raw parent complex trajectories were
+uploaded, so parent-propagator reproduction relies
+on the original hash-locked local runner, not an
+independent physical rerun here.
+
+Primary `Nt=128`: sampled FD4 bath Euler L2
+`9.27e-5–9.68e-5`, original R1 interval
+ODE both one-sided L2 about `2.20e-11–2.24e-11`;
+control `Nt=64`: FD4 `6.58e-5–6.72e-5`,
+original interval ODE `3.10e-11–3.22e-11`.
+Original `phase>=1` bins (2527/260096 primary
+and 1789/129024 control node-interval pairs)
+contain essentially **all** squared norm of sampled
+left-derivative defect, with original unchanged
+bins and no exclusions. The original H4F3d6
+near-unit **FD4** Euler ratio remains real as
+a sampled diagnostic but is explained by the
+sampled-versus-original interval-derivative defect;
+it must NOT be construed as verified physical
+original-ODE bath on-shell violation or as a
+newly certified covariant bath on-shell condition.
+The diagnostic separates the two formulations,
+not a physical all-sector H4 Ward.
+
+New immutable archive audit manifest:
+`ge19/h4f3d7r1_actual_physical_discrepancy_independent_archive_audit.json`,
+Git blob `b85b3bbd80603ed324a6cc54b0080489167fef31`.
+Detailed physical freeze:
+`docs/ge19_h4f3d7r1_actual_physical_r1_fd4_discrepancy_diagnostic_freeze.md`,
+blob `7f34ffbd829353028d41c620334e2c01b273917e`.
+No binary user artifact was claimed as committed
+to GitHub. Original H4F3d7 broken local FULL.log
+and its versioned implementation repair/CI
+static PASS are retained separately; old physical
+and science history is untouched.
+
+**NEXT:** evaluate actual nonbath H4 parent Euler
+and boundary arrays on exact original frozen parents
+using H4F3d8's restricted symbolic independent
+compiler, then complete original source/bath/
+nonbath/boundary/operator integrated H4 Ward
+with physically justified original derivative error
+bound (H4F3d9 structural stencil constants do
+not yet constitute actual physical bound).
+No retuning source, physics equations, time grid,
+2048-node R1 bath, preregistered thresholds
+or observations; Repair37 SCIENCE_FAIL immutable.
+**Full actual H4 Noether NOT CERTIFIED; window-local
+particular reduced Z21 NOT CERTIFIED; lensing BLOCKED.**
