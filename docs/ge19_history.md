@@ -1,6 +1,6 @@
 # GE19 reduced weakly nonlinear track — persistent history
 
-Last updated: 2026-09-23
+Last updated: 2026-09-25
 
 Branch:
 
@@ -4013,3 +4013,63 @@ Required physical files are the ORIGINAL hash-locked actual H4F3b JSON/NPZ (SHA 
 **Full actual all-sector H4 structural Noether PASS NOT PRODUCED. Z21 NOT CERTIFIED. Lensing blocked.**
 
 New-chat transfer document: `docs/ge19_new_chat_handoff_2026_09_25.md`. This standalone handoff includes verified H4F3d7 CI results, exact original physical input hashes, the pending physical d7 diagnostic and independent nonbath full-Ward steps.
+
+---
+
+## Latest checkpoint — H4F3d7 physical local runner STATIC PASS; physical measurement open (2026-09-25)
+
+This supersedes only previous NEXT-step text. The complete new-chat
+handoff in `docs/ge19_new_chat_handoff_2026_09_25.md`, all historical
+Repair22/27/32, corrected H3F/H3G and actual H4F3b/H4F3d6
+certificates, the H4F3d4 formal ledger, Repair37 SCIENCE_FAIL
+and Repair38–44 diagnostics remain immutable.
+
+**New implementation/static result:** `GE19_H4F3D7_PHYSICAL_LOCAL_RUNNER_STATIC_PASS_PHYSICAL_OPEN`.
+
+The locked original physical local runner
+`ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh`,
+blob `6fe12ef99f9a469da8f5913121d3301df519aae2`,
+was created in commit `a6e1137b7d8e74c82466d98540c733aa72e1241f`.
+The separate static CI workflow
+`.github/workflows/ge19-h4f3d7-physical-local-runner-static.yml`,
+blob `632aefa190722ad273beca15f3743c941a866372`,
+passed [Actions 36150787708](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36150787708),
+job `108123212034`, on 25 September 2026. The static CI
+checked pinned source, Bash and Python-heredoc syntax,
+physical CLI arguments, no manufactured execution,
+absolute hashes, temp-CWD-before-import isolation and
+non-overwriting outputs. It DID NOT load the original
+physical NPZ binaries.
+
+Immutable runner freeze:
+`docs/ge19_h4f3d7_local_physical_runner_lock.md`,
+blob `67cd27ea11a24e93f8f4cd5a9a181ccec65112c1`.
+
+The local physical runner is now prepared to use exactly the
+original physical H4F3b JSON/NPZ, actual H4F3d6 JSON/NPZ,
+certified H3F/H3G/Repair32B Z11/Repair32C/Repair13
+and exact 26,643,162-byte Repair26 R1 full-history trace.
+Its isolated preflight delegates all parent hashes to the
+existing frozen `s.frozen_inputs` and verifies the current
+original d7 code, Repair24 stepper AST and H4F3b/H4F3d6
+certifications. The physical d7 code and preregistration
+are unchanged. It preserves BOTH original R1 interval
+sides, all original 2048 frequency nodes, six original modes
+and all fixed phase bins. No new bath-on-shell threshold,
+source fitting, exclusions, or clock refit is introduced.
+
+**NEXT:** execute this runner only in the user-local
+scientific environment where the exact original physical
+binaries are present. Independently verify output JSON/NPZ/FULL
+hashes and freeze the actual physical classification
+without changing any previous result. Independently
+derive/evaluate the remaining signed nonbath H4 Euler
+parents and action boundary and preregister a separate
+FD4/FD8 structural error budget BEFORE the all-sector
+physical Ward test. Source-only Ward is report-only.
+Original active shift <=1e-6 and temporal order >=2.5
+are unchanged.
+
+**H4F3d7 physical decomposition NOT YET EXECUTED;
+full actual H4 Noether NOT CERTIFIED; Z21 NOT CERTIFIED;
+lensing blocked.**
