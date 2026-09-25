@@ -78,3 +78,50 @@ Unknown `E_i00*F_i21,chi`, original
 `L21*E_L00-b21*E_b00`, complete H4 Ward
 and a valid physical FD4/FD8 error bound remain
 unresolved. No certified Z21 or lensing.
+
+
+## Actual H4F3d10r1 lossless nonbath diagnostic PASS (2026-09-25)
+
+The user-local physically executed, preregistered H4F3d10r1
+lossless archive corrected only the original D10's lossy
+Fourier output. All six original C/Nt cohorts and original
+dual FD4/FD8 report-only nonbath first-order
+GE06/GE07/Lambda Euler and signed known L/b lower boundary
+passed original archive-only lossless full-Nyquist gate
+(max `2.8428133461119143e-16`, original threshold `1e-12`).
+Uploaded JSON SHA256
+`69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2`,
+NPZ SHA256
+`85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b`;
+FULL log byte-identical to JSON and runner hashes match.
+Original failed D10 NPZ SHA
+`1b9ff8e421f2b9241cd0ffbc65967ecc4f5efc8afc43d5747ae1216f5d944fab`
+was independently rechecked: **all 530 original arrays
+bitwise-identical** in r1, alongside 528 extra finite
+`m41..64` high-band arrays. Independently
+reconstructed all 12 actual C/Nt/scheme full-real
+eight-field parent sums (max relative `4.163e-16`),
+signed known boundaries (`3.769e-16`), and
+`W_known=P_known-partial_chi(B_known)` (exact at
+saved full-real reconstruction). Machine manifest
+`ge19/h4f3d10r1_actual_physical_lossless_archive_independent_audit.json`
+blob `2921f79dbb0ce99200418bfba924b699ff8cd67f`.
+Detailed frozen science-boundary record
+`docs/ge19_h4f3d10r1_actual_physical_lossless_known_boundary_freeze.md`,
+blob `e9329cd24631241d0ef9610d104336cf4f6590b9`.
+
+**Scientific boundary:** an actual *known first-order
+nonbath* diagnostic PASS, NOT full H4 Noether,
+not certified source/bath/action background
+on-shell, not a solved Z21 or licensed lensing.
+Original D10 six FAILs and Repair37 SCIENCE_FAIL
+immutable. Unknown background
+`sum_i E_i00 F_i21,chi` and
+`L21 E_L00 - b21 E_b00` must be evaluated from
+the original action and certified F21 rather than
+asserted zero. Original H4F3d7r1 physical
+FD4/interval ODE decomposition remains diagnostic.
+Next: preregister and evaluate actual background
+Euler E00, then the missing original mixed H4
+boundary and all-sector integrated Ward with
+a valid original-grid error budget, before Z21.
