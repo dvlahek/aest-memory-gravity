@@ -3379,3 +3379,98 @@ Original active shift `1e-6` and temporal
 order >=2.5 remain unrelaxed. Full all-sector
 H4 Noether and Z21 are NOT CERTIFIED;
 lensing blocked.
+
+
+---
+
+## Latest checkpoint — actual H4F3b corrected six-source PASS and H4F3d full operator/parent Ward preregistration (2026-09-25)
+
+This supersedes only older NEXT text. Preserve all original Repair22/27/32
+certifications, Repair37 H4/Z21 SCIENCE_FAIL and Repair38--44 diagnostics
+without relabeling. No source scale, active mask, hot spot or frozen
+science threshold was adjusted.
+
+**Actual local H4F3b source on corrected certified physical parents: PASS.**
+
+User uploaded all four local H4F3b results. Their SHA-256 and byte counts
+were independently verified from mounted files:
+
+- JSON: 17898 bytes,
+  `1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1`;
+- FULL log: 17898 bytes, byte-identical to JSON, same SHA-256;
+- NPZ: 30913364 bytes,
+  `787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b`;
+- outer runner log: 3180 bytes,
+  `411c72f0c54557c69883718082e030b1158cdb6fdfb6e1702abf45510e222179`.
+
+Classification:
+`GE19_H4F3B_ACTUAL_CORRECTED_SIX_SOURCE_PASS_FULL_WARD_OPEN`;
+terminal marker
+`GE19_H4F3B_ACTUAL_SIX_SOURCE_PASS_FULL_WARD_OPEN`;
+all eight frozen gates true, no failed gates.
+Full result freeze:
+`docs/ge19_h4f3b_actual_corrected_six_source_valid_local_freeze.md`,
+blob `578768817615807260afc2d7baaa24d2c4928858`.
+
+Independent NPZ inspection: **146 finite numeric fields**, with all
+18 original C/beta/Nt cohorts. Every total source has shape
+(8,Nt,41), with all six actual source families and physical
+source-only Ward arrays. The exact maximum absolute defect between
+total source and direct sum of six saved source rows is **0.0**
+across all cohorts. The maximum saved physical *source-only*
+Ward magnitude is `3.610734858956584e-12` (Nt64);
+this number is **report-only, not a smallness/pass gate**.
+
+The original H3F/H3G/Z11, R13 and R1 hashes were checked by the
+locked local runner. The user's original scientific environment
+supplied the exact certified Repair32B Z11 NPZ that had been absent
+from the conversation's mounted files. That missing-conversation-
+attachment note is now superseded for the genuine local H4F3b
+execution, but the exact original Z11 binary is not automatically
+available on GitHub Actions. Old scalar-only Y and Repair27 q20
+were not consumed; the Stage E action-complete Y u+phi rows were.
+
+**H4F3c genuine unmocked generator manufactured CI: PASS.**
+
+Previously launched workflow `36096862132` is now confirmed completed
+successfully, job `107950837089`, marker
+`GE19_H4F3C_GENUINE_FROZEN_GENERATORS_MANUFACTURED_PASS`.
+JSON SHA-256:
+`5c0288cbf836dcc260e7d0029ae644cb733dd2e141a0128595c70633d2c57992`;
+artifact `10848180381`.
+Frozen manufactured generator result:
+`docs/ge19_h4f3c_genuine_mixed_generators_manufactured_valid_freeze.md`,
+blob `a9f929203a072dae66d50d8781f64440e2ede184`.
+This independently executes the genuine frozen GE06/GE07/Lambda mixed
+generators on *manufactured* inputs; it is not a separate
+physical-parent H4F3b run or a Noether certificate.
+
+**NEXT integrated structural gate H4F3d: PREREGISTERED/PRELOCK PASS,
+NOT YET IMPLEMENTED OR SCIENTIFICALLY EXECUTED.**
+
+Preregistration:
+`ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json`,
+blob `f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51`.
+Dedicated prelock workflow
+`360? (see actions workflow ge19-h4f3d-actual-operator-parent-ward-prelock.yml)`
+passed at latest commit `b368073cc71cc9d3e291707566a69edf05e5d8a3`.
+
+H4F3d must use the **exact actual H4F3b source NPZ** and the
+same certified on-shell H1/Z11/corrected H3F Z20/H3G q20 and original
+GE07 dust/Repair26 R1 per-node bath parents. Derive and evaluate
+independently the original canonical linear-operator Ward term,
+all signed background/parent Euler residual products, action boundary
+terms and original six-piece source Ward on the same physical x=ln(a)
+grids. Use the frozen H*FD8/H*FD4 source family derivative schemes,
+original GE19 operator convention and registered early
+C_max/beta=1/m8/index3 hotspot. A small source Ward on its own is
+neither a full identity nor a science PASS.
+
+The physical H4F3d structural tolerance needs its **own pre-data
+derivation from the signed Ward identity and FD discretization error**.
+Do not retrospectively fit it to the H4F3b source-Ward magnitude,
+or substitute the later H4/Z21 active-shift target (unchanged 1e-6).
+Only after a separately frozen full actual operator+parent Ward
+structural PASS may a new Z21 science solver be preregistered.
+
+**Full H4 Noether NOT CERTIFIED; Z21 NOT CERTIFIED; lensing blocked.**
