@@ -3961,3 +3961,25 @@ A full all-sector H4 Noether PASS has NOT occurred.
 The original active shift `1e-6` and matched order
 `>=2.5` remain unchanged. Z21 NOT CERTIFIED;
 lensing blocked.
+
+
+**NEXT H4F3d7 diagnostic is preregistered (not numerically run):**
+
+- predata `ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json`,
+  blob `ccf3185b4f790d9d6068f80beb39a442b186158c`;
+- independent prelock workflow
+  `.github/workflows/ge19-h4f3d7-bath-fd4-r1-prelock.yml`,
+  GitHub Actions run `36137851501`, SUCCESS,
+  `GE19_H4F3D7_BATH_FD4_R1_PREDATA_PRELOCK_PASS`.
+
+The registered decomposition uses the ORIGINAL Repair24
+step-linear bath ODE, physical `H FD4_x(a^3v/tau)`,
+both one-sided interval-H currents at interior nodes and
+predeclared per-frequency phase bins. It distinguishes
+sampled FD4 derivative error from the frozen step's
+piecewise-H background mismatch. No on-shell smallness
+gate, time-stencil/source fitting or high-frequency
+node exclusion was introduced. This prelock is NOT a
+physical H4F3d7 result. Independent nonbath parent and
+canonical operator full-Ward work remains a separate
+necessary component.
