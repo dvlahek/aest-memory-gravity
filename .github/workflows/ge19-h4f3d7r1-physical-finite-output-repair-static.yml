@@ -1,0 +1,88 @@
+name: GE19 H4F3d7r1 Physical Finite Output Repair Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d7r1_predata_physical_output_finite_check_repair.json'
+      - 'ge19/h4f3d7r1_physical_output_finite_check_repair.py'
+      - 'ge19/run_local_h4f3d7r1_physical_output_finite_check_repair.sh'
+      - '.github/workflows/ge19-h4f3d7r1-physical-finite-output-repair-static.yml'
+
+jobs:
+  source-only-implementation-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact finite-array regression dependency
+        run: python3 -m pip install numpy
+      - name: Verify original immutable blobs, isolated runner, exact single-expression diff and real AST gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json)" = "ccf3185b4f790d9d6068f80beb39a442b186158c"
+          test "$(git rev-parse HEAD:ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py)" = "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh)" = "6fe12ef99f9a469da8f5913121d3301df519aae2"
+          test "$(git rev-parse HEAD:ge19/h4f3d7r1_predata_physical_output_finite_check_repair.json)" = "f404c1b910e9dbcb342fbc4d3403fb83108697f7"
+          test "$(git rev-parse HEAD:ge19/h4f3d7r1_physical_output_finite_check_repair.py)" = "e4cb9d6638b427368647a29b86ccf5445b43d7a2"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d7r1_physical_output_finite_check_repair.sh)" = "6bdee189cf795a04e4d1b19822af6ed778b5af46"
+          bash -n ge19/run_local_h4f3d7r1_physical_output_finite_check_repair.sh
+          python3 - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          import numpy as np
+          old=Path("ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py").read_text()
+          new=Path("ge19/h4f3d7r1_physical_output_finite_check_repair.py").read_text()
+          pre=json.loads(Path("ge19/h4f3d7r1_predata_physical_output_finite_check_repair.json").read_text())
+          runner=Path("ge19/run_local_h4f3d7r1_physical_output_finite_check_repair.sh").read_text()
+          broken='''    valid=bool(len(cases)==6 and all(v["pass"] for v in cases)
+               and all(all(np.isfinite(q).all()
+                   for q in stored.values()) for stored in (
+                       [outputs[k] for k in outputs] ,)))'''
+          fixed='''    valid=bool(len(cases)==6 and all(v["pass"] for v in cases)
+               and all(np.isfinite(arr).all()
+                       for arr in outputs.values()))'''
+          assert old.count(broken)==1
+          assert new==old.replace(broken,fixed), "more than registered single expression changed"
+          assert pre["classification"]=="GE19_H4F3D7R1_PREDATA_PHYSICAL_OUTPUT_FINITE_CHECK_IMPLEMENTATION_REPAIR_ONLY"
+          assert pre["frozen_parent_script"]["git_blob"]=="b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+          assert pre["frozen_parent_runner"]["git_blob"]=="6fe12ef99f9a469da8f5913121d3301df519aae2"
+          original_tree=ast.parse(old)
+          new_tree=ast.parse(new)
+          assert len(original_tree.body)==len(new_tree.body)
+          fn=next(node for node in new_tree.body if isinstance(node,ast.FunctionDef) and node.name=="physical_run")
+          assignments=[node for node in ast.walk(fn) if isinstance(node,ast.Assign)
+                       and len(node.targets)==1 and isinstance(node.targets[0],ast.Name)
+                       and node.targets[0].id=="valid"]
+          assert len(assignments)==1
+          gate=compile(ast.fix_missing_locations(ast.Expression(body=assignments[0].value)),
+                       "actual_frozen_final_valid_gate","eval")
+          cases=[{"pass":True} for _ in range(6)]
+          finite={"primary_C_min_x":np.array([1.,2.]),"control_C_max_FD4":np.array([[1.+2.j]])}
+          assert eval(gate,{"np":np,"cases":cases,"outputs":finite}) is True
+          for bad in (np.nan,np.inf,-np.inf):
+              broken_arrays={**finite,"primary_C_star_extra":np.array([bad])}
+              assert eval(gate,{"np":np,"cases":cases,"outputs":broken_arrays}) is False
+          assert eval(gate,{"np":np,"cases":cases[:5],"outputs":finite}) is False
+          assert eval(gate,{"np":np,"cases":[*cases[:5],{"pass":False}],"outputs":finite}) is False
+          assert 'from ge19 import h4f3d7r1_physical_output_finite_check_repair as d7' in runner
+          assert 'python3 -B -m ge19.h4f3d7r1_physical_output_finite_check_repair' in runner
+          assert 'ge19_h4f3d7r1_physical_r1_fd4_vs_interval_ode' in runner
+          assert 'ge19_h4f3d7_physical_r1_fd4_vs_interval_ode_FULL.log' not in runner
+          assert 'GE19_H4F3D7R1_OUTPUT_ALREADY_EXISTS_NO_OVERWRITE' in runner
+          assert 'TMP="$(mktemp -d)"' in runner
+          assert runner.index('cd "$TMP"')<runner.index('from ge19 import')
+          assert runner.index('cd "$TMP"')<runner.index('python3 -B -c')
+          assert 's.frozen_inputs(rd, trace)' in runner
+          assert 'd7.stepper_ast_exact()' in runner
+          assert '--manufactured' not in runner
+          blocks=re.findall(r"<<'PY'\n(.*?)\nPY\n",runner,re.S)
+          assert len(blocks)==2
+          for src in blocks: compile(src,"frozen_runner_inline","exec")
+          assert '--repair26-trace "$TRACE"' in runner
+          assert '--source-json "$SOURCE_JSON"' in runner and '--d6-npz "$D6_NPZ"' in runner
+          assert 'rm -f "$JSON"' not in runner and 'rm -f "$NPZ"' not in runner
+          print("GE19_H4F3D7R1_EXACT_SINGLE_FINITE_GATE_REPAIR_STATIC_PASS_PHYSICAL_OPEN")
+          PY
