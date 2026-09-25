@@ -1,0 +1,43 @@
+{
+  "classification": "GE19_H4F3D4_PREDATA_COMPLETE_ETA_REGULARIZED_MIXED_WARD_LEDGER",
+  "scope": "Complete FORMAL exact off-shell epsilon^2 eta1 spatial Ward coefficient of frozen plane-longitudinal GE06+GE07+Lambda+NL0C+2eta NL0B action, including the corrected eta-rescaled bath q parent term, full original GE19 canonical independent L/shift row mapping and signed six-family source decomposition. This proves algebraic coefficient identity, not actual parent residuals on physical grids, a numerical structural tolerance or H4/Z21 science.",
+  "frozen_parents": {
+    "H4F3D3_predata": "ff7720381ddd09c7c073e106b2f35065ac3d1d6f",
+    "H4F3D3_compiler": "fb340b957c31e34d35f1ebd9404a53b59d29c102",
+    "H4F3D3_CI_result_sha256": "1d59931e887d9c370398d198afae6c9c7197b8b65d6f375f3a047fbae247597b",
+    "H4F2B_formal_Ward": "ab783ffe8242d8ff455647df8664a074f725ee81",
+    "H4F3D1_canonical_operator_Ward": "60786ac14c9478801c5df9ccf458ead9a34ac827",
+    "H4F3D2_dust_bath_currents": "42b2405759402195ffb371056d9e48b70dcded71",
+    "H4F2H_physical_time_six_source_Ward": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "H4F3B_actual_six_piece_source_code": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "H4F3D_full_physical_predata": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51"
+  },
+  "signed_Ward": "W21=sum_i!=q(E_i00 F_i21,x +2 E_i10 F_i11,x+2 E_i11 F_i10,x)+4 sum_j E_qj,GE05,10 q_j10,x -d_x[B21]-d_t E_b21 =0",
+  "boundary": "B21=a E_L21+L21 E_L00+2 L10 E_L11+2 L11 E_L10-b21 E_b00-2 b10 E_b11-2 b11 E_b10",
+  "common_mapping": "E_L21=(E_iso21+2 E_aniso21)/3, E_b21=E_shift21, E21=L21-S21 original GE19 RHS sign",
+  "operator": "W_op=-H D4_ln(a)[(C10+C11)w]-ik a {[C6+2(C12+C13)]w/3-H D4_ln(a)[C14w]}",
+  "source": "W_source=sum_piece[H D_source_piece S_shift,piece+ik a(S_iso,piece+2 S_aniso,piece)/3], with FD8 GE06/GE07/Lambda/Y and FD4 GE05 M1/M2 frozen",
+  "parent": "W_parent=sum_i!=q(E_i00 F_i21,x+2 E_i10 F_i11,x+2 E_i11 F_i10,x)+4 sum_j E_qj10,GE05 q_j10,x-d_x[L21 E_L00+2 L10 E_L11+2 L11 E_L10-b21 E_b00-2 b10 E_b11-2 b11 E_b10]",
+  "formal_identity": "W_op + W_source + W_parent =0 IF all E21 linear operator/source and exact action parent mappings are from the same frozen action; do not assume W_op alone=0 or W_source alone=0",
+  "proof_gates": [
+    "Pin all prior action/partial/canonical operator and source dictionary sources exactly.",
+    "Derive full off-shell formal mixed derivative from nonbath fields plus physical 2eta normalized per-node bath Ward, with background q_j00=0 and eta-independent homogeneous backgrounds.",
+    "Prove the exact extra +4 E_qj10 q_j10,x and absence of direct E_q20 q20,x for first-order physical H4 mixed coefficient; preserve exact plus sign and original 2 scale.",
+    "Separate the complete lower-parent/boundary remainder from the independent E_L21 and E_b21 rows without deleting it on shell prematurely.",
+    "Prove original GE19 isotropic+anisotropy row projection and the original E21=L21-S21 source sign at the mixed H4 coefficient.",
+    "Bind all six fixed actual H4F3b source families and original physical FD8/FD4 derivative scheme without modifying any source arrays or falsely requiring source-only Ward zero.",
+    "Provide formula and stop classification for unavailable physical parent Euler residuals and missing independent FD4/FD8 tolerance."
+  ],
+  "outcomes": {
+    "FORMAL_COMPLETE_MIXED_WARD_LEDGER_PASS": "All source-bound algebraic and exact sign/factor gates pass. Freeze full FORMAL continuum identity, then independent actual-grid all-parent residuals, boundary and preregistered FD tolerance remain necessary before H4 science.",
+    "FORMAL_MIXED_WARD_LEDGER_UNRESOLVED": "Freeze exact failed algebraic gate; do not run H4 science or fit residual."
+  },
+  "stops": {
+    "no_actual_physical_Ward_PASS_claim": true,
+    "no_unregistered_numeric_threshold": true,
+    "no_Z21_solve": true,
+    "no_historical_relabel": true,
+    "no_relaxed_1e_minus6": true,
+    "no_lensing": true
+  }
+}
