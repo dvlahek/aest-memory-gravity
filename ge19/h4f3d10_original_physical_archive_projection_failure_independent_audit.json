@@ -1,0 +1,59 @@
+{
+  "classification": "GE19_H4F3D10_ORIGINAL_ACTUAL_PHYSICAL_ARCHIVE_PROJECTION_FAIL_INDEPENDENTLY_LOCALIZED",
+  "date": "2026-09-25",
+  "immutable_original_classification": "GE19_H4F3D10_ACTUAL_PARENT_INTERFACE_UNRESOLVED",
+  "original_input_stage": "Original actual H4F3b,H4F3d6,H4F3d7r1,corrected H3F/H3G/Z11/Repair13 and Repair26 verified in original user-local runner",
+  "uploaded_artifacts": {
+    "json": {
+      "sha256": "df4240b40aa7f3b787e36dd0fd87212c6dcb746b35278f6cb36fc1083aa4ea21",
+      "bytes": 25580
+    },
+    "npz": {
+      "sha256": "1b9ff8e421f2b9241cd0ffbc65967ecc4f5efc8afc43d5747ae1216f5d944fab",
+      "bytes": 23566797
+    },
+    "full_log": {
+      "sha256": "df4240b40aa7f3b787e36dd0fd87212c6dcb746b35278f6cb36fc1083aa4ea21",
+      "bytes": 25580
+    },
+    "runner_log": {
+      "sha256": "14410be4b9c2139a8561a9e116ff23a64d8e76c4472a4204d8fc7ad814946648",
+      "bytes": 2390
+    },
+    "full_log_byte_identical_to_json": true,
+    "runner_hashes_match_all_outputs": true
+  },
+  "independent_checks": {
+    "six_unique_original_C_Nt_cases": true,
+    "all_original_code_parent_sha_reported_exact": true,
+    "all_six_original_case_pass_flags": false,
+    "all_six_archive_gate_fail": true,
+    "npz_array_count": 530,
+    "npz_all_finite": true,
+    "all_eight_nonbath_fields_in_each_case": true,
+    "original_2048_R1_nodes_preserved": true,
+    "original_FD4_FD8_both_saved": true,
+    "max_reported_low_mode_parent_boundary_spatial_identity": 2.6490057104221805e-16,
+    "max_independently_reconstructed_P_B_W_norm_relative_error": 1.3030086426085057e-15,
+    "archive_only_max_unprojected_low_mode_field_relative_range": [
+      0.3950754869047245,
+      0.47202988447647204
+    ]
+  },
+  "localized_cause": {
+    "original_archive_representation": "Only real physical positive Fourier coefficients m=0..40 saved for Nx128 arrays, while original archive_err wrongly demands exact recovery of EVERY unprojected Euler field at relative tolerance 1e-12.",
+    "example_C_min_Nt128_FD4_Erho10_full_real_L2": 9.092607269317478e-21,
+    "example_C_min_Nt128_FD4_Erho10_projected_omitted_L2_estimate": 4.039493810461776e-21,
+    "example_C_min_Nt128_FD4_Erho10_omitted_fraction_estimate": 0.44426133130074075,
+    "worst_case_C_star_Nt64_FD4_Erho10_omitted_L2_estimate": 5.0972444265964545e-21,
+    "worst_case_omitted_fraction_estimate": 0.46547084459126803,
+    "interpretation": "Unarchived high-frequency Fourier energy in near-zero Euler fields causes ratio-only archive checks to fail; high-band raw coefficients were not saved in original NPZ, so cannot independently establish their detailed spectrum or a physical roundoff bound from these four uploads."
+  },
+  "known_parent_reconstruction": {
+    "primary_C_min_FD4_P_known_L2_original": 0.0000028601379944532727,
+    "primary_C_min_FD4_P_known_L2_from_saved_low_modes": 0.0000028601379944532727,
+    "primary_C_min_FD4_B_known_L2_original": 7.780332052205952e-29,
+    "max_across_six_and_both_schemes_independent_P_B_W_norm_error": 1.3030086426085057e-15
+  },
+  "preserved_boundary": "Original H4F3d10 actual result remains UNRESOLVED; its original archive gate FAIL is not relabeled to PASS. No full actual H4 Noether, no E00*F21/L21 action background terms, no certified Z21, no lensing. Next version may extend archive to Nyquist without changing physics and rerun locally; do not fit thresholds or exclude any original node/mode."
+}
