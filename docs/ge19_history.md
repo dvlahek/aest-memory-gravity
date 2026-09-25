@@ -3313,3 +3313,69 @@ The original active-shift threshold
 `>=2.5` remain unchanged.
 **Full H4 Noether NOT CERTIFIED.
 Z21 NOT CERTIFIED. Lensing blocked.**
+
+
+---
+
+## Latest checkpoint — H4F3c genuine frozen mixed generators launched; exact Z11 still required (2026-09-25)
+
+Certified H3F corrected-Y Z20, H3G corrected-Y q20,
+independently uploaded H3G NPZ, original certified
+Repair32B/32C Z11 **classification** and all H4F2a--h
+restricted analytic/action/source-clock results remain
+unchanged. The exact certified Repair32B Z11 NPZ
+with SHA-256
+`5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327`
+has still not been supplied among the mounted
+conversation/Library files. Do not relabel
+a synthetic manufactured Z11 as that certified parent.
+
+**New H4F3c preregistration and genuine frozen
+source-generator manufactured Actions execution:**
+
+- predata:
+  `ge19/h4f3c_predata_real_generator_manufactured_runtime.json`,
+  blob `2fab9aafd16aa6ea6b11fa6dafff3f3394d97061`;
+- deterministic **manufactured**, NOT real-parent,
+  selftest:
+  `ge19/h4f3c_genuine_frozen_q_lambda_manufactured_selftest.py`,
+  blob `be3b1d29f3f3a6110883ede801c99d121a2755ee`;
+- dedicated workflow:
+  `.github/workflows/ge19-h4f3c-genuine-frozen-mixed-generators.yml`,
+  blob `bfcc469f34f6a0596d46ade27bec594bf2e45fbd`;
+- workflow run `36096862132`, started
+  `2026-09-25T05:02:05Z`;
+  at this checkpoint, `status=in_progress`,
+  final PASS/FAIL NOT YET KNOWN.
+
+This Action executes the **actual frozen**
+GE06/GE07 mixed-Q and Lambda source generators,
+symbolic bilinear function maps, exact
+polarization and direct-vs-swapped real
+Fourier source evaluators on two deterministic
+smooth Nt16/Nt32 manufactured backgrounds.
+It does NOT mock these three expensive
+source functions as the previous H4F3b
+synthetic wiring test did. It does not
+evaluate the real corrected-parent H4
+source, independent canonical operator
+Ward or all-parent Euler residual terms.
+No successful H4F3c result has been claimed
+from a merely running workflow.
+
+The existing H4F3b true physical local
+runner is `ge19/run_local_h4f3b_actual_corrected_six_piece_source.sh`.
+Run it only on the user's exact frozen
+H3F/H3G/R13/R1 parents and exact original
+Repair32B Z11 NPZ, with the lock and SHA
+gates left unchanged. This source-only
+test precedes independent complete H4
+operator+parent Noether and any subsequent
+separately preregistered Z21 science solve.
+
+Historical Repair37 H4 science FAIL and
+Repair38--44 diagnostics remain immutable.
+Original active shift `1e-6` and temporal
+order >=2.5 remain unrelaxed. Full all-sector
+H4 Noether and Z21 are NOT CERTIFIED;
+lensing blocked.
