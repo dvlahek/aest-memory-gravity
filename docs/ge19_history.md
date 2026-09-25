@@ -4330,3 +4330,70 @@ No retuning source, physics equations, time grid,
 or observations; Repair37 SCIENCE_FAIL immutable.
 **Full actual H4 Noether NOT CERTIFIED; window-local
 particular reduced Z21 NOT CERTIFIED; lensing BLOCKED.**
+
+---
+
+## H4F3d10r1 actual known nonbath and H4F3d11 source-bound E00 preregistration (2026-09-25)
+
+Original user-local H4F3d10 actually completed all six
+C/Nt eight-field nonbath first-order parent/boundary
+cohorts but failed its lossy m0..40 archive recovery
+on tiny high-frequency individual Euler rows.
+Its original `GE19_H4F3D10_ACTUAL_PARENT_INTERFACE_UNRESOLVED`
+classification and six original FAIL flags are immutable.
+Separate preregistered H4F3d10r1 archived all
+m0..64 Fourier coefficients without changing original
+m0..40 arrays or full-resolution physics. It PASSED
+original actual physical local execution and subsequent
+independent NPZ audit: 530 original arrays bitwise
+identical, 528 new full-Nyquist high arrays finite,
+six cases and both original FD4/FD8, max full-grid
+archive-only inverse error `2.8428133461119143e-16`
+(original `1e-12` archive-only comparator).
+All 12 original signed full-real P_known/B_known/W_known
+assembled independently. Original actual H4F3d10r1
+JSON SHA256 `69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2`,
+NPZ SHA256 `85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b`.
+Freeze `docs/ge19_h4f3d10r1_actual_physical_lossless_known_boundary_freeze.md`
+(blob `e9329cd24631241d0ef9610d104336cf4f6590b9`);
+independent machine audit
+`ge19/h4f3d10r1_actual_physical_lossless_archive_independent_audit.json`
+(blob `2921f79dbb0ce99200418bfba924b699ff8cd67f`).
+This actual diagnostic does NOT establish full H4 Noether.
+
+Next H4F3d11 preregistered original-action
+eight-field homogeneous GE06/GE07/Lambda background
+Euler `E_i00` on the same original frozen
+Repair13 C_min/C_star/C_max x Nt128/Nt64
+backgrounds, with separate original FD4 and FD8
+physical-time derivatives and source-stable Z.
+Original GE06 15 and GE07 7 exact source
+partial-map FLRW expressions symbolically verified,
+including nonzero GE06 homogeneous spatial shift
+momentum p_bx00, scalar time current and negative
+controls. Source [static CI 36189149840](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36189149840)
+PASS; no-overwrite/isolated driver/synthetic assembly
+[static CI 36189465789](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36189465789)
+PASS. Initial workflow 36189057213 failed only a
+literal test-string comparison before importing
+the physical action; separately versioned CI r1
+fixed the harness test, not physics. Frozen D11
+predata blob `deb4b35e6a147b48fe93d6c99d798572650000ac`,
+source compiler `1f085efec4ea64b42822ddeaac566f532d9dccf1`,
+actual physical driver `b162fad1db2a855917b5f8e29fce10c67d30737f`,
+locked local runner
+`8c4f34ad79b347b3810093a1bba0b4129468f7fc`.
+Static freeze
+`docs/ge19_h4f3d11_source_bound_actual_background_e00_static_freeze.md`
+(blob `bf178afbaa6886202b857503d8cc6e1a39b80290`).
+
+**Actual H4F3d11 physical E00 output NOT YET RUN.**
+Local command `bash ge19/run_local_h4f3d11_actual_original_action_background_e00.sh`
+after `git pull --ff-only` and activating `.venv`.
+Required four new JSON/NPZ/FULL/LOCAL logs must be
+independently audited. No E00 on-shell assertion
+or omitted `sum_i E_i00 F_i21,chi` and
+`L21 E_L00-b21 E_b00` products, no full integrated
+H4 Ward, no certified Z21, no lensing. All older
+Repair37 SCIENCE_FAIL, original bath 2048 nodes,
+shift `1e-6` and temporal order `>=2.5` unchanged.
