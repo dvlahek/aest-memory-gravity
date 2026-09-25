@@ -1,0 +1,56 @@
+name: GE19 H4F3c Genuine Frozen Mixed Generators Manufactured
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3c_predata_real_generator_manufactured_runtime.json'
+      - 'ge19/h4f3c_genuine_frozen_q_lambda_manufactured_selftest.py'
+      - '.github/workflows/ge19-h4f3c-genuine-frozen-mixed-generators.yml'
+
+jobs:
+  genuine-generators:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen symbolic and numerical dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Check source lock and exercise unmocked GE06 GE07 Lambda
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3c_predata_real_generator_manufactured_runtime.json)" = "2fab9aafd16aa6ea6b11fa6dafff3f3394d97061"
+          test "$(git rev-parse HEAD:ge19/h4f3c_genuine_frozen_q_lambda_manufactured_selftest.py)" = "be3b1d29f3f3a6110883ede801c99d121a2755ee"
+          python3 -m py_compile ge19/h4f3c_genuine_frozen_q_lambda_manufactured_selftest.py
+          python3 -m ge19.h4f3c_genuine_frozen_q_lambda_manufactured_selftest \
+            --json-out results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured.json \
+            > results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured_FULL.log
+          python3 - <<'PY'
+          import json
+          d=json.load(open("results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured.json"))
+          assert d["classification"]=="GE19_H4F3C_GENUINE_FROZEN_Q_LAMBDA_MANUFACTURED_RUNTIME_PASS"
+          assert d["all_gates_pass"] is True
+          assert all(v["exact"] for v in d["source_blobs"].values())
+          assert d["actual_frozen_symbolic_polarization_pass"] is True
+          assert [q["Nt"] for q in d["manufactured_cases"]]==[16,32]
+          assert all(q["all_frozen_generator_gates_pass"] for q in d["manufactured_cases"])
+          assert d["original_certified_Repair32B_Z11_binary_consumed"] is False
+          assert d["H4F3b_actual_corrected_parent_six_source_run"] is False
+          assert d["complete_H4_operator_parent_Ward_derived"] is False
+          assert d["H4_Z21_solved"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3C_GENUINE_FROZEN_GENERATORS_MANUFACTURED_PASS")
+          PY
+          sha256sum results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured.json
+          wc -c results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3c_genuine_frozen_q_lambda_manufactured
+          path: |
+            results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured.json
+            results/ge19_h4f3c_genuine_frozen_q_lambda_manufactured_FULL.log
+          retention-days: 90
