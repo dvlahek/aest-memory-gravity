@@ -6,6 +6,7 @@ on:
     branches: [physics-first-gravitational-elasticity]
     paths:
       - 'ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json'
+      - 'ge19/h4f3d9_predata_amendment01_correct_d7_git_blob.json'
       - 'ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py'
       - '.github/workflows/ge19-h4f3d9-original-fd4-fd8-stencil-budget.yml'
 
@@ -20,7 +21,8 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD:ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json)" = "98e6fd8835fdbe3bd169d062431eefe80a3e9232"
-          test "$(git rev-parse HEAD:ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py)" = "15045454c35bd3d1fc9f4014ece5cd7736e5b1c7"
+          test "$(git rev-parse HEAD:ge19/h4f3d9_predata_amendment01_correct_d7_git_blob.json)" = "34cea0c62ef2dc962bc43ef93b2fbbd70b9c2180"
+          test "$(git rev-parse HEAD:ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py)" = "03864a08110e341038056dd4cefd5842d4a5eb1e"
           python3 -m py_compile ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py
           mkdir -p results
           python3 -B -m ge19.h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler \

@@ -17,6 +17,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 PREDATA = "ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json"
 PRE_BLOB = "98e6fd8835fdbe3bd169d062431eefe80a3e9232"
+AMENDMENT = "ge19/h4f3d9_predata_amendment01_correct_d7_git_blob.json"
+AMEND_BLOB = "34cea0c62ef2dc962bc43ef93b2fbbd70b9c2180"
 PATHS = {
     "Repair07_original_FD4": "ge19/repair07_window_retarded_reduced_h3_z20_particular.py",
     "Repair37_original_FD8": "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py",
@@ -51,9 +53,35 @@ def source_lock():
             "GE19_H4F3D9_PREDATA_ORIGINAL_FD4_FD8_STENCIL_CONSTANTS_AND_FULL_WARD_ERROR_BUDGET_PROTOCOL"
             or set(prereg["frozen_source_blobs"]) != set(PATHS)):
         raise RuntimeError("H4F3d9 frozen preregistration not recognized")
-    want = {"predata": (PREDATA, PRE_BLOB)}
+    amend = json.loads((ROOT/AMENDMENT).read_text())
+    override = amend["one_allowed_override"]
+    if not (
+        amend["classification"] ==
+        "GE19_H4F3D9_PREDATA_AMENDMENT01_CORRECT_FROZEN_D7_BLOB_ONLY"
+        and amend["parent_predata"] == PREDATA
+        and amend["parent_predata_git_blob"] == PRE_BLOB
+        and override["label"] == "H4F3d7_original_interval_diagnostic"
+        and override["path"] == PATHS[override["label"]]
+        and prereg["frozen_source_blobs"][override["label"]] ==
+            override["old_wrong_git_blob"]
+        and override["correct_original_git_blob"] ==
+            "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+        and all(amend[key] is True for key in (
+            "original_predata_unchanged",
+            "all_other_source_pins_unchanged",
+            "physical_dataset_unmodified",
+            "registered_FD4_FD8_formulas_unchanged",
+            "no_new_numeric_error_tolerance",
+            "no_physical_test_executed",
+            "no_relabel_of_historical_results"))
+    ):
+        raise RuntimeError("H4F3d9 immutable single-pin amendment not recognized")
+    registered = dict(prereg["frozen_source_blobs"])
+    registered[override["label"]] = override["correct_original_git_blob"]
+    want = {"predata": (PREDATA, PRE_BLOB),
+            "predata_amendment01": (AMENDMENT, AMEND_BLOB)}
     want.update({key:(PATHS[key],value)
-                 for key,value in prereg["frozen_source_blobs"].items()})
+                 for key,value in registered.items()})
     result = {}
     for key,(path,expected) in want.items():
         head,actual = blob(path),blob(path,True)
@@ -62,7 +90,7 @@ def source_lock():
             "working_tree":actual,
             "exact":expected==head==actual
         }
-    return result,prereg
+    return result,prereg,amend
 
 
 def exact_fraction(node):
@@ -210,7 +238,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--json-out",required=True)
     args=p.parse_args()
-    locks,prereg=source_lock()
+    locks,prereg,amend=source_lock()
     # Refuse to read the original source AST if any frozen source changed.
     if not all(item["exact"] for item in locks.values()):
         raise RuntimeError("H4F3d9 frozen source/predata blob mismatch")
@@ -227,6 +255,8 @@ def main():
             "GE19_H4F3D9_EXACT_FD4_FD8_STENCIL_CONSTANTS_PASS_PHYSICAL_BUDGET_OPEN"
             if passed else "GE19_H4F3D9_STENCIL_COMPILER_FAIL"),
         "preregistration":prereg["classification"],
+        "preregistration_amendment01":amend["classification"],
+        "amendment01_single_original_d7_blob_pin_only":True,
         "frozen_source_blobs":locks,
         "original_operator_and_source_scheme_binding":schemes,
         "FD4_exact_original_stencil":fd4,
