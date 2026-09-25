@@ -1,0 +1,50 @@
+{
+  "classification": "GE19_H4F3D9_PREDATA_ORIGINAL_FD4_FD8_STENCIL_CONSTANTS_AND_FULL_WARD_ERROR_BUDGET_PROTOCOL",
+  "date": "2026-09-25",
+  "purpose": "Freeze source-derived FD4 and FD8 exact rational stencil/moment/remainder constants and a physically valid independent error-budget protocol BEFORE any integrated actual-grid all-sector H4 Ward test. This preregistration does not invent the missing physical derivative envelopes or assign a numerical Noether tolerance from the observed structural residual.",
+  "frozen_source_blobs": {
+    "Repair07_original_FD4": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "Repair37_original_FD8": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+    "H4F2H_original_scheme_map": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "H4F3d1_original_canonical_operator": "60786ac14c9478801c5df9ccf458ead9a34ac827",
+    "H4F3d6_original_bath_Euler": "0419145499f5f44e06ba0c96f779c2a604e84ce7",
+    "H4F3d7_original_interval_diagnostic": "b598a5cc49b3d87827b4758c55d3ce7f3ae7f9c",
+    "H4F3d8_independent_nonbath_compiler": "861cd5a81c17380a727777a4e1ff08cd7e857522",
+    "NL0C_Y_original_action_flux": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "H4F3d_full_actual_predata": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51"
+  },
+  "registered_source_only_compiler": {
+    "FD4": "Extract the five exact 5-point coefficient rows directly from the original Repair07 fd4_matrix AST, including first/second one-sided, interior, and last/penultimate rows. Confirm denominator 12*h and all original row placements.",
+    "FD8": "Extract the nine exact 9-point rational coefficient rows directly from the original Repair37 _FD8_W assignment AST and verify its full boundary/center stencil assignment. No reimplemented or optimized derivative replaces the production matrix.",
+    "exact_moments": "For each row i with offsets s_j=j-i, verify sum_j c_ij*s_j^k = delta_(k,1) for all integer 0<=k<=p, exactly as rational arithmetic, with p=4 or 8.",
+    "registered_smooth_remainder": "K_(p,i)=sum_j abs(c_ij)*abs(s_j)^(p+1)/(p+1)!, exact rational. For a C^(p+1) function on the entire corresponding stencil interval, |D_p f(x_i)-f_prime(x_i)| <= h^p K_(p,i) sup_stencil |f^(p+1)|.",
+    "edge_controls": "Report every distinct original stencil row and maximum K_p over all rows. Include both first and last boundary formulas, never use the central constant for edge nodes.",
+    "scope": "Original uniform x=ln(a), Nt64/Nt128; original H*D4 operator and H*D8 (GE06/GE07/Lambda/Y) versus H*D4 (GE05 M1/M2) source groups."
+  },
+  "registered_physical_budget_protocol": {
+    "status": "PREREGISTERED_FORMULAS_ONLY_NUMERICAL_ENVELOPES_NOT_YET_CERTIFIED",
+    "precondition": "Independently derive and certify local M5/M9 suprema for the actual physical time currents/shift rows and GE06/GE07/Lambda/Y and GE05 source fluxes on each Nt128/Nt64 original interval before inspecting combined all-sector W. For Y zero-gradient points, prove requisite local regularity or use a separate rigorously bounded lower-regularity modulus; no global C9 assumption.",
+    "operator": "B_op(m,i)=abs(H_i)*h^4*K4_i*M5(E_shift_total(m),i)+abs(k_m*a_i*H_i)*h^4*K4_i*M5((C14*w)(m),i). Original product C14*w must be differentiated before evaluating its derivative envelope.",
+    "six_source": "B_source(m,i)=abs(H_i)*(h^8*K8_i*sum_{p in GE06,GE07,Lambda,Y} M9(S_shift_p(m),i)+h^4*K4_i*sum_{p in GE05_M1,GE05_M2} M5(S_shift_p(m),i)). Each source term remains on its original frozen time grid and scheme.",
+    "nonbath_parent": "Independently derive per-sector Euler/current differentiation budgets with the ORIGINAL actual GE06/GE07/Lambda/Y action coefficients, signed lower-boundary product, spatial Fourier derivative and all original parent state and current representations. A missing Euler or boundary term is STOP, not a zero assumption.",
+    "bath_parent": "Use the separately frozen physical H4F3d7 both-one-sided original interval-H R_ODE and sampled D_FD4 decomposition for all 2048 nodes, all six positive modes and both endpoints. R_ODE is a physical on-shell consistency issue, NOT an FD tolerance. Do not absorb the near-unit H4F3d6 R_FD4 or tune its coefficient into a structural error budget.",
+    "roundoff": "Derive and freeze a conservative floating-point propagation bound for the original matrix construction, products, summations and H/clock factors. Polynomial exactness alone is not a floating-point bound; if an operation-level proof is unavailable, STOP rather than choose a residual-fitted floor.",
+    "full_Ward": "Only after every source-independent envelope and roundoff constant has been independently certified and frozen, define B_total by the exact signed operator/source/parent absolute error propagation. Compare on all original C x beta x Nt x m x t physical cohorts, including C_max beta=1 m=8 Nt128 index=3 and all active m=1..40. Do not derive B_total from W_total observed defects or selectively exclude high-frequency nodes.",
+    "no_numeric_tolerance_yet": true,
+    "source_only_Ward_zero_gate": false
+  },
+  "original_limits": {
+    "historical_Repair37_science_FAIL_immutable": true,
+    "Repair38_to_44_diagnostic_only": true,
+    "active_shift_limit_1e_minus6_unchanged": true,
+    "matched_temporal_order_min_2p5_unchanged": true,
+    "no_observation_tuning": true,
+    "no_manufactured_physical_parent": true,
+    "no_Z21_solve": true,
+    "no_lensing": true
+  },
+  "outcomes": {
+    "STENCIL_CONSTANTS_COMPILER_PASS_BUDGET_OPEN": "Both original stencil extractions and every exact rational moment/remainder gate pass. Freeze constants, but do not run the integrated physical Ward until missing independent physical derivative/regularity/roundoff bounds are frozen.",
+    "STENCIL_CONSTANTS_COMPILER_FAIL": "Any original source mismatch, exact moment failure, incorrect edge stencil or nonpositive remainder bound is an implementation/algebra failure. No physical test is licensed."
+  }
+}
