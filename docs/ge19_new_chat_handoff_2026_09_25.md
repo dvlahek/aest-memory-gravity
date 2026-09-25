@@ -125,3 +125,51 @@ Next: preregister and evaluate actual background
 Euler E00, then the missing original mixed H4
 boundary and all-sector integrated Ward with
 a valid original-grid error budget, before Z21.
+
+
+## D11 action-bound actual-background E00: static PASS, physical run OPEN (2026-09-25)
+
+H4F3d10r1 actual original-parent signed known
+first-order nonbath Euler and lower boundary are
+independently audited PASS as a DIAGNOSTIC only.
+Original D10 archive FAIL remains unchanged.
+Machine manifest
+`ge19/h4f3d10r1_actual_physical_lossless_archive_independent_audit.json`
+(blob `2921f79dbb0ce99200418bfba924b699ff8cd67f`);
+original physical JSON/NPZ SHA256
+`69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2`
+and `85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b`.
+
+New D11 exact frozen original-action background
+E00 all-eight field compiler and physical driver
+are committed and static PASS:
+[original action source CI 36189149840](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36189149840),
+[driver CI 36189465789](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36189465789).
+Symbolically source-bound all original 15 GE06
+and 7 GE07 FLRW local partials at stable
+`pt=Q0+Z0*Z_action`; exact original Lambda
+action, GE07 dust and NL0C/Y homogeneous
+zero-gradient included. Original FD4 and FD8
+background Euler evaluated separately only in
+a future user-local PHYSICAL run, with every
+E_i00 nonzero residual retained report-only.
+Prereg blob
+`deb4b35e6a147b48fe93d6c99d798572650000ac`;
+source `1f085efec4ea64b42822ddeaac566f532d9dccf1`;
+physical driver `b162fad1db2a855917b5f8e29fce10c67d30737f`;
+local runner `8c4f34ad79b347b3810093a1bba0b4129468f7fc`.
+Detailed static freeze:
+`docs/ge19_h4f3d11_source_bound_actual_background_e00_static_freeze.md`
+(blob `bf178afbaa6886202b857503d8cc6e1a39b80290`).
+
+**NEXT physical action:**
+`cd ~/aest-memory-gravity && git checkout physics-first-gravitational-elasticity && git pull --ff-only && source .venv/bin/activate`;
+`bash ge19/run_local_h4f3d11_actual_original_action_background_e00.sh 2>&1 | tee results/ge19_H4F3D11_LOCAL_runner.log`
+(with `set -o pipefail`).
+Collect four distinct new D11
+JSON/NPZ/FULL/LOCAL outputs for byte and physical
+audit before any E00 on-shell conclusion.
+Background `E00*F21` and `L21*EL00-b21*Eb00`
+remain EXPLICITLY UNRESOLVED, not silently
+zeroed. No actual complete H4 Noether,
+no Z21 or lensing, no physics tuning to observations.
