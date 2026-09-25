@@ -1,0 +1,91 @@
+name: GE19 H4F3d7 Physical Local Runner Static Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh'
+      - '.github/workflows/ge19-h4f3d7-physical-local-runner-static.yml'
+      - 'ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py'
+      - 'ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json'
+
+jobs:
+  static-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact frozen code, Bash syntax, absolute physical paths and isolated imports
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh)" = "6fe12ef99f9a469da8f5913121d3301df519aae2"
+          test "$(git rev-parse HEAD:ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json)" = "ccf3185b4f790d9d6068f80beb39a442b186158c"
+          test "$(git rev-parse HEAD:ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py)" = "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
+          test "$(git rev-parse HEAD:ge19/h4f3b_actual_corrected_six_piece_source.py)" = "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c"
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          test "$(git rev-parse HEAD:docs/ge19_h4f3d6_valid_local_actual_bath_parent_ward_subset_freeze.md)" = "a78dee66657a1c9fddb952d29a1084a9f48ce3ea"
+          bash -n ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh
+          python3 - <<'PY'
+          import ast
+          import re
+          from pathlib import Path
+          s=Path("ge19/run_local_h4f3d7_physical_r1_fd4_vs_interval_ode.sh").read_text()
+          p=Path("ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py").read_text()
+          ast.parse(p)
+          required=(
+              'set -euo pipefail', 'umask 077',
+              'GE19_H4F3D7_PHYSICAL_LOCAL_LOCK_PASS',
+              'GE19_H4F3D7_FROZEN_H4F3B_H4F3D6_R1_SHA256_PASS',
+              'GE19_H4F3D7_PHYSICAL_ORIGINAL_ALL_PARENT_INPUT_PASS',
+              'GE19_H4F3D7_PHYSICAL_LOCAL_PREEXECUTION_PASS',
+              'GE19_H4F3D7_PHYSICAL_DECOMPOSITION_PASS_FULL_NOETHER_OPEN',
+              'GE19_H4F3D7_PHYSICAL_DIAGNOSTIC_FAIL',
+              'GE19_H4F3D7_PHYSICAL_IMPLEMENTATION_OR_INPUT_FAIL',
+              'GE19_H4F3D7_OUTPUT_ALREADY_EXISTS_NO_OVERWRITE',
+              'export PYTHONPATH="$ROOT"',
+              'export PYTHONDONTWRITEBYTECODE=1',
+              'TMP="$(mktemp -d)"',
+              'mkdir -p "$TMP/results"',
+              'cd "$TMP"',
+              's.frozen_inputs(rd, trace)',
+              'd7.stepper_ast_exact()',
+              'SOURCE_JSON="$ROOT/results/ge19_h4f3b_actual_corrected_six_piece_source.json"',
+              'D6_JSON="$ROOT/results/ge19_h4f3d6_actual_normalized_bath_parent_ward.json"',
+              '608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8',
+              '5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327',
+              '--results-dir "$ROOT/results"',
+              '--repair26-trace "$TRACE"',
+              '--source-json "$SOURCE_JSON"',
+              '--source-npz "$SOURCE_NPZ"',
+              '--d6-json "$D6_JSON"',
+              '--d6-npz "$D6_NPZ"',
+              '--json-out "$JSON"',
+              '--npz-out "$NPZ"',
+              'FULL_NOETHER_CERTIFIED',
+              'Z21_CERTIFIED',
+          )
+          for item in required:
+              # Certified original Z11 digest is enforced by frozen_inputs
+              # through s.REQUIRED / Repair32C, not repeated in the runner.
+              if item.startswith('5d4a0a72'):
+                  assert 's.frozen_inputs(rd, trace)' in s
+              else:
+                  assert item in s, item
+          assert s.index('cd "$TMP"') < s.index('from ge19 import'), "import before isolated CWD"
+          assert s.index('cd "$TMP"') < s.index('python3 -B -c'), "Python before isolated CWD"
+          blocks=re.findall(r"<<'PY'\n(.*?)\nPY\n",s,re.S)
+          assert len(blocks)==2,len(blocks)
+          for i,src in enumerate(blocks):
+              compile(src,f"locked_runner_heredoc_{i}.py","exec")
+          for forbidden in ('--manufactured','rm -rf "$ROOT/results"',
+                            'rm -f "$JSON"','rm -f "$NPZ"',
+                            'repair37_cancellation_safe_fd8_h4_z21_reclosure.py --'):
+              assert forbidden not in s,forbidden
+          assert "full_all_sector_H4_Noether_certified" in p
+          assert "both_one_sided_interior_reported" in p
+          assert "all_original_frequency_nodes_and_modes_included" in p
+          print("GE19_H4F3D7_PHYSICAL_LOCAL_RUNNER_STATIC_PASS_ONLY")
+          PY
