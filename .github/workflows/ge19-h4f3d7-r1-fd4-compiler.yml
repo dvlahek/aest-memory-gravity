@@ -1,0 +1,59 @@
+name: GE19 H4F3d7 Frozen R1 ODE Versus FD4 Compiler
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json'
+      - 'ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py'
+      - '.github/workflows/ge19-h4f3d7-r1-fd4-compiler.yml'
+
+jobs:
+  manufactured-compiler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install frozen Python dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Verify exact preregistration and source-only R1/FD4 compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          test "$(git rev-parse HEAD:ge19/h4f3d7_predata_bath_fd4_vs_original_r1_interval_ode.json)" = "ccf3185b4f790d9d6068f80beb39a442b186158c"
+          test "$(git rev-parse HEAD:ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py)" = "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
+          python3 -m py_compile ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py
+          python3 -m ge19.h4f3d7_bath_fd4_vs_original_r1_interval_ode \
+            --manufactured \
+            --json-out results/ge19_h4f3d7_frozen_r1_fd4_compiler.json \
+            > results/ge19_h4f3d7_frozen_r1_fd4_compiler_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f3d7_frozen_r1_fd4_compiler.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F3D7_FROZEN_ODE_FD4_COMPILER_PASS_PHYSICAL_OPEN"
+          assert d["all_compiler_gates_pass"] is True
+          assert d["original_Repair24_stepper_AST_exact"] is True
+          assert all(v["exact"] for v in d["frozen_blobs"].values())
+          assert [q["Nt"] for q in d["manufactured_cases"]]==[64,128]
+          assert all(q["pass"] and q["nonzero_negative_controls"] for q in d["manufactured_cases"])
+          assert all(all(v<=1e-11 for v in q["identity_relative_natural"].values()) for q in d["manufactured_cases"])
+          assert d["actual_physical_parent_evaluated"] is False
+          assert d["full_all_sector_H4_Noether_certified"] is False
+          assert d["Z21_certified"] is False
+          print("GE19_H4F3D7_R1_FD4_COMPILER_PASS_PHYSICAL_OPEN")
+          PY
+          sha256sum results/ge19_h4f3d7_frozen_r1_fd4_compiler.json
+          wc -c results/ge19_h4f3d7_frozen_r1_fd4_compiler.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d7_original_r1_fd4_compiler
+          path: |
+            results/ge19_h4f3d7_frozen_r1_fd4_compiler.json
+            results/ge19_h4f3d7_frozen_r1_fd4_compiler_FULL.log
+          retention-days: 90
