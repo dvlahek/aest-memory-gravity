@@ -38,12 +38,12 @@ jobs:
           pre=json.loads(Path("ge19/h4f3d7r1_predata_physical_output_finite_check_repair.json").read_text())
           runner=Path("ge19/run_local_h4f3d7r1_physical_output_finite_check_repair.sh").read_text()
           broken='''    valid=bool(len(cases)==6 and all(v["pass"] for v in cases)
-               and all(all(np.isfinite(q).all()
-                   for q in stored.values()) for stored in (
-                       [outputs[k] for k in outputs] ,)))'''
+                         and all(all(np.isfinite(q).all()
+                             for q in stored.values()) for stored in (
+                                 [outputs[k] for k in outputs] ,)))'''
           fixed='''    valid=bool(len(cases)==6 and all(v["pass"] for v in cases)
-               and all(np.isfinite(arr).all()
-                       for arr in outputs.values()))'''
+                         and all(np.isfinite(arr).all()
+                                 for arr in outputs.values()))'''
           assert old.count(broken)==1
           assert new==old.replace(broken,fixed), "more than registered single expression changed"
           assert pre["classification"]=="GE19_H4F3D7R1_PREDATA_PHYSICAL_OUTPUT_FINITE_CHECK_IMPLEMENTATION_REPAIR_ONLY"
