@@ -1,0 +1,64 @@
+name: GE19 H4F3d8 Independent Restricted Nonbath Euler Boundary
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d8_predata_independent_nonbath_euler_and_boundary.json'
+      - 'ge19/h4f3d8_independent_nonbath_euler_and_boundary.py'
+      - '.github/workflows/ge19-h4f3d8-independent-nonbath-euler-boundary.yml'
+
+jobs:
+  independent-symbolic-compiler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic compiler
+        run: python3 -m pip install sympy
+      - name: Verify frozen sources and independent restricted Euler/boundary identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d8_predata_independent_nonbath_euler_and_boundary.json)" = "007bec20e450dd67263d32a33476dcb8a5c33996"
+          test "$(git rev-parse HEAD:ge19/h4f3d8_independent_nonbath_euler_and_boundary.py)" = "42b8fcdbd53113b90d6e5ae3044b15277ab46ccd"
+          test "$(git rev-parse HEAD:ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py)" = "87d8be9ec44ecb099feecbaf59a904bd989da2fb"
+          python3 -m py_compile ge19/h4f3d8_independent_nonbath_euler_and_boundary.py
+          mkdir -p results
+          python3 -B -m ge19.h4f3d8_independent_nonbath_euler_and_boundary \
+            --json-out results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler.json \
+            > results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler_FULL.log
+          python3 - <<'PY'
+          import json
+          p="results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler.json"
+          d=json.load(open(p))
+          assert d["classification"]=="GE19_H4F3D8_RESTRICTED_NONBATH_EULER_BOUNDARY_COMPILER_PASS_ACTUAL_OPEN"
+          assert d["all_restricted_compiler_gates_pass"] is True
+          assert all(v["exact"] for v in d["git_source_blobs"].values())
+          assert len(d["eight_field_parent_dictionary"])==8
+          for name in ("independently_derived_eight_field_parent",
+                       "independently_derived_lower_action_boundary",
+                       "GE07_dust_action_Euler_current_gates",
+                       "Lambda_action_Euler_gates",
+                       "NL0C_Y_zero_set_gates"):
+            assert all(v is True for v in d[name].values()),name
+          assert d["GE06_full_action_first_order_actual_Euler_arrays_derived"] is False
+          assert d["all_physical_nonbath_parent_arrays_evaluated"] is False
+          assert d["original_actual_H4F3b_NPZ_loaded"] is False
+          assert d["FD4_FD8_physical_structural_error_budget_frozen"] is False
+          assert d["full_actual_H4_Noether_structural_PASS"] is False
+          assert d["Z21_certified"] is False
+          assert d["lensing_licensed"] is False
+          print("GE19_H4F3D8_INDEPENDENT_RESTRICTED_COMPILER_PASS_ACTUAL_OPEN")
+          PY
+          sha256sum results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler.json
+          wc -c results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ge19_h4f3d8_independent_nonbath_euler_boundary_compiler
+          path: |
+            results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler.json
+            results/ge19_h4f3d8_independent_nonbath_euler_boundary_compiler_FULL.log
+          retention-days: 90
