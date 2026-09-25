@@ -1,0 +1,96 @@
+name: GE19 H4F3d10r1 Lossless Nyquist Archive Static Regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d10r1_*'
+      - 'ge19/run_local_h4f3d10r1_lossless_fourier_archive_repair.sh'
+      - '.github/workflows/ge19-h4f3d10r1-lossless-archive-static.yml'
+
+jobs:
+  exact-archive-implementation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deterministic archive regression dependency
+        run: python3 -m pip install numpy
+      - name: Verify immutable original and versioned complete Fourier archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d10_predata_actual_nonbath_first_order_known_boundary.json)" = "7aafe872f32057ab46ed99650b3df1803050077e"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_actual_nonbath_first_order_known_boundary.py)" = "c570546caa301ec6899b4e669b663726fd4fdc2f"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_nonbath_first_order_local_partials.py)" = "4c3968d7186e27f15b10992198d7bccedf207bfb"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_known_parent_boundary_assembly.py)" = "d3a43a0ebbd78e03f2313592bdb1455977cb1d1c"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_physical_main.py)" = "1eec8381ba107a02ba3dc41bfd18fcc7e12d224e"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d10_actual_nonbath_first_order_known_boundary.sh)" = "4c873192001a1fd8f3652a9e47ec13c11d999199"
+          test "$(git rev-parse HEAD:ge19/h4f3d10_original_physical_archive_projection_failure_independent_audit.json)" = "b4bce81d944201e663717e5f2d0dace546abd535"
+          test "$(git rev-parse HEAD:ge19/h4f3d10r1_predata_lossless_fourier_archive_repair.json)" = "418859847f108b31cf66ac71c998cc604ca35c31"
+          test "$(git rev-parse HEAD:ge19/h4f3d10r1_lossless_known_parent_boundary_assembly.py)" = "d4f67adc2c9267cd3e4fd0e6dd1358c2c97a8545"
+          test "$(git rev-parse HEAD:ge19/h4f3d10r1_lossless_fourier_physical_main.py)" = "659ba72aafedc6f62d519f5fe09e47736074e90a"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d10r1_lossless_fourier_archive_repair.sh)" = "4bc186f7f6185198fc53cc6e072a221214ed81ad"
+          bash -n ge19/run_local_h4f3d10r1_lossless_fourier_archive_repair.sh
+          python3 - <<'PY'
+          import ast,json,importlib.util
+          from pathlib import Path
+          import numpy as np
+          root=Path("ge19")
+          files=("h4f3d10_known_parent_boundary_assembly.py",
+                 "h4f3d10r1_lossless_known_parent_boundary_assembly.py",
+                 "h4f3d10r1_lossless_fourier_physical_main.py")
+          for f in files: ast.parse((root/f).read_text(),filename=f)
+          pre=json.loads((root/"h4f3d10r1_predata_lossless_fourier_archive_repair.json").read_text())
+          forensic=json.loads((root/"h4f3d10_original_physical_archive_projection_failure_independent_audit.json").read_text())
+          assert pre["frozen_original_artifacts_sha256"]["json"]==forensic["uploaded_artifacts"]["json"]["sha256"]
+          assert pre["frozen_original_artifacts_sha256"]["npz"]==forensic["uploaded_artifacts"]["npz"]["sha256"]
+          assert pre["repair_contract"]["archive_gate"].find("1e-12")>=0
+          runner=(root/"run_local_h4f3d10r1_lossless_fourier_archive_repair.sh").read_text()
+          assert "ge19_h4f3d10_actual_nonbath_first_order_known_boundary.json" in runner
+          assert "ge19_h4f3d10r1_lossless_fourier_known_boundary.json" in runner
+          assert "GE19_H4F3D10R1_NO_OVERWRITE" in runner
+          assert runner.index('cd "$TMP"')<runner.index("python3 -B -m ge19.h4f3d10r1_lossless_fourier_physical_main")
+          def module(name,file):
+              spec=importlib.util.spec_from_file_location(name,root/file)
+              mod=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(mod)
+              return mod
+          old=module("old_d10_asm",files[0])
+          new=module("new_d10r1_asm",files[1])
+          th=2*np.pi*np.arange(128)/128
+          nt=8
+          fields=old.FIELDS
+          def dx(q):
+              kk=np.fft.fftfreq(128)*128
+              return np.fft.ifft(1j*.25*kk[None,:]*np.fft.fft(q,axis=-1),axis=-1).real
+          dx.kfund=.25
+          F10={f:np.broadcast_to((.1+i*.01)*np.cos(3*th)[None,:],(nt,128))
+               for i,f in enumerate(fields)}
+          F11={f:np.broadcast_to((.07+i*.012)*np.sin(5*th)[None,:],(nt,128))
+               for i,f in enumerate(fields)}
+          X10={k:dx(v) for k,v in F10.items()}
+          X11={k:dx(v) for k,v in F11.items()}
+          E10={f:.2*F10[f]+.02*np.sin(7*th)[None,:] for f in fields}
+          E11={f:.3*F11[f]+.03*np.cos(9*th)[None,:] for f in fields}
+          E10["rho"]=np.broadcast_to((1.e-20*np.cos(3*th)+1.e-20*np.cos(47*th))[None,:],(nt,128))
+          E11["T"]=np.broadcast_to((1.e-24*np.sin(5*th)+1.e-24*np.cos(51*th))[None,:],(nt,128))
+          assert old.archive_err(E10["rho"])>.5
+          assert new.archive_err(E10["rho"])<1e-12
+          assert new.full_pair(E10["rho"])[1].shape==(nt,24)
+          assert np.linalg.norm(new.full_pair(E10["rho"])[1])>0
+          schemes={"FD4":(E10,E11),"FD8":(E10,E11)}
+          old_arrays,old_diagnostics,old_error,old_pass=old.evaluate_pair(F10,X10,F11,X11,schemes,dx)
+          new_arrays,new_diagnostics,new_error,new_pass,tails=new.evaluate_pair(F10,X10,F11,X11,schemes,dx)
+          assert not old_pass and old_error>.5
+          assert new_pass and new_error<1e-12
+          assert set(old_arrays)=={k for k in new_arrays if not k.endswith("_hi41_64")}
+          for key in old_arrays:
+              assert np.array_equal(old_arrays[key],new_arrays[key]),key
+              assert np.all(np.isfinite(new_arrays[key+"_hi41_64"]))
+              assert new.archive_err(new.lossless_recover(new_arrays[key],new_arrays[key+"_hi41_64"]))<1e-12
+          assert tails["FD4_E10_rho"]["high_m41_to64_fraction_unprojected_L2_report_only"]>.5
+          assert "E00" in (root/"h4f3d10r1_lossless_fourier_physical_main.py").read_text()
+          print("GE19_H4F3D10R1_FULL_NYQUIST_ARCHIVE_STATIC_PASS_ACTUAL_PHYSICAL_OPEN")
+          PY
