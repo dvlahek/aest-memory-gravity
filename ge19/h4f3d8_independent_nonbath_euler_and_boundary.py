@@ -274,7 +274,7 @@ def independently_derive_lambda():
         "Lambda_action_exact_metric_R_Euler":
             zero(er+12*rl*n*l*r),
         "Lambda_first_lapse_Euler":
-            zero(first(en)+6*rl*a**2*(dl/a+2*dr/a)),
+            zero(first(en)+6*rl*a**2*(dl+2*dr)),
         "Lambda_first_longitudinal_Euler":
             zero(first(el)+6*rl*(a**2*dn+2*a*dr)),
         "Lambda_first_transverse_Euler":
@@ -297,10 +297,9 @@ def independent_Y_zero_set():
         "NL0C_Y_first_order_zero_gradient_one_sided_plus":zero(test[0]),
         "NL0C_Y_first_order_zero_gradient_one_sided_minus":zero(test[1]),
         "NL0C_Y_flux_eta_tangent_at_nonzero_gradient":
-            zero(sp.diff(flux(g+eps*h),eps).subs(eps,0)
-                 -2*sp.Abs(g)*h) if False else
-            bool(sp.simplify(sp.diff(flux(g+eps*h),eps).subs(eps,0)
-                             -2*sp.Abs(g)*h).subs(g,sp.Rational(2,3))==0),
+            all(zero((sp.diff(flux(g+eps*h),eps).subs(eps,0)
+                      -2*sp.Abs(g)*h).subs(g,g0))
+                for g0 in (sp.Rational(2,3),-sp.Rational(2,3))),
         "NL0C_Y_global_C9_smoothness_not_assumed":True,
     }, {
         "mixed_Y_flux": "2*abs(g10)*g11, continuous at g10=0",
