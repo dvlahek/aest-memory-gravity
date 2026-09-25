@@ -1,0 +1,21 @@
+{
+  "classification": "GE19_H4F3D9_PREDATA_AMENDMENT01_CORRECT_FROZEN_D7_BLOB_ONLY",
+  "date": "2026-09-25",
+  "parent_predata": "ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json",
+  "parent_predata_git_blob": "98e6fd8835fdbe3bd169d062431eefe80a3e9232",
+  "reason": "The H4F3d9 preregistration copied the immutable H4F3d7 script Git blob with a transposed/truncated suffix. The first H4F3d9 CI run 36152370247 correctly STOPPED on its frozen-source mismatch before any stencil calculation. Nine independent repository blob checks verified that this is the ONLY wrong source pin. This amendment corrects provenance, not an equation, dataset, stencil, frequency, phase bin, tolerance or physical result.",
+  "one_allowed_override": {
+    "label": "H4F3d7_original_interval_diagnostic",
+    "path": "ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py",
+    "old_wrong_git_blob": "b598a5cc49b3d87827b4758c55d3ce7f3ae7f9c",
+    "correct_original_git_blob": "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+  },
+  "original_predata_unchanged": true,
+  "all_other_source_pins_unchanged": true,
+  "physical_dataset_unmodified": true,
+  "registered_FD4_FD8_formulas_unchanged": true,
+  "no_new_numeric_error_tolerance": true,
+  "no_physical_test_executed": true,
+  "no_relabel_of_historical_results": true,
+  "next_step": "Require the exact original parent predata Git blob plus this exact amendment Git blob in H4F3d9 compiler and CI, then execute original AST-only source-derived stencil arithmetic."
+}
