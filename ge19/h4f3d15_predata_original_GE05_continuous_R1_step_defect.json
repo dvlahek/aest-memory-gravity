@@ -1,0 +1,35 @@
+{
+  "classification": "GE19_H4F3D15_PREDATA_ORIGINAL_GE05_CONTINUOUS_R1_STEP_DEFECT_AND_SIGNED_BATH_ERROR_BUDGET",
+  "date": "2026-09-26",
+  "status": "PREDATA_ONLY_NO_ACTUAL_D15_EXECUTION",
+  "motivation": "D14 original discrete source-weighted phase>=pi interval ODE contribution is small, but sampled FD4 total is cancellation sensitive and hard phase-bin Nq comparison is not a physical error bound. Continuous original variable-H and variable-X10 GE05 first-order on-shell remains open.",
+  "original_actual_parents": {
+    "D13_JSON_SHA256": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+    "D13_NPZ_SHA256": "1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89",
+    "D14_JSON_SHA256": "8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e",
+    "D14_NPZ_SHA256": "f79d87f10dc1561ef2c61997b7952d62d85eda6674abaa015e5d38e161b55c48",
+    "R1_trace_SHA256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "D14_independent_audit_git_blob": "3f7acc17aee24c6b776578ef2b654a40b2db6af0"
+  },
+  "immutable_original_source_git_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "ge19/h4f3d13_original_r1_interval_signed_bath_assembly.py": "64641d11c34a729508dbfa29d2fe65ccae3a031a",
+    "ge19/h4f3d14_original_r1_source_weighted_phase_bath_partition.py": "727a8abb63a4aaa314d09e3396d7e2fbeb03bd71"
+  },
+  "exact_frozen_R1_step": "On every original R1 step s=t/tau, h_mid=tau*sqrt(H_i H_{i+1}), dz/ds=v, dv/ds=-3*h_mid*v-r^2*(z-X_lin(s)), where X_lin is the original affine-in-step drive and the frozen step_linear_nd is exact for these piecewise step coefficients.",
+  "exact_original_action_defect": "R_GE05 = d/dt(a^3*v/tau) + a^3*(r/tau)^2*(z-X_true(t)). For the frozen R1 step solution, this equals 3*a^3/tau*(H_true(t)-h_mid/tau)*v_step(t) + a^3*(r/tau)^2*(X_lin(t)-X_true(t)).",
+  "conditional_bound": "|R_GE05| <= 3*a^3/tau*epsilon_H*|v_step|+a^3*(r/tau)^2*epsilon_X, where original action-source interval envelopes epsilon_H and epsilon_X bound true variable H and true X10 against frozen piecewise h_mid/tau and original affine X_lin. No continuous on-shell classification without source-bound envelopes.",
+  "original_signed_mode_propagation": "Original E_qj10= -sqrt(w_j)/(2*omega_j)*R_j, qx_j10=sqrt(w_j)/omega_j*(i*kfund*m)*z_j10, signed +4 convolution of all +/- six original modes m0..40. Propagate conservative source-weighted errors through every signed mode-pair with no high-frequency deletion or cancellation-dependent relative-only budget.",
+  "independent_numerical_scopes": "Original Nt128/Nt64, C_min/C_star/C_max, Nq2048/Nq1024 and original Repair26 R1 trace; require original H3F/Repair13 action-consistent continuous H and X10 or independently certified interval enclosures, original D13/D14 signed array equality, original source and boundary SHA locks, signed and unsigned error, separate quadrature/time/drive/propagation error, physical active window.",
+  "false_inferences_forbidden": "No fitting to lensing or observables, no hard-phase bin relative quadrature error bar, no source-independent original X10 interpolation called exact, no FD4 cancellation result called first-order GE05 on-shell, no automatic full H4 Ward/Z21.",
+  "stop_if_missing_continuous_parent": "GE19_H4F3D15_CONDITIONAL_ONLY_NO_GE05_ONSHELL_CLAIM",
+  "immutable_flags": {
+    "original_Repair37_SCIENCE_FAIL": true,
+    "original_D10_FAIL": true,
+    "original_GE05_bath_first_order_on_shell_certified": false,
+    "original_full_H4_Ward_certified": false,
+    "Z21_certified": false,
+    "lensing_licensed": false
+  }
+}
