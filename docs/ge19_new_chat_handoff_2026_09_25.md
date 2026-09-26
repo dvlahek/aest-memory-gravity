@@ -238,3 +238,76 @@ E00*F21 defect test and missing original
 `L21*E_L00-b21*E_b00` boundary before full
 original bath-inclusive integrated H4 Noether.
 NO Z21 certification or lensing yet.
+
+
+## GE19 D12 original artifacts restored on GitHub (2026-09-26)
+
+The GitHub write blocker was resolved with an
+actual successful commit. The following original
+pre-existing D12 artifacts are committed
+**bit-for-bit** on the existing
+`physics-first-gravitational-elasticity`
+branch, not regenerated from post hoc physics:
+
+- Prereg `ge19/h4f3d12_predata_restricted_background_and_f21_bound.json`,
+  Git blob `97b513c176f9de6e1ee55cc21d87cb23103fc707`,
+  original SHA256 `d704bd35c71f80133c7e5b3bb7b71423366f4a692be48fb5797526c2f31db183`.
+- Historical failed implementation `ge19/h4f3d12_restricted_background_and_conditional_f21_bound.py`,
+  blob `d5f3184f069738679ce7fe738836ef712f60b867`.
+  Preserved as original r0; do not retrospectively relabel FAIL.
+- Corrected r1 source
+  `ge19/h4f3d12r1_restricted_background_and_conditional_f21_bound.py`,
+  blob `794df05d6c2c7572a435ba617b0c22649a28b318`,
+  original SHA256 `cc637acbe41941247bdf0382dfd1d517790795ba5e7c1562482e0ac0ca757017`.
+- Original immutable manifest
+  `ge19/h4f3d12_freeze_manifest.json`,
+  blob `b7b8a97ea9e27e6f31a85e7724532bb4dfc4fc4b`,
+  retains historical before-GitHub statement.
+- Original report
+  `docs/ge19_h4f3d12_restricted_background_freeze_report.md`,
+  blob `ec2a6ab2758777d6373623dd2d869a206080e84c`.
+- Original actual D11-derived machine JSON archived losslessly
+  as `ge19/h4f3d12_actual_d11_conditional_f21_bound.json.gz`,
+  Git blob `30cae15e4c2992484d96d3ba0f3f02e8ea8969b1`.
+  Decompressed original JSON SHA256
+  `5d94ac19e3176e8e6d2948260b957718eba9620ea9fced2981fe2e6df2c5837e`.
+
+[GitHub D12 CI](https://github.com/dvlahek/aest-memory-gravity/actions/workflows/ge19-h4f3d12r1-restricted-background-static.yml)
+passed exact source/action hashes, original archived
+JSON and 23 symbolic gates, all 12 actual original D11
+conditional multiplier rows. Independent original D11
+replay outside CI was byte-identical; no-overwrite
+and tampered-input negative controls PASS.
+Versioned hash-locked user-local runner:
+`ge19/run_local_h4f3d12r1_restricted_background_and_f21_bound.sh`,
+blob `857765404ad013175d69be91c0f3d8428f647228`.
+New chronological integration note
+`docs/ge19_h4f3d12_checkpoint.md` distinguishes
+original immutable pre-push report from
+subsequent successful GitHub integration.
+
+**Strict science scope unchanged:** original GE06/GE07/Lambda
+homogeneous conditional continuum identity and D11
+background-array conditional full-Nyquist coefficient
+`B(C_star,Nt128,FD4)=6.858137595155815e-16`,
+`B(C_star,Nt128,FD8)=5.98037737151968e-18`,
+each multiplying UNKNOWN `||F21||`. Not an
+absolute all-sector Ward smallness result.
+Original actual F21/L21/b21 and complete GE05 bath
+background/first-order Euler and full H4 action
+boundaries still OPEN. Original Repair37 SCIENCE_FAIL,
+original D10 archive FAIL, R1 2048 nodes and original
+shift/temporal gates immutable.
+
+**NEXT PHYSICS:** source-first GE05 per-node
+first-order bath Euler on original actual
+Repair26 R1 interval ODE, with original phase
+and 2048/1024 quadrature controls, and actual signed
+`+4 sum_j E_qj10*dchi q_j10`.
+Original H4F3d7r1 report only decomposed
+the FD4-vs-interval defect; it did NOT certify
+bath on-shell. Do not discard GE05 bath
+or use an uncertified Repair37 Z21 as actual F21.
+Then restore original nonbath F21-dependent
+and lower action boundary and full integrated
+H4 Noether before certifying Z21 or lensing.
