@@ -173,3 +173,68 @@ Background `E00*F21` and `L21*EL00-b21*Eb00`
 remain EXPLICITLY UNRESOLVED, not silently
 zeroed. No actual complete H4 Noether,
 no Z21 or lensing, no physics tuning to observations.
+
+
+## H4F3d11 actual original background E00: independent audit PASS, original full H4 OPEN (2026-09-26)
+
+The user uploaded FOUR actual original-local D11 artifacts.
+Actual D11 classification:
+`GE19_H4F3D11_ACTUAL_BACKGROUND_E00_ARRAYS_DIAGNOSTIC_PASS_ONSHELL_OPEN`.
+JSON SHA256 `d62436b12bb5e5d9b7cbf1ea24abd0e6c06ac3ff1bfd43a41556aef284e3d3df`,
+49826 bytes. NPZ SHA256
+`7679dc6765b87c0b1294b3915d0d1305e4fa59ac86a18d75621d5bf85c616229`,
+358182 bytes. FULL log byte-identical to JSON;
+runner SHA `5d8f7f5cc306cce969ad498aa86db0737246e5055415c3d372ece6bd109537e9`,
+2167 bytes; all runner SHA/length checks independently match.
+Original H3F/H3G/Repair13/Z11/Repair26 physical parent locks
+verified by local runner. Original passed D10r1 SHA
+also verified on local physical run; original D10
+archive FAIL and Repair37 SCIENCE_FAIL immutable.
+
+Independent NPZ audit: 578 finite arrays, six
+original C/Nt cases, all eight E00 fields,
+original FD4 and FD8 separately. Every one
+of 96 saved E00 fields is exactly recomposed
+from signed archived local action components;
+all 48 original pLt,pRt,phi_t,T_t time derivative
+components independently recomputed exactly
+from original FD4/FD8 coefficients.
+Original GE07 varrho_b=3*C/a^3 versus Repair13
+rho_dust_action=C/a^3: preserve factor three.
+Independent source partial matches frozen original
+GE06 GE07 action to max `3.7032e-15` relative.
+
+Frozen exact original nonbath homogeneous charge
+and Friedmann identities on actual grid give
+conditional continuum `E_L00=E_R00=0`.
+The analytic original-grid E_L after replacing
+FD derivative by exact derivative has maximum
+L2 `4.961e-22` across six backgrounds;
+original discrete vs exact Euler difference
+matches original temporal derivative defect
+to `6.484e-23` L2. At C_star/Nt128
+FD4 E_L L2 `1.5441856e-15` but
+FD8 E_L L2 `5.80716e-20`.
+GE06 scalar charge about `0.0004007778406741802`
+is constant to `1.0842e-19` span, Lambda exactly
+constant in all actual archived backgrounds.
+Do NOT infer all-sector original covariant E00
+on-shell, or delete numerical E00*F21 because
+original actual F21 is unknown and lacks a
+certified error bound.
+
+Machine audit
+`ge19/h4f3d11_actual_original_background_e00_independent_archive_audit.json`
+(blob `c3f238c2914ff18e43030ec31a3debb0edab81f1`).
+Detailed science freeze
+`docs/ge19_h4f3d11_actual_original_background_e00_independent_freeze.md`
+(blob `5d38c45430bf0207d5e0b383f9c3f6be6d7e7613`).
+
+NEXT: preregister an independent symbolic exact
+original nonbath homogeneous on-shell
+identity with original conserved charges, then
+an actual source- and F21-bound numerical
+E00*F21 defect test and missing original
+`L21*E_L00-b21*E_b00` boundary before full
+original bath-inclusive integrated H4 Noether.
+NO Z21 certification or lensing yet.
