@@ -1,0 +1,55 @@
+{
+  "classification": "GE19_H4F3D14_PREDATA_ORIGINAL_R1_SIGNED_GE05_SOURCE_WEIGHTED_PHASE_BATH_ERROR_DIAGNOSTIC",
+  "date": "2026-09-26",
+  "parent_actual_D13": {
+    "json_sha256": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+    "npz_sha256": "1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89",
+    "independent_audit_git_blob": "886ac54bd7ad6f802895145fd7776f2ebd6c64d1"
+  },
+  "original_immutable_source_git_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/h4f3d13_predata_original_r1_interval_signed_bath_parent.json": "ec07d6be5c267dcbbdb05395ea81cc5e7405781e",
+    "ge19/h4f3d13_original_r1_interval_signed_bath_assembly.py": "64641d11c34a729508dbfa29d2fe65ccae3a031a",
+    "ge19/h4f3d13_actual_original_r1_signed_interval_bath_parent.py": "5cce06a82869d5b7ff70c12a92e70b9257073c42",
+    "ge19/h4f3d13_actual_original_r1_signed_interval_bath_independent_archive_audit.json": "886ac54bd7ad6f802895145fd7776f2ebd6c64d1",
+    "ge19/h4f3d7r1_physical_output_finite_check_repair.py": "e4cb9d6638b427368647a29b86ccf5445b43d7a2",
+    "ge19/h4f3d6_actual_normalized_bath_parent_ward.py": "0419145499f5f44e06ba0c96f779c2a604e84ce7",
+    "ge19/h4f3b_actual_corrected_six_piece_source.py": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+  },
+  "purpose": "Quantify actual source-weighted signed and conservative unsigned contributions of original GE05 R1 high-phase bath nodes separately from original sampled FD4 derivative defect and first-order on-shell error budget. Do not tune source, phase thresholds, modes, quadrature, background or parameters to observations.",
+  "cohorts": "Original C_min/C_star/C_max x Nt128,Nt64 x Nq2048,Nq1024, original left and right one-sided interval nodes, exact same Repair26 R1 trace and same original full history boundary.",
+  "predeclared_phase_bins": [
+    0,
+    0.25,
+    0.5,
+    1,
+    3.141592653589793,
+    "infinity"
+  ],
+  "original_D7r1_phase_bins_preserved": "[0,.25),[.25,.5),[.5,1),[1,infinity); new pi split subdivides only old >=1 report-only bin.",
+  "exact_source": "Original GE05 E_q10= -sqrt(w)/(2omega)*R, qx10=sqrt(w)/omega*i*kfund*m*z, full original six positive and six conjugate negative frequencies, signed +4 E_q10*qx10 Fourier convolution m0..40.",
+  "original_interval_R": "Use exact frozen D13 implementation of both one-sided R_ODE and sampled FD4 temporal defect at same endpoints with original h_mid=tau*sqrt(H_i H_i+1); preserve full sampled R_FD4 and complex phase.",
+  "signed_phase_bin_requirement": "For each bin and each original one-sided endpoint save signed complex W_ODE, signed complex W_FD4_defect and a noncancelling componentwise absolute-sum upper envelope over original bath nodes and conjugate mode pairings, with all original m0..40 time arrays. Saving only absolute bath per-node norms is insufficient to certify cancellation.",
+  "derived_identity": "Across five bins, exact signed original W_ODE/W_defect must reconstruct frozen D13 original signed one-sided result. The bin-by-bin sum W_ODE + W_defect must reproduce frozen D13 sampled FD4 signed W at the corresponding side. These are machine identities only.",
+  "quadrature_diagnostics": "Report Nq2048 vs Nq1024 left/right signed W for each phase bin and whole total, unsigned conservative envelope, and original sampled FD4 total. Retain relative and absolute differences on same original grid; no posthoc pass tolerance for physical smallness.",
+  "phase_diagnostics": "Report raw per-bin node-interval counts and source-weighted signed and conservative unsigned envelopes. Counts alone cannot prove original high-phase contribution small.",
+  "original_archive_scope": "D13 signed bath archive m0..40; no full Nyquist m41..64 bath diagnostic or source-consistent on-shell claim inferred.",
+  "machine_controls": {
+    "original_D13_and_D7r1_physical_SHA_required": true,
+    "all_six_original_cohorts_both_original_quadratures_required": true,
+    "exact_signed_mode_and_phase_reconstruction_required": true,
+    "no_overwrite": true,
+    "original_existing_machine_identity_tolerance": 1e-11,
+    "numerical_algebra_tolerance_applies_only_to_identity_not_physical_smallness": true
+  },
+  "immutable_science_boundary": {
+    "original_D13_actual_signed_bath_parent_diagnostic_PASS_only": true,
+    "original_GE05_bath_first_order_on_shell_OPEN": true,
+    "original_H4_all_sector_Noether_OPEN": true,
+    "original_E00_F21_and_action_boundary_OPEN": true,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "original_Repair37_SCIENCE_FAIL_immutable": true
+  }
+}
