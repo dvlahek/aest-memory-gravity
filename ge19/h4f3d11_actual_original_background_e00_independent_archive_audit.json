@@ -1,0 +1,115 @@
+{
+  "classification": "GE19_H4F3D11_ACTUAL_ORIGINAL_SOURCE_BACKGROUND_E00_INDEPENDENT_ARCHIVE_AND_DERIVATIVE_DIAGNOSTIC_PASS_ONSHELL_OPEN",
+  "date": "2026-09-26",
+  "stage": "Post-predata independent audit of user-uploaded, ORIGINAL local D11 physical actual parent outputs; not a second original physical background propagation.",
+  "source_physical_result_classification": "GE19_H4F3D11_ACTUAL_BACKGROUND_E00_ARRAYS_DIAGNOSTIC_PASS_ONSHELL_OPEN",
+  "exact_uploaded_artifacts": {
+    "json": {
+      "filename": "ge19_h4f3d11_actual_original_action_background_e00.json",
+      "sha256": "d62436b12bb5e5d9b7cbf1ea24abd0e6c06ac3ff1bfd43a41556aef284e3d3df",
+      "bytes": 49826
+    },
+    "npz": {
+      "filename": "ge19_h4f3d11_actual_original_action_background_e00.npz",
+      "sha256": "7679dc6765b87c0b1294b3915d0d1305e4fa59ac86a18d75621d5bf85c616229",
+      "bytes": 358182
+    },
+    "full_log": {
+      "filename": "ge19_h4f3d11_actual_original_action_background_e00_FULL.log",
+      "sha256": "d62436b12bb5e5d9b7cbf1ea24abd0e6c06ac3ff1bfd43a41556aef284e3d3df",
+      "bytes": 49826
+    },
+    "local_runner_log": {
+      "filename": "ge19_H4F3D11_LOCAL_runner.log",
+      "sha256": "5d8f7f5cc306cce969ad498aa86db0737246e5055415c3d372ece6bd109537e9",
+      "bytes": 2167
+    },
+    "full_log_byte_identical_to_json": true,
+    "runner_printed_json_npz_full_sha256_and_byte_sizes_match_uploaded_bytes": true
+  },
+  "immutable_original_parent_provenance": {
+    "prereg_git_blob": "deb4b35e6a147b48fe93d6c99d798572650000ac",
+    "original_source_partial_compiler_blob": "1f085efec4ea64b42822ddeaac566f532d9dccf1",
+    "original_physical_driver_blob": "b162fad1db2a855917b5f8e29fce10c67d30737f",
+    "original_physical_runner_blob": "8c4f34ad79b347b3810093a1bba0b4129468f7fc",
+    "frozen_Repair13_npz_sha256": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3",
+    "frozen_H4F3d10r1_actual_json_sha256": "69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2",
+    "frozen_H4F3d10r1_actual_npz_sha256": "85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b",
+    "frozen_original_source_code_git_blobs_all_reported_exact": true,
+    "frozen_H3F_H3G_Z11_Repair26_and_bath_input_locks_all_reported_exact": true,
+    "limitation": "Historical raw H3F/H3G/Z11/Repair13 original input bytes were verified by the user-local runner, not reuploaded nor independently reintegrated here."
+  },
+  "independent_uploaded_npz_results": {
+    "total_numeric_arrays": 578,
+    "exact_array_count_per_C_Nt_case": 96,
+    "clock_arrays": 2,
+    "primary_128_length_arrays": 289,
+    "control_64_length_arrays": 289,
+    "all_arrays_finite": true,
+    "exact_original_eight_fields": [
+      "N",
+      "L",
+      "R",
+      "b",
+      "u",
+      "phi",
+      "T",
+      "rho"
+    ],
+    "six_original_cases": true,
+    "both_original_FD4_and_FD8_schemes_separate": true,
+    "all_96_original_E00_arrays_reassembled_from_saved_action_components_max_relative": 0,
+    "all_48_original_FD4_FD8_GE06_Lt_Rt_phiT_GE07_Tt_time_derivative_components_recomputed_absolute_L2_max": 0,
+    "all_six_original_GE06_GE07_symbolic_source_gates_reported_pass": true,
+    "independent_original_action_closed_partial_reconstruction_max_relative": 3.703185483300111e-15,
+    "original_dust_action_density_normalization": "GE07 varrho_b=3*C/a^3 while Repair13 rho_dust_action=C/a^3. Consequently GE07 p_N_f=-6*C and p_T_t=6*C. This factor of three was explicitly retained in independent reconstruction.",
+    "scalar_charge_a3_KQ_max_peak_to_peak": 1.0842021724855044e-19,
+    "scalar_charge_a3_KQ_original_mean_about": 0.0004007778406741802,
+    "all_six_rho_lambda_grid_peak_to_peak": 0,
+    "original_bx00_shift_action_momentum_nonzero": true,
+    "all_six_background_Eb_Eu_Erho_arrays_exact_zero": true,
+    "all_six_original_ER_equals_2EL_archived_arrays_exact": true,
+    "max_EN_minus_explicit_6a3_Friedmann_L2": 2.9382467894936906e-21,
+    "max_original_analytic_pressure_EL_L2_using_frozen_dH2dx_minus_QKQ_minus3dust": 4.960877369952275e-22,
+    "max_discrete_EL_minus_analytic_EL_minus_temporal_derivative_defect_L2": 6.483745362808791e-23,
+    "exact_analytic_derivative_formula": "For frozen scalar and dust charge and constant Lambda, dH^2/d ln(a)=-Q*KQ-3*C/a^3; -d/dt p_Lt=8*a^2*H^2+2*a^2*dH^2/dln(a), and E_L00=2*a^2*(3*H^2+dH^2/dln(a)+K-3*rho_lambda). These imply E_L00=0 in the exact GE06/GE07/Lambda homogeneous continuum upon imposing frozen Repair13 Friedmann and conservation identities. Actual original FD4/FD8 residuals are preserved independently.",
+    "analytic_pressure_assumption": "rho_lambda_action exactly constant across all six stored grids. Original frozen scalar charge a^3*KQ is constant to float64, but no GE05 bath Euler or full covariant initial-data certificate was evaluated in this audit."
+  },
+  "primary_C_star_original_Nt128": {
+    "FD4_E_L00_L2": 1.5441856131963101e-15,
+    "FD8_E_L00_L2": 5.80716229024602e-20,
+    "FD4_E_N00_L2": 2.9408307827015814e-21,
+    "FD8_E_N00_L2": 2.9408307827015814e-21,
+    "FD4_E_phi00_L2": 1.9807398159888434e-18,
+    "FD8_E_phi00_L2": 1.4700053866597062e-17,
+    "FD4_E_T00_L2": 4.281972018047634e-25,
+    "FD8_E_T00_L2": 1.7753483802583367e-24,
+    "FD4_E_L00_natural_relative_report_only": 4.2164172551459215e-10,
+    "FD8_E_L00_natural_relative_report_only": 1.5856525968590937e-14,
+    "original_background_shift_bx00_momentum_L2": 0.003607041618639692,
+    "E_phi_FD8_is_larger_due_to_differentiating_nearly_constant_machine_precision_charge": true
+  },
+  "primary_control_metrics": {
+    "FD4_E_L00_Cstar_Nt64_L2": 2.1393414268967728e-14,
+    "FD8_E_L00_Cstar_Nt64_L2": 1.0818594715925826e-19,
+    "FD4_E_L00_original_Nt128_Cstar_L2": 1.5441856131963101e-15,
+    "FD8_E_L00_original_Nt128_Cstar_L2": 5.80716229024602e-20,
+    "FD4_vs_FD8_not_an_independent_full_H4_physical_error_budget": true
+  },
+  "science_boundary": {
+    "exact_nonbath_homogeneous_action_reduction": "Conditional algebraic background cancellation only, from original GE06 GE07 Lambda FLRW source and frozen Repair13 scalar/dust/Friedmann data; no discrete on-shell upgrade for original archived residuals or complete original GE05 bath.",
+    "actual_original_E00_arrays_evaluated": true,
+    "actual_E00_on_shell_certified_with_preregistered_error_budget": false,
+    "actual_E00_times_F21_evaluated": false,
+    "actual_L21_EL00_minus_b21_Eb00_evaluated": false,
+    "all_sector_bath_and_full_H4_noether_certified": false,
+    "original_H4F3d10_unresolved_immutable": true,
+    "original_Repair37_SCIENCE_FAIL_immutable": true,
+    "original_shifting_gate_1e_minus6_unchanged": true,
+    "original_temporal_order_min_2p5_unchanged": true,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "no_observational_tuning": true
+  },
+  "next_route": "PREREG_SOURCE_BOUND_EXACT_NONBATH_CONTINUUM_BACKGROUND_E00_CANCELLATION_AND_ORIGINAL_F21_DEPENDENT_DISCRETE_DEFECT_BOUND_THEN_FULL_GE05_BATH_ACTION_WARD"
+}
