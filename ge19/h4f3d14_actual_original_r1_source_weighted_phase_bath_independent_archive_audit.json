@@ -1,0 +1,158 @@
+{
+  "classification": "GE19_H4F3D14_ACTUAL_ORIGINAL_R1_SOURCE_WEIGHTED_PHASE_BATH_INDEPENDENT_ARCHIVE_AUDIT_PASS_ONSHELL_OPEN",
+  "date": "2026-09-26",
+  "actual_parent_classification": "GE19_H4F3D14_ACTUAL_ORIGINAL_R1_SOURCE_WEIGHTED_PHASE_BATH_DIAGNOSTIC_PASS_ONSHELL_OPEN",
+  "uploaded_original_physical_bytes": {
+    "json": {
+      "sha256": "8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e",
+      "bytes": 290019
+    },
+    "npz": {
+      "sha256": "f79d87f10dc1561ef2c61997b7952d62d85eda6674abaa015e5d38e161b55c48",
+      "bytes": 31955470
+    },
+    "full_log": {
+      "sha256": "8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e",
+      "bytes": 290019
+    },
+    "local_runner_log": {
+      "sha256": "497871f79c0969f619287d215e532bdc235e08a263bec48958054dc6b3c96586",
+      "bytes": 2512
+    },
+    "json_full_log_byte_identical": true,
+    "local_runner_exact_code_R1_parent_and_D13_actual_SHA_gates_pass": true
+  },
+  "original_immutable_D13_actual_parent": {
+    "json_sha256": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+    "npz_sha256": "1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89",
+    "both_actual_uploads_independently_SHA_verified": true,
+    "independent_archive_audit_git_blob": "886ac54bd7ad6f802895145fd7776f2ebd6c64d1",
+    "original_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "caveat": "Original user-local R1 trace is hash-locked by local runner and original driver, not independently reintegrated in postrun audit."
+  },
+  "original_D14_source_git_blobs": {
+    "ge19/h4f3d14_predata_original_r1_phase_weighted_signed_bath_error.json": "321217d3661bf09fe67f1359606a5296faa4d304",
+    "ge19/h4f3d14_original_r1_source_weighted_phase_bath_partition.py": "727a8abb63a4aaa314d09e3396d7e2fbeb03bd71",
+    "ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath.py": "cb823960e9b2cf1b82b1accd458ec75f4acf4547",
+    "ge19/run_local_h4f3d14_original_r1_source_weighted_phase_bath.sh": "50dd92494e53dcc6adca63ab3e4ea399de4448a6"
+  },
+  "independent_actual_array_checks": {
+    "arrays": 746,
+    "distinct_names": true,
+    "finite": true,
+    "full_six_C_Nt_cases_and_both_Nq_2048_1024_present": true,
+    "actual_C_tags": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "actual_Nt": [
+      128,
+      64
+    ],
+    "original_quadrature_orders": [
+      2048,
+      1024
+    ],
+    "actual_interval_sides": [
+      "left",
+      "right"
+    ],
+    "original_signed_positive_six_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "original_output_mode_scope": "m0..40 signed six-mode +/- convolution ONLY; no m41..64 bath archive",
+    "original_phase_bin_edges": [
+      "0",
+      ".25",
+      ".5",
+      "1",
+      "pi",
+      "infinity"
+    ],
+    "original_phase_node_interval_entries_checked": 1751040,
+    "original_phase_bins_one_to_one_exhaustive_and_JSON_counts_exact": true,
+    "original_D13_phase_arrays_exact_for_both_sides": true,
+    "original_D13_sampled_FD4_signed_W_array_bitwise_equal_12_of_12": true,
+    "max_relative_ODE_five_bin_sum_vs_original_D13": 4.666416083264566e-16,
+    "max_relative_defect_five_bin_sum_vs_original_D13": 5.150113272825773e-16,
+    "max_relative_FD4_five_bin_sum_vs_original_D13": 4.4297659348837253e-16,
+    "max_relative_per_bin_FD4_eq_interval_ODE_plus_derivative_defect": 4.1685390616065405e-16,
+    "max_absolute_componentwise_envelope_roundoff_excess": 4.543838814073028e-28,
+    "max_reported_per_bin_source_identity_relative_due_cancellation": 2.874240521458319e-14,
+    "original_FD4_m0_max_absolute_report_only": 3.2202159546123623e-24,
+    "parent_JSON_all_twelve_pass_machine_only": true,
+    "source_blobs_all_reported_exact": true
+  },
+  "high_phase_original_source_weighting_report_only": {
+    "definition": "L2 norm of signed phase-bin W / L2 norm of whole signed original W, and L2 of unsigned phase-bin envelope / L2 of sum across all bin envelopes; both computed on original m0..40 mode-time array, not individual per-node continuous-time EOM or physical error norm.",
+    "primary_C_star_Nt128_Nq2048_left": {
+      "unweighted_fraction_phase_ge_pi": 0.005432609498031496,
+      "unweighted_fraction_phase_ge_1": 0.009715643454724409,
+      "phase_max": 961.0313760770676,
+      "interval_ODE_whole_signed_W_L2": 1.4132200209806873e-12,
+      "interval_ODE_phase_ge_pi_signed_norm_fraction": 1.883602911e-7,
+      "interval_ODE_phase_ge_pi_unsigned_envelope_norm_fraction": 1.883603607e-7,
+      "interval_ODE_phase_ge_1_unsigned_envelope_norm_fraction": 0.000005606470312,
+      "derivative_defect_whole_signed_W_L2": 1.3664519122854888e-12,
+      "derivative_defect_phase_ge_pi_unsigned_envelope_norm_fraction": 0.0005208835857,
+      "sampled_FD4_whole_signed_W_L2": 4.8422385381524534e-14,
+      "sampled_FD4_phase_ge_pi_signed_norm_fraction": 0.007003555644,
+      "sampled_FD4_phase_ge_pi_unsigned_envelope_norm_fraction": 0.01460932802,
+      "sampled_FD4_phase_ge_1_unsigned_envelope_norm_fraction": 0.02669004592
+    },
+    "primary_C_star_Nt128_Nq2048_right": {
+      "interval_ODE_phase_ge_pi_unsigned_envelope_norm_fraction": 1.957263738e-7,
+      "derivative_defect_phase_ge_pi_unsigned_envelope_norm_fraction": 0.0004822060897,
+      "sampled_FD4_phase_ge_pi_unsigned_envelope_norm_fraction": 0.01459704721
+    },
+    "all_24_sides_12_cohorts": {
+      "interval_ODE_phase_ge_pi_unsigned_envelope_norm_fraction_min_max": [
+        1.51714e-7,
+        0.00000164316
+      ],
+      "derivative_defect_phase_ge_pi_unsigned_envelope_norm_fraction_min_max": [
+        0.000480693,
+        0.00144684
+      ],
+      "sampled_FD4_phase_ge_pi_unsigned_envelope_norm_fraction_min_max": [
+        0.0145388,
+        0.0195537
+      ],
+      "sampled_FD4_phase_ge_1_unsigned_envelope_norm_fraction_min_max": [
+        0.0257203,
+        0.0401988
+      ]
+    },
+    "caveat": "All fractions concern the frozen discrete GE05 signed Ward source-weighted arrays only. They are NOT a continuous-time GE05 E_q10-on-shell or all-sector Noether bound."
+  },
+  "independent_original_quadrature_findings": {
+    "max_over_six_cases_original_sampled_FD4_signed_total_Nq2048_vs_Nq1024_relative": 0.013547707431333269,
+    "primary_C_star_Nt128_original_sampled_FD4_total_signed_W_relative": 0.013497592283513972,
+    "primary_C_star_Nt128_original_sampled_FD4_total_signed_W_absolute_L2": 6.569599692967569e-16,
+    "primary_C_star_Nt128_phase_ge_pi_ODE_signed_W_absolute_L2_difference": 7.593873261767442e-20,
+    "primary_C_star_Nt128_phase_ge_pi_ODE_signed_W_relative_difference": 0.28527532601083566,
+    "primary_C_star_Nt128_phase_ge_pi_sampled_FD4_signed_W_relative_difference": 0.787151457276425,
+    "primary_C_star_Nt64_phase_ge_pi_sampled_FD4_signed_W_relative_difference": 0.5644919485524852,
+    "interpretation": "Hard phase-bin mask moves node membership when original quadrature order changes, so per-bin relative differences can be large even when absolute and fully summed interval-ODE differences are small. Sampled original FD4 remains cancellation-sensitive and varies at percent-level relative. No bin-wise relative difference is a continuous GE05 physical error estimate."
+  },
+  "physical_stop": {
+    "original_Repair37_SCIENCE_FAIL_immutable": true,
+    "original_D10_failure_immutable": true,
+    "original_D13_bath_signed_interval_diagnostic_PASS_only": true,
+    "original_D14_phase_weighted_bath_diagnostic_PASS_only": true,
+    "GE05_bath_first_order_on_shell_certified": false,
+    "source_weighted_phase_tail_absolute_continuous_error_certified": false,
+    "full_all_sector_H4_Ward_certified": false,
+    "actual_E00_F21_and_full_original_action_boundary_evaluated": false,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "no_observational_tuning": true
+  },
+  "next_route": "D15 predata original GE05 continuous-time/source-bound R1 interval mismatch and signed total quadrature/time error budget; avoid nonnested hard-phase-mask relative gating, preserve original action/parent and original high-phase contributions. Then full H4 Ward with actual F21 and all original action boundary pieces."
+}
