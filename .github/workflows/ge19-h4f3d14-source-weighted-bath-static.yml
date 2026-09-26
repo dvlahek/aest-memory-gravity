@@ -1,0 +1,76 @@
+name: GE19 H4F3d14 Source-Weighted Signed R1 Phase Bath Static Regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d14_*'
+      - 'ge19/run_local_h4f3d14_original_r1_source_weighted_phase_bath.sh'
+      - '.github/workflows/ge19-h4f3d14-source-weighted-bath-static.yml'
+
+jobs:
+  original-ge05-source-weighted-bath:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install original bath symbolic and numerical dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Verify locked original source and independently exercise signed source phase bins and conservative envelopes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d14_predata_original_r1_phase_weighted_signed_bath_error.json)" = "321217d3661bf09fe67f1359606a5296faa4d304"
+          test "$(git rev-parse HEAD:ge19/h4f3d14_original_r1_source_weighted_phase_bath_partition.py)" = "727a8abb63a4aaa314d09e3396d7e2fbeb03bd71"
+          test "$(git rev-parse HEAD:ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath.py)" = "cb823960e9b2cf1b82b1accd458ec75f4acf4547"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d14_original_r1_source_weighted_phase_bath.sh)" = "50dd92494e53dcc6adca63ab3e4ea399de4448a6"
+          test "$(git rev-parse HEAD:ge19/h4f3d13_original_r1_interval_signed_bath_assembly.py)" = "64641d11c34a729508dbfa29d2fe65ccae3a031a"
+          test "$(git rev-parse HEAD:ge19/h4f3d13_actual_original_r1_signed_interval_bath_parent.py)" = "5cce06a82869d5b7ff70c12a92e70b9257073c42"
+          test "$(git rev-parse HEAD:ge19/h4f3d13_actual_original_r1_signed_interval_bath_independent_archive_audit.json)" = "886ac54bd7ad6f802895145fd7776f2ebd6c64d1"
+          test "$(git rev-parse HEAD:ge05/memory_directional_source_generator.py)" = "40837d77f89028da30c28899e2d0530a4401844e"
+          bash -n ge19/run_local_h4f3d14_original_r1_source_weighted_phase_bath.sh
+          python3 - <<'PY'
+          import ast,json
+          from pathlib import Path
+          import numpy as np
+          from ge19 import h4f3d14_original_r1_source_weighted_phase_bath_partition as phase
+          from ge19 import h4f3d13_actual_original_r1_signed_interval_bath_parent as d13
+          pre=json.loads(Path("ge19/h4f3d14_predata_original_r1_phase_weighted_signed_bath_error.json").read_text())
+          assert pre["classification"]=="GE19_H4F3D14_PREDATA_ORIGINAL_R1_SIGNED_GE05_SOURCE_WEIGHTED_PHASE_BATH_ERROR_DIAGNOSTIC"
+          assert pre["original_D7r1_phase_bins_preserved"].startswith("[0,.25)")
+          assert len(phase.EDGES)==6 and len(phase.LABELS)==5
+          for path in ("ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath.py",):
+              t=ast.parse(Path(path).read_text(),filename=path)
+              assert any(isinstance(x,ast.FunctionDef) and x.name=="compare_original_archive" for x in t.body)
+          nq,nt=5,12
+          x=np.linspace(np.log(.4),np.log(.83),nt)
+          a=np.exp(x)
+          H=np.linspace(.6,.63,nt)
+          r=np.array([.05,.3,.55,1.7,5.])
+          w=np.array([.11,.17,.23,.29,.2])
+          tau=.1
+          rm=r[:,None,None]
+          m=phase.prior.MODES[None,:,None]
+          xt=x[None,None,:]
+          z=(1+.1*rm+.03*m)*np.exp(1j*(.2*rm+.1*m+.7*xt))*(1+.07*xt)
+          v=(.3+.02*rm+.03*m)*z
+          X=.13*np.exp(1j*(.1*phase.prior.MODES[:,None]+.3*x[None,:]))
+          out,rows=phase.phase_partition(
+              z,v,X,a,H,x,r,w,tau,.12,d13.d6.fd4,d13.d6.ward_signed_convolution)
+          assert all(rows[side]["all_source_weighted_bins_finite"] for side in ("left","right"))
+          assert all(a["node_interval_count"]>0 for a in rows["left"]["phase_bins"])
+          assert sum(a["node_interval_count"] for a in rows["left"]["phase_bins"])==nq*(nt-1)
+          for side,sl in (("left",slice(1,None)),("right",slice(None,-1))):
+              assert max(rows[side]["signed_exact_machine_identity_only"].values())<1e-11
+              a=sum((out[side+"_"+s+"_FD4_signed_W"] for s in phase.LABELS),
+                    np.zeros((nt-1,41),complex))
+              assert phase.rel(a,out["original_FD4_signed_W"][sl,:])<1e-11
+              for label in phase.LABELS:
+                  for part in ("ODE","defect","FD4"):
+                      f=out[side+"_"+label+"_"+part+"_signed_W"]
+                      e=out[side+"_"+label+"_"+part+"_unsigned_envelope"]
+                      assert f.shape==(nt-1,41) and e.shape==f.shape
+                      assert np.all(np.abs(f)<=e*(1+1e-11)+1e-18)
+          print("GE19_H4F3D14_ORIGINAL_SOURCE_WEIGHTED_PHASE_BATH_STATIC_PASS_PHYSICAL_OPEN")
+          PY
