@@ -381,3 +381,62 @@ Old D7r1 remains diagnostic only. Bath
 on-shell and full H4 Ward, unknown
 F21/L21/b21, Z21 and lensing all OPEN.
 Original Repair37 SCIENCE_FAIL immutable.
+
+
+## D13 actual signed interval GE05 bath: independently archived diagnostic PASS, original on-shell OPEN (2026-09-26)
+
+Actual original R1 D13 user-local JSON
+SHA256 `2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76`,
+NPZ `1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89`,
+FULL log byte-identical to JSON and runner
+`3326712c9a1b42593c457ccdd94191f4a976a7a42dfd3f439a18405e7b5cf76e`.
+Local code and parent SHA checks PASS. Actual classification
+`GE19_H4F3D13_ACTUAL_ORIGINAL_R1_SIGNED_INTERVAL_BATH_PARENT_DIAGNOSTIC_PASS_ONSHELL_OPEN`.
+
+Independent actual D13 NPZ audit: 134 all-finite
+arrays, 12 original C/Nt/Nq cohorts, both sides,
+full original Nq2048 + Nq1024 control, signed
+positive/negative six-mode convolution m0..40,
+FD4 sampled original and original interval
+ODE + derivative defect identity max
+`4.778325451736743e-16` relative. Original
+previous D7r1 actual NPZ checked independently:
+all 24 `R_ODE` and `FD4_defect` mode-time
+L2 arrays bitwise identical; six clocks and
+six phase-bin counts identical.
+
+Original signed interval Nq control < `7.661e-8`
+relative, BUT sampled original FD4 total
+Nq2048 vs Nq1024 difference reaches `0.0135477`
+relative because signed interval+derivative
+defect components cancel by factor up to `60.185`
+in summed norms. Primary C_star/Nt128 original
+left signed interval `1.41322e-12`, FD4 defect
+`1.36645e-12`, original FD4 signed output
+`4.84224e-14`; their complex-array correlation
+about `-0.999959`. Primary original phase has
+about `0.5433%` unweighted node-interval pairs
+with phase > pi and max about `961`;
+control Nt64 phase max about `1933`.
+Unweighted phase tails do NOT establish their
+source-weighted physical significance.
+Original D13 bath signed archive m0..40 does
+NOT inherit D10r1 full Nyquist m0..64.
+
+Independent machine manifest:
+`ge19/h4f3d13_actual_original_r1_signed_interval_bath_independent_archive_audit.json`
+Git blob `886ac54bd7ad6f802895145fd7776f2ebd6c64d1`;
+full freeze
+`docs/ge19_h4f3d13_actual_original_r1_signed_interval_bath_independent_freeze.md`
+Git blob `6e611bbe8dcf3584b5e27c55cda4eafd0e342141`.
+
+**NEXT source-first D14:** independently audit
+source-weighted phase-tail/step-interpolation
+and cancellation-sensitive signed total
+quadrature/time errors on original R1 parent.
+Original GE05 bath first-order on-shell
+and complete H4 all-sector Ward still OPEN.
+Unknown actual F21 and full original
+`a*EL21+L21*EL00-b21*Eb00` action boundary
+remain explicit. No Z21 or lensing.
+Original Repair37 SCIENCE_FAIL immutable.
