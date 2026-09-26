@@ -4397,3 +4397,44 @@ or omitted `sum_i E_i00 F_i21,chi` and
 H4 Ward, no certified Z21, no lensing. All older
 Repair37 SCIENCE_FAIL, original bath 2048 nodes,
 shift `1e-6` and temporal order `>=2.5` unchanged.
+
+---
+
+## H4F3d11 actual physical original-source E00 and finite-difference defect audit (2026-09-26)
+
+Actual original-local H4F3d11 output uploaded and
+independently hash-checked:
+JSON `d62436b12bb5e5d9b7cbf1ea24abd0e6c06ac3ff1bfd43a41556aef284e3d3df`,
+NPZ `7679dc6765b87c0b1294b3915d0d1305e4fa59ac86a18d75621d5bf85c616229`,
+FULL log byte-identical to JSON, runner SHA/lengths exact.
+Physical classification
+`GE19_H4F3D11_ACTUAL_BACKGROUND_E00_ARRAYS_DIAGNOSTIC_PASS_ONSHELL_OPEN`.
+Source locks and frozen parent inputs PASS by
+original local runner; independent audit verifies
+578 finite NPZ arrays in six original cases,
+eight Euler fields, both original FD4/FD8,
+exact reassembly of all 96 E00 arrays and all
+48 original temporal derivative components.
+Original GE07 dust action varrho_b=3*C/a^3
+vs Repair13 rho_dust=C/a^3 preserved exactly.
+Original scalar charge a^3*KQ constant to
+`1.0842e-19` span and rho_lambda constant
+exactly on saved grid. Conditional exact
+homogeneous GE06/GE07/Lambda pressure equation
+reduction gives analytic E_L L2 `<=4.961e-22`;
+FD4/FD8 E_L-minus-analytic difference matches
+original finite-difference temporal defect
+to `6.484e-23` absolute L2. This localizes
+FD4 pressure residual to temporal discretization
+without changing old thresholds.
+Original H4F3d10r1 known nonbath PASS unchanged;
+original D10 UNRESOLVED and Repair37 SCIENCE_FAIL
+unchanged. Original complete GE05 bath E00,
+actual E00*F21, L21*EL00-b21*Eb00, complete
+integrated H4 Ward, Z21 and lensing remain OPEN.
+Machine audit
+`ge19/h4f3d11_actual_original_background_e00_independent_archive_audit.json`
+(blob `c3f238c2914ff18e43030ec31a3debb0edab81f1`);
+science freeze
+`docs/ge19_h4f3d11_actual_original_background_e00_independent_freeze.md`
+(blob `5d38c45430bf0207d5e0b383f9c3f6be6d7e7613`).
