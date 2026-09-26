@@ -1,0 +1,54 @@
+{
+  "classification": "GE19_H4F3D13_PREDATA_ORIGINAL_R1_ONE_SIDED_INTERVAL_SIGNED_GE05_BATH_PARENT",
+  "date": "2026-09-26",
+  "provenance": {
+    "original_D7r1_physical_classification": "GE19_H4F3D7_FD4_INTERVAL_ODE_DISCREPANCY_DECOMPOSED",
+    "original_D7r1_json_sha256": "031229d570d29ae9c4ea0ab8e25222d94e9cda4520c991cd203e9d7b97e01dc9",
+    "original_D7r1_npz_sha256": "4f011c96c2c11165df6332eafc459c5d2c5e7bc5164a436bde3d1563696f0e13",
+    "original_D6_json_sha256": "4607edde17c6820c85f32c0bbd774d5a58148eb01bfd0c81ce592e8c1b907791",
+    "original_D6_npz_sha256": "17b50c6ee584b2a8886f7114a90ea9396a127172dd9e02976b0e6275fe2fedc0",
+    "original_six_source_json_sha256": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1",
+    "original_six_source_npz_sha256": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b",
+    "original_Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "original_Repair26_R1_trace_bytes": 26643162,
+    "immutable_code_git_blobs": {
+      "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+      "ge19/h4f3d2_dust_bath_parent_euler_currents.py": "42b2405759402195ffb371056d9e48b70dcded71",
+      "ge19/h4f3d6_actual_normalized_bath_parent_ward.py": "0419145499f5f44e06ba0c96f779c2a604e84ce7",
+      "ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py": "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8",
+      "ge19/h4f3d7r1_physical_output_finite_check_repair.py": "e4cb9d6638b427368647a29b86ccf5445b43d7a2",
+      "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+      "ge19/h4f3b_actual_corrected_six_piece_source.py": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+      "ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py": "87d8be9ec44ecb099feecbaf59a904bd989da2fb"
+    }
+  },
+  "exact_original_GE05_physics": {
+    "per_node_action": "GE05 original Lq=NLR^2/4[(A^mu d_mu q)^2-(omega q-sqrt(w) Xphi)^2]; frozen first-order FLRW and normalized eta-rescaled bath.",
+    "original_state": "z_j10,v_j10 from frozen Repair24 R1 ODE stepper, common first-order X10 source from original H3F, original R1 full history boundary quadrature r,w.",
+    "original_normalization": "omega_j=r_j/tau, q_j10=sqrt(w_j)/omega_j*z_j10, J=a^3*v_j10/tau, R_FD4=H*FD4_ln(a)(J)+a^3*omega_j^2(z_j10-X10), E_qj10=-sqrt(w_j)/(2omega_j)*R",
+    "original_interval_one_sided_derivative": "h_mid(i)=sqrt(H_i*H_{i+1}), R_right(i)=3*a_i^3*(H_i-h_mid(i))*v_i/tau and R_left(i+1)=3*a_{i+1}^3*(H_{i+1}-h_mid(i))*v_{i+1}/tau, reconstructed from original exact R1 ODE and same frozen drive, with both sides independently saved; use full original D7 exact unsimplified jit+potential as cross-check",
+    "original_signed_bath_parent": "+4 sum_j E_qj10 dchi q_j10 in original six positive Fourier modes m=[3,5,8,10,15,20], reconstruct both conjugate signs at original kfund, retain all output modes m0..40 with original signed convolution; distinguish left and right intervals and FD4 sampled comparison",
+    "structural_zero": "For original homogeneous q_j00=0,qt_j00=0,Xphi00=0, GE05 E_qj00=0 and all homogeneous metric/aether/scalar bath sources vanish because original bath action is quadratic in first-order q/Xphi/derivatives. Do not infer actual E_qj10=0 from this."
+  },
+  "numerical_cohorts": {
+    "physical_original_primary": "3 C tags x Nt128,Nt64 x Nq2048 original R1 quadrature, 6 actual bath cohorts; both one-sided interval values per cohort",
+    "quadrature_control": "Nq1024 on same original R1 trace and same C/Nt/positive Fourier modes, separate report-only signed bath Ward and node phase diagnostic, no new quadrature science gate",
+    "original_mode_scope": "m1=3,5,8,10,15,20; output signed m0..40; no projection of individual Euler field to infer it is zero",
+    "matched_exact_archives": "Original D6 FD4 physical signed bath W and D7r1 original one-sided mode-time Euler L2 archive must be checked on Nq2048; all previous original parent SHA locks remain unchanged",
+    "original_D7r1_phase_bins": "[0,.25),[.25,.5),[.5,1),[1,infinity) unchanged",
+    "original_D7r1_existing_machine_identity_tolerance": 1e-11,
+    "independent_numerical_compare": "Identity-only comparisons of original D6 signed FD4 W = interval one-sided W + sampled derivative defect W at matching end nodes and original D7r1 phase/norm reproduction. Existing 1e-11 relates to original normalized identity, not a bath on-shell physical acceptance threshold."
+  },
+  "stop": {
+    "no_new_Eq10_on_shell_smallness_threshold": true,
+    "original_D7r1_discrepancy_only_diagnostic": true,
+    "no_GE05_bath_on_shell_certification": true,
+    "no_complete_h4_noether": true,
+    "no_original_f21_solve": true,
+    "no_Z21_certification": true,
+    "no_lensing": true,
+    "no_observational_tuning": true,
+    "original_Repair37_SCIENCE_FAIL_immutable": true
+  },
+  "next_route": "ACTUAL_FROZEN_R1_INTERVAL_SIGNED_BATH_PARENT_DIAGNOSTIC_THEN_INDEPENDENT_BATH_ONSHELL_ERROR_BUDGET_AND_FULL_ALL_SECTOR_NOETHER"
+}
