@@ -4494,3 +4494,41 @@ D7r1 FD4 versus one-sided interval ODE
 discrepancy. 1024-node quadrature and Nt64
 controls stay independent. Do not upgrade
 D7r1 diagnostic to bath on-shell.
+
+---
+
+## H4F3d13 actual signed one-sided R1 GE05 bath parent independent audit (2026-09-26)
+
+Original local 12-cohort D13 diagnostic PASS,
+original source and parent SHA locks PASS;
+actual JSON SHA `2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76`,
+NPZ SHA `1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89`,
+FULL log byte-identical. Independently
+verified 134 finite distinct arrays, original
+signed left/right interval W + derivative
+defect = original sampled FD4 W to max
+`4.7783e-16` relative. Original prior D7r1
+mode-time per-side Nq2048 arrays 24/24
+bitwise equal and original six phase-bin
+counts identical. Original signed interval
+W quadrature difference Nq2048/1024 max
+`7.661e-8` but cancellation-sensitive
+original sampled FD4 signed W changes up to
+`1.35477%` relative. Original signed interval
+W / FD4 W ranges `14.38..29.61` in norm;
+sum-component amplification up to `60.185`;
+C_star/Nt128 left signed interval and
+sampled derivative defect correlation
+`-0.999959`. Original phase high-tail
+>pi requires source-weighted audit, not
+unweighted node-count science gate. Original
+GE05 bath on-shell and full all-sector H4
+Ward remain OPEN; no Z21/lensing.
+Machine audit blob
+`886ac54bd7ad6f802895145fd7776f2ebd6c64d1`,
+science freeze blob
+`6e611bbe8dcf3584b5e27c55cda4eafd0e342141`.
+Original D10 FAIL and Repair37 SCIENCE_FAIL
+unchanged. Next predata D14 source-weighted
+bath high-phase and signed cancellation
+error budget using original R1 state and GE05 action.
