@@ -568,3 +568,22 @@ before original full H4 Ward and
 Z21. Repair37 SCIENCE_FAIL and
 original D10 FAIL immutable,
 no lensing tuning.
+
+
+D15 exact GE05 continuous variable-H/X10 step defect prereg source:
+`ge19/h4f3d15_predata_original_GE05_continuous_R1_step_defect.json`,
+Git blob `055f7b8a8916306685064042a40a8069239a900c`.
+PRE-DATA ONLY, no D15 actual driver or local
+physical output yet. Symbolic identity on
+the original frozen R1 step:
+`R_GE05 = 3 a^3 v/tau*(H_true-h_mid/tau)
++ a^3 (r/tau)^2*(X_lin-X_true)`.
+At original endpoints the drive interpolation
+difference vanishes if original X10 endpoint
+is exact, but the interior original variable
+H/X10 error remains. True original
+continuous H/X10 or independently source-
+certified interval enclosures required before
+bath on-shell test. Original D13/D14
+numeric signed high-phase arrays remain
+a DISCRETE source diagnostic only.
