@@ -1,0 +1,25 @@
+{
+  "classification": "GE19_H4F3D12_PREDATA_RESTRICTED_HOMOGENEOUS_NOETHER_AND_CONDITIONAL_F21_BOUND",
+  "date": "2026-09-26",
+  "frozen_parent_D11_json_sha256": "d62436b12bb5e5d9b7cbf1ea24abd0e6c06ac3ff1bfd43a41556aef284e3d3df",
+  "frozen_parent_D11_npz_sha256": "7679dc6765b87c0b1294b3915d0d1305e4fa59ac86a18d75621d5bf85c616229",
+  "frozen_original_D10r1_json_sha256": "69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2",
+  "frozen_original_D10r1_npz_sha256": "85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c616229",
+  "original_D11_independent_audit_git_blob": "c3f238c2914ff18e43030ec31a3debb0edab81f1",
+  "original_GE06_source_git_blob": "a7afe0035054a9dca55d74a6497c081422114b4c",
+  "original_GE07_source_git_blob": "cde8da77a80799cef00fc7c09c3633310fc9e3d4",
+  "homogeneous_continuum_assumptions": [
+    "Original frozen GE06/GE07/Lambda homogeneous action and the already audited source-bound D11 partials",
+    "Repair13 exact Friedmann H^2=(Q*KQ-K)/3+C/a^3+rho_lambda",
+    "exact scalar charge d(a^3*KQ)/d ln a=0",
+    "exact dust charge dC/d ln a=0 and GE07 matter varrho=3C/a^3",
+    "constant homogeneous rho_lambda; K is differentiable and dK/dQ=KQ",
+    "Homogeneous NL0C/Y zero-background-gradient restriction; no GE05 bath Euler claim"
+  ],
+  "symbolic_gates": "Require exact symbolic E_N=6 a^3 Friedmann; E_L=2 a^2[3 Friedmann + H2prime+QKQ+3C/a^3]; E_R=2E_L; E_phi=-2a^3 H(3KQ+KQprime); E_T=-6H Cprime; E_b,E_u,E_rho=0 and nonzero p_bx; all reduce to zero under exact background assumptions. Include negative controls.",
+  "numerical_scope": "Original actual uploaded D11 Nt128 and Nt64 three C, original separate FD4/FD8 E00 arrays. Source independent from user-provided observations. Original Nx128 complete Nyquist m0..64 conditional coefficient; optional m0..40 tagged reduced-projection-only.",
+  "conditional_bound": "For each cohort, ||sum_i E_i00 dchi F_i21||_L2(t,chi) <= kmax sqrt(sum_i ||E_i00||_Linf(t)^2) sqrt(sum_i ||F_i21||_L2(t,chi)^2); kmax=64*kfund, kfund=ge09.K_REQ[0]/repair07.FOURIER_N[0]. This does not provide a number for the unknown F21 norm or prove the product small.",
+  "boundary_bound": "||L21 E_L00-b21 E_b00|| <= ||E_L00||_Linf ||L21||+||E_b00||_Linf ||b21||. The derivative boundary additionally has the factor kmax for periodic full-band F21 fields. Never set the unknown F21,L21,b21 to zero.",
+  "full_period_m0_identity": "For spatially homogeneous E_i00 and periodic full-period F_i21, the full-period integral of E_i00 dchi F_i21 is zero at each time by periodicity; this does not extend to spatial subintervals, spatially varying weights, local Ward or nonzero Fourier modes.",
+  "frozen_stops": "The original D10 archive FAIL, D10r1 diagnostic PASS, D11 E00 diagnostic PASS, Repair37 SCIENCE_FAIL and original source/numerical gates stay unchanged. No complete bath H4 Ward, Z21 or lensing acceptance."
+}
