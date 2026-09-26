@@ -311,3 +311,73 @@ or use an uncertified Repair37 Z21 as actual F21.
 Then restore original nonbath F21-dependent
 and lower action boundary and full integrated
 H4 Noether before certifying Z21 or lensing.
+
+
+## GE19 D13 original R1 signed one-sided GE05 bath: static PASS, actual physical OPEN (2026-09-26)
+
+**GitHub recovered:** the original byte-for-byte
+H4F3d12 prereg/r0/r1/freeze/report and original
+D11-derived machine JSON (as lossless gzip) are
+committed to
+`physics-first-gravitational-elasticity`.
+The latest dedicated
+[D12 CI 36223812141](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36223812141)
+is SUCCESS. Chronological recovery is recorded in
+`docs/ge19_h4f3d12_checkpoint.md`. The historical
+original manifest statement of pre-push GitHub
+rejection remains unchanged.
+
+New D13 preregistered the **actual original
+GE05 R1 per-node first-order bath Euler**
+on original 2048 R1 history nodes and independent
+1024 quadrature control for original
+`C_min,C_star,C_max x Nt128,Nt64`.
+Both one-sided original R1 interval ODE Euler
+residuals, original sampled FD4 Euler and
+the exact derivative defect are kept distinct.
+Full signed `+/-` Fourier convolution
+`4 sum_j E_qj10*dchi q_j10` reconstructs
+original m0..40 on all six original positive
+input modes. Original D6 physical signed
+FD4 Ward and D7r1 original one-sided
+mode/time Euler norms must be reverified
+before accepting new actual physical
+output. No new bath-on-shell science
+threshold and no post hoc fitting.
+
+Exact prereg blob `ec07d6be5c267dcbbdb05395ea81cc5e7405781e`;
+pure signed helper `64641d11c34a729508dbfa29d2fe65ccae3a031a`;
+actual physical driver
+`5cce06a82869d5b7ff70c12a92e70b9257073c42`;
+isolated no-overwrite runner
+`3eca153fb847aaa147be88a3c0ca21873f352b3c`.
+[Dedicated static CI 36224232492](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36224232492)
+completed SUCCESS using only synthetic
+physical arrays; signed +/- negative controls,
+both original interval residual identities,
+D6 AST-extracted original FD4/conv functions,
+driver AST and runner bash syntax all PASS.
+Full prereg/static freeze:
+`docs/ge19_h4f3d13_original_r1_signed_interval_bath_static_freeze.md`,
+blob `f8f52a1c80e1ac04106b17e2a8b30ce016e6f3e9`.
+
+**NEXT user-local physical action** after `git pull --ff-only`
+and `source .venv/bin/activate`:
+
+```bash
+set -o pipefail
+bash ge19/run_local_h4f3d13_original_r1_signed_interval_bath_parent.sh \
+  2>&1 | tee results/ge19_H4F3D13_LOCAL_runner.log
+echo "EXIT=${PIPESTATUS[0]}"
+```
+
+Collect new D13 JSON/NPZ/FULL/runner log for
+independent actual audit. The user's original
+26,643,162-byte Repair26 R1 trace SHA
+`608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8`
+is NOT in GitHub CI. No actual D13
+physical signed-interval parent has run.
+Old D7r1 remains diagnostic only. Bath
+on-shell and full H4 Ward, unknown
+F21/L21/b21, Z21 and lensing all OPEN.
+Original Repair37 SCIENCE_FAIL immutable.
