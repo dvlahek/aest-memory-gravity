@@ -1,0 +1,39 @@
+{
+  "Z21_certified": false,
+  "actual_D11_derived_output": {
+    "name": "ge19_h4f3d12_actual_d11_conditional_f21_bound.json",
+    "rows": 12,
+    "sha256": "5d94ac19e3176e8e6d2948260b957718eba9620ea9fced2981fe2e6df2c5837e",
+    "symbolic_gates": 23
+  },
+  "actual_full_Nx128_F21_fields_available": false,
+  "actual_restricted_nonbath_full_grid_multiplier_Nt128_Cstar_FD4": 6.858137595155815e-16,
+  "actual_restricted_nonbath_full_grid_multiplier_Nt128_Cstar_FD8": 5.98037737151968e-18,
+  "all_sector_bath_H4_Noether_certified": false,
+  "classification": "GE19_H4F3D12_RESTRICTED_EXACT_HOMOGENEOUS_NONBATH_IDENTITY_AND_ACTUAL_D11_CONDITIONAL_F21_MULTIPLIERS_PASS_FULL_OPEN",
+  "date": "2026-09-26",
+  "frozen_parent_D11_json_sha256": "d62436b12bb5e5d9b7cbf1ea24abd0e6c06ac3ff1bfd43a41556aef284e3d3df",
+  "frozen_parent_D11_npz_sha256": "7679dc6765b87c0b1294b3915d0d1305e4fa59ac86a18d75621d5bf85c616229",
+  "lensing_licensed": false,
+  "original_D12_first_implementation": {
+    "name": "ge19_h4f3d12_restricted_background_and_conditional_f21_bound.py",
+    "outcome": "machine-only residual-relative consistency diagnostic failed because its denominator was a cancellation-small Euler residual rather than the sum of original action component norms; no physical science gate failed; original file retained immutable",
+    "sha256": "61912f04c5504bd173c86e0b143156c756aec7200801d9e468c16edbc7e6edbb"
+  },
+  "original_full_period_conditional_background_spatial_m0_zero": true,
+  "original_private_git_branch": "physics-first-gravitational-elasticity",
+  "original_private_git_last_verified_HEAD_before_D12": "3c44790d0e360e25b9a6504bf5779bf4f2101edc",
+  "predata": {
+    "name": "ge19_h4f3d12_predata_restricted_background_and_f21_bound.json",
+    "sha256": "d704bd35c71f80133c7e5b3bb7b71423366f4a692be48fb5797526c2f31db183"
+  },
+  "repo_commit_of_D12": "NOT_PERFORMED_GITHUB_WRITE_REJECTED",
+  "scope": "Independent from the four already uploaded original D11 physical artifacts; no new original H3F or F21 integration.",
+  "source_bound_original_GE06_GE07_actions": "Original H4F3d11 source audit and symbolic compiler CI PASS; D12 derives implications from these already verified original-action background partials, not from rerunning unuploaded raw original source locally.",
+  "stage": "GE19 H4F3d12 source-linked conditional continuum nonbath proof and actual D11 Fourier coefficient audit",
+  "versioned_r1_implementation": {
+    "change": "numeric reconstruction consistency denominator only uses original GE06 local, GE06 time derivative and Lambda component natural L2 scale, same 1e-12 machine tolerance, original sources, D11 arrays and physical acceptance criteria unchanged",
+    "name": "ge19_h4f3d12r1_restricted_background_and_conditional_f21_bound.py",
+    "sha256": "cc637acbe41941247bdf0382dfd1d517790795ba5e7c1562482e0ac0ca757017"
+  }
+}
