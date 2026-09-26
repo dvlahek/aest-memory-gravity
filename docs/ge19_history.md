@@ -4438,3 +4438,59 @@ Machine audit
 science freeze
 `docs/ge19_h4f3d11_actual_original_background_e00_independent_freeze.md`
 (blob `5d38c45430bf0207d5e0b383f9c3f6be6d7e7613`).
+
+---
+
+## H4F3d12 restored GitHub freeze and next original GE05 bath gate (2026-09-26)
+
+GitHub write access restored; first checkout-backed write
+`003ce380f65da913e8ec616ea6d9342fc7e454b1` was
+confirmed. Original D12 prereg, original failed r0,
+corrected r1, original manifest and scientific report
+have been committed **byte-for-byte** to
+`physics-first-gravitational-elasticity`; historical
+pre-GitHub rejection remains unchanged in the
+original manifest/report and is reconciled only
+by the newer `docs/ge19_h4f3d12_checkpoint.md`.
+Original actual D11-derived machine JSON is committed
+losslessly in `ge19/h4f3d12_actual_d11_conditional_f21_bound.json.gz`,
+blob `30cae15e4c2992484d96d3ba0f3f02e8ea8969b1`,
+decompressed JSON SHA256
+`5d94ac19e3176e8e6d2948260b957718eba9620ea9fced2981fe2e6df2c5837e`.
+Corrected r1 implementation blob
+`794df05d6c2c7572a435ba617b0c22649a28b318`;
+original prereg blob
+`97b513c176f9de6e1ee55cc21d87cb23103fc707`.
+Reproducible no-overwrite original-parent local replay
+`ge19/run_local_h4f3d12r1_restricted_background_and_f21_bound.sh`
+blob `857765404ad013175d69be91c0f3d8428f647228`.
+[GitHub D12 CI 36223812141](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36223812141)
+completed SUCCESS and checked frozen source,
+full archived actual result, 23 symbolic gates,
+12 actual D11 Fourier multiplier rows, original
+D11 claim boundaries, synthetic FFT controls and
+runner syntax. Independent original D11 replay
+was byte-identical; original numerical and
+scientific gates were unchanged.
+
+Physical scope remains conditional original
+homogeneous GE06/GE07/Lambda background Euler
+cancellation and the actual-D11-dependent
+coefficient times UNKNOWN `||F21||`.
+For C_star/Nt128, original full-band
+B(FD4)=`6.858137595155815e-16`,
+B(FD8)=`5.98037737151968e-18`;
+these are NOT complete all-sector H4 smallness
+certificates. Original full bath, nonzero
+Fourier F21, L21/b21 boundary, full H4 Noether,
+Z21 and lensing remain OPEN. Original Repair37
+SCIENCE_FAIL immutable.
+
+Next original-action step: preregister the
+independent GE05 per-node 2048-node original
+R1 interval bath Euler and signed mixed
+`+4 sum E_qj10*dchi q_j10`; preserve original
+D7r1 FD4 versus one-sided interval ODE
+discrepancy. 1024-node quadrature and Nt64
+controls stay independent. Do not upgrade
+D7r1 diagnostic to bath on-shell.
