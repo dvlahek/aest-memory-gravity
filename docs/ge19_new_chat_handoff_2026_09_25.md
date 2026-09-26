@@ -488,3 +488,83 @@ FULL log, LOCAL runner log. This is
 SOURCE-WEIGHTED BATH DIAGNOSTIC, no
 GE05 first-order on-shell certificate,
 full H4 Ward, Z21 or lensing.
+
+
+## D14 actual original GE05 phase-weighted bath: independent physical archive PASS, on-shell OPEN (2026-09-26)
+
+User-local D14 original 12-cohort
+source-weighted signed/unsigned R1 GE05
+phase partition physical diagnostic PASS.
+Actual JSON SHA256
+`8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e`
+(290,019 bytes); actual NPZ SHA256
+`f79d87f10dc1561ef2c61997b7952d62d85eda6674abaa015e5d38e161b55c48`
+(31,955,470 bytes), FULL log byte-identical to
+JSON; runner SHA256
+`497871f79c0969f619287d215e532bdc235e08a263bec48958054dc6b3c96586`.
+Original R1/D13/source SHA locks PASS.
+
+Independent postrun NPZ audit:
+746 distinct finite arrays, twelve original
+C/Nt/Nq cohorts, both sides, exact original
+D13 SHA JSON+NPZ independently verified,
+1,751,040 node-interval phase labels
+repartitioned with exact saved JSON counts.
+Original D13 actual source arrays
+reproduced by signed five-bin sums with
+max relative 5.15012e-16; source interval
+ODE+derivative defect=sampled FD4
+max relative 4.16854e-16 per-bin; original
+signed FD4 arrays bitwise identical.
+Conservative unsigned per-mode envelopes
+verified (absolute roundoff excess
+<=4.544e-28). D14 source claims are
+DIAGNOSTIC ONLY.
+
+Primary C_star/Nt128/Nq2048, left,
+phase>=pi unweighted count 0.54326%;
+source-weighted conservative unsigned
+phase>=pi fractions of total envelope:
+interval ODE 1.88360e-7, original FD4
+derivative defect 5.20884e-4, sampled
+FD4 total 1.46093%. Right respective
+1.95726e-7, 4.82206e-4, 1.45970%.
+High phase makes tiny source-weighted
+interval ODE contribution on original
+frozen discrete grid, but has amplified
+relative FD4 share due cancellation.
+Original sampled FD4 Nq2048/1024
+relative difference max 1.35477%;
+individual hard-bin Nq comparisons
+are NOT physical quadrature error bars
+because phase membership changes
+with nonnested nodes. Original D13
+signed m0..40 is NOT full bath Nyquist
+m0..64.
+
+Independent machine freeze:
+`ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_archive_audit.json`
+Git blob `3f7acc17aee24c6b776578ef2b654a40b2db6af0`.
+Independent science report:
+`docs/ge19_h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_freeze.md`
+Git blob `eba18e11006abcd837f1532850014e9daab53bf2`.
+
+**NEXT D15 original-action physics:** obtain
+certified original continuous variable-H(t)
+and original X10(t) forcing/enclosures
+for each original R1 interval; derive
+the exact piecewise-frozen-step vs
+GE05 continuous action Euler defect
+and source-weighted propagated/signed
+bath error including high-phase nodes.
+Do NOT call sampled FD4 W or its
+quadrature difference an on-shell
+certificate. If original continuous
+input/enclosure missing, D15
+CONDITIONAL ONLY. Then full action
+bath + actual E_i00 F_i21 +
+a E_L21+L21 E_L00-b21 E_b00
+before original full H4 Ward and
+Z21. Repair37 SCIENCE_FAIL and
+original D10 FAIL immutable,
+no lensing tuning.
