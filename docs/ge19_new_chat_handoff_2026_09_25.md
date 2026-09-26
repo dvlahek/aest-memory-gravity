@@ -440,3 +440,51 @@ Unknown actual F21 and full original
 `a*EL21+L21*EL00-b21*Eb00` action boundary
 remain explicit. No Z21 or lensing.
 Original Repair37 SCIENCE_FAIL immutable.
+
+
+## D14 source-weighted phase-bin R1 signed bath: static PASS, actual original physics OPEN (2026-09-26)
+
+D13 user-local actual signed interval GE05 bath diagnostic
+and independently audited original D7r1
+mode-time/phase parent archive PASS.
+Original D13 exact JSON SHA256
+`2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76`,
+NPZ `1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89`.
+Source-weighted D14 predata, partition module,
+actual physical driver and no-overwrite local
+runner frozen; static original-source synthetic
+CI [36225513503](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36225513503)
+PASS. D14 partitions exact frozen original R1
+per-node phase into [0,.25), [.25,.5),
+[.5,1), [1,pi), [pi,infinity), retaining
+original D7r1 bins, signed original +/- six
+Fourier modes m0..40 and per-mode/time
+conservative unsigned source-node envelopes
+for original interval, FD4 derivative defect
+and sampled total. Original Nq2048/1024
+control report-only and D13 actual NPZ
+original-parent exact matching mandatory.
+
+PRE `ge19/h4f3d14_predata_original_r1_phase_weighted_signed_bath_error.json`
+blob `321217d3661bf09fe67f1359606a5296faa4d304`.
+Source partition
+`ge19/h4f3d14_original_r1_source_weighted_phase_bath_partition.py`
+blob `727a8abb63a4aaa314d09e3396d7e2fbeb03bd71`.
+Original physical driver
+`ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath.py`
+blob `cb823960e9b2cf1b82b1accd458ec75f4acf4547`.
+Runner
+`ge19/run_local_h4f3d14_original_r1_source_weighted_phase_bath.sh`
+blob `50dd92494e53dcc6adca63ab3e4ea399de4448a6`.
+D14 static freeze
+`docs/ge19_h4f3d14_original_r1_source_weighted_phase_bath_static_freeze.md`
+blob `37cc2c32438bbdfba8763e9f8f2d99c4ec1de898`.
+
+**NEXT:** user-local original physical execution:
+`bash ge19/run_local_h4f3d14_original_r1_source_weighted_phase_bath.sh 2>&1 | tee results/ge19_H4F3D14_LOCAL_runner.log`
+after branch pull/venv and `set -o pipefail`.
+Independent audit new D14 JSON, NPZ,
+FULL log, LOCAL runner log. This is
+SOURCE-WEIGHTED BATH DIAGNOSTIC, no
+GE05 first-order on-shell certificate,
+full H4 Ward, Z21 or lensing.
