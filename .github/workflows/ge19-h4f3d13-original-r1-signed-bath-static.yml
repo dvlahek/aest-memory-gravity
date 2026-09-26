@@ -1,0 +1,95 @@
+name: GE19 H4F3d13 Original R1 One-Sided Signed Bath Static Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d13_*'
+      - 'ge19/run_local_h4f3d13*'
+      - '.github/workflows/ge19-h4f3d13-original-r1-signed-bath-static.yml'
+
+jobs:
+  frozen-original-ge05:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deterministic numerical dependency
+        run: python3 -m pip install numpy
+      - name: Original source pin, signed +/- Fourier and interval FD4 defect identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:ge19/h4f3d13_predata_original_r1_interval_signed_bath_parent.json)" = "ec07d6be5c267dcbbdb05395ea81cc5e7405781e"
+          test "$(git rev-parse HEAD:ge19/h4f3d13_original_r1_interval_signed_bath_assembly.py)" = "64641d11c34a729508dbfa29d2fe65ccae3a031a"
+          test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
+          test "$(git rev-parse HEAD:ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py)" = "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
+          test "$(git rev-parse HEAD:ge19/h4f3d7r1_physical_output_finite_check_repair.py)" = "e4cb9d6638b427368647a29b86ccf5445b43d7a2"
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+          test "$(git rev-parse HEAD:ge05/memory_directional_source_generator.py)" = "40837d77f89028da30c28899e2d0530a4401844e"
+          python3 -B - <<'PY'
+          import ast,importlib.util,json
+          from pathlib import Path
+          import numpy as np
+          pre=json.loads(Path("ge19/h4f3d13_predata_original_r1_interval_signed_bath_parent.json").read_text())
+          assert pre["stop"]["no_new_Eq10_on_shell_smallness_threshold"] is True
+          assert pre["stop"]["no_GE05_bath_on_shell_certification"] is True
+          assert pre["stop"]["no_complete_h4_noether"] is True
+          assert pre["stop"]["no_Z21_certification"] is True
+          assert pre["provenance"]["original_Repair26_R1_trace_bytes"]==26643162
+          spec=importlib.util.spec_from_file_location(
+              "d13",Path("ge19/h4f3d13_original_r1_interval_signed_bath_assembly.py"))
+          d13=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(d13)
+          assert np.array_equal(d13.MODES,np.array([3,5,8,10,15,20]))
+          # Import only the original, SHA-pinned FD4 and signed convolution
+          # function AST, avoiding historical module-level result writers.
+          old=ast.parse(Path("ge19/h4f3d6_actual_normalized_bath_parent_ward.py").read_text())
+          methods=[f for f in old.body if isinstance(f,ast.FunctionDef) and
+                   f.name in ("fd4","ward_signed_convolution")]
+          assert len(methods)==2
+          original={"np":np,"MODES":d13.MODES,"M_MAX":40}
+          exec(compile(ast.Module(body=methods,type_ignores=[]),
+                       "frozen_D6_methods","exec"),original)
+          fd4=original["fd4"];conv=original["ward_signed_convolution"]
+          rng=np.random.default_rng(1313)
+          nb,nt=5,17
+          x=np.linspace(np.log(.4),np.log(1/1.2),nt)
+          a=np.exp(x);H=np.linspace(.00012,.000065,nt)
+          rr=np.array([.23,.47,.72,1.04,1.57])
+          ww=np.array([.08,.12,.20,.27,.33])
+          tau=1.7
+          modes=d13.MODES[None,:,None]
+          zz=(rng.standard_normal((nb,6,nt))+
+              1j*rng.standard_normal((nb,6,nt)))*1e-3
+          vv=zz*.07+(rng.standard_normal((nb,6,nt))+
+                        1j*rng.standard_normal((nb,6,nt)))*1e-5
+          X=(rng.standard_normal((6,nt))+
+             1j*rng.standard_normal((6,nt)))*1e-3
+          out,diag=d13.interval_signed(
+              zz,vv,X,a,H,x,rr,ww,tau,.0067332463908486599,fd4,conv)
+          for side in ("left","right"):
+              row=diag[side]
+              assert row["original_ODE_unsimplified_vs_explicit_interval_H_relative_natural"]<=1e-11
+              assert row["original_FD4_equals_interval_ODE_plus_derivative_defect_relative_natural"]<=1e-11
+              assert row["original_signed_FD4_equals_interval_plus_defect_relative_natural"]<=1e-11
+              assert row["one_sided_R_ODE_abs_L2"]>0
+          qx=np.sqrt(ww)[:,None,None]/(rr[:,None,None]/tau)*(
+              1j*.0067332463908486599*modes)*zz
+          E=-(np.sqrt(ww)[:,None,None]/(2*(rr[:,None,None]/tau)))*(
+              H[None,None,:]*fd4(a[None,None,:]**3*vv/tau,x)
+              +a[None,None,:]**3*(rr[:,None,None]/tau)**2*(zz-X[None,:,:]))
+          good=conv(E,qx)
+          independent=d13.signed_convolution_independent(E,qx)
+          assert d13.rel(good,independent)<1e-12
+          assert d13.rel(good,out["FD4_original_signed_W"])<1e-12
+          positive_only=np.zeros_like(good)
+          for i,p in enumerate(d13.MODES):
+              for j,q in enumerate(d13.MODES):
+                  if p+q<=40:
+                      positive_only[:,p+q]+=4*np.sum(E[:,i,:]*qx[:,j,:],axis=0)
+          assert d13.rel(good,positive_only)>1e-3
+          assert all(np.isfinite(x).all() for x in out.values())
+          print("GE19_H4F3D13_ORIGINAL_R1_SIGNED_BATH_STATIC_PASS_ACTUAL_PHYSICAL_OPEN")
+          PY
