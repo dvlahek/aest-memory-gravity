@@ -4563,3 +4563,60 @@ Detailed static freeze blob
 `37cc2c32438bbdfba8763e9f8f2d99c4ec1de898`.
 No GE05 bath on-shell, complete all-sector
 H4 Ward, Z21 or lensing claim.
+
+---
+
+## H4F3d14 actual original source-weighted GE05 bath independent archive freeze (2026-09-26)
+
+User-local D14 original physical result
+`GE19_H4F3D14_ACTUAL_ORIGINAL_R1_SOURCE_WEIGHTED_PHASE_BATH_DIAGNOSTIC_PASS_ONSHELL_OPEN`.
+Original actual JSON SHA
+`8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e`
+(290019 bytes); NPZ SHA
+`f79d87f10dc1561ef2c61997b7952d62d85eda6674abaa015e5d38e161b55c48`
+(31955470 bytes); FULL log identical to JSON,
+original code, R1 trace and D13 physical SHA
+local runner PASS. Independently verified
+746 finite distinct arrays, 12 original
+C/Nt/Nq cohorts, 1,751,040 original
+node-interval phases, all original D13
+parent JSON/NPZ SHA and 12/12
+sampled signed FD4 arrays bitwise.
+Five signed phase-bin ODE/derivative defect/
+FD4 complex array sums match original D13
+with max relative 5.15012e-16.
+Per-bin original FD4=ODE+defect
+max relative 4.16854e-16. Original
+unsigned source-node/signed-mode
+envelope componentwise valid to
+absolute 4.544e-28 roundoff.
+
+In original primary C_star/Nt128/Nq2048
+phase>=pi unweighted count 0.54326%;
+source-weighted conservative unsigned
+L2 fractions: one-sided interval ODE
+1.88360e-7 (left), FD4 derivative defect
+5.20884e-4, original sampled FD4 total
+0.0146093. Original FD4 relative Nq2048/
+Nq1024 difference up to 1.35477%;
+individual nonnested hard-phase bin
+Nq relative differences can be 0.79
+or greater and are NOT independent
+physical quadrature error bars.
+High-phase interval-ODE source
+weight is small on the ORIGINAL
+DISCRETE signed bath parent only.
+No continuous GE05 on-shell inference.
+
+Machine D14 audit blob
+`3f7acc17aee24c6b776578ef2b654a40b2db6af0`,
+science freeze blob
+`eba18e11006abcd837f1532850014e9daab53bf2`.
+D15 predata original GE05 variable
+H(t),X10(t) continuous R1-step defect
+is registered separately; actual
+continuous background/drive
+enclosures and physical D15 execution
+OPEN. Full all-sector action Ward,
+Z21 and lensing blocked; original
+Repair37 SCIENCE_FAIL preserved.
