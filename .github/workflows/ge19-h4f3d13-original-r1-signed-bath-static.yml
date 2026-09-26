@@ -23,6 +23,9 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD:ge19/h4f3d13_predata_original_r1_interval_signed_bath_parent.json)" = "ec07d6be5c267dcbbdb05395ea81cc5e7405781e"
           test "$(git rev-parse HEAD:ge19/h4f3d13_original_r1_interval_signed_bath_assembly.py)" = "64641d11c34a729508dbfa29d2fe65ccae3a031a"
+          test "$(git rev-parse HEAD:ge19/h4f3d13_actual_original_r1_signed_interval_bath_parent.py)" = "5cce06a82869d5b7ff70c12a92e70b9257073c42"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d13_original_r1_signed_interval_bath_parent.sh)" = "3eca153fb847aaa147be88a3c0ca21873f352b3c"
+          bash -n ge19/run_local_h4f3d13_original_r1_signed_interval_bath_parent.sh
           test "$(git rev-parse HEAD:ge19/h4f3d6_actual_normalized_bath_parent_ward.py)" = "0419145499f5f44e06ba0c96f779c2a604e84ce7"
           test "$(git rev-parse HEAD:ge19/h4f3d7_bath_fd4_vs_original_r1_interval_ode.py)" = "b598a5cc49b3d87827b4758c55d3ce7f3a1198a8"
           test "$(git rev-parse HEAD:ge19/h4f3d7r1_physical_output_finite_check_repair.py)" = "e4cb9d6638b427368647a29b86ccf5445b43d7a2"
@@ -91,5 +94,20 @@ jobs:
                       positive_only[:,p+q]+=4*np.sum(E[:,i,:]*qx[:,j,:],axis=0)
           assert d13.rel(good,positive_only)>1e-3
           assert all(np.isfinite(x).all() for x in out.values())
+          maincode=Path("ge19/h4f3d13_actual_original_r1_signed_interval_bath_parent.py")
+          mainast=ast.parse(maincode.read_text(),filename=str(maincode))
+          names={node.name for node in mainast.body if isinstance(node,ast.FunctionDef)}
+          assert {"main","original_scope_compare","original_physical_inputs","locks"}<=names
+          mainsrc=maincode.read_text()
+          for text in ("GE19_H4F3D13_ACTUAL_ORIGINAL_R1_SIGNED_INTERVAL_BATH_PARENT_DIAGNOSTIC_PASS_ONSHELL_OPEN",
+                       '"original_GE05_bath_first_order_on_shell_certified":False',
+                       '"actual_full_all_sector_H4_Noether_certified":False',
+                       '"Z21_certified":False',
+                       '"lensing_licensed":False'):
+              assert text in mainsrc
+          runsrc=Path("ge19/run_local_h4f3d13_original_r1_signed_interval_bath_parent.sh").read_text()
+          assert 'GE19_H4F3D13_NO_OVERWRITE' in runsrc
+          assert 'GE19_H4F3D13_ORIGINAL_R1_SIGNED_INTERVAL_BATH_DIAGNOSTIC_PASS_ONSHELL_OPEN' in runsrc
+          assert '2048,1024' in mainsrc
           print("GE19_H4F3D13_ORIGINAL_R1_SIGNED_BATH_STATIC_PASS_ACTUAL_PHYSICAL_OPEN")
           PY
