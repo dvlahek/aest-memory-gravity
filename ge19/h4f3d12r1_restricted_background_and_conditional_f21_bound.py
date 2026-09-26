@@ -278,8 +278,7 @@ def main():
        "lensing_licensed":False,
        "claim_boundary":"Exact conditional continuum zero of restricted homogeneous GE06/GE07/Lambda Euler under frozen original Friedmann/scalar/dust/Lambda conservation; original actual discrete E00 arrays retained. Gives finite coefficient multiplying unknown F21 norm, not a smallness or absolute Ward bound. Full-period m0 of homogeneous E00*dchi periodic F21 exactly zero, not pointwise/nonzero m/subwindow/full all-sector Ward. No F21 solve, bath on-shell, Z21 or lensing."
     }
-    args.json_out.write_text(json.dumps(report,indent=2,sort_keys=True,allow_nan=False)+"
-")
+    args.json_out.write_text(json.dumps(report,indent=2,sort_keys=True,allow_nan=False)+"\n")
     print(report["classification"])
     print("D12_SOURCE_BOUND_SYMBOLIC_GATES",len(proof),all(proof.values()))
     print("D12_SIX_C_NT_FD4_FD8_ACTUAL_D11_ROWS",len(a["rows"]))
