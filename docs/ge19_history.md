@@ -4532,3 +4532,34 @@ Original D10 FAIL and Repair37 SCIENCE_FAIL
 unchanged. Next predata D14 source-weighted
 bath high-phase and signed cancellation
 error budget using original R1 state and GE05 action.
+
+---
+
+## H4F3d14 source-weighted phase-bin signed GE05 bath predata and static PASS (2026-09-26)
+
+Following independently audited D13 user-local
+actual signed bath diagnostic PASS and discovery
+of cancellation-sensitive original sampled
+FD4 quadrature variation up to `1.35477%`
+relative despite one-sided signed interval
+quadrature variation < `7.661e-8` relative,
+pre-registered D14 original source-weighted
+R1 bath phase-tail diagnostic. Frozen original
+phase bins [0,.25),[.25,.5),[.5,1),[1,pi),
+[pi,infinity); original D7r1 bins unchanged.
+Original GE05 E_q10 and original signed +/- six
+Fourier mode convolution separately retain
+ODE interval, sampled derivative defect and
+FD4 total for all m0..40; each phase bin
+also records a conservative absolute-sum
+source-node/mode-pair envelope. Original
+Nq2048/1024 quadrature/timing report-only.
+New actual original physical driver hash-locks
+D13 JSON/NPZ original physical SHA and original
+Repair26 R1 trace. Synthetic source static
+[CI 36225513503](https://github.com/dvlahek/aest-memory-gravity/actions/runs/36225513503)
+PASS; actual original local D14 physical result OPEN.
+Detailed static freeze blob
+`37cc2c32438bbdfba8763e9f8f2d99c4ec1de898`.
+No GE05 bath on-shell, complete all-sector
+H4 Ward, Z21 or lensing claim.
