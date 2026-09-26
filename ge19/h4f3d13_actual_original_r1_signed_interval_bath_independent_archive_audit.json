@@ -1,0 +1,119 @@
+{
+  "classification": "GE19_H4F3D13_ACTUAL_ORIGINAL_R1_SIGNED_INTERVAL_BATH_PARENT_INDEPENDENT_ARCHIVE_AUDIT_PASS_ONSHELL_OPEN",
+  "date": "2026-09-26",
+  "parent_local_classification": "GE19_H4F3D13_ACTUAL_ORIGINAL_R1_SIGNED_INTERVAL_BATH_PARENT_DIAGNOSTIC_PASS_ONSHELL_OPEN",
+  "actual_user_uploaded_artifacts": {
+    "json": {
+      "filename": "ge19_h4f3d13_actual_original_r1_signed_interval_bath_parent.json",
+      "sha256": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+      "bytes": 38083
+    },
+    "npz": {
+      "filename": "ge19_h4f3d13_actual_original_r1_signed_interval_bath_parent.npz",
+      "sha256": "1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89",
+      "bytes": 28446953
+    },
+    "full_log": {
+      "filename": "ge19_h4f3d13_actual_original_r1_signed_interval_bath_parent_FULL.log",
+      "sha256": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+      "bytes": 38083
+    },
+    "local_runner_log": {
+      "filename": "ge19_H4F3D13_LOCAL_runner.log",
+      "sha256": "3326712c9a1b42593c457ccdd94191f4a976a7a42dfd3f439a18405e7b5cf76e",
+      "bytes": 2401
+    },
+    "original_json_and_full_log_byte_identical": true,
+    "original_local_runner_code_and_parent_SHA_pass": true,
+    "original_local_runner_reported_SHA_and_bytes_match_actual_uploaded_files": true
+  },
+  "immutable_original_physics": {
+    "prereg_git_blob": "ec07d6be5c267dcbbdb05395ea81cc5e7405781e",
+    "original_assembly_git_blob": "64641d11c34a729508dbfa29d2fe65ccae3a031a",
+    "original_actual_driver_git_blob": "5cce06a82869d5b7ff70c12a92e70b9257073c42",
+    "original_GE05_action_git_blob": "40837d77f89028da30c28899e2d0530a4401844e",
+    "frozen_Repair26_R1_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+    "frozen_H4F3d7r1_json_sha256": "031229d570d29ae9c4ea0ab8e25222d94e9cda4520c991cd203e9d7b97e01dc9",
+    "frozen_H4F3d7r1_npz_sha256": "4f011c96c2c11165df6332eafc459c5d2c5e7bc5164a436bde3d1563696f0e13",
+    "original_parent_bytes_scope": "Original raw Repair26 R1 trace, H3F/H3G/Z11/Repair13 and source six-piece original inputs locked by user-local runner and reported SHA; independent audit here has actual uploaded D13 and original D7r1 output NPZ/JSON, not raw Repair26 trajectory."
+  },
+  "independent_actual_NPZ_archive": {
+    "arrays": 134,
+    "all_arrays_finite": true,
+    "all_array_names_unique": true,
+    "all_C_min_C_star_C_max_by_Nt128_Nt64_by_Nq2048_Nq1024_twelve_cohorts_present": true,
+    "original_positive_six_modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "original_signed_conjugate_convolution_Nx128_m0_to40_saved": true,
+    "original_full_Nx128_Nyquist_m41_to64_NOT_saved_in_D13": true,
+    "original_phase_shapes": "(Nq,Nt-1) separate for left/right",
+    "original_time_clocks_uniform_max_abs_dx_deviation": 1.1102230246251565e-16,
+    "max_original_FD4_equals_interval_plus_defect_relative": 4.778325451736743e-16,
+    "original_m0_FD4_signed_complex_absolute_max": 3.2202159546123623e-24,
+    "original_Nq2048_vs_Nq1024_interval_W_relative_max_left": 7.317452705144347e-8,
+    "original_Nq2048_vs_Nq1024_interval_W_relative_max_right": 7.660772380391031e-8,
+    "independently_recomputed_signed_interval_quadrature_relative_max": 7.660772380391031e-8,
+    "previously_uploaded_original_D7r1_ODE_and_FD4_defect_mode_time_L2_arrays_bitwise_equal": "24/24",
+    "original_D7r1_timing_arrays_exact": "6/6",
+    "previously_uploaded_original_D7r1_phase_bin_counts_exact": "6/6",
+    "caution": "D13 original m0..40 signed Fourier parent is the preregistered physical output, not a full-Nyquist m0..64 field; do not conflate D10r1 full-Nyquist known nonbath with D13 bath archive."
+  },
+  "physical_report_only": {
+    "max_Nq2048_vs_Nq1024_original_sampled_FD4_signed_W_relative": 0.013547707431333269,
+    "primary_C_star_Nt128_Nq2048": {
+      "left_R_ODE_L2": 2.2413784906860675e-11,
+      "left_R_FD4_derivative_defect_L2": 0.00009684776850305503,
+      "left_signed_interval_W_L2": 1.4132200209806873e-12,
+      "left_signed_derivative_defect_W_L2": 1.3664519122854888e-12,
+      "left_original_sampled_FD4_signed_W_L2": 4.8422385381524534e-14,
+      "right_signed_interval_W_L2": 1.3358149081747353e-12,
+      "right_signed_derivative_defect_W_L2": 1.3794385628153709e-12,
+      "right_original_sampled_FD4_signed_W_L2": 4.511961673510633e-14,
+      "left_signed_interval_over_sampled_FD4_norm_about": 29.2,
+      "left_interval_and_derivative_defect_complex_correlation_about": -0.999959,
+      "left_phase_fraction_gt_pi_unweighted": 0.005432609498031496,
+      "left_phase_fraction_gt_one_unweighted": 0.009715643454724409,
+      "left_phase_max": 961.0313760770676
+    },
+    "control_C_star_Nt64_Nq2048": {
+      "left_signed_interval_W_L2": 2.063362058161854e-12,
+      "left_signed_derivative_defect_W_L2": 1.925747421766659e-12,
+      "left_original_sampled_FD4_signed_W_L2": 1.425259295267305e-13,
+      "left_interval_and_derivative_defect_complex_correlation_about": -0.999827,
+      "left_phase_max": 1933.4816161234326
+    },
+    "original_signed_interval_over_sampled_FD4_norm_range": [
+      14.380196366206171,
+      29.609252336939093
+    ],
+    "max_signed_cancellation_amplification_component_sum_over_FD4_norm": 60.18536184074539,
+    "original_sampled_FD4_Nq2048_vs_Nq1024_relative_by_Nt": {
+      "Nt128_C_min": 0.013345234497759184,
+      "Nt128_C_star": 0.013497592283513972,
+      "Nt128_C_max": 0.013547707431333269,
+      "Nt64_C_min": 0.008839826724828722,
+      "Nt64_C_star": 0.008875723706676894,
+      "Nt64_C_max": 0.008927815553748695
+    },
+    "caution": "Small relative Nq control for interval ODE W does not imply sampled FD4 signed W is quadrature stable. Strong cancellation and high unweighted phase tail need independent SOURCE-weighted error budget; do not infer large-phase bath weight from node counts alone."
+  },
+  "scientific_gates": {
+    "original_D13_signed_bath_parent_diagnostic": true,
+    "independent_actual_uploaded_D13_archive_and_D7r1_parent_audit": true,
+    "original_GE05_bath_first_order_on_shell_certified": false,
+    "original_all_sector_H4_Ward_certified": false,
+    "original_E00_F21_and_full_action_boundary_evaluated": false,
+    "original_H4F3d10_archive_fail_immutable": true,
+    "original_Repair37_SCIENCE_FAIL_immutable": true,
+    "Z21_certified": false,
+    "lensing_licensed": false,
+    "no_observational_tuning": true
+  },
+  "next_source_first_route": "Before full H4: preregister separate phase-/frequency-weighted R1 signed interval bath error budget on frozen physical nodes with original R1 stepper continuous history and independent time/quadrature checks. Retain full original GE05 action boundary and unknown F21, L21, b21. Do not call cancellation-sensitive sampled FD4 or signed interval ODE an on-shell certificate."
+}
