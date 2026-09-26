@@ -27,6 +27,8 @@ jobs:
           test "$(git rev-parse HEAD:ge19/h4f3d12_freeze_manifest.json)" = "b7b8a97ea9e27e6f31a85e7724532bb4dfc4fc4b"
           test "$(git rev-parse HEAD:docs/ge19_h4f3d12_restricted_background_freeze_report.md)" = "ec2a6ab2758777d6373623dd2d869a206080e84c"
           test "$(git rev-parse HEAD:ge19/h4f3d12_actual_d11_conditional_f21_bound.json.gz)" = "30cae15e4c2992484d96d3ba0f3f02e8ea8969b1"
+          test "$(git rev-parse HEAD:ge19/run_local_h4f3d12r1_restricted_background_and_f21_bound.sh)" = "857765404ad013175d69be91c0f3d8428f647228"
+          bash -n ge19/run_local_h4f3d12r1_restricted_background_and_f21_bound.sh
           test "$(git rev-parse HEAD:ge19/h4f3d11_actual_original_background_e00_independent_archive_audit.json)" = "c3f238c2914ff18e43030ec31a3debb0edab81f1"
           test "$(git rev-parse HEAD:ge06/analytic_aest_directional_source_generator.py)" = "a7afe0035054a9dca55d74a6497c081422114b4c"
           test "$(git rev-parse HEAD:ge07/pressureless_matter_directional_source_generator.py)" = "cde8da77a80799cef00fc7c09c3633310fc9e3d4"
