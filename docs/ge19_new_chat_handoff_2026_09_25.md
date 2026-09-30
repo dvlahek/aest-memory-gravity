@@ -725,3 +725,17 @@ NEXT: D47 r5g1 full 508-step primary/C_star/m=20 endpoint run at nsplit64
 with checkpoint/resume. Only after a controlled full-window endpoint result
 should we add the continuous-within-step pass and then expand modes/C cases.
 GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 formal correction before r5g1 (2026-09-30)
+
+r5g0 is numerically very promising (~7.93x tighter than r5b at step 64), but
+the multi-step center/radius and forcing aggregation used ordinary NumPy
+matrix products after certified per-step Arb bounds were converted to
+binary64. Final rigorous status therefore waits for one outward-rounded
+Arb/acb recomposition audit.
+
+NEXT: r5g0r1 first-64 nsplit64 with Arb/acb block algebra. If it agrees,
+proceed immediately to checkpointed full 508-step r5g1.
