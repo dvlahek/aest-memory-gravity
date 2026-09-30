@@ -769,3 +769,20 @@ failure.
 NEXT: D47 r5g2 global signed-suffix Arb sweep across all 508 cached local
 steps, with no 64-step error-box collapse. Do not increase nsplit or expand
 modes/C cases yet. Continuous H1, GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g2 update (2026-09-30)
+
+Global signed-suffix endpoint Arb sweep PASSED:
+L1 upper = 2.6964426513, relative upper = 0.6020388686, improving r5g1 by
+1.5826x. Removing 64-step box collapse helps, but the global transfer radius
+still grows to ~8036 while the nominal global norm is ~72.97. The dominant
+remaining issue is long-range box/radius wrapping.
+
+NEXT: D47 r5g3 affine complex-polydisc generator propagation using the
+already-certified r5g2 local A,D,q cache. Preserve every signed nominal
+generator across all 508 steps and add only each new local uncertainty box.
+Do not increase nsplit yet. Continuous H1, GE05 bath, Z21 and lensing remain
+OPEN.
