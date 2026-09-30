@@ -4915,3 +4915,43 @@ map. Only if r5f4 is stable should the block method be extended full-window.
 
 Claim boundary unchanged: full all-case continuous H1, GE05 bath on shell,
 full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5f4 exact-width formal closure (2026-09-30)
+
+D47 r5f4 repeated the first eight-step primary/C_star/m=20 validated
+fixed-balance block at nsplit=64 with exact stored-endpoint-width
+parameterization. The continuous coordinate is
+theta=(x-xa)/(xb_exact-xa_exact), the original binary64 Radau step
+h=fl(xb-xa) is retained in the numerical polynomial, dp/dx includes the
+exact h/width factor, and exact-real polynomial endpoint jumps are added
+explicitly to both the homogeneous step map and archived state.
+
+The formal correction was numerically negligible, as expected:
+maximum homogeneous endpoint jump
+`1.0794223306922099e-16`,
+maximum state endpoint jump
+`2.1357830058834712e-19`.
+For these first eight adjacent stored points the exact binary64 subtraction
+matches the exact stored-endpoint width, so the h/width mismatch is zero.
+
+The validated block result is unchanged to displayed science precision:
+nominal block 2-norm `1.188672010730937`,
+condition number `1.415943339927396`,
+transfer radius infinity norm `0.7724368553253664`,
+endpoint original-L1 upper `6.013118112393102e-4`,
+relative upper `1.5636992636631221e-3`.
+This remains about `7.9875x` tighter than r5b at the same endpoint.
+
+r5f4 therefore closes the archived-grid parameterization bookkeeping for the
+pilot. It certifies the eight-step endpoint error only; continuous enclosure
+inside all eight steps, the full window/all modes, GE05 bath on shell, full
+H4 Ward, Z21 and lensing remain OPEN.
+
+**NEXT D47 r5g0:** extend exactly the same formalized fixed-balance
+construction from the locked initial state through the first 64 fine
+substeps at nsplit=64. This is a medium-window endpoint pilot before paying
+for all 508 fine substeps. If the 64-step bound remains controlled, proceed
+to checkpointed full-window propagation.
