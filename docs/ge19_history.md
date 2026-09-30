@@ -4840,3 +4840,39 @@ steps, full-window/all-mode H1, GE05 bath on shell, or Z21.
 enclosure before any full-window block run. First sweep x-subdivision and
 fixed-vs-local balance on the first step, and measure interval operator /
 fundamental-residual overestimation. Do not launch r5g full-window yet.
+
+
+---
+
+## D47 r5f2 subdivision convergence (2026-09-30)
+
+D47 r5f2 swept the existing validated first-step fixed-balance construction
+for primary/C_star/m=20 over x-subdivision counts 8,16,32,64. The
+homogeneous fundamental-transfer radius converged almost exactly linearly
+with segment width:
+`0.7669195410 -> 0.3824449852 -> 0.1911268274 -> 0.09571683966`.
+The local state collocation-defect forcing showed the same halving:
+`3.6460891e-6 -> 1.8221506e-6 -> 9.1086272e-7 -> 4.5538896e-7`.
+
+The rigorous first-step endpoint original-L1 / archived-L2 upper bound also
+halved:
+`1.530645891e-3 -> 7.649932037e-4 -> 3.824195094e-4 -> 1.911957144e-4`.
+At nsplit=64 the endpoint L1 upper bound was
+`7.02292833158882e-5`. Az remained strongly regular, endpoint replay was
+zero, and the stage scaled residual remained
+`3.5004747272454526e-16`.
+
+Interpretation: the wide r5f homogeneous-transfer enclosure is dominated by
+ordinary x-interval dependency proportional to segment width; there is no
+current evidence that a centered/Neumann Az/operator reformulation is needed
+before testing finer subdivision. This is diagnostic convergence evidence,
+not a new all-window physics certificate.
+
+**NEXT D47 r5f3:** repeat the complete first eight-step fixed-balance block
+for nsplit 8,16,32,64 and test whether the block endpoint enclosure and block
+transfer radius retain the same approximately 1/nsplit convergence. Do not
+launch the 508-step full-window block run until this block-level convergence
+is demonstrated.
+
+Claim boundary unchanged: full all-case continuous H1, GE05 bath on shell,
+full H4 Ward, Z21 and lensing remain OPEN.
