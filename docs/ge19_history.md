@@ -5116,3 +5116,45 @@ primary/C_star/m=20 endpoint;
 `rigorous_original_action_H1_integrator_error_enclosed=false`,
 `GE05_bath_onshell_certified=false`,
 `Z21_certified=false`.
+
+
+---
+
+## D47 r5g2 global signed-suffix endpoint result (2026-09-30)
+
+D47 r5g2 reused the fully certified nsplit64 local step cache for all 508
+primary/C_star/m=20 D17 fine steps and removed the 64-step endpoint-box
+collapse. It performed one global backward signed suffix sweep with acb
+center products, arb radius recurrence, and full-suffix forcing aggregation.
+
+The run passed with classification
+`GE19_D47_R5G2_GLOBAL_SIGNED_SUFFIX_FULLWINDOW_CSTAR_M20_ENDPOINT_ARB_PASS`.
+The final endpoint original-L1 upper bound is
+`2.6964426512869193`, archived endpoint L2 norm
+`4.478851435897949`, relative upper `0.6020388686427415`.
+This is a factor `1.5825586602706494` tighter than r5g1
+(`4.267278669717265`, relative `0.9527618253901144`).
+
+Therefore chunk-boundary componentwise collapse was a real loss, but not the
+dominant remaining one. The global transfer radius still grows to
+`8036.409106873319` while the nominal global product has 2-norm
+`72.96925325302405` and condition number `5651.34263829795`.
+This identifies long-range box/radius wrapping in the global transfer
+enclosure as the main remaining bottleneck.
+
+Local controls remain clean and unchanged: maximum single-step radius
+~`0.1035866574`, max local forcing ~`1.0090910e-5`, endpoint replay zero,
+stage residual ~`3.61e-16`, exact-width mismatch zero, and endpoint jumps
+remain at floating roundoff scale.
+
+A cache-only diagnostic using the certified A,D,q arrays shows that preserving
+signed generator correlations is worth testing before increasing nsplit.
+NEXT is therefore an affine complex-polydisc (no generator reduction)
+propagation: carry all nominally propagated forcing/uncertainty generators
+through the 508 steps, add only the new step uncertainty as eight diagonal
+disc generators, and compute the final row-sum radius in Arb/acb. This avoids
+both chunk-box collapse and the single global center/radius collapse.
+
+Claim boundary unchanged: current result is a rigorous endpoint enclosure
+for primary/C_star/m=20 only. Continuous H1, other modes/C cases, GE05 bath,
+Z21 and lensing remain OPEN.
