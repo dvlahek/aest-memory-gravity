@@ -850,3 +850,18 @@ continuous certificate at n64. NEXT: r5g7 recompute m3,5,8,10,15 at
 nsplit256 using their locked mode-specific balances, then run the same
 affine endpoint propagation. m20 n256 is already closed at endpoint and
 continuous level. GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g7 update (2026-09-30)
+
+All six primary/C_star positive modes now have nsplit256 affine endpoint
+enclosures in the few-percent regime:
+m3=0.0574045, m5=0.0501244, m8=0.0490130, m10=0.0495790,
+m15=0.0521279, m20=0.0544976.
+
+NEXT: r5g8 continuous-in-x nsplit256 passes for m3,5,8,10,15 using each
+mode's own r5g7 cache and affine endpoint result. m20 continuous is already
+certified by r5g5. If these pass, primary/C_star all-six continuous H1 is
+closed and work returns to GE05 bath. GE05, Z21 and lensing remain OPEN.
