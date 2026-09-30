@@ -5317,3 +5317,44 @@ Use the nsplit256 five-mode screen to decide if any mode needs more than
 n256; otherwise proceed directly to their continuous-in-x passes.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g7 all-six C_star nsplit256 endpoint screen (2026-09-30)
+
+D47 r5g7 completed the nsplit256 affine endpoint campaign for the five
+remaining primary/C_star modes m={3,5,8,10,15}, using the corrected
+mode-specific deterministic power-of-two balances from r5g6r1. Together
+with the existing r5g4 m=20 result, all six positive Fourier modes now have
+full-window nsplit256 affine endpoint enclosures.
+
+Relative endpoint upper bounds:
+- m=3:  0.05740451563496902
+- m=5:  0.05012443707754402
+- m=8:  0.049012960568540265
+- m=10: 0.04957901154055716
+- m=15: 0.05212792765546878
+- m=20: 0.05449763094253632
+
+The best endpoint relative bound is m=8 at ~4.90%; the worst is m=3 at
+~5.74%. Thus every C_star positive mode is now in the same few-percent
+endpoint regime at nsplit256. No additional endpoint-method development or
+higher nsplit is justified before the continuous-in-x gate.
+
+All five new affine runs passed. As a representative higher mode, m=15 used
+508 fine steps, nsplit256, Arb precision 192, exact mode-specific balance,
+and ended with L1 upper 0.171514549503219 and relative upper
+0.05212792765546878. Local controls remained clean: zero endpoint replay,
+stage residual ~4.30e-16, exact-width mismatch zero, and max local radius
+~0.01499.
+
+**NEXT D47 r5g8:** continuous-in-x nsplit256 H1 passes for
+m={3,5,8,10,15}, reusing each r5g7 certified affine endpoint cache exactly
+as r5g5 did for m=20. If all five pass with similarly modest continuous
+inflation, the full primary/C_star six-mode continuous H1 branch is closed
+and the project returns immediately to GE05 bath on-shell certification.
+
+C_min/C_max and control-grid cases remain robustness extensions unless GE05
+or the final theorem requires them. GE05 bath, full H4 Ward, Z21 and lensing
+remain OPEN.
