@@ -4620,3 +4620,81 @@ enclosures and physical D15 execution
 OPEN. Full all-sector action Ward,
 Z21 and lensing blocked; original
 Repair37 SCIENCE_FAIL preserved.
+
+
+---
+
+## D47 validated continuous-H1 enclosure campaign (2026-09-30)
+
+D47 moved the original-action H1 line from sampled numerical diagnostics to
+validated-numerics pilots using python-flint/Arb, while preserving all earlier
+claim boundaries. Frozen parents remain:
+D17 NPZ SHA256 `cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359`,
+D16R1 NPZ SHA256 `915709b21bae65c53f9521325a3920d4e0320b650e43458cad03109733d27a36`,
+R13 NPZ SHA256 `011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3`,
+and Repair07 local-source SHA256
+`ce308f85d14d0feece720db18c77a618c1c828447b09c6225a47b80200bc42a3`.
+
+D47 r3 sampled 108 independent off-clock operator evaluations over
+primary/control, C_min/C_star/C_max, first/middle/last interval midpoint,
+and six Fourier modes. Max algebraic cancellation-safe backward error was
+`2.5627728818676326e-16`; max lapse backward error
+`1.0143577850211808e-13`. This remained a sampled numerical diagnostic,
+not a continuous enclosure.
+
+D47 r4 compared the shared middle midpoint on Nt128/Nt64. High modes
+m=15,20 showed approximately third-order two-grid scaling
+(p_obs about 2.88--3.10); low modes were contaminated by machine-floor
+effects. This was descriptive convergence evidence only.
+
+D47 r5 source audit established that the active local map is homogeneous
+linear in the perturbation variables, GE06 exposes symbolic
+`coeff1_expr`, GE07 exposes symbolic first-order coefficients, and the
+original-action background can be translated into Arb balls. python-flint
+0.9.0 with Arb was installed in the project .venv.
+
+The first rigorous Arb slice certified interval Az regularity and float
+operator containment. A scalar norm majorant was unusably conservative,
+so the validated propagation was reformulated with fixed diagonal scaling
+and then a componentwise Metzler comparison system.
+
+D47 r5a v5 rigorously enclosed the first
+primary/C_star/m=20 fine Radau substep. At nsplit=32 the final original
+L1 error upper bound was `1.4046888124825654e-4`, corresponding to
+`3.8241950989669635e-4` of the archived L2 norm. The previously dominant
+component-6 bound dropped to `2.3818878054467154e-5`.
+Thus `first_substep_continuous_H1_error_enclosed=true` for that slice.
+
+D47 r5b then propagated the same validated mechanism through the complete
+primary/C_star/m=20 D17 window: 508 fine substeps, 8 Arb subdivisions per
+fine substep, 4064 certified x-segments. Endpoint Radau replay was exact,
+max scaled stage residual `3.613811247327609e-16`, minimum certified
+Az determinant magnitude lower bound about `1.8576739053e10`, and
+boundary-jump total was zero. Therefore
+`case_mode_fullwindow_continuous_H1_error_enclosed=true` for this single
+case/mode. However, the enclosure wrapped severely over the long window:
+final original L1 upper bound `48675.85992551011`, or
+`10867.933581224325` times the archived final L2 norm. This is a valid
+but physically uninformative error enclosure and MUST NOT be generalized
+to all modes/C cases.
+
+D47 r5c independently reconstructed the full discrete Radau fundamental
+propagator for the same case/mode. Global state replay relative error was
+`4.112904877298e-15`, confirming the reconstructed dynamics. The full
+propagator had 2-norm `4.662693544964e5`, smallest singular value
+`1.260710881584e-6`, and condition number `3.698463789815e11`.
+The progressive anisotropy is therefore genuine for this representation,
+not a simple operator-reconstruction bug. A global inverse fundamental
+frame is not suitable for a rigorous enclosure.
+
+**Current next gate:** D47 r5d moving-balance / local QR-Lohner diagnostic.
+Test stepwise/frequent coordinate frames that retain correlations without
+forming a global ill-conditioned inverse. Do not launch all 18 case/mode
+validated runs until the long-window wrapping problem is controlled.
+
+Claim boundary unchanged:
+`full_continuous_H1_error_enclosed=false`,
+`rigorous_original_action_H1_integrator_error_enclosed=false`,
+`GE05_bath_onshell_certified=false`,
+`Z21_certified=false`.
+No observation-based tuning and no lensing claim.
