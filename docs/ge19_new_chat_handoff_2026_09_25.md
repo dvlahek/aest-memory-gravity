@@ -612,3 +612,23 @@ Current state:
 
 Still OPEN: all-case/mode continuous H1 certificate, original GE05 bath
 on-shell, full all-sector H4 Ward, Z21, and lensing. No observational tuning.
+
+
+---
+
+## D47 r5d current override (2026-09-30)
+
+r5d fixed-vs-moving balance diagnostic completed on primary/C_star/m=20.
+Raw full propagator cond ~3.70e11. One fixed midpoint-selected diagonal
+balance reduces full propagator cond to ~5.65e3 and, crucially, makes every
+fine-step matrix near identity (max norm ~1.0221, max cond ~1.0449).
+Moving balance reaches global cond ~1.20e3 but has per-boundary scale
+transfers up to 2 and max step norm/cond ~2.006/~2.036.
+
+Current NEXT is D47 r5e fixed-balance block/QR diagnostic. Goal: choose a
+validated reconditioning block length and quantify wrapping from sequential
+absolute-value propagation before implementing Arb/Lohner-style correlated
+full-window enclosure.
+
+Do not scale r5b to all 18 cases yet. GE05 bath on-shell, all-case/mode
+continuous H1, full H4 Ward, Z21, and lensing remain OPEN.
