@@ -5198,3 +5198,44 @@ n256 run completes.
 
 Continuous H1 inside every step, other modes/C cases, GE05 bath on shell,
 Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g4 nsplit256 affine full-window endpoint result (2026-09-30)
+
+D47 r5g4 recomputed the complete 508-step primary/C_star/m=20 local
+original-action enclosure cache at nsplit=256 and then propagated the error
+set with the unreduced affine complex-polydisc construction from r5g3.
+
+The local refinement behaved as intended. Maximum certified single-step
+homogeneous radius fell to `0.0262597739924021` and maximum local state
+forcing to `2.522842970187365e-6`, close to the expected factor-four
+reduction from nsplit64. Endpoint replay remained zero, max scaled stage
+residual `3.613811247327609e-16`, exact-width mismatch zero, and endpoint
+jump corrections remained at roundoff scale.
+
+The nsplit256 affine run passed with classification
+`GE19_D47_R5G4_N256_AFFINE_COMPLEX_POLYDISC_FULLWINDOW_CSTAR_M20_ENDPOINT_ARB_PASS`.
+Final endpoint original-L1 upper bound is `0.24408679260001528`, archived
+endpoint L2 norm `4.478851435897949`, and relative upper
+`0.05449763094253632`. This is a factor `5.190354716446119` tighter than
+the nsplit64 affine result. The companion n256 global signed-suffix enclosure
+was `0.07208063466413411` relative, confirming that the affine generator
+representation still provides additional tightening.
+
+This is the first full-window endpoint result in the few-percent regime for
+the locked primary/C_star/m=20 case. The remaining required gate before
+calling this case a rigorous H1 integrator enclosure is continuous-in-x
+control inside every fine Radau step.
+
+**NEXT D47 r5g5:** continuous-within-step nsplit256 H1 enclosure for the same
+locked primary/C_star/m=20 case. Reuse the certified r5g4 endpoint A,D,q
+cache to provide the incoming endpoint error set at each fine step, and
+recompute only the state collocation residual and interval original-action
+operator inside each of the 256 x-subsegments. Use an entrywise-nonnegative
+majorant of the Metzler comparison generator so its end-of-subsegment value
+bounds the entire subsegment. Keep the affine endpoint propagation unchanged
+between fine steps.
+
+Other modes/C cases, GE05 bath on shell, Z21 and lensing remain OPEN.
