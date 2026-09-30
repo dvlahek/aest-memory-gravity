@@ -834,3 +834,19 @@ NEXT: r5g6 nsplit64 affine endpoint screen for the remaining primary/C_star
 modes 3,5,8,10,15. Refine only modes that need it, then run their continuous
 passes. C_min/C_max and control-grid robustness can follow after the central
 C_star six-mode branch is closed. GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g6r1 update (2026-09-30)
+
+Corrected nsplit64 affine endpoint screen completed for remaining C_star
+modes. Relative upper bounds:
+m3=0.2476361, m5=0.2371965, m8=0.2379300, m10=0.2423610,
+m15=0.2599169. Existing m20 n64=0.2828620.
+
+All modes therefore need refinement; none can skip directly to a final
+continuous certificate at n64. NEXT: r5g7 recompute m3,5,8,10,15 at
+nsplit256 using their locked mode-specific balances, then run the same
+affine endpoint propagation. m20 n256 is already closed at endpoint and
+continuous level. GE05 bath, Z21 and lensing remain OPEN.
