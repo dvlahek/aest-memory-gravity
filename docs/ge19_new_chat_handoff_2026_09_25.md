@@ -786,3 +786,19 @@ already-certified r5g2 local A,D,q cache. Preserve every signed nominal
 generator across all 508 steps and add only each new local uncertainty box.
 Do not increase nsplit yet. Continuous H1, GE05 bath, Z21 and lensing remain
 OPEN.
+
+
+---
+
+## CURRENT D47 r5g3 update (2026-09-30)
+
+Affine complex-polydisc propagation PASSED over all 508 cached local steps.
+Final L1 upper = 1.2668970352 and relative upper = 0.2828620358.
+This is 2.13x tighter than r5g2 and 3.37x tighter than r5g1.
+
+A cache-only first-order scaling diagnostic predicts ~0.1175 at effective
+2x local refinement, ~0.0545 at 4x, ~0.0263 at 8x. Because earlier local
+sweeps showed near-1/nsplit convergence, NEXT is r5g4: recompute the full
+local cache directly at nsplit=256 and rerun the same affine-polydisc
+propagation. Do not spend a production run on nsplit128 first.
+Continuous H1, GE05 bath, Z21 and lensing remain OPEN.
