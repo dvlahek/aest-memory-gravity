@@ -665,3 +665,18 @@ NEXT: tighten/diagnose the homogeneous fundamental-transfer interval
 enclosure (subdivision convergence and fixed-vs-local balance) before any
 full-window block propagation. All-case H1, GE05 bath, Z21 and lensing remain
 OPEN.
+
+
+---
+
+## CURRENT D47 r5f2 update (2026-09-30)
+
+First-step validated subdivision sweep shows clean ~1/nsplit convergence:
+fundamental radius 0.7669, 0.3824, 0.1911, 0.09572 for nsplit
+8,16,32,64; endpoint relative bound 1.5306e-3 down to 1.9120e-4.
+This identifies ordinary interval-width dependency as the current r5f
+transfer-enclosure bottleneck.
+
+NEXT: D47 r5f3 full first-eight-step block sweep at nsplit 8,16,32,64.
+Do not run the full 508-step block scheme yet. GE05 bath, all-case H1,
+Z21 and lensing remain OPEN.
