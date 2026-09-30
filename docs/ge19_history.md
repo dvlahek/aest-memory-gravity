@@ -5027,3 +5027,39 @@ algebra agrees should the checkpointed 508-step r5g1 be launched.
 
 No physics inputs or observational data are changed. GE05 bath, full H4 Ward,
 Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g0r1 outward-rounded block algebra closure (2026-09-30)
+
+D47 r5g0r1 repeated the first-64 primary/C_star/m=20 nsplit64 endpoint
+calculation with the entire multi-step block algebra moved into Flint:
+signed center products use acb, radius recurrences use arb, forcing
+aggregation uses arb, and binary64 NumPy matrix products are excluded from
+the certificate.
+
+The result agrees with r5g0 to displayed science precision:
+64-step block nominal norm `3.0722158054808113`, condition number
+`9.60563386869856`, certified transfer-radius infinity norm
+`7.417754204535626`, endpoint original-L1 upper
+`0.007874136064092228`, and endpoint relative upper
+`0.014293921320196268`. This is still about `7.92739x` tighter than
+r5b at the same endpoint.
+
+Formal controls remain clean: endpoint replay zero, max stage scaled residual
+`3.5004747272454526e-16`, max homogeneous endpoint jump
+`1.1187071496204896e-16`, max state endpoint jump
+`3.923154623343181e-19`, and Az remains strongly regular.
+
+Therefore the outward-rounding gate identified after r5g0 is closed for the
+64-step pilot. The first-64 endpoint H1 enclosure is now rigorous under the
+current source/parent locks. Continuous enclosure inside all steps, the full
+508-step endpoint/window, other modes/C cases, GE05 bath on shell, Z21 and
+lensing remain OPEN.
+
+**NEXT D47 r5g1:** checkpointed full 508-step primary/C_star/m=20 endpoint
+run at nsplit64. Use 64-step rigorous Arb/acb chunks, propagate the incoming
+componentwise error through each chunk, checkpoint after every chunk, and
+support safe resume after interruption. No observational data enter this
+calculation.
