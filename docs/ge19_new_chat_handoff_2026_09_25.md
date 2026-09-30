@@ -739,3 +739,17 @@ Arb/acb recomposition audit.
 
 NEXT: r5g0r1 first-64 nsplit64 with Arb/acb block algebra. If it agrees,
 proceed immediately to checkpointed full 508-step r5g1.
+
+
+---
+
+## CURRENT D47 r5g0r1 update (2026-09-30)
+
+The outward-rounded Arb/acb block-algebra audit PASSED and reproduces r5g0:
+first-64 endpoint relative H1 bound = 0.01429392132, about 7.93x tighter
+than r5b at the same endpoint. The previous floating block-algebra caveat is
+closed for this pilot.
+
+NEXT: checkpointed/resumable full 508-step primary/C_star/m=20 endpoint run
+(r5g1) using 64-step Arb/acb chunks at nsplit64. Continuous-within-step H1,
+other modes/C cases, GE05 bath, Z21 and lensing remain OPEN.
