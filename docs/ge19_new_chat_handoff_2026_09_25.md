@@ -680,3 +680,18 @@ transfer-enclosure bottleneck.
 NEXT: D47 r5f3 full first-eight-step block sweep at nsplit 8,16,32,64.
 Do not run the full 508-step block scheme yet. GE05 bath, all-case H1,
 Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5f3 update (2026-09-30)
+
+First-eight-step block sweep has clean ~1/nsplit convergence. At nsplit=64,
+endpoint L1 upper is 6.0131e-4, about 7.99x tighter than r5b at the same
+endpoint. Block nominal cond remains ~1.416.
+
+Before full-window propagation, close the exact archived-grid-width issue:
+use width=xb_exact-xa_exact for the continuous x parameterization, retain
+binary64 Radau h in the numerical polynomial, include h/width in dp/dx, and
+add exact-real endpoint jumps. NEXT: D47 r5f4 first-eight-step nsplit=64
+formal-width correction. GE05 bath, all-case H1, Z21 and lensing remain OPEN.
