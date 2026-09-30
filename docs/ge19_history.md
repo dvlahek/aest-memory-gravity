@@ -5279,3 +5279,41 @@ on all five modes. C_min/C_max and control-grid cases remain robustness
 extensions, not the immediate GE05 gate.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g6r1 remaining C_star mode screen (2026-09-30)
+
+The corrected r5g6r1 campaign completed the nsplit64 affine endpoint screen
+for the five remaining primary/C_star modes. The original r5g6 failure was
+only an implementation lock error: it incorrectly forced every mode to reuse
+the m=20 fixed-balance scale vector. r5g6r1 instead uses the deterministic
+mode-specific power-of-two balance and replays/locks it per mode.
+
+All five science runs passed. Their nsplit64 affine endpoint relative upper
+bounds are:
+
+- m=3:  0.2476360721497, L1 upper 8.379641830487e-3
+- m=5:  0.2371965289578, L1 upper 4.450045562574e-2
+- m=8:  0.2379299903999, L1 upper 1.421474261854e-1
+- m=10: 0.2423610064199, L1 upper 2.555628808684e-1
+- m=15: 0.2599168590706, L1 upper 8.551946144190e-1
+
+For reference, the existing m=20 nsplit64 affine endpoint relative upper is
+0.2828620357977. Therefore all six C_star modes occupy the same broad
+~0.24-0.28 relative-error regime at nsplit64. No remaining mode is already
+tight enough to skip refinement.
+
+The final all-six summary script itself failed only because it looked for the
+old r5g6 m=3 output pathname instead of the r5g6r1 pathname. This occurred
+after all five mode calculations had completed successfully and does not
+invalidate any mode result.
+
+**NEXT D47 r5g7:** recompute m={3,5,8,10,15} at nsplit256 with the same
+mode-specific affine-polydisc method. m=20 already has nsplit256 endpoint
+relative upper 0.05449763094 and continuous relative upper 0.05557368636.
+Use the nsplit256 five-mode screen to decide if any mode needs more than
+n256; otherwise proceed directly to their continuous-in-x passes.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
