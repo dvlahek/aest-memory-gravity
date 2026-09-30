@@ -4743,3 +4743,56 @@ Claim boundaries unchanged:
 `rigorous_original_action_H1_integrator_error_enclosed=false`,
 `GE05_bath_onshell_certified=false`,
 `Z21_certified=false`.
+
+
+---
+
+## D47 r5d-r5e balanced-frame diagnostics (2026-09-30)
+
+After the r5b full-window primary/C_star/m=20 Arb enclosure became
+mathematically valid but physically uninformative because of long-window
+wrapping, r5c reconstructed the discrete Radau fundamental propagator and
+showed that the original-coordinate dynamics are genuinely highly
+anisotropic: full 2-norm `4.662693544964e5`, smallest singular value
+`1.260710881584e-6`, condition number `3.698463789815e11`, with global
+state replay `4.112904877298e-15`.
+
+D47 r5d tested fixed and moving diagonal balance frames. One fixed,
+mid-window, power-of-two diagonal balance reduced the full propagator to
+2-norm `72.96925325302` and condition number `5651.342638298`.
+In that same fixed frame every individual Radau step was close to identity:
+maximum step 2-norm `1.022073939665`, maximum step condition number
+`1.044910357879`. A moving boundary balance reduced the full-product
+condition number further to `1202.492459418`, but introduced boundary scale
+transfers up to factor 2 and individual transformed step norms up to
+`2.005772664381`. Fixed and moving reconstructions both matched the
+original product to displayed zero; global state replay remained
+`4.112904877298e-15`.
+
+D47 r5e measured cancellation loss under sequential absolute-value box
+propagation in the fixed balanced frame. Full signed product norm was
+`72.96925325302408`; sequential absolute product norm
+`6344.427662350447`, ratio `86.94658886463955`.
+Local block behavior stayed well-conditioned:
+block sizes 1,2,4,8,16,32,64 had maximum box/signed norm ratios
+`1.00579, 1.01161, 1.02341, 1.04769, 1.10034, 1.22934, 1.62526`
+respectively. At block size 8 the maximum signed block condition number was
+only `1.41594`; at block size 16 it was `1.97844`.
+
+Interpretation: the catastrophic r5b growth is dominated by repeated
+componentwise wrapping, not failure of the local Radau map. The fixed
+power-of-two balance is preferable for the next validated pilot because it
+avoids moving-frame boundary terms while retaining near-identity local maps.
+
+**NEXT D47 r5f:** certify one 8-step block using the fixed balanced frame,
+rigorous Arb enclosures of each exact homogeneous step transfer around the
+nominal Radau matrix, rigorous local collocation-defect forcing boxes, and
+blockwise signed-product aggregation before collapsing to a box. If this
+substantially improves the r5b eight-step endpoint bound, extend the same
+validated block-transfer scheme through the full primary/C_star/m=20 window.
+
+Claim boundary unchanged:
+`full_continuous_H1_error_enclosed=false`,
+`rigorous_original_action_H1_integrator_error_enclosed=false`,
+`GE05_bath_onshell_certified=false`,
+`Z21_certified=false`.
