@@ -4796,3 +4796,47 @@ Claim boundary unchanged:
 `rigorous_original_action_H1_integrator_error_enclosed=false`,
 `GE05_bath_onshell_certified=false`,
 `Z21_certified=false`.
+
+
+---
+
+## D47 r5f fixed-balance first-8 Arb block result (2026-09-30)
+
+D47 r5f rigorously enclosed the endpoint H1 error after the first eight
+primary/C_star/m=20 D17 fine Radau substeps in one fixed power-of-two
+balanced frame. Scope: Arb 192 bits, 8 x-subdivisions per fine substep.
+Parent locks and original local-source SHA locks passed; endpoint replay was
+exact and maximum scaled stage residual was
+`3.5004747272454526e-16`. Minimum certified Az determinant magnitude
+lower bound remained about `1.8576739053e10`.
+
+The nominal eight-step block stayed benign:
+2-norm `1.188672010731`, condition number `1.415943339927`.
+However, the rigorous homogeneous transfer enclosure around each nominal
+Radau step was very wide: maximum single-step fundamental radius entry
+`0.7693889759130575`; the assembled eight-step transfer radius infinity
+norm was `6.3392230066517845`.
+
+The local archived-state collocation-defect forcing itself remained small:
+maximum per-step weighted local forcing entry
+`3.8010366584467623e-6`. The rigorous first-eight-step endpoint original
+L1 error upper bound was `0.00489085394620988`, relative to archived
+endpoint L2 norm `0.012718567258158483`.
+
+This does NOT improve the existing r5b box propagation at the same endpoint
+(`0.0048029868174418915`, relative `0.01249007055813272`);
+the reported r5f/r5b "improvement" factor was `0.9820343993637`, i.e. r5f
+is about 1.8% worse. Therefore signed block multiplication is not yet the
+limiting issue in the rigorous implementation. The current bottleneck is the
+over-wide interval enclosure of the homogeneous fundamental transfer, not the
+local state residual.
+
+r5f certifies only the eight-step endpoint error:
+`first8_block_endpoint_H1_error_enclosed=true`.
+It explicitly does NOT establish continuous H1 enclosure inside all eight
+steps, full-window/all-mode H1, GE05 bath on shell, or Z21.
+
+**NEXT D47:** diagnose and tighten the per-step fundamental transfer
+enclosure before any full-window block run. First sweep x-subdivision and
+fixed-vs-local balance on the first step, and measure interval operator /
+fundamental-residual overestimation. Do not launch r5g full-window yet.
