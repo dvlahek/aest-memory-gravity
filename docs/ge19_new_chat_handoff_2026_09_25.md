@@ -587,3 +587,28 @@ certified interval enclosures required before
 bath on-shell test. Original D13/D14
 numeric signed high-phase arrays remain
 a DISCRETE source diagnostic only.
+
+
+---
+
+# CURRENT OVERRIDE / D47 STATUS (2026-09-30)
+
+The older NEXT markers above are historical. Current active work is D47
+validated continuous-H1 numerics on the original-action canonical H1 system.
+See `docs/ge19_history.md`, section "D47 validated continuous-H1 enclosure
+campaign (2026-09-30)" for exact numbers and claim boundaries.
+
+Current state:
+- first primary/C_star/m=20 Radau substep rigorously enclosed with Arb;
+- full primary/C_star/m=20 window also rigorously enclosed, but the long-window
+  componentwise bound wraps to a physically useless final relative upper bound
+  ~1.0868e4;
+- independent full discrete propagator replay is ~4.11e-15, with global
+  condition number ~3.70e11, so the long-window anisotropy is genuine in this
+  representation;
+- do NOT scale the current full-window certificate to all 18 C/mode cases yet;
+- next diagnostic is D47 r5d moving-balance/local QR-Lohner framing to retain
+  error correlations without a global ill-conditioned inverse.
+
+Still OPEN: all-case/mode continuous H1 certificate, original GE05 bath
+on-shell, full all-sector H4 Ward, Z21, and lensing. No observational tuning.
