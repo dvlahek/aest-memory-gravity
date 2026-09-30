@@ -5158,3 +5158,43 @@ both chunk-box collapse and the single global center/radius collapse.
 Claim boundary unchanged: current result is a rigorous endpoint enclosure
 for primary/C_star/m=20 only. Continuous H1, other modes/C cases, GE05 bath,
 Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g3 affine-polydisc full-window endpoint result (2026-09-30)
+
+D47 r5g3 propagated the certified r5g2 local A,D,q cache through all 508
+primary/C_star/m=20 steps using an unreduced complex-polydisc generator set
+in Arb/acb. Every historical generator is propagated through the signed
+nominal step map; only the new multiplicative uncertainty and local forcing
+are appended as eight fresh diagonal disc generators. No generator reduction
+or NumPy product enters the certificate.
+
+The run passed with classification
+`GE19_D47_R5G3_AFFINE_COMPLEX_POLYDISC_FULLWINDOW_CSTAR_M20_ENDPOINT_ARB_PASS`.
+Final generator count was 4064. The endpoint original-L1 upper bound is
+`1.2668970351936948`, archived endpoint L2 norm
+`4.478851435897949`, giving relative upper
+`0.28286203579773334`.
+
+This improves r5g2 by factor `2.1283834253149565` and r5g1 by factor
+`3.3682916221086936`. The result confirms that preserving signed nominal
+correlations is materially better than a single global center/radius box.
+
+The remaining dominant loss is now the new per-step uncertainty box
+`D_j * rad(E_j) + q_j`. A cache-only scaling diagnostic (not a certificate)
+using the same affine propagation predicts relative endpoint bounds of about
+0.1175, 0.0545, 0.0263, and 0.0129 if both local D and q were reduced by
+factors 2,4,8,16 respectively. This is consistent with the previously
+observed ~1/nsplit local convergence and motivates skipping nsplit128 as an
+intermediate production run.
+
+**NEXT D47 r5g4:** recompute all 508 local step enclosures at nsplit=256 with
+checkpoint/resume, then run the same unreduced affine complex-polydisc
+propagation. Target: a full-window endpoint relative upper bound near the
+few-percent regime. This extrapolated target is diagnostic only until the
+n256 run completes.
+
+Continuous H1 inside every step, other modes/C cases, GE05 bath on shell,
+Z21 and lensing remain OPEN.
