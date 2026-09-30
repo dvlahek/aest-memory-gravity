@@ -695,3 +695,18 @@ use width=xb_exact-xa_exact for the continuous x parameterization, retain
 binary64 Radau h in the numerical polynomial, include h/width in dp/dx, and
 add exact-real endpoint jumps. NEXT: D47 r5f4 first-eight-step nsplit=64
 formal-width correction. GE05 bath, all-case H1, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5f4 update (2026-09-30)
+
+Exact-width correction passed and is negligible: max homogeneous endpoint
+jump ~1.08e-16, max state endpoint jump ~2.14e-19. First-eight-step nsplit64
+endpoint relative upper remains 1.563699e-3, ~7.99x tighter than r5b at the
+same endpoint.
+
+NEXT: D47 r5g0 first-64-fine-substep endpoint pilot at nsplit64 using the
+same formal exact-width construction. Only after that should the full
+508-step run be attempted. GE05 bath, all-case H1, Z21 and lensing remain
+OPEN.
