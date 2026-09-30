@@ -648,3 +648,20 @@ NEXT: D47 r5f validated first 8-step block transfer in the fixed balanced
 frame, preserving signed products inside the block before box collapse.
 Do not run all modes/C cases yet. GE05 bath, all-case H1, Z21 and lensing
 remain OPEN.
+
+
+---
+
+## CURRENT D47 r5f update (2026-09-30)
+
+r5f first-eight-step fixed-balance Arb endpoint enclosure PASSED
+mathematically, but did not improve r5b: endpoint L1 upper
+`0.0048908539462` vs r5b `0.0048029868174`.
+The nominal 8-step block is well-conditioned (cond ~1.416), but the rigorous
+homogeneous step-transfer radius is huge (~0.77 per step; 8-step radius
+inf-norm ~6.34). Local state collocation forcing remains small (~3.8e-6).
+
+NEXT: tighten/diagnose the homogeneous fundamental-transfer interval
+enclosure (subdivision convergence and fixed-vs-local balance) before any
+full-window block propagation. All-case H1, GE05 bath, Z21 and lensing remain
+OPEN.
