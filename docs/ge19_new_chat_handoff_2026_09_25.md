@@ -710,3 +710,18 @@ NEXT: D47 r5g0 first-64-fine-substep endpoint pilot at nsplit64 using the
 same formal exact-width construction. Only after that should the full
 508-step run be attempted. GE05 bath, all-case H1, Z21 and lensing remain
 OPEN.
+
+
+---
+
+## CURRENT D47 r5g0 update (2026-09-30)
+
+First-64-step exact-width nsplit64 Arb endpoint enclosure PASSED.
+Endpoint L1 upper = 7.874136e-3, relative upper = 1.429392e-2, about
+7.93x tighter than r5b at the same endpoint. Nominal 64-step block cond
+~9.606; local fundamental radius stays near 0.096-0.0984.
+
+NEXT: D47 r5g1 full 508-step primary/C_star/m=20 endpoint run at nsplit64
+with checkpoint/resume. Only after a controlled full-window endpoint result
+should we add the continuous-within-step pass and then expand modes/C cases.
+GE05 bath, Z21 and lensing remain OPEN.
