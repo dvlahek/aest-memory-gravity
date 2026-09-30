@@ -4955,3 +4955,46 @@ construction from the locked initial state through the first 64 fine
 substeps at nsplit=64. This is a medium-window endpoint pilot before paying
 for all 508 fine substeps. If the 64-step bound remains controlled, proceed
 to checkpointed full-window propagation.
+
+
+---
+
+## D47 r5g0 first-64 exact-width endpoint enclosure (2026-09-30)
+
+D47 r5g0 extended the formalized r5f4 fixed-balance Arb construction to the
+first 64 primary/C_star/m=20 fine Radau substeps at nsplit=64. All parent and
+source locks passed. Exact stored-endpoint-width bookkeeping remained clean:
+max h/width relative difference was zero on these stored points, max
+homogeneous endpoint jump `1.1187071496204896e-16`, and max state endpoint
+jump `3.923154623343181e-19`. Endpoint replay remained zero and the maximum
+scaled stage residual remained `3.5004747272454526e-16`.
+
+The local validated transfer remained stable across the 64-step window:
+maximum fundamental step radius entry increased only from about 0.09572 to
+`0.09835740897757052`; maximum local state forcing entry was
+`6.544681307202042e-7`.
+
+The 64-step nominal signed block had 2-norm `3.0722158054808117` and
+condition number `9.605633868698574`. Its validated transfer-radius
+infinity norm was `7.4177542045356315`. The rigorous endpoint original-L1
+error upper bound was `0.007874136064092228`, relative to the archived
+endpoint L2 norm `0.014293921320196266`.
+
+At the same 64-step endpoint, the old r5b componentwise propagation gave
+L1 upper `0.06242134929692224`, relative `0.11331349220894592`.
+Thus r5g0 is tighter by factor `7.927390229079` while preserving the same
+underlying original-action H1 dynamics.
+
+r5g0 therefore demonstrates that the fixed-balance signed-block method
+remains controlled over a medium window. It certifies the 64-step endpoint
+only, not continuous enclosure throughout all 64 steps and not the full
+508-step window/all modes.
+
+**NEXT D47 r5g1:** run the same exact-width nsplit64 construction over the
+full 508-step primary/C_star/m=20 window with checkpoint/resume support.
+Record endpoint bounds and intermediate checkpoints; do not yet expand to
+other modes/C cases. If the full-window endpoint bound remains informative,
+add a separate continuous-within-step envelope pass before upgrading the
+full H1 claim.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
