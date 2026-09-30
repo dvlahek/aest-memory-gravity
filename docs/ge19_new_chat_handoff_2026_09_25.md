@@ -819,3 +819,18 @@ NEXT: r5g5 continuous-within-step nsplit256 enclosure for this same case.
 Use the r5g4 affine endpoint set as the incoming error at every fine step,
 then certify the error continuously through all 256 subsegments of each
 Radau step. Other modes/C cases, GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g5 update (2026-09-30)
+
+Continuous-in-x H1 for primary/C_star/m20 PASSED rigorously over all 508
+fine steps. Max continuous L1 upper = 0.2488989257 and max continuous
+L1/poly-L2 upper = 0.05557368636. The endpoint exactly reproduces r5g4
+(relative upper 0.05449763094).
+
+NEXT: r5g6 nsplit64 affine endpoint screen for the remaining primary/C_star
+modes 3,5,8,10,15. Refine only modes that need it, then run their continuous
+passes. C_min/C_max and control-grid robustness can follow after the central
+C_star six-mode branch is closed. GE05 bath, Z21 and lensing remain OPEN.
