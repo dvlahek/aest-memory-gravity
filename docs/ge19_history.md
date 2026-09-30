@@ -4998,3 +4998,32 @@ add a separate continuous-within-step envelope pass before upgrading the
 full H1 claim.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g0 formal block-algebra correction (2026-09-30)
+
+While preparing the 508-step extension, a final rigor bookkeeping issue was
+identified in the r5f/r5g block composition layer. Local x-segment operator,
+Az, collocation-defect, and per-step transfer-radius quantities are Arb
+outward-rounded. However, after converting those certified per-step upper
+bounds to binary64, the multi-step center/radius recurrence and forcing
+aggregation were performed by NumPy matrix products without an explicit
+outward-rounding allowance for those matrix multiplications.
+
+The missing allowance is expected to be at floating roundoff scale and does
+not change the strong numerical diagnosis: r5g0 endpoint bound
+`7.874136064092228e-3` is ~7.93x tighter than r5b, with stable local
+transfer radii. But until the block algebra itself is recomposed in Arb, the
+r5f4/r5g0 multi-step endpoint values are VALIDATED-CANDIDATE bounds, not the
+final rigorous certificate.
+
+**NEXT D47 r5g0r1:** rerun the first-64 nsplit64 calculation with the same
+local certified step data but perform all signed nominal product,
+center/radius recurrence, suffix propagators, and forcing accumulation in
+Arb/acb matrices. Compare against r5g0. Only after this outward-rounded block
+algebra agrees should the checkpointed 508-step r5g1 be launched.
+
+No physics inputs or observational data are changed. GE05 bath, full H4 Ward,
+Z21 and lensing remain OPEN.
