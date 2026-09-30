@@ -5063,3 +5063,56 @@ run at nsplit64. Use 64-step rigorous Arb/acb chunks, propagate the incoming
 componentwise error through each chunk, checkpoint after every chunk, and
 support safe resume after interruption. No observational data enter this
 calculation.
+
+
+---
+
+## D47 r5g1 full-window endpoint result (2026-09-30)
+
+D47 r5g1 completed the full 508-step primary/C_star/m=20 endpoint campaign
+at nsplit=64 with exact-width Arb operator enclosures, outward-rounded acb/arb
+64-step chunk algebra, rigorous incoming-error propagation between chunks,
+and checkpoint/resume support.
+
+The run completed all checkpoints 64,128,192,256,320,384,448,508 and ended
+with classification
+`GE19_D47_R5G1_FULLWINDOW_CSTAR_M20_ENDPOINT_ARB_PASS`.
+The final endpoint original-L1 error upper bound is
+`4.267278669717265`, versus archived endpoint L2 norm
+`4.478851435897949`, giving relative upper
+`0.9527618253901144`.
+
+This is mathematically valid and dramatically tighter than the old r5b
+full-window bound (L1 `48675.85992551011`, relative
+`10867.933581224324`), an improvement factor of about `1.14e4`.
+However, a ~95% relative endpoint bound is still too loose for a useful
+physics-level H1 certificate.
+
+The chunk trajectory shows smooth growth:
+relative endpoint bounds at 64,128,192,256,320,384,448,508 steps were
+approximately
+`0.0143, 0.0320, 0.0549, 0.0889, 0.1468, 0.2558, 0.4805, 0.9528`.
+Local step radii remained benign throughout (max fundamental step radius
+~0.1036), so the remaining growth is not a local operator failure. It is
+dominated by long-range enclosure/wrapping and the componentwise error-box
+collapse at chunk boundaries.
+
+Formal controls remain clean: endpoint replay zero, max scaled stage residual
+~`3.61e-16`, exact-width mismatch zero, endpoint jumps ~1e-16/1e-18, and
+Az remains strongly regular.
+
+**NEXT D47 r5g2:** keep the same nsplit64 local step enclosures but remove the
+64-step error-box collapse. Cache all 508 local nominal step maps, certified
+step radii, and local forcing vectors, then perform one global backward
+acb/arb suffix sweep across all 508 steps and aggregate every local forcing
+term against its full signed suffix enclosure. This directly tests how much
+of the 0.9528 bound is caused by chunk-boundary wrapping. Do not increase
+nsplit or expand modes/C cases until this is measured.
+
+Claim boundary unchanged:
+`fullwindow_endpoint_H1_error_enclosed=true` only for this one
+primary/C_star/m=20 endpoint;
+`full_continuous_H1_error_enclosed=false`,
+`rigorous_original_action_H1_integrator_error_enclosed=false`,
+`GE05_bath_onshell_certified=false`,
+`Z21_certified=false`.
