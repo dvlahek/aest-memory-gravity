@@ -753,3 +753,19 @@ closed for this pilot.
 NEXT: checkpointed/resumable full 508-step primary/C_star/m=20 endpoint run
 (r5g1) using 64-step Arb/acb chunks at nsplit64. Continuous-within-step H1,
 other modes/C cases, GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g1 update (2026-09-30)
+
+Full 508-step primary/C_star/m=20 endpoint Arb run PASSED mathematically.
+Final L1 upper = 4.2672786697, relative upper = 0.9527618254.
+This is ~1.14e4 tighter than r5b but still too loose for a useful H1 physics
+certificate. Local step radii remain ~0.10, so the dominant remaining loss is
+long-range wrapping/chunk-boundary box collapse rather than local operator
+failure.
+
+NEXT: D47 r5g2 global signed-suffix Arb sweep across all 508 cached local
+steps, with no 64-step error-box collapse. Do not increase nsplit or expand
+modes/C cases yet. Continuous H1, GE05 bath, Z21 and lensing remain OPEN.
