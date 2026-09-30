@@ -5239,3 +5239,43 @@ bounds the entire subsegment. Keep the affine endpoint propagation unchanged
 between fine steps.
 
 Other modes/C cases, GE05 bath on shell, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5g5 continuous H1 closure for primary/C_star/m20 (2026-09-30)
+
+D47 r5g5 completed the continuous-in-x original-action H1 enclosure for the
+locked primary/C_star/m=20 case. It reused the certified r5g4 nsplit256
+affine-polydisc endpoint set as the incoming error at every D17 fine step and
+recomputed the original-action state residual/operator on 256 x-subsegments
+inside each fine Radau step.
+
+The run passed with classification
+`GE19_D47_R5G5_N256_CONTINUOUS_H1_CSTAR_M20_ARB_PASS`.
+The maximum continuous original-coordinate L1 error upper bound over the
+entire 508-step window is `0.2488989256895909`. The maximum rigorous
+L1-error / D17-polynomial-L2 upper ratio is `0.05557368635602259`.
+No subsegment had a zero polynomial-norm lower bound, so this relative
+diagnostic is available globally.
+
+The final endpoint exactly reproduces r5g4:
+L1 upper `0.24408679260001528`, archived endpoint L2
+`4.478851435897949`, relative upper `0.05449763094253632`, with affine
+endpoint reproduction relative error exactly zero. Endpoint replay is zero,
+max scaled stage residual is `3.613811247327609e-16`, and Az remains
+strongly regular.
+
+Therefore primary/C_star/m=20 now has a rigorous continuous original-action
+H1 integration-error enclosure across the full D17 window. The global all
+case/mode H1 flag remains OPEN because the other five positive Fourier modes
+have not yet received this continuous enclosure.
+
+**NEXT D47 r5g6:** screen the remaining primary/C_star modes
+m={3,5,8,10,15} with the already validated nsplit64 affine endpoint pipeline.
+This is the minimum next campaign needed for the central C_star physical
+branch. Use the screen to choose per-mode refinement; do not yet spend n256
+on all five modes. C_min/C_max and control-grid cases remain robustness
+extensions, not the immediate GE05 gate.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
