@@ -4876,3 +4876,42 @@ is demonstrated.
 
 Claim boundary unchanged: full all-case continuous H1, GE05 bath on shell,
 full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D47 r5f3 block-level subdivision convergence (2026-09-30)
+
+D47 r5f3 repeated the complete first eight-step primary/C_star/m=20
+fixed-balance Arb block for nsplit 8,16,32,64. The full block retained clean
+first-order subdivision convergence. Maximum fundamental step radius:
+`0.7693889759, 0.3836787336, 0.1917185089, 0.09601517227`.
+Eight-step block transfer radius infinity norm:
+`6.3392230067, 3.1159507421, 1.5470759960, 0.7724368553`.
+Endpoint original-L1 upper bound:
+`4.8908539462e-3, 2.4223367897e-3, 1.2054430923e-3, 6.0131180913e-4`.
+Observed orders for endpoint L1 were
+`1.01369, 1.00684, 1.00338`, essentially exact 1/nsplit behavior.
+
+At nsplit=64 the first-eight-step endpoint relative upper bound was
+`1.5636992582e-3`, improving the same-endpoint r5b bound by factor
+`7.9875145383`. The nominal block remained unchanged and benign:
+2-norm `1.1886720107`, condition number `1.4159433399`.
+
+This establishes block-level interval-width dependency as the dominant
+current enclosure error and shows that finer subdivision systematically
+controls it. However, before a full-window run, close the formal archived-grid
+parameterization gap: the r5f family currently parameterizes x using the
+binary64 Radau step h=fl(xb-xa), while the exact archived endpoint interval is
+defined by the two stored binary64 endpoints xa,xb. The difference is tiny but
+must be included in a rigorous certificate.
+
+**NEXT D47 r5f4:** exact-width endpoint correction on the first 8-step,
+nsplit=64 block. Parameterize x by exact stored-endpoint width
+`xb_exact-xa_exact`, retain the numerical Radau h in the collocation
+polynomial, scale dp/dx by h/width, and explicitly add exact-real polynomial
+endpoint-to-archived binary64 jumps for both the state and homogeneous step
+map. Only if r5f4 is stable should the block method be extended full-window.
+
+Claim boundary unchanged: full all-case continuous H1, GE05 bath on shell,
+full H4 Ward, Z21 and lensing remain OPEN.
