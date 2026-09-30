@@ -802,3 +802,20 @@ sweeps showed near-1/nsplit convergence, NEXT is r5g4: recompute the full
 local cache directly at nsplit=256 and rerun the same affine-polydisc
 propagation. Do not spend a production run on nsplit128 first.
 Continuous H1, GE05 bath, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g4 update (2026-09-30)
+
+Full 508-step nsplit256 affine endpoint enclosure PASSED for
+primary/C_star/m=20:
+L1 upper = 0.2440867926, relative upper = 0.05449763094.
+This is 5.19x tighter than the nsplit64 affine result and puts the locked
+endpoint case in the few-percent regime. Local radii/forcing reduced by
+approximately the expected factor four.
+
+NEXT: r5g5 continuous-within-step nsplit256 enclosure for this same case.
+Use the r5g4 affine endpoint set as the incoming error at every fine step,
+then certify the error continuously through all 256 subsegments of each
+Radau step. Other modes/C cases, GE05 bath, Z21 and lensing remain OPEN.
