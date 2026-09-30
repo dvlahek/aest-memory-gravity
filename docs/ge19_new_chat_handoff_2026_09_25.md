@@ -632,3 +632,19 @@ full-window enclosure.
 
 Do not scale r5b to all 18 cases yet. GE05 bath on-shell, all-case/mode
 continuous H1, full H4 Ward, Z21, and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5d-r5e update (2026-09-30)
+
+r5d/r5e show that a single fixed power-of-two balanced frame makes each
+Radau step almost identity (max norm ~1.0221, max cond ~1.0449) and keeps
+8-step blocks well conditioned (max cond ~1.4159, box/signed ratio ~1.0477).
+The global original-coordinate anisotropy is real, but the catastrophic r5b
+error growth is primarily repeated componentwise wrapping.
+
+NEXT: D47 r5f validated first 8-step block transfer in the fixed balanced
+frame, preserving signed products inside the block before box collapse.
+Do not run all modes/C cases yet. GE05 bath, all-case H1, Z21 and lensing
+remain OPEN.
