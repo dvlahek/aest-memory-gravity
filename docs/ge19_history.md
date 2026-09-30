@@ -4698,3 +4698,48 @@ Claim boundary unchanged:
 `GE05_bath_onshell_certified=false`,
 `Z21_certified=false`.
 No observation-based tuning and no lensing claim.
+
+
+---
+
+## D47 r5d fixed-vs-moving balance diagnostic (2026-09-30)
+
+User-local r5d float diagnostic completed for the locked
+primary/C_star/m=20 D17 full window. Original discrete fundamental
+propagator reproduced prior r5c exactly:
+2-norm `4.662693544964e5`, sigma_min
+`1.260710881584e-6`, condition number
+`3.698463789815e11`; global state replay relative
+`4.112904877298e-15`.
+
+A single fixed global diagonal balance selected at the midpoint reduced the
+full-window propagator to norm `7.296925325302e1` and condition number
+`5.651342638298e3`. More importantly, every transformed fine-step matrix
+was near identity: maximum step 2-norm `1.022073939665`, maximum step
+condition number `1.044910357879`.
+
+A moving boundary balance reduced the full-window condition number further
+to `1.202492459418e3` and norm to `6.883165847857e1`, but introduced
+boundary scale transfers up to factor 2 and maximum transformed step norm
+`2.005772664381`, condition number `2.035524800619`. Scale drift over
+the window remained modest componentwise (ratios 1--8). Fixed and moving
+reconstruction residuals were exactly zero in binary64.
+
+Interpretation: the catastrophic r5b long-window box growth is primarily a
+representation/wrapping problem. The fixed balanced frame is especially
+attractive for validated propagation because it removes approximately six
+orders of magnitude of raw conditioning while keeping every discrete step
+close to identity and avoids moving-frame boundary transfers.
+
+**Current next gate:** D47 r5e fixed-balance block/QR diagnostic to choose a
+reconditioning block length and measure sequential-absolute box inflation
+against signed block propagation. If local block products remain well
+conditioned while unsigned propagation inflates strongly, implement the
+validated Arb/Lohner-style correlated enclosure in the fixed frame before
+running all 18 C/mode cases.
+
+Claim boundaries unchanged:
+`full_continuous_H1_error_enclosed=false`,
+`rigorous_original_action_H1_integrator_error_enclosed=false`,
+`GE05_bath_onshell_certified=false`,
+`Z21_certified=false`.
