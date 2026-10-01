@@ -5728,3 +5728,50 @@ adjoint/Hermite certificate there instead of certifying the obsolete affine
 R1 drive.
 
 GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D52r1 Hermite versus original-action X10 source sensitivity (2026-10-01)
+
+D52r1 passed the diagnostic comparison between the frozen D16R1
+H3F-endpoint/H1dot cubic-Hermite drive and the independently integrated D50
+sub16 original-action X10 trajectory. Classification:
+`GE19_D52R1_CSTAR_HERMITE_TRUE_X10_SOURCE_SENSITIVITY_DIAGNOSTIC_PASS_NOT_CERTIFICATE`.
+
+Uploaded SHA-256:
+JSON `0dcf7cd618e839f287381cf18a4fe0b2ec72c9d7bc30a73ad08cf5eea77cb98b`,
+NPZ `c01046d221975e1b2f395db3104533509eed8f87ba5de4e3658aca2d0e96f3d4`,
+log `9bfecb5f89481de1d2719ae7cf1e10e1ad1e9ba899efe95d8c2ad7536066f211`.
+
+The Hermite route improves the deterministic affine-drive error by a nearly
+mode-independent factor `9.3799`, but the residual mismatch is dominated
+by the H3F endpoint-versus-D50 original-action difference, not interior
+Hermite curvature. The endpoint relative difference is nearly constant
+`2.11566e-6` across all six modes. For m20 the affine sampled Linf is
+`8.32735e-9`, while Hermite/D50 Linf is `8.87786e-10`.
+
+Mapped through the frozen D49 X-source sensitivity:
+- sampled affine center / D14 ODE = `4.69699`;
+- Hermite mismatch / D14 ODE = `0.702306`;
+- Hermite + D51 DWR / D14 ODE = `0.703639`;
+- frozen D16R1 sub16 clock-only / D14 ODE = `0.0621721`.
+The Nq2048 and Nq1024 values agree to ~1e-8 relative.
+
+Therefore the D16R1 Hermite route is materially better than the original
+affine R1 drive but is not comfortably negligible on the frozen D14 ODE
+scale. The D51 DWR-only contribution is tiny (~0.001354 of D14 ODE);
+the dominant Hermite-route floor is the H3F endpoint mismatch. If the bath
+is driven directly by the original-action trajectory, the remaining
+diagnostic budget becomes clock + DWR, about `0.0635265` of the D14 ODE
+scale by triangle inequality, but still about `1.83` times the D14 FD4
+scale.
+
+**NEXT D53:** audit the already-frozen D16R1 clock-only source envelopes
+across every archived Hermite substep level (expected sub4/sub8/sub16 if
+present). Measure convergence order and combine each clock envelope with the
+D51 DWR-only X-source contribution. This decides if a direct-original-action
+physical-clock bath merely needs finer temporal resolution or if the clock
+construction itself needs reformulation.
+
+GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
