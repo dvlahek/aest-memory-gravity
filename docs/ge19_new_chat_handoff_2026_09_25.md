@@ -897,3 +897,18 @@ affine center displacement required by the exact D15 defect identity.
 NEXT: D48r1 add |X_D17poly-X_R1lin| at theta=0,1/2,1 and recompute the
 sampled D15a U_X envelope. The continuous D48 true-minus-D17-polynomial
 X10 envelope remains valid. GE05 bath on shell is still OPEN.
+
+
+---
+
+## CURRENT D48r1 update (2026-10-01)
+
+D48r1 sampled center correction PASSED. The largest center displacement is
+8.31e-9 (m20, theta=1/2), and the largest correction factor to the D48
+sampled drive envelope is only 1.0000001616. Therefore the sampled D48
+numbers are stable.
+
+NEXT: D48r2 continuous center displacement + continuous original-action
+epsilon_H over all 127 R1 intervals, producing the complete continuous
+epsilon_X/epsilon_H parents for the exact D15 GE05 defect identity.
+GE05 bath on shell remains OPEN.
