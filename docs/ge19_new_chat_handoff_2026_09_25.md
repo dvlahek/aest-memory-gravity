@@ -989,3 +989,20 @@ integrator certificate alone would not close the frozen affine bath.
 NEXT: D52 compare the existing D16R1 cubic-Hermite physical-clock drive to
 D50 sub16 X10 and evaluate its source sensitivity plus D16R1 clock-only
 envelope. If Hermite removes the floor, certify that route rigorously.
+
+
+---
+
+## CURRENT D52r1 update (2026-10-01)
+
+D52r1 PASSED. Hermite reduces the affine-drive source sensitivity from
+4.697x to 0.7023x the frozen D14 ODE unsigned scale, but the remaining
+mismatch is dominated by the frozen H3F endpoint versus D50 original-action
+difference (~2.11566e-6 relative). D51 DWR adds only ~0.001354x.
+
+The frozen D16R1 sub16 clock-only source is 0.06217x D14 ODE. Therefore a
+direct original-action-drive route has a diagnostic clock+DWR triangle
+budget ~0.06353x D14 ODE, although still ~1.83x D14 FD4.
+
+NEXT: D53 audit D16R1 clock-only convergence across all archived substep
+levels and combine each with the D51 DWR-only contribution.
