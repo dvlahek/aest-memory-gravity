@@ -5358,3 +5358,55 @@ and the project returns immediately to GE05 bath on-shell certification.
 C_min/C_max and control-grid cases remain robustness extensions unless GE05
 or the final theorem requires them. GE05 bath, full H4 Ward, Z21 and lensing
 remain OPEN.
+
+
+---
+
+## D47 r5g8 all-six C_star continuous H1 closure (2026-10-01)
+
+D47 r5g8 completed the continuous-in-x nsplit256 original-action H1
+campaign for the five remaining primary/C_star positive Fourier modes
+m={3,5,8,10,15}. Together with the existing r5g5 m=20 certificate,
+the complete six-mode primary/C_star branch is now continuously enclosed.
+
+All five new mode runs passed and the final summary classification is
+`GE19_D47_R5G8_PRIMARY_CSTAR_ALL6_N256_CONTINUOUS_H1_COMPLETE`.
+
+Maximum continuous L1 / D17-polynomial-L2 upper bounds:
+- m=3:  0.0581383470072098
+- m=5:  0.0509709529145299
+- m=8:  0.04991644368061971
+- m=10: 0.0505165897113902
+- m=15: 0.0531416787551773
+- m=20: 0.05557368635602259
+
+The worst continuous relative upper bound is m=3 at ~5.814%.
+No mode has a zero polynomial-norm lower segment, so the continuous
+relative diagnostic is available globally across all six modes.
+
+Final endpoint relative uppers exactly reproduce the already-certified
+n256 affine endpoints:
+m3 0.05740451563496902,
+m5 0.05012443707754402,
+m8 0.049012960568540265,
+m10 0.04957901154055716,
+m15 0.05212792765546878,
+m20 0.05449763094253632.
+
+Therefore the central primary/C_star six-mode continuous original-action H1
+branch is closed at nsplit256. No further H1 endpoint/continuous refinement
+is planned unless a later GE05 source term exposes a specific missing
+componentwise requirement.
+
+**NEXT PHYSICS GATE:** return to the preregistered GE05 bath on-shell line.
+D13/D14 established the original signed bath structure and source-weighted
+phase behavior but left continuous on-shell status open. D15 already
+registered the exact variable-background step-defect identity
+`R_GE05 = 3 a^3 v/tau (H_true-h_mid/tau)
+          + a^3 (r/tau)^2 (X_lin-X_true)`.
+Use the now-certified continuous H1 branch to construct rigorous continuous
+H/X10 driver enclosures for the central C_star six-mode branch, then close
+or explicitly fail the GE05 bath on-shell bound without relaxing any prior
+science target.
+
+Full all-sector H4 Ward, Z21 and lensing remain OPEN.
