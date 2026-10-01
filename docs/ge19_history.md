@@ -5632,3 +5632,48 @@ targeted adjoint/functional X10 certificate) or reflects a genuinely large
 integration uncertainty.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D50r1 high-resolution X10 convergence diagnostic (2026-10-01)
+
+D50r1 completed the source-locked primary/C_star original-action X10
+sub4/sub8/sub16 diagnostic for all six modes. Classification:
+`GE19_D50R1_CSTAR_X10_HIGH_RES_NUMERICAL_CONVERGENCE_DIAGNOSTIC_PASS_NOT_CERTIFICATE`.
+
+The archived D17 sub4 state and X10 are reproduced exactly
+(max relative replay 0.0), and the maximum Radau scaled solve residual is
+`4.760299360136617e-16`.
+
+The key result is that actual high-resolution X10 differences are tiny:
+sub8-vs-sub16 Linf ranges from `1.10646e-14` (m3) to
+`1.49732e-12` (m20), while the current rigorous D48 epsilon_X ranges from
+`4.79520e-5` to `4.03046e-2`. Therefore D48 epsilon_X exceeds the
+sub8-vs-sub16 numerical difference by factors from `4.33e9` to
+`2.69e10`.
+
+The JSON field `observed_order_L2_4_8_to_8_16 ~= 2.5025` is a raw-L2
+grid-cardinality artifact: the 4-vs-8 difference is sampled on 509 common
+points while 8-vs-16 is sampled on 1017 common points. Using Linf or RMS
+normalization gives order ~3.001 across all six modes, consistent with the
+two-stage Radau IIA global order. Do not quote 2.5025 as the physical
+convergence order.
+
+For m20, the report-only order-3 Richardson Linf scale is
+`2.13903e-13`, versus D48 epsilon_X `4.03046e-2`, a gap of about
+`1.88e11`. Even the GE05 X-source requirement inferred from D49
+(~1.7e-9 to reach the frozen D14 ODE unsigned scale) remains roughly four
+orders above the numerical Richardson scale. This strongly supports the
+interpretation that D48 is dominated by validated wrapping/conservatism,
+not by actual H1/X10 time-discretization error.
+
+**NEXT D51:** perform a source-locked dual-weighted-residual/adjoint
+feasibility diagnostic on the sub8-vs-sub16 hierarchy. Preserve each local
+8-vector defect exactly, propagate it to X10 with the discrete adjoint, and
+sum absolute scalar defect contributions without componentwise state
+wrapping. If this noncancelling functional envelope remains near the
+observed sub8-vs-sub16 X10 difference and far below ~1e-9, proceed directly
+to a rigorous interval-adjoint X10 certificate.
+
+GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
