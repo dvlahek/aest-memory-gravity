@@ -912,3 +912,15 @@ NEXT: D48r2 continuous center displacement + continuous original-action
 epsilon_H over all 127 R1 intervals, producing the complete continuous
 epsilon_X/epsilon_H parents for the exact D15 GE05 defect identity.
 GE05 bath on shell remains OPEN.
+
+
+---
+
+## D48r2r1 correction (2026-10-01)
+
+Do NOT use the r2r1 continuous epsilon_X/center values. Endpoint replay was
+6.705e-4 because the script used canonical y[2],y[3] for X10; D17 actually
+uses y[1],y[2]. D48 and D48r1 remain valid; epsilon_H is unaffected.
+
+NEXT: D48r2r2 with corrected canonical indices and a hard endpoint-replay
+gate, then continue to the GE05 |v_step| gate.
