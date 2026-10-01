@@ -5498,3 +5498,36 @@ continuous D15 `epsilon_X` parent required by the exact GE05 defect
 identity.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D48r2r1 index-mapping correction gate (2026-10-01)
+
+D48r2r1 completed numerically, but its own endpoint replay control exposed an
+implementation error in the continuous X-center reconstruction. The reported
+`D17_dense_X_endpoint_replay_abs_upper_max` was
+`6.705324376892e-4`, far too large for a reconstruction of the archived
+D17 action X10 center.
+
+Source audit identified the exact cause. D17 canonical state is
+`y=(S,u,phi,T,pS,pu,pphi,pT)`, and the archived D17 action drive is built as
+`X10 = Q_action*y[1] + (i k/a)*y[2]`. D48r2/r2r1 mistakenly used
+`y[2]` and `y[3]` (phi,T), shifting both drive components by one slot.
+This explains both the large endpoint replay and the inflated continuous
+center-displacement values (~3e-4--7e-4), which must not be used as certified
+epsilon_X parents.
+
+The D48 and D48r1 results remain valid: D48 only used a componentwise H1 L1
+error bound to enclose true-minus-D17 X10, and D48r1 compared archived
+Xdense directly to archived original-R1 X knots. The independently computed
+D48r2 epsilon_H background envelope (~2.0204e-6) is not affected by this
+canonical-index bug, but the D48r2 continuous epsilon_X/center certificate is
+withdrawn pending rerun.
+
+**NEXT D48r2r2:** rerun the continuous R1 center construction with the exact
+D17 mapping `u=y[1], phi=y[2]`, including matching stage derivatives
+`fy[1],fy[2]`. Add a hard endpoint-replay gate before accepting any
+continuous-center result.
+
+GE05 bath on shell remains OPEN.
