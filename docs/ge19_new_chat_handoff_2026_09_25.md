@@ -938,3 +938,19 @@ Continuous D17poly-R1lin center max is only 5.26048e-8.
 NEXT: D49 rigorous continuous frozen-bath z/v envelope + exact D15 GE05
 residual + full signed source-envelope propagation. Compare to frozen D14
 unsigned source scales without introducing a post-hoc threshold.
+
+
+---
+
+## CURRENT D49 decision (2026-10-01)
+
+D49 envelope construction PASSED, but GE05 on-shell is NOT promotable.
+Nq2048 W_total/D14_ODE ~5.45e12. The H piece is IR-nonuniform under the
+energy majorant (Nq2048/Nq1024 factor ~3.998), but the X piece is
+quadrature-stable and already ~2.43e7 times the frozen D14 ODE unsigned
+scale by itself.
+
+NEXT: D50 source-locked primary/C_star X10 convergence diagnostic at Radau
+substeps 4,8,16. If actual X10 differences are tiny, replace the loose
+forward L1-based epsilon_X with a targeted rigorous functional/adjoint
+certificate. Do not spend the next campaign only on the H low-r envelope.
