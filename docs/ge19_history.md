@@ -5677,3 +5677,54 @@ observed sub8-vs-sub16 X10 difference and far below ~1e-9, proceed directly
 to a rigorous interval-adjoint X10 certificate.
 
 GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D51r1 discrete-adjoint X10 feasibility (2026-10-01)
+
+D51r1 passed the source-locked primary/C_star discrete-adjoint feasibility
+diagnostic for all six modes. Classification:
+`GE19_D51R1_CSTAR_X10_DISCRETE_ADJOINT_FEASIBILITY_PASS_NOT_CERTIFICATE`.
+
+The noncancelling dual-weighted residual (DWR) absolute sum is essentially
+identical to the observed sub8-vs-sub16 X10 difference. Worst case is m20:
+`1.4973566722651986e-12`. The maximum within-time cancellation factor is
+only `1.0000123868`; therefore the tiny X10 error is not being produced by
+delicate cancellation between time-step contributions.
+
+Modewise DWR Linf values:
+m3 `1.1064805921e-14`,
+m5 `6.7786112782e-14`,
+m8 `2.1472361637e-13`,
+m10 `3.7598766331e-13`,
+m15 `1.1410841687e-12`,
+m20 `1.4973566723e-12`.
+Against the fixed D51 GE05 X reference `1.7e-9`, the worst margin is
+`1135.334` (m20). D48 epsilon_X exceeds the DWR scale by
+~4.3e9--2.69e10.
+
+Absolute recurrence and signed-adjoint replay defects are machine-level
+(~1e-20--2e-18), and the source-locked Radau matrix solves remain
+~6e-16--7e-16.
+
+**Important downstream observation:** reducing the H1 integrator error alone
+cannot automatically certify the frozen original-R1 affine bath. The
+deterministic D17-polynomial minus R1-affine drive term remains. A direct
+sensitivity calculation using the already-frozen D48/D49 arrays shows that
+the rigorous continuous affine-center envelope alone maps to an unsigned
+X-source L2 about 46.45 times the frozen D14 ODE unsigned scale at Nq2048.
+Using the actual D50 sub16 sampled affine curvature instead of the interval
+center bound reduces this diagnostic ratio to about 4.15, still not
+negligible. This is a numerical-drive representation issue, not H1
+integration uncertainty.
+
+**NEXT D52:** test the already-existing source-locked D16R1 cubic-Hermite
+physical-clock bath route against D50 sub16 X10. Quantify Hermite-vs-sub16
+drive error modewise and map it through the frozen D49 source sensitivity.
+Also report the frozen D16R1 clock-only source envelope. If the Hermite route
+removes the affine-center floor by a large margin, target the rigorous
+adjoint/Hermite certificate there instead of certifying the obsolete affine
+R1 drive.
+
+GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
