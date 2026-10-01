@@ -1006,3 +1006,17 @@ budget ~0.06353x D14 ODE, although still ~1.83x D14 FD4.
 
 NEXT: D53 audit D16R1 clock-only convergence across all archived substep
 levels and combine each with the D51 DWR-only contribution.
+
+
+---
+
+## CURRENT D53 update (2026-10-01)
+
+D53 PASSED, but the archived D16R1 NPZ contains only sub16 clock envelopes,
+so no clock convergence order is available. Direct original-action
+clock+D51-DWR budget is 0.0634919x D14 ODE at Nq2048 and 0.0634919x at
+Nq1024; relative to D14 FD4 it is ~1.83x/~1.82x.
+
+NEXT: D54 exact D16R1-derived sub32/sub64 physical-clock extension with the
+original-action X10 drive. Use the local D16R1 source/core as the contract;
+do not rederive the implementation from memory.
