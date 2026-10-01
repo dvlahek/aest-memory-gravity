@@ -882,3 +882,18 @@ pre-registered D15 exact variable-background defect identity together with
 the now-certified continuous H1 H/X10 driver enclosures. Do not reopen H1
 method development unless GE05 exposes a specific componentwise need.
 Full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D48 update (2026-10-01)
+
+D48 continuous X10 envelope PASSED for primary/C_star all six modes.
+Max absolute eps_X rises from ~4.80e-5 (m3) to 4.03046e-2 (m20).
+The provisional D15a sampled source-drive L2 was ~8.86e-7 to 9.20e-7,
+but this bridge omitted the deterministic D17-polynomial versus original-R1
+affine center displacement required by the exact D15 defect identity.
+
+NEXT: D48r1 add |X_D17poly-X_R1lin| at theta=0,1/2,1 and recompute the
+sampled D15a U_X envelope. The continuous D48 true-minus-D17-polynomial
+X10 envelope remains valid. GE05 bath on shell is still OPEN.
