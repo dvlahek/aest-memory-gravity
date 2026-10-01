@@ -924,3 +924,17 @@ uses y[1],y[2]. D48 and D48r1 remain valid; epsilon_H is unaffected.
 
 NEXT: D48r2r2 with corrected canonical indices and a hard endpoint-replay
 gate, then continue to the GE05 |v_step| gate.
+
+
+---
+
+## CURRENT D48r2r2r1 update (2026-10-01)
+
+Corrected continuous R1 driver envelopes PASSED for primary/C_star.
+Hard D17 X10 endpoint replay = 6.2633e-20 (<1e-10).
+epsilon_H max = 2.02038e-6; epsilon_X global max = 0.0403046351.
+Continuous D17poly-R1lin center max is only 5.26048e-8.
+
+NEXT: D49 rigorous continuous frozen-bath z/v envelope + exact D15 GE05
+residual + full signed source-envelope propagation. Compare to frozen D14
+unsigned source scales without introducing a post-hoc threshold.
