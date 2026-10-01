@@ -5531,3 +5531,54 @@ D17 mapping `u=y[1], phi=y[2]`, including matching stage derivatives
 continuous-center result.
 
 GE05 bath on shell remains OPEN.
+
+
+---
+
+## D48r2r2r1 continuous R1 epsilon_H / epsilon_X closure (2026-10-01)
+
+The corrected D48r2r2r1 run passed for primary/C_star with the exact D17
+canonical X10 mapping `X10=Q_action*y[1]+(i*k/a)*y[2]`. Parent locks passed,
+Arb precision was 192 bits, and the exact-rational original-theta check was
+active.
+
+The hard D17 dense-X endpoint replay control passed decisively:
+maximum absolute replay upper `6.263278924221237e-20` against the frozen
+gate `1e-10`. Radau stage scaled residual remained
+`4.304149139297149e-16`; the D48r1 sampled center corrections are contained
+with positive minimum margin `8.51842556708393e-11`.
+
+Continuous original-R1 driver parents are now closed for the central C_star
+six-mode branch:
+- epsilon_H max upper = `2.020375979332667e-6`
+  (median `1.0491107239353201e-6`);
+- epsilon_X global max upper = `0.04030463514324942`.
+Modewise epsilon_X max uppers:
+m3 `4.795197873549524e-5`,
+m5 `3.8783337602686034e-4`,
+m8 `1.933378900370822e-3`,
+m10 `4.31547022757525e-3`,
+m15 `2.1239115574250542e-2`,
+m20 `4.030463514324942e-2`.
+The continuous D17poly-minus-R1lin center itself is tiny: from
+`3.914187112451229e-10` (m3) to `5.260475954838029e-8` (m20).
+
+Uploaded result SHA-256:
+JSON `cabb027ca83636501d7b9050550b5fe051b037ac90505d5340586a72b6c5d42c`,
+NPZ `a5b37563b8a9666900b52e37f71bfa70860fde9a8d3eb466f126c63c601fb19c`,
+log `7e4188c32c62b9d90c69749b3a0f1bbb202dcb7066225465dcdf27bced451a22`.
+
+Metadata note: the JSON `continuous_epsilon_X.construction` prose inherited
+an old phi/T wording. The actual accepted code path and the explicit control
+field use the correct y[1],y[2] mapping, and the 6.26e-20 endpoint replay
+hard-gates this source contract. Do not copy the stale prose into a paper.
+
+**NEXT D49:** construct a rigorous continuous envelope for the frozen
+Repair24 first-order bath z_step and v_step on every quadrature node, input
+mode and original R1 interval. Combine it with the certified D48r2r2r1
+epsilon_H/epsilon_X/a^3 parents in the exact D15 GE05 residual identity,
+then propagate the resulting residual through the full signed +/- six-mode
+bath source. Report the noncancelling source envelope against the frozen D14
+unsigned ODE/FD4 source scales; do not invent a post-hoc smallness threshold.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN until D49.
