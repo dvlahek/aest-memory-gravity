@@ -5775,3 +5775,42 @@ physical-clock bath merely needs finer temporal resolution or if the clock
 construction itself needs reformulation.
 
 GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D53 frozen D16R1 clock inventory and direct-action budget (2026-10-01)
+
+D53 passed the frozen D16R1 clock-envelope inventory and direct-action budget
+diagnostic. Classification:
+`GE19_D53_D16R1_CLOCK_CONVERGENCE_DIRECT_ACTION_BUDGET_PASS_NOT_CERTIFICATE`.
+
+The critical finding is that the frozen D16R1 NPZ contains only one complete
+clock-only envelope level for primary/C_star at both quadrature orders:
+`sub16`. Therefore no clock-envelope convergence order can be extracted
+from the archived NPZ; `clock_convergence` is empty.
+
+At Nq2048:
+- D16R1 sub16 clock-only / D14 ODE = `0.06217208918`;
+- D51 DWR-only / D14 ODE = `0.00135438295`;
+- direct original-action clock + DWR / D14 ODE = `0.06349188729`;
+- the same direct budget / D14 FD4 = `1.83384302`.
+
+At Nq1024 the corresponding values are
+`0.06217208913`, `0.00135438294`, `0.06349188722`, and
+`1.81946906`. The near-identity of Nq2048/Nq1024 confirms that this budget
+is not being driven by quadrature-order instability.
+
+The D53 result therefore supports the direct-original-action route, but it
+does NOT establish temporal convergence of the clock residual because only
+sub16 was archived. GE05 remains open.
+
+**NEXT D54:** extend the exact D16R1 physical-clock construction to new
+sub32 and sub64 levels, driven directly by the original-action X10
+trajectory rather than the H3F endpoint Hermite surrogate. Preserve the
+same one-sided signed/unsigned source semantics and D14 comparison scales.
+Before implementing D54, use the exact local D16R1 source and its core as
+the implementation contract; do not reconstruct the bath algorithm from
+memory or alter its physics.
+
+GE05 on shell, full H4 Ward, Z21 and lensing remain OPEN.
