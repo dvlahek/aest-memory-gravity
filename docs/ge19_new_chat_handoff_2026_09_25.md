@@ -865,3 +865,20 @@ NEXT: r5g8 continuous-in-x nsplit256 passes for m3,5,8,10,15 using each
 mode's own r5g7 cache and affine endpoint result. m20 continuous is already
 certified by r5g5. If these pass, primary/C_star all-six continuous H1 is
 closed and work returns to GE05 bath. GE05, Z21 and lensing remain OPEN.
+
+
+---
+
+## CURRENT D47 r5g8 update (2026-10-01)
+
+primary/C_star all-six nsplit256 continuous original-action H1 is now CLOSED.
+Continuous relative uppers:
+m3=0.05813835, m5=0.05097095, m8=0.04991644,
+m10=0.05051659, m15=0.05314168, m20=0.05557369.
+Worst mode is m3 at ~5.814%; all polynomial norm lower bounds remain positive.
+
+NEXT: return immediately to GE05 bath on-shell certification. Use the
+pre-registered D15 exact variable-background defect identity together with
+the now-certified continuous H1 H/X10 driver enclosures. Do not reopen H1
+method development unless GE05 exposes a specific componentwise need.
+Full H4 Ward, Z21 and lensing remain OPEN.
