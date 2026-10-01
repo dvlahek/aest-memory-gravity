@@ -5410,3 +5410,53 @@ or explicitly fail the GE05 bath on-shell bound without relaxing any prior
 science target.
 
 Full all-sector H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D48 continuous X10 envelope and sampled GE05 bridge (2026-10-01)
+
+D48 consumed the closed D47 primary/C_star six-mode continuous-H1 branch
+and produced a rigorous continuous absolute error envelope for the
+original-action D17 X10 representation:
+`|X_true-X_D17poly| <= (sup|Q|+sup|k/a|) E_L1`
+on every D17 fine step.
+
+The run passed with classification
+`GE19_D48_CSTAR_CONTINUOUS_X10_ENVELOPE_PASS_D15_SAMPLED_BRIDGE_GE05_ONSHELL_OPEN`.
+Uploaded result SHA-256:
+JSON `f1ab1be3f5ce7c486bc45ec1776ef4c8e8a2b7fd81dfa7d9302659df8659cff5`,
+NPZ `9046b5772fc7bcac704d163351cea1c5815d9bfab03f7c8aeebf98a04b469a1e`,
+log `0a0b34b71d5a13d9b7e6e67f36129ca7fe0a4df56ad2889572179532285dbd31`.
+
+Maximum continuous absolute X10-error uppers by mode:
+m3 4.795165767189028e-5,
+m5 3.8783142096444277e-4,
+m8 1.9333727155863526e-3,
+m10 4.315459400535249e-3,
+m15 2.1239082720809238e-2,
+m20 4.030459203432021e-2.
+The global maximum is the m20 value 0.04030459203432021.
+
+At the frozen D15a theta={0,1/2,1} samples, the provisional drive-envelope
+L2 values using only the D47/D48 true-minus-D17-polynomial error were about
+8.86e-7, 9.03e-7 and 9.20e-7 for Nq2048, with Nq1024 agreeing to roughly
+1e-7 relative. These drive terms dominate the previously frozen clock-only
+unsigned envelope by factors ~2.7e3--2.9e3.
+
+**Formal correction before GE05 promotion:** D15's exact defect is written
+relative to the frozen original R1 affine drive X_lin, while D48 rigorously
+bounds X_true relative to the D17 continuous collocation polynomial.
+Therefore the sampled D15 bridge must also include the known center
+displacement `|X_D17poly-X_R1lin|` at theta=0,1/2,1. The continuous
+D48 X10 envelope itself remains valid; only the provisional
+`sampled_D15_drive_uncertainty_bounded` promotion is suspended until this
+center-displacement term is added.
+
+**NEXT D48r1:** compute the exact frozen D17-vs-R1-affine X10 displacement
+at theta=0,1/2,1 from the D17 dense archive, add it modewise to the rigorous
+D48 epsilon_X, and rebuild the sampled D15a U_X source envelope. Do not
+launch a continuous GE05 on-shell certification before this corrected bridge
+is frozen.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
