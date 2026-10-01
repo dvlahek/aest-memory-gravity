@@ -971,3 +971,21 @@ NEXT: D51 dual-weighted-residual/adjoint feasibility diagnostic retaining
 local defect-vector correlations. If the absolute scalar functional sum is
 still far below ~1e-9, implement the rigorous interval-adjoint X10
 certificate.
+
+
+---
+
+## CURRENT D51r1 update (2026-10-01)
+
+D51r1 PASSED. Worst noncancelling DWR X10 Linf = 1.49736e-12 (m20), with
+cancellation factor only 1.000012 and fixed 1.7e-9 target margin 1135x.
+Thus D48 epsilon_X is overwhelmingly validated wrapping.
+
+However, the original R1 affine drive has a deterministic center floor:
+rigorous D48 center-only source sensitivity is ~46.45x D14 ODE, and the
+D50 sub16 sampled affine curvature is still ~4.15x. Therefore a perfect H1
+integrator certificate alone would not close the frozen affine bath.
+
+NEXT: D52 compare the existing D16R1 cubic-Hermite physical-clock drive to
+D50 sub16 X10 and evaluate its source sensitivity plus D16R1 clock-only
+envelope. If Hermite removes the floor, certify that route rigorously.
