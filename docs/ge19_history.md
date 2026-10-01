@@ -5582,3 +5582,53 @@ bath source. Report the noncancelling source envelope against the frozen D14
 unsigned ODE/FD4 source scales; do not invent a post-hoc smallness threshold.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN until D49.
+
+
+---
+
+## D49 continuous GE05 residual/source envelope decision (2026-10-01)
+
+D49 completed the preregistered primary/C_star continuous frozen-bath
+z/v envelope, exact D15 residual inequality, and full noncancelling signed
++/- six-mode source propagation. Construction PASS classification:
+`GE19_D49_CSTAR_CONTINUOUS_GE05_RESIDUAL_SIGNED_SOURCE_ENVELOPE_PASS_ONSHELL_DECISION_OPEN`.
+
+Uploaded result SHA-256:
+JSON `4d74685f3b41e33c7a579d2a2b82af5fe496d5870dcf22a0f250953ed5a97f45`,
+NPZ `63d348642010476099ed491b957c9fac4235bf0ca08c0af7772535012caf074f`,
+log `e2449a86477250a0a459cd25b03c3058c9bab2bf0f7377eba7f0364d0df4a3d8`.
+
+The envelope is NOT negligible on the already-frozen D14 physical source
+scale, so GE05 on-shell cannot be promoted from D49. For Nq2048,
+W_total unsigned L2 upper is `15.5869874145`, about
+`5.4478e12` times the frozen D14 ODE unsigned L2 scale and
+`1.5735e14` times the frozen D14 FD4 unsigned L2 scale. Nq1024 gives
+`3.89869201357` with ratios `1.3626e12` and `3.9049e13`.
+
+Two distinct effects are visible and must not be conflated:
+1. The H-clock piece is infrared-nonuniform under the D49 energy majorant.
+   Its W_H L2 changes by factor `3.99805` between Nq1024 and Nq2048,
+   matching the low-r quadrature scaling. This is a certificate-looseness
+   issue, not evidence of a physical divergence.
+2. The X-driver piece is quadrature-stable:
+   W_X L2 is `6.94932926e-5` (2048) and `6.94932921e-5` (1024),
+   ratio `1.00000000746`. Yet W_X alone is already about
+   `2.4289e7` times the frozen D14 ODE unsigned scale and about
+   `7.0e8` times the D14 FD4 unsigned scale. Therefore fixing only the
+   low-r H majorant cannot close GE05.
+
+The immediate blocker is the current rigorous continuous X10 error parent:
+D48r2r2r1 epsilon_X is mathematically valid but much too loose for the tiny
+second-order GE05 source scale. Do not spend the next run only tightening
+the bath-v infrared bound.
+
+**NEXT D50:** run a source-locked high-resolution original-action H1/X10
+numerical convergence diagnostic on primary/C_star using Radau substeps
+4,8,16 for all six modes. Reproduce the archived D17 sub4 solution exactly,
+then measure X10 sub4-vs-sub8 and sub8-vs-sub16 differences and observed
+order. This is diagnostic only, not a new certificate. Its purpose is to
+decide if the large D48 epsilon_X is wrapping/conservatism (then build a
+targeted adjoint/functional X10 certificate) or reflects a genuinely large
+integration uncertainty.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
