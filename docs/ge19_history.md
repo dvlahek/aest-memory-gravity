@@ -5460,3 +5460,41 @@ launch a continuous GE05 on-shell certification before this corrected bridge
 is frozen.
 
 GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
+
+
+---
+
+## D48r1 sampled D15 center-displacement correction (2026-10-01)
+
+D48r1 corrected the D48 sampled D15 bridge by adding the deterministic
+D17-collocation-center minus original-R1-affine center displacement at the
+already-frozen theta={0,1/2,1} samples.
+
+The run passed with classification
+`GE19_D48R1_CSTAR_SAMPLED_D15_CENTER_CORRECTED_BRIDGE_PASS_GE05_ONSHELL_OPEN`.
+Uploaded result SHA-256:
+JSON `e7b4c6579a84225c3ebb49be738f81f889d323f42fabed7a11fb238a5fd89537`,
+NPZ `0413553dc4dcfe34eeb2747cd5f65a5e4e0002bbf7aef631b32b272feb0af90e`,
+log `7209a2b9822beb9ea88c9e40d1ae44884cfe9a9b38219515115fdc7845f8a251`.
+
+The missing center term is numerically negligible. The largest sampled
+center displacement occurs for m=20 at theta=1/2 and is
+`8.313899903915263e-9`. The corrected m20 epsilon_X maximum at theta=1/2
+is `0.04030460034822011`.
+
+For Nq2048 the corrected sampled drive L2 values are
+`8.858717147305045e-7`, `9.030010941695075e-7`,
+and `9.204007942358936e-7` at theta=0,1/2,1. The maximum correction
+factor relative to the provisional D48 bridge is only
+`1.000000161611577`. Thus the D48 sampled numerical conclusion is stable,
+but D48r1 remains a sampled bridge only.
+
+**NEXT D48r2:** bound the D17-collocation versus original-R1-affine X10
+center displacement continuously over every original interval, and in the
+same original-action interval pass construct rigorous
+`epsilon_H = |H_true-sqrt(H_i H_{i+1})|` envelopes. Combine the continuous
+center bound with D48's true-minus-D17-polynomial envelope to obtain the
+continuous D15 `epsilon_X` parent required by the exact GE05 defect
+identity.
+
+GE05 bath on shell, full H4 Ward, Z21 and lensing remain OPEN.
