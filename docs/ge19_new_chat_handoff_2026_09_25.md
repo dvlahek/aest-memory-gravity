@@ -954,3 +954,20 @@ NEXT: D50 source-locked primary/C_star X10 convergence diagnostic at Radau
 substeps 4,8,16. If actual X10 differences are tiny, replace the loose
 forward L1-based epsilon_X with a targeted rigorous functional/adjoint
 certificate. Do not spend the next campaign only on the H low-r envelope.
+
+
+---
+
+## CURRENT D50r1 update (2026-10-01)
+
+D50r1 strongly identifies D48 epsilon_X as validated wrapping/conservatism.
+Sub8-vs-sub16 X10 Linf is 1.1e-14--1.5e-12 while D48 epsilon_X is
+4.8e-5--4.0e-2, a gap of 4.3e9--2.7e10. Sub4 replay is exact.
+
+Important: the JSON raw-L2 observed order ~2.5025 is a grid-size artifact.
+Linf/RMS order is ~3.001 for all modes.
+
+NEXT: D51 dual-weighted-residual/adjoint feasibility diagnostic retaining
+local defect-vector correlations. If the absolute scalar functional sum is
+still far below ~1e-9, implement the rigorous interval-adjoint X10
+certificate.
