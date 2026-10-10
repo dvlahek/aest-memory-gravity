@@ -1,0 +1,107 @@
+{
+  "Z21_execution_licensed": false,
+  "already_closed_before_this_stage": {
+    "GE05_first_order_bath_onshell_D55": true,
+    "canonical_operator_formula": true,
+    "continuous_X10_D55": true,
+    "continuum_GE05_bath_quadrature_D55": true,
+    "corrected_six_source_H4F3B": true,
+    "exact_background_E00_F21_elimination_D12R2": true,
+    "formal_mixed_Ward_identity": true,
+    "lossless_known_nonbath_parent_boundary_archive": true
+  },
+  "classification": "GE19_H4F3D12R3_PREDATA_FULL_WARD_NUMERICAL_BUDGET_PRELOCK",
+  "forbidden_before_budget_completion": [
+    "Do not evaluate the integrated full H4 Ward residual.",
+    "Do not inspect the registered hotspot full-Ward defect.",
+    "Do not infer a tolerance from Nt128/Nt64 observed Ward cancellation.",
+    "Do not fit B_total to source, operator, parent or total Ward defects.",
+    "Do not change the original 1e-6 H4 science gate.",
+    "Do not solve Z21.",
+    "Do not open lensing or other observations for theory tuning."
+  ],
+  "frozen_artifacts": {
+    "D10R1_json": {
+      "path": "results/ge19_h4f3d10r1_lossless_fourier_known_boundary.json",
+      "sha256": "69eabf101a6ec1939b32323e25b207dc419fad57eb5b2cef0858874a50cfa1d2"
+    },
+    "D10R1_npz": {
+      "path": "results/ge19_h4f3d10r1_lossless_fourier_known_boundary.npz",
+      "sha256": "85c0fbd8b56037aae98615926b70bd60739a1af2fa1ff666ffc2e95485c2749b"
+    },
+    "D12R2_json": {
+      "path": "results/ge19_h4f3d12r2_exact_background_onshell_elimination.json",
+      "sha256": "8a76edf7a9e8c21f1de49eb49f85332876cc230cf5e7c2d8ef136ca5e368b650"
+    },
+    "D1_json": {
+      "path": "results/ge19_h4f3d1_frozen_canonical_operator_ward.json",
+      "sha256": "8b19ff87ca51650f6c2396b0edce2abd50cef041608dc6abce4900c34deaa444"
+    },
+    "D4_json": {
+      "path": "results/ge19_h4f3d4_complete_eta_regularized_mixed_ward_ledger.json",
+      "sha256": "d6fd4f79910b552238756eb9015e6a7956a8fa0892cb2a46a9bd9e2e7c8d5694"
+    },
+    "D55CR11F_json": {
+      "path": "results/d47_offclock_first_interval/ge19_d55cr11f_continuum_bath_ge05_closure.json",
+      "sha256": "3b1165a0fd55d55eebf6409d2b37502ee3037eeb0b4246255d00da3fd4373c63"
+    },
+    "H4F3B_json": {
+      "path": "results/ge19_h4f3b_actual_corrected_six_piece_source.json",
+      "sha256": "1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1"
+    },
+    "H4F3B_npz": {
+      "path": "results/ge19_h4f3b_actual_corrected_six_piece_source.npz",
+      "sha256": "787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b"
+    }
+  },
+  "frozen_git_blobs": {
+    "D10R1_boundary": {
+      "blob": "d4f67adc2c9267cd3e4fd0e6dd1358c2c97a8545",
+      "path": "ge19/h4f3d10r1_lossless_known_parent_boundary_assembly.py"
+    },
+    "D12R2_background": {
+      "blob": "df5d0b384747edefaab2878e1a9fe6d174d2da29",
+      "path": "ge19/h4f3d12r2_exact_background_onshell_elimination.py"
+    },
+    "D12R2_prereg": {
+      "blob": "d34de3b2befe1820bcfc2619aadc508378d0f5f9",
+      "path": "ge19/h4f3d12r2_predata_exact_background_onshell_elimination.json"
+    },
+    "D1_operator": {
+      "blob": "60786ac14c9478801c5df9ccf458ead9a34ac827",
+      "path": "ge19/h4f3d1_frozen_canonical_operator_ward.py"
+    },
+    "D4_formal_ward": {
+      "blob": "87d8be9ec44ecb099feecbaf59a904bd989da2fb",
+      "path": "ge19/h4f3d4_complete_eta_regularized_mixed_ward_ledger.py"
+    },
+    "D9_compiler": {
+      "blob": "03864a08110e341038056dd4cefd5842d4a5eb1e",
+      "path": "ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py"
+    },
+    "D9_prereg": {
+      "blob": "98e6fd8835fdbe3bd169d062431eefe80a3e9232",
+      "path": "ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json"
+    },
+    "H4F3B_source": {
+      "blob": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+      "path": "ge19/h4f3b_actual_corrected_six_piece_source.py"
+    },
+    "full_H4_prereg": {
+      "blob": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51",
+      "path": "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json"
+    }
+  },
+  "full_Ward_execution_licensed": false,
+  "lensing_licensed": false,
+  "parent_HEAD": "5df18b434f3de4bd29b47a9488b4081e23f843f1",
+  "parent_branch": "physics-first-gravitational-elasticity",
+  "purpose": "Freeze the remaining source-independent numerical obligations required by the original H4F3D9 protocol before the first integrated actual W_operator+W_six_source+W_all_parent residual is evaluated. This stage must not read or construct that residual.",
+  "remaining_original_D9_obligations": {
+    "Y_zero_set_lower_regularity_modulus_for_FD8": "OPEN",
+    "nonbath_parent_and_lower_boundary_discretization_budget": "OPEN",
+    "operation_level_roundoff_propagation_bound": "OPEN",
+    "physical_operator_and_source_M5_M9_envelopes": "OPEN"
+  },
+  "success_route": "CERTIFY_D9_PHYSICAL_DERIVATIVE_Y_PARENT_AND_ROUNDOFF_ENVELOPES_THEN_FREEZE_B_TOTAL_THEN_RUN_ONE_FULL_WARD"
+}
