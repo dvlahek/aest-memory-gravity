@@ -1,0 +1,33 @@
+{
+  "classification": "GE19_H4F3D12R2_PREDATA_EXACT_BACKGROUND_ONSHELL_ELIMINATION",
+  "purpose": "Prove that every homogeneous background Euler factor multiplying an unknown mixed-H4 F21/L21/b21 state vanishes exactly under the frozen Repair13 reduced-action background equations, without solving for F21 and without using a numerical smallness threshold.",
+  "frozen_physics": [
+    "Repair13 exact reduced Friedmann background",
+    "frozen scalar charge conservation a^3 K_Q = const",
+    "frozen comoving dust conservation",
+    "constant Lambda",
+    "NL0C/Y background X0=0",
+    "GE05 q background q00=0 and Xphi00=0"
+  ],
+  "required_exact_identities": [
+    "E_N00 = 0",
+    "E_L00 = 0",
+    "E_R00 = 0",
+    "E_phi00 = 0",
+    "E_T00 = 0",
+    "E_b00 = 0",
+    "E_u00 = 0",
+    "E_rho00 = 0",
+    "E_qj00 = 0 for every regular GE05 bath node",
+    "sum_i E_i00 dchi(F_i21) = 0 for arbitrary F21",
+    "L21 E_L00 - b21 E_b00 = 0 for arbitrary L21,b21"
+  ],
+  "forbidden": [
+    "Do not set F21, L21 or b21 to zero.",
+    "Do not use observed H4 Ward residuals to define a tolerance.",
+    "Do not change any source coefficient, threshold, action normalization or parent.",
+    "Do not reinterpret historical D10, D22A, Repair37 or other failures.",
+    "Do not claim full H4 Ward, Z21 or lensing from this stage."
+  ],
+  "success_route": "ONE_ACTUAL_COMMON_GRID_OPERATOR_SIX_SOURCE_ALL_PARENT_WARD_TEST_WITH_BACKGROUND_F21_TERMS_ANALYTICALLY_ELIMINATED"
+}
