@@ -5,3 +5,13 @@ results_bundle_*.zip
 class
 __pycache__/
 *.pyc
+
+# Local Python/runtime state
+.venv/
+.local/
+
+# Windows alternate-data-stream metadata copied into WSL
+*:Zone.Identifier
+
+# Local recovery/archive area kept outside versioned science provenance
+local_archive/
