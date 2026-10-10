@@ -10,6 +10,7 @@ For the current scientific state, resume from:
 
 - `docs/CURRENT_GE19_STATUS.md`
 - `docs/ge19_history_2026-10-10.md`
+- `docs/ge19_h4f3d12r2_exact_background_onshell_elimination_result_freeze.md`
 - older persistent chronology: `docs/ge19_history.md`
 
 Historical classifications are immutable. A later repair never relabels an earlier FAIL.
@@ -31,7 +32,9 @@ H3G corrected-Y q20 PASS
         ↓
 H4F3B corrected six genuine H4 sources PASS
         ↓
-H4F3D operator + all-parent Ward closure
+D12R2 exact background on-shell elimination PASS
+        ↓
+integrated full actual H4 Ward test
         ↓
 final Z21 science solve
         ↓
@@ -43,16 +46,16 @@ Current certified corrected parents:
 - `GE19_H3F_CORRECTED_Y_H3_Z20_CERTIFIED`
 - `GE19_H3G_CORRECTED_Y_Q20_RECONSTRUCTION_PASS`
 - `GE19_H4F3B_ACTUAL_CORRECTED_SIX_SOURCE_PASS_FULL_WARD_OPEN`
+- `GE19_H4F3D12R2_EXACT_BACKGROUND_ONSHELL_ELIMINATION_PASS_F21_INDEPENDENT`
 
 The full H4 Ward/Noether identity is **not yet certified** and Z21/lensing are still blocked.
 
 ## Immediate remaining gates
 
-Only three substantive gates remain on the active route:
+Only two substantive gates remain on the active route:
 
-1. exact background on-shell elimination of the unknown-state factors `E00*dchi(F21)` and `L21*E_L00-b21*E_b00` without assigning or solving `F21/L21/b21`;
-2. one integrated actual common-grid H4 source + linear-operator + all-parent + boundary Ward test;
-3. if that Ward test PASSes, one final action-completed Z21 solve using the unchanged original gate
+1. one integrated actual common-grid H4 source + linear-operator + all-parent + boundary Ward test using the corrected H4F3B source arrays and exact D12R2 background elimination;
+2. if that Ward test PASSes, one final action-completed Z21 solve using the unchanged original gate
    `H4_active_shift_Nt128_Linf <= 1e-6`.
 
 Lensing becomes the next natural observable only after the final Z21 gate passes.
