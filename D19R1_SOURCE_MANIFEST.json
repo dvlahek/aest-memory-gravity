@@ -1,0 +1,27 @@
+{
+  "classification": "GE19_D19R1_ORIGINAL_ACTION_EXTENDED_BATH_SOURCE_FROZEN_ACTUAL_LOCAL_RUN_OPEN",
+  "files": {
+    "README_D19R1.md": "f3842994eb66502c69b9ea790b31afbfb5bb91e976721c725ba5abcb23b0932d",
+    "docs/ge19_h4f3d19r1_extended_numerical_bath_freeze.md": "735d7988a7adc370f85b25be3fdad1f1bdac1664e58a56dfe9ee7da9d3c35aad",
+    "ge19/h4f3d19r1_actual_source_action_bath_numerical_reclosure.py": "247e8e5b571ca53c082aa806fb3bb83e3ccc9e4f09b3496e3982e28684d35128",
+    "ge19/h4f3d19r1_physical_bath_numerical_core.py": "1b3f550bb11fcfec9eab0b6f45f9723627498dc14aeed413d2b4422036e24889",
+    "ge19/h4f3d19r1_predata_numerical_reclosure.json": "041475e4bfb5ef9d4e9856995077ae25797b17d0bde86a56763c35d7cb83d7a5",
+    "ge19/h4f3d19r1_static_numerical_reclosure_test.py": "afe85f8bd4dda39f943b027f9c9f7020a14a3e7118112f585cd2c103f315f086",
+    "ge19/run_local_h4f3d19r1_source_action_physical_bath_numerical_reclosure.sh": "b44bfa8626df1dc2023031205685e3785ca05dee94f85c297ee24413d3b52177"
+  },
+  "generated": "2026-09-26",
+  "numerical_extended_original_substeps": [
+    64,
+    128,
+    256
+  ],
+  "original_D19_ZIP_sha256": "9ba91d747fa8e771bfaf318b7fc72bc8d6ef16bc3c976a0c4321814233d20fde",
+  "original_numerical_gates_unchanged": {
+    "full_node_v_relative": 0.0005,
+    "full_node_z_relative": 3e-05,
+    "high_phase_v_relative": 0.002,
+    "sampled_GE05_relative_residual": 0.001,
+    "weighted_v_relative": 0.0005,
+    "weighted_z_relative": 3e-05
+  }
+}

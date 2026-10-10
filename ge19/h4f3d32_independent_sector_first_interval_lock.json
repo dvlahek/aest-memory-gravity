@@ -1,0 +1,10 @@
+{
+  "D31R1_and_all_historical_science_failures_immutable": true,
+  "classification": "GE19_D32_SOURCE_PREREG_STATIC_RUNNER_SHA256_LOCK",
+  "sha256_local_files": {
+    "ge19/h4f3d32_independent_sector_first_interval.py": "35b5f19803cd69b732a2f2ed0d07beb77e9de1ccad1295a5f97039eaa39cc00e",
+    "ge19/h4f3d32_independent_sector_first_interval_prereg.json": "e279c43eb7ed5b9983ab70e4a52ad15a138e590bb83ca5b4bf0a3811f5eebfac",
+    "ge19/h4f3d32_independent_sector_first_interval_static_test.py": "5402d7d93eb33346072d82b590b5d783cfe2c2c740458f12a992822b8c64f9a8",
+    "ge19/run_local_h4f3d32_independent_sector_first_interval.sh": "be541ad910a9bd59f88564c857b22cf0360457edbc9e6630c4c3c2591aafd1f7"
+  }
+}

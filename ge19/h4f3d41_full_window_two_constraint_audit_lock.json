@@ -1,0 +1,8 @@
+{
+  "sha256_local_files": {
+    "ge19/h4f3d41_full_window_two_constraint_audit.py": "553b72d3f308236972e2bca3268f4604696ec2ca8188a98c9b366fec45dc02bc",
+    "ge19/h4f3d41_full_window_two_constraint_audit_prereg.json": "40fa78ab36fc76fb4dce0d55390bea62d0ab7e38f015a818e8a1beb64c4f56c8",
+    "ge19/h4f3d41_full_window_two_constraint_audit_static_test.py": "9528325f9fd7dda04516fae8e9d11df0cdff2df24616f071104f9b8158b52b83",
+    "ge19/run_local_h4f3d41_full_window_two_constraint_audit.sh": "21c077490be4c1d78d80469783e268cb201f7b938a6d5db7ffa666541a3a6893"
+  }
+}

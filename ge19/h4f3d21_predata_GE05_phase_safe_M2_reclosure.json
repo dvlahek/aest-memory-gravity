@@ -1,0 +1,73 @@
+{
+  "Repair26_R1_trace_SHA256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+  "classification": "GE19_H4F3D21_PREDATA_EXACT_GE05_M2_PT_TIME_DERIVATIVE_REPLACEMENT",
+  "cohort": "C_star,Nt128,Nq2048 original positive m=3,5,8,10,15,20; Fourier output m=0..40",
+  "date": "2026-09-27",
+  "exact_GE05_c2_pt": "a^3*w*u10*(z10-X10) for normalized z10 and original GE05 eps-second directional coefficient",
+  "exact_physical_time_derivative": "a^3*w*[(3H*u10+u10_t)*(z10-X10)+u10*(v10/tau-H*X10_x)]",
+  "locked_parent_classifications": {
+    "D19": "GE19_H4F3D19R1_CSTAR_NUMERICAL_BATH_TOLERANCE_PASS_D17_H1_AND_FULL_H4_OPEN",
+    "D20": "GE19_D20R1_D17_D19R1_FIVE_SOURCE_DEPENDENCY_DIAGNOSTIC_PASS_FULL_H4_OPEN"
+  },
+  "max_original_GE05_pt_current_identity_relative": 1e-10,
+  "no_observational_tuning": true,
+  "no_promotions": [
+    "No all-interval GE05 on-shell or H1 error certificate",
+    "No new physical q20/M1 and Z11 reclosure",
+    "No coherent full six-piece H4 or full Ward",
+    "No Z21 solve or lensing"
+  ],
+  "node_chunk": 8,
+  "original_Repair37_SCIENCE_FAIL_immutable": true,
+  "original_git_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/h4_stagee_versioned_y_source_rows.py": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "ge19/h4f2g_action_completed_six_piece_source_ledger.py": "d9778da0bb6cc52a15015238810c79978527ffc5",
+    "ge19/h4f2h_physical_time_source_ward_bridge.py": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "ge19/h4f3b_actual_corrected_six_piece_source.py": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+    "ge19/h4f3d6_actual_normalized_bath_parent_ward.py": "0419145499f5f44e06ba0c96f779c2a604e84ce7",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py": "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+  },
+  "outcome_gate": "Only structural original GE05 c2[pt] identity, frozen parents, complete Nq2048, exact sign/row support, finite outputs and linearity of explicitly mixed parent ledger are gated. Correction magnitude is reported, not preaccepted or tuned.",
+  "output_nonoverwrite": true,
+  "parent_results_sha256": {
+    "D17_JSON": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.json",
+      "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294"
+    ],
+    "D17_NPZ": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
+      "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"
+    ],
+    "D19_JSON": [
+      "ge19_h4f3d19r1_actual_Cstar_Nt128_Nq2048_numerical_reclosure.json",
+      "56027906e54bae8430203b796ab31182ae3ed743639714857bf6a6af38ec73de"
+    ],
+    "D19_NPZ": [
+      "ge19_h4f3d19r1_actual_Cstar_Nt128_Nq2048_numerical_reclosure.npz",
+      "31a03042d467732d1463312c4a850c349c88411a0048a03d655caa16fc7dca86"
+    ],
+    "D20_JSON": [
+      "ge19_h4f3d20r1_actual_Cstar_five_sources_GE05_ward_subset.json",
+      "89b3da03257916f1d522574b6ab1747a7ed96892ec88d6c387624115fabdf6f9"
+    ],
+    "D20_NPZ": [
+      "ge19_h4f3d20r1_actual_Cstar_five_sources_GE05_ward_subset.npz",
+      "1b44036ab9362015bf6e0b8faa1af78f58c050edc308a592eb787f7b26f309dc"
+    ]
+  },
+  "required_existing_local_sources": {
+    "ge19/h4f3d19r1_physical_bath_numerical_core.py": "1b3f550bb11fcfec9eab0b6f45f9723627498dc14aeed413d2b4422036e24889",
+    "ge19/h4f3d20r1_recompute_five_sources_and_bath_ward.py": "6dcaae0648dda370f8c84483b60594556c8e38dd8d7f162ed57dca0dcc1b7e41"
+  },
+  "scientific_problem": "D20R1 original-knot GE05 bath FD4 Euler relative ~0.999 is non-phase-resolved, while D19R1 physical-step sampled residual ~1.96e-4. Frozen GE05 M2 scalar current used that same FD4 temporal derivative. Use the exact original action quadratic pt current identity and physical-time chain rule with D17 action X_x and D19R1 z_t=v/tau. No action/threshold tuning.",
+  "source_row_patch": "Original raw GE05 scalar=-dt pt-dx px. Original GE06-mapped H4 contribution=-2 raw, hence delta(M2 mapped scalar row)=+2*(dt_pt_chain_rule-dt_pt_original_FD4). Only source row 3 changes. Original source-only Ward uses rows 6,1,7 and its delta is structurally exactly zero, not full Ward.",
+  "source_sha256": {
+    "ge19/h4f3d21_GE05_phase_safe_M2_core.py": "8aefd593af4a54a0134551d962c7a4aa59f7c9ca553805f601cebef40ef1fab7",
+    "ge19/h4f3d21_actual_GE05_phase_safe_M2_reclosure.py": "a31f7ef8c9f02c047dcaabaf96576205c79c5a18919f768b549a52549626cdef",
+    "ge19/h4f3d21_static_GE05_phase_safe_M2_test.py": "31166de5254b6df7df39d85869cc487bf790d512de53f02be4dc4fa60983a55a",
+    "ge19/h4f3d21_static_source_contract_test.py": "9ac4119d0d1f138cbc3d537779aca2e1d96021a3fc2c8e0e5735243fa5e7a1a7"
+  }
+}

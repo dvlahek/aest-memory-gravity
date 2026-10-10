@@ -1,0 +1,34 @@
+{
+  "classification": "GE19_H4F3D17_SOURCE_ACTION_DENSE_H1_SOURCE_MANIFEST",
+  "date": "2026-09-26",
+  "files": {
+    "README.md": {
+      "bytes": 903,
+      "sha256": "9cce5d77e6a32b357b128b8474a8281d754f058afcfd32d11a6c74a4645db725"
+    },
+    "docs/ge19_h4f3d17_source_action_canonical_H1_predata_freeze.md": {
+      "bytes": 2342,
+      "sha256": "f3a9cadc4b78fba29ea9348c3422da093a0c073b5ba8d5703a8c7e81c79d18db"
+    },
+    "ge19/h4f3d17_actual_original_action_dense_canonical_H1.py": {
+      "bytes": 15067,
+      "sha256": "3fdce421b04e34f3f4d5342960a0375a1ac21412b5dd7c104256c2d5bb580227"
+    },
+    "ge19/h4f3d17_original_action_dense_H1_core.py": {
+      "bytes": 6095,
+      "sha256": "5dc876539c08146d0bf204e5cbaf4b8e824d335f4458093c975453a3365608b2"
+    },
+    "ge19/h4f3d17_predata_original_action_dense_canonical_H1.json": {
+      "bytes": 4142,
+      "sha256": "44661484ab84c84a6413e80a9adba0e2448d29e74866bb13bac102b585fe9358"
+    },
+    "ge19/h4f3d17_static_canonical_source_test.py": {
+      "bytes": 2266,
+      "sha256": "9c138ebec9edea776b66c76bfd249c5e284be1a1d50c48f8fa4a286448f66711"
+    },
+    "ge19/run_local_h4f3d17_original_action_dense_canonical_H1.sh": {
+      "bytes": 4143,
+      "sha256": "4564f27830da30823e21b7db58708aa59193040b9aea735cd87a008b689ed9ab"
+    }
+  }
+}

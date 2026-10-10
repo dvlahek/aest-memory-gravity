@@ -1,0 +1,12 @@
+{
+  "classification": "GE19_D26_PREDATA_FROZEN_D25R1_SIGNED_SHIFT_SOURCE_TRANSPORT",
+  "target": "First-interval signed shift transport for m=14 beta=0.1 and m=1 beta=1; m=40 beta=0.1 negative control; exact endpoint product ledger and initial gprime using the original action and original frozen PCHIP source.",
+  "frozen_D25R1_outputs": {
+    "D25R1_JSON": {"filename": "ge19_h4f3d25r1_first_interval_shift_substep_decision.json", "sha256": "e7461d7c1ef6830e10adcda0604697b2a4952e95302f26478416bd6f0146e7b1"},
+    "D25R1_NPZ": {"filename": "ge19_h4f3d25r1_first_interval_shift_substep_decision.npz", "sha256": "109f8c090b048beb9ccb92d50726947f2813417b385ef6e9f9b85e79687b6774"}
+  },
+  "frozen_parents": "All parent SHA checks and original-action locks are inherited unaltered from D25R1.",
+  "mode_beta": [[14,0.1],[1,1.0],[40,0.1]],
+  "operator_derivative_one_sided_epsilon_over_first_interval": [0.0625,0.03125,0.015625],
+  "constraints": ["Original action/physical clock and original frozen H3F sources only", "PCHIP source derivative matches Repair07 frozen interpolation exactly", "Signed -shift RHS retained", "No physical threshold adjusted; derivative comparisons report-only", "D22A FAIL and D25 r0 replay FAIL immutable", "No Z11/Z20/q20/H4/Z21/lensing certification or observations"]
+}

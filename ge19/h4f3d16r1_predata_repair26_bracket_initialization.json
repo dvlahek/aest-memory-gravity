@@ -1,0 +1,16 @@
+{
+  "claim_boundary": "Implementation-order repair only, no physical result until actual D16R1 local run. Original continuous X10/H1 uncertainty, GE05 all-interval on-shell, external boundary, H4 Ward, Z21, lensing all open; no observation tuning.",
+  "classification": "GE19_H4F3D16R1_PREDATA_REPAIR26_BRACKET_INITIALIZATION_ORDER_ONLY",
+  "date": "2026-09-26",
+  "frozen_original_D16_core_SHA256": "43f16e8d503d8e58313dd524bf7fa17dc1c5e4aca538c86bb41a0b6973ad3276",
+  "frozen_original_D16_predata_SHA256": "60307c4abfba8a476b966b5148132c694daf3806170d28445d5c98ed90170280",
+  "frozen_original_D16_source_SHA256": "59b0744421f93209ece1e4062bb56d2b6612f6c3aef303af21cd859dd1acfa31",
+  "original_D13_D14_D15a_SHA_checks": "Unchanged original D16 code and runner parent checks; original D16 failure retained under its original log path.",
+  "original_D16_failure": "GE19_H4F3D16_IMPLEMENTATION_OR_ORIGINAL_SOURCE_FAIL",
+  "original_Repair26_trace_SHA256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+  "output_nonoverwrite": "D16R1 distinct JSON NPZ FULL and runner log names; never overwrite failed original D16 FULL log or existing original outputs.",
+  "precise_cause": "Original Repair24 full_history_boundary uses historical v0.77 TRACE_LO_A=0.3799548579266745, TRACE_HI_A=0.41924557250685585 until original Repair37.build_context installs the frozen Repair27 Repair26 brackets. D16 invoked full_history_boundary before build_context; D13 and D15a invoke it after.",
+  "repair": "Move original D16 full_history_boundary call inside original Repair13 NPZ context, directly after d15.d13.old.build_context; assert original r24 frozen bracket equals original r27 Repair26 bracket before extraction. Do not change original Repair24, Repair27, Repair37, trace, initial data, timestep, model, solver or science gates.",
+  "reported_exception": "unexpected frozen a=0.4 bracket: 0.39953919419256334, 0.4000388311146992",
+  "source_bracket_provenance": "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py build_context: r24.TRACE_LO_A=r27.REPAIR26_TRACE_LO_A and corresponding HI; original frozen Repair27 constants 0.39953919419256334 and 0.4000388311146992."
+}

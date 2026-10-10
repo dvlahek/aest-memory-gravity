@@ -1,0 +1,54 @@
+{
+  "D35_m26_representation_not_bitwise_Repair18": true,
+  "all_full_41_mode_sources_retained": true,
+  "betas": [
+    1.0,
+    0.5,
+    0.1
+  ],
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D42_PREEXEC_LAPSE_TWO_SECTOR_INDEPENDENT_SUBSTEP_CONVERGENCE",
+  "clock_nodes": 128,
+  "diagnostic_nodes": [
+    1,
+    115
+  ],
+  "frozen_D41_code_sha256": {
+    "ge19/h4f3d41_full_window_two_constraint_audit.py": "553b72d3f308236972e2bca3268f4604696ec2ca8188a98c9b366fec45dc02bc",
+    "ge19/h4f3d41_full_window_two_constraint_audit_lock.json": "9c856dd0ac0ecae899c8098915705a0ea7b88fa5317277b8ec2c5ab603538ea7",
+    "ge19/h4f3d41_full_window_two_constraint_audit_prereg.json": "40fa78ab36fc76fb4dce0d55390bea62d0ab7e38f015a818e8a1beb64c4f56c8",
+    "ge19/h4f3d41_full_window_two_constraint_audit_static_test.py": "9528325f9fd7dda04516fae8e9d11df0cdff2df24616f071104f9b8158b52b83",
+    "ge19/run_local_h4f3d41_full_window_two_constraint_audit.sh": "21c077490be4c1d78d80469783e268cb201f7b938a6d5db7ffa666541a3a6893"
+  },
+  "frozen_D41_results_sha256": {
+    "ge19_h4f3d41_full_window_two_constraint_audit.json": "09d01c035876b8b70ae70975c3056d85c2a84a96212050d35a4e057be6a7a1da",
+    "ge19_h4f3d41_full_window_two_constraint_audit.npz": "17a64a7f0329a362d73f16705a547027c3743d2f146cbaa70ce65dd8bf95f82c"
+  },
+  "frozen_substeps": [
+    1,
+    8
+  ],
+  "independent_x0_start_for_each_new_n": true,
+  "lapse_fail_is_report_only": true,
+  "lapse_reference_report_only": 1e-06,
+  "modes": [
+    1,
+    6,
+    14,
+    26,
+    40
+  ],
+  "new_endpoint_expected": 5715,
+  "new_substeps": [
+    2,
+    4,
+    16
+  ],
+  "no_action_or_threshold_changes": true,
+  "no_new_projection": true,
+  "no_observation_tuning": true,
+  "no_parent_certification": true,
+  "original_D22A_D34_D34R1_FAIL_immutable": true,
+  "original_shift_gate": 1e-06,
+  "stop_on_original_shift_gate_failure": true
+}

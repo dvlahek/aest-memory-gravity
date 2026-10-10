@@ -1,0 +1,17 @@
+{
+  "actual_WSL_run_performed": false,
+  "claims": {
+    "H4_Z21_lensing_certified": false,
+    "new_q20_computed": false
+  },
+  "classification": "GE19_D22A_ARCHIVE_PREEXECUTION_MANIFEST",
+  "files": {
+    "README_D22A.md": "9849ef508b468b8e1eebcab89d04182ca1ef35cb995982193e350a4999e90039",
+    "docs/ge19_h4f3d22a_predata_original_action_parent_reclosure_freeze.md": "51eaf4ba68a0b1e8e6df2716588975cff035aec8da64983da48918a8128a22aa",
+    "ge19/h4f3d22a_action_parent_reclosure.py": "ca3bd645bb3bf9f5755a55f1168501de57f93c8e39aa8da8f50e78c9a75f23f2",
+    "ge19/h4f3d22a_predata_original_action_parent_reclosure.json": "f54e51abd032bc226aa969dcf2d4c54b91af2d114fd7e77162f98b58f1a0efd3",
+    "ge19/h4f3d22a_static_parent_contract_test.py": "7b8fafe014b5c5b77c163236a6a3ee33ffe12645c435b72024cbb4a961abbbb0",
+    "ge19/run_local_h4f3d22a_action_parent_reclosure.sh": "8f1084ca3e5cc1777bb71830ac67ba2922e990f18c3b452f3fe2cd8028612369"
+  },
+  "parent_SHA_8_verified_in_current_artifact_build": true
+}

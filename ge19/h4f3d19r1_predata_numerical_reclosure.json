@@ -1,0 +1,74 @@
+{
+  "GE05_residual": "At fixed x=.4 and .6 of each original H3F interval, reconstruct frozen substep trajectory and original action H(x), D17 fine-Hermite X(x); sample dimensionless Rs=3(tau H-heff)v +r^2(Xlin-X_D17). Signed +/- +4 W with original exact Fourier dictionary; not full H4 Ward.",
+  "Repair26_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+  "actual_parent_results": {
+    "D15A_NPZ": [
+      "ge19_h4f3d15a_actual_original_R1_clock_conditional.npz",
+      "f7f9c94a341ec514d7d97ade297097b29102754231746531cde4485b61b2273c"
+    ],
+    "D16R1_JSON": [
+      "ge19_h4f3d16r1_actual_original_H1dot_Hermite_physical_bath.json",
+      "4843901cf7b03e6a2657a55f1918d04641c4d84fde1b6d60f847b079b615d352"
+    ],
+    "D16R1_NPZ": [
+      "ge19_h4f3d16r1_actual_original_H1dot_Hermite_physical_bath.npz",
+      "915709b21bae65c53f9521325a3920d4e0320b650e43458cad03109733d27a36"
+    ],
+    "D17_JSON": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.json",
+      "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294"
+    ],
+    "D17_NPZ": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
+      "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"
+    ]
+  },
+  "bath_step": "Original frozen Repair24 step_linear_nd constant h/affine drive per physical-clock substep, with v continuous and no R1 impulse",
+  "classification": "GE19_H4F3D19R1_PREDATA_EXTENDED_ORIGINAL_ACTION_NUMERICAL_BATH_RECLOSURE",
+  "cohort": "C_star primary Nt128 Nq2048 exactly, no 3C/2Nt scope claim",
+  "date": "2026-09-26",
+  "do_not_claim": "No continuum H1 error bound, no unobserved all-interval GE05 residual, no q20/H3G reclosure, no original full H4 Ward, no certified Z21/lensing, no observational tuning; Repair37 SCIENCE_FAIL immutable.",
+  "extension_scope": "New version preserves all original D19 numerical thresholds; original D19 16/32/64-substep source is not modified; D19R1 runs 64/128/256 steps per original H3F interval and compares 128 vs 256.",
+  "frozen_numerical_gates": {
+    "full_node_v_relative": 0.0005,
+    "full_node_z_relative": 3e-05,
+    "high_phase_v_relative": 0.002,
+    "sampled_GE05_relative_residual": 0.001,
+    "weighted_v_relative": 0.0005,
+    "weighted_z_relative": 3e-05
+  },
+  "frozen_numerical_gates_original_D19_unchanged": {
+    "full_node_v_relative": 0.0005,
+    "full_node_z_relative": 3e-05,
+    "high_phase_v_relative": 0.002,
+    "sampled_GE05_relative_residual": 0.001,
+    "weighted_v_relative": 0.0005,
+    "weighted_z_relative": 3e-05
+  },
+  "frozen_source_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/h3f_corrected_y_parent_core.py": "7e1da10ae8d79b6269b306f5483783de0fd3fd30",
+    "ge19/h3f_corrected_y_z20_science_reclosure.py": "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0",
+    "ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_archive_audit.json": "3f7acc17aee24c6b776578ef2b654a40b2db6af0",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair13_self_consistent_reduced_background_h1_reclosure.py": "362d63d03d7b850fceae393f535353ded79aeea7",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+  },
+  "gating_semantics": "Pass only for preregistered Cstar finite-tolerance sampled numerical test; if any gate fails numerical tolerance NOT_CLOSED; no retry/tolerance change under same version.",
+  "high_phase": "Use physical-action original Gauss16 interval ds, mask r*ds >= pi, do not drop high phase or reweight node statistics",
+  "independent_pilot_boundary": "An independent accelerated implementation with exactly matched local source step on an 8-interval spot test observed GE05 sampled relative residual ~0.000196 at 256 steps; it is NOT the source-locked D19R1 real local run.",
+  "non_overwrite": true,
+  "physical_clock": "Original D15a action H(x); Gauss-Legendre16 ds per substep, compare sum vs frozen D15a Gauss16 over original intervals",
+  "predata_parent_original_D19_ZIP_sha256": "9ba91d747fa8e771bfaf318b7fc72bc8d6ef16bc3c976a0c4321814233d20fde",
+  "scientific_problem": "Original D19 standalone replication bug fixed by restoring damping exponentials; extend exact frozen Repair24 source-action D17 physical-clock bath propagation until sampled GE05 residual and original pre-registered numerical gates close, without altering theory/parents.",
+  "source_sha256": {
+    "ge19/h4f3d19r1_actual_source_action_bath_numerical_reclosure.py": "247e8e5b571ca53c082aa806fb3bb83e3ccc9e4f09b3496e3982e28684d35128",
+    "ge19/h4f3d19r1_physical_bath_numerical_core.py": "1b3f550bb11fcfec9eab0b6f45f9723627498dc14aeed413d2b4422036e24889",
+    "ge19/h4f3d19r1_static_numerical_reclosure_test.py": "afe85f8bd4dda39f943b027f9c9f7020a14a3e7118112f585cd2c103f315f086"
+  },
+  "substeps_per_D17_fine_interval": [
+    16,
+    32,
+    64
+  ]
+}

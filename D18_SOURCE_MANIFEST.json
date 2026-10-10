@@ -1,0 +1,38 @@
+{
+  "D17_JSON_sha256": "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294",
+  "D17_NPZ_sha256": "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359",
+  "classification": "GE19_H4F3D18_SOURCE_ACTION_AFFINE_BERNSTEIN_CONDITIONAL_PACKAGE_MANIFEST",
+  "contents": {
+    "README_D18.md": {
+      "bytes": 1500,
+      "sha256": "6e4669a03ab04c996fd387d195144cfd2eb5bafe48909aa64bbafa1063644954"
+    },
+    "docs/ge19_h4f3d18_predata_conditional_Bernstein_H1_freeze.md": {
+      "bytes": 3824,
+      "sha256": "54ce0d52ae2d6b74efd304a717422b4ddd0c0bfc8889c170a9bea5af0d546db6"
+    },
+    "ge19/h4f3d18_actual_source_action_Bernstein_canonical_H1.py": {
+      "bytes": 13417,
+      "sha256": "60c4012e5223ce96c3df82587a200e26513023782e9b84e795022b913f149e93"
+    },
+    "ge19/h4f3d18_bernstein_affine_canonical_H1_core.py": {
+      "bytes": 5437,
+      "sha256": "f8a1757790cb2bee8e14b1bd4b4e04563ed0e5354782dfbe409c58db52f2d489"
+    },
+    "ge19/h4f3d18_predata_source_action_bernstein_canonical_H1.json": {
+      "bytes": 2104,
+      "sha256": "699fd676a3278e2af77c47cec2613aacd04a29aaedaf381f28a24663c8c10aba"
+    },
+    "ge19/h4f3d18_static_bernstein_test.py": {
+      "bytes": 2719,
+      "sha256": "87cf7b522fefa81de01cd9f6a2c1e287edc0abc05edc5f7a773ac167fd4a99dc"
+    },
+    "ge19/run_local_h4f3d18_source_action_Bernstein_conditional_H1.sh": {
+      "bytes": 3885,
+      "sha256": "653ff8e4df36388b8f56866f0cae90eb354c21ec33bc5cee46a33728284f196f"
+    }
+  },
+  "date": "2026-09-26",
+  "original_GE05_on_shell_certified": false,
+  "original_action_H1_enclosed": false
+}

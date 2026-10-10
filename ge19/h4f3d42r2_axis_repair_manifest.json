@@ -1,0 +1,23 @@
+{
+  "baseline_D42_source_sha256": "e590deb370849556d6419b145fc70218fd9fc6c621d0b691a6e5b05f8993a392",
+  "changed_statements_exactly_two": [
+    [
+      "lap[:,:,:,entry_for_sub(n)]=frozenlap[:,selected_indices,:,0 if n==1 else 1]",
+      "lap[:,:,:,entry_for_sub(n)]=np.take(frozenlap[:,:,:,0 if n==1 else 1],selected_indices,axis=1)"
+    ],
+    [
+      "shift[:,:,:,entry_for_sub(n)]=frozenshift[:,selected_indices,:,0 if n==1 else 1]",
+      "shift[:,:,:,entry_for_sub(n)]=np.take(frozenshift[:,:,:,0 if n==1 else 1],selected_indices,axis=1)"
+    ]
+  ],
+  "classification": "GE19_D42R2_TWO_FROZEN_AXIS_COPY_IMPLEMENTATION_REPAIR_STATIC_PACKAGE_PHYSICAL_OPEN",
+  "files_sha256": {
+    "ge19/h4f3d42r2_lapse_substep_convergence.py": "66a1e01a869eaaea8d1a4158b258f95f1480325ad59fd33d04ec58aef23b2654",
+    "ge19/run_local_h4f3d42r2_lapse_substep_convergence.sh": "ce86f6c2dcf1295b83f938eb9af0735c2021913fbe9b00b2835db3d21df8db38"
+  },
+  "frozen_D41_npz_sha256": "17a64a7f0329a362d73f16705a547027c3743d2f146cbaa70ce65dd8bf95f82c",
+  "previous_D42R1_full_log_failure": "ValueError: source (5,128,3), destination (128,5,3) frozen D41 lapse/shift advanced-indexing layout",
+  "previous_D42R1_source_sha256": "1c0637d23efc4d48d91a8dc494ea7c7feae9a621712be54b15901433d5b9c3ab",
+  "prior_D42_and_D42R1_failures_immutable": true,
+  "science_scope": "Original D42 prereg, original-action D41 parent, D22A original SCIENCE_FAIL, D34/R1 boundary FAIL and D35 m26 posthoc state preserved. Only frozen D41 n1/n8 diagnostic slice copy axes fixed. No source/operator/integrator/mode/beta/tolerance/threshold/clock changes. New n2/n4/n16 physical WSL run not performed in this package. No certified H3/H4/Z21/lensing."
+}

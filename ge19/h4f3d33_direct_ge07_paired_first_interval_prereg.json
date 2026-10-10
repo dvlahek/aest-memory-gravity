@@ -1,0 +1,35 @@
+{
+  "classification": "GE19_D33_PREEXEC_DIRECT_GE07_SIGNED_PAIR_AND_PAIRED_FIRST_INTERVAL",
+  "branch": "physics-first-gravitational-elasticity",
+  "D30_npz": "ge19_h4f3d30_direct_ge06_mode_pair_audit.npz",
+  "D32_json": "ge19_h4f3d32_independent_sector_first_interval.json",
+  "D32_npz": "ge19_h4f3d32_independent_sector_first_interval.npz",
+  "required_D32_classification": "GE19_D32_INDEPENDENT_SIGNED_GE06_GE07_LAMBDA_STAGEE_FIRST_INTERVAL_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "cases": [[14, 0.1], [1, 1.0], [40, 0.1]],
+  "substeps": [1, 8],
+  "off_support_modes": [1, 14],
+  "original_source_replay_limit": 1e-11,
+  "D32_candidate_B_source_replay_limit": 1e-10,
+  "D32_candidate_B_state_replay_limit": 1e-8,
+  "D32_candidate_B_metric_replay_limit": 1e-8,
+  "off_support_StageE_Y_replay_limit": 1e-10,
+  "m40_GE07_original_direct_replay_limit": 1e-6,
+  "m40_endpoint_state_relative_limit": 1e-8,
+  "original_boundary_backward_gate": 1e-6,
+  "original_shift_gate": 1e-6,
+  "frozen_local_code_sha256": {
+    "ge19/h4f3d32_independent_sector_first_interval.py": "35b5f19803cd69b732a2f2ed0d07beb77e9de1ccad1295a5f97039eaa39cc00e",
+    "ge19/h4f3d32_independent_sector_first_interval_prereg.json": "e279c43eb7ed5b9983ab70e4a52ad15a138e590bb83ca5b4bf0a3811f5eebfac",
+    "ge19/h4f3d30_direct_ge06_mode_pair_audit.py": "a59aadf817ce200c674b3b731303588a4e51054f0be82dd167b738f248906ec5"
+  },
+  "frozen_results_sha256": {
+    "ge19_h4f3d32_independent_sector_first_interval.json": "f4946e4a09d2fa0573c615400ee56615644d3c829018ded15fc6fc72bb7cdc9f",
+    "ge19_h4f3d32_independent_sector_first_interval.npz": "55a8b6634fef9371b4dec1465340a8cbea1c79832094917ccf2a5cb054941156",
+    "ge19_h4f3d30_direct_ge06_mode_pair_audit.npz": "87ec12870d55763ab3574928b918825dd5d3635d5448cdcf42cc626ad4c8ba8c"
+  },
+  "original_D22A_science_FAIL_immutable": true,
+  "H3_H4_Z21_lensing_certification": false,
+  "production_source_unchanged": true,
+  "no_observational_tuning": true,
+  "preregistered_decision": "Original GE07 smooth c2 on frozen six signed H1 harmonics: report full 0..40 source comparison to original GE07 and original selected source and metric gates without reclassification. The direct signed-pair candidate C keeps original D30 direct GE06, original Lambda and beta-specific nonanalytic Stage E Y. Reproject exactly original lapse/shift two-row boundary rule and compare n1/n8 to immutable D32 candidate B. m40 action replay and unchanged original m40 control are mandatory. Off-support m1/m14 GE06 and GE07 vanish by action-source support, but no whole-mode removal. No new physical tolerance, source fitting, production change or parent certification."
+}

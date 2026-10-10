@@ -1,0 +1,85 @@
+{
+  "D42R2_subset_max_abs_metric_difference_guard": 1e-10,
+  "betas": [
+    1.0,
+    0.5,
+    0.1
+  ],
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D43_PREEXEC_FULL_40_MODE_N2_N4_ORIGINAL_ACTION_CLOCK_DIAGNOSTIC",
+  "clock_nodes": 128,
+  "diagnostic_nodes": [
+    1,
+    115
+  ],
+  "frozen_D42R2_output_sha256": {
+    "ge19_h4f3d42r2_lapse_substep_convergence.json": "4d958da57587c03cd5a23a82681e031d59af90775961774363c34ae5cc903e28",
+    "ge19_h4f3d42r2_lapse_substep_convergence.npz": "5d949fe54a706cf1ebfe0702233ee416ae8c3e96615243dab0015d5fedb10218"
+  },
+  "frozen_substeps": [
+    1,
+    8
+  ],
+  "full_41_source_modes_retained": true,
+  "immutable_historical_failures": [
+    "D22A_original_science_FAIL",
+    "D34_D34R1_m26_boundary_FAIL",
+    "D35_posthoc_m26_initial_representation"
+  ],
+  "independent_original_x0_start_per_substep": true,
+  "lapse_reference_report_only": 1e-06,
+  "modes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40
+  ],
+  "new_endpoint_expected": 30480,
+  "new_substeps": [
+    2,
+    4
+  ],
+  "no_new_projection": true,
+  "no_parent_certification": true,
+  "no_physics_or_observation_tuning": true,
+  "original_shift_gate": 1e-06,
+  "parent_D42R2_source_sha256": "66a1e01a869eaaea8d1a4158b258f95f1480325ad59fd33d04ec58aef23b2654",
+  "preserve_all_prior_failures": true,
+  "scope": "Full 40-mode diagnostic n2/n4, frozen n1/n8 D41, parent D42R2 pilot 5-mode replay. Lapse reference 1e-6 is report-only, original shift 1e-6 binding. Does not certify H1/H3/H4 or Z11/Z20/Z21/lensing."
+}

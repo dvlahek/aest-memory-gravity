@@ -1,0 +1,121 @@
+{
+  "D22A_original_science_FAIL_immutable": true,
+  "D33_json": "ge19_h4f3d33_direct_ge07_paired_first_interval.json",
+  "D33_npz": "ge19_h4f3d33_direct_ge07_paired_first_interval.npz",
+  "H3_H4_Z21_lensing_certification": false,
+  "betas": [
+    1.0,
+    0.5,
+    0.1
+  ],
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D34R1_PREEXEC_FAILED_BOUNDARY_COHORT_LEDGER",
+  "exact_quadratic_support": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    10,
+    11,
+    12,
+    13,
+    15,
+    16,
+    17,
+    18,
+    20,
+    23,
+    25,
+    28,
+    30,
+    35,
+    40
+  ],
+  "frozen_code_sha256": {
+    "ge19/h4f3d33_direct_ge07_paired_first_interval.py": "529196f16fa8fe152d7df66466300cb9c45754bfff09501c1a45c9543143759e",
+    "ge19/h4f3d33_direct_ge07_paired_first_interval_prereg.json": "905d79477b2379ac2a303e1d2a876d037f2e25b476dc0f0404d9e08781ca423c"
+  },
+  "frozen_results_sha256": {
+    "ge19_h4f3d33_direct_ge07_paired_first_interval.json": "9b1d649964a975e4a25a00e17ad1348346bea815a4640dbe5a93cba1787ffafb",
+    "ge19_h4f3d33_direct_ge07_paired_first_interval.npz": "41c75b883b7df7b1f57b72f0309d71e1c7c3779f291e524f33fa7532861eb264"
+  },
+  "modes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40
+  ],
+  "no_observational_tuning": true,
+  "original_D33_metric_replay_limit": 1e-08,
+  "original_D33_replay_cases": [
+    [
+      14,
+      0.1
+    ],
+    [
+      1,
+      1.0
+    ],
+    [
+      40,
+      0.1
+    ]
+  ],
+  "original_D33_state_replay_limit": 1e-08,
+  "original_D34_fail_log_name": "ge19_h4f3d34_all_mode_first_interval_gate_scan_FULL.log",
+  "original_D34_fail_log_sha256": "c72611e7c5038baaea8ed9813f36614840fae4b5a8afc0cee4f717aa4d450c9f",
+  "original_D34_frozen_code_sha256": {
+    "ge19/h4f3d34_all_mode_first_interval_gate_scan.py": "f1ea0d5be9d1dd906e9b83c7505fc06e228541a5882922ba49f681592e228180",
+    "ge19/h4f3d34_all_mode_first_interval_gate_scan_prereg.json": "78888fe4ec4024ce00249e1e6c02cbe9e77c8c3f395487e079f517247781e5d1",
+    "ge19/h4f3d34_all_mode_first_interval_gate_scan_static_test.py": "7d6c5998cb0a5c1e937e8cbe58e7887b667c00c5e6c9a7cc9291c6161d4a0646",
+    "ge19/run_local_h4f3d34_all_mode_first_interval_gate_scan.sh": "3adef0131333c9a55ca6f6369382c2794adf7653685ad313584d4bb40093e2ee"
+  },
+  "original_boundary_backward_gate": 1e-06,
+  "original_shift_gate": 1e-06,
+  "preregistered_decision": "Aditive D34R1 error-ledger only: freeze the m26 beta1 D34 failure and original 1e-6 two-row projection; attempt every m1..40 beta 1/0.5/0.1 boundary, evolve n1/n8 ONLY for boundary-accepted cases, mark skipped evolution cases unevaluated and not shift gate PASS or FAIL. Preserve selected D33 control reproduction, D33 candidate C, original action/operator and beta-specific nonanalytic Y. No increased tolerance, no modified initial projection, no mode exclusion or parent certification.",
+  "production_source_unchanged": true,
+  "required_D33_classification": "GE19_D33_ORIGINAL_GE07_DIRECT_SIGNED_PAIRS_PAIRED_FIRST_INTERVAL_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "substeps": [
+    1,
+    8
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "classification": "GE19_H4F3D15A1_PREDATA_ORIGINAL_GE05_X_EMBEDDED_R1_INTERNAL_INTERFACE_CURRENT_JUMP",
+  "date": "2026-09-26",
+  "scope": "Mathematical source-first amendment to frozen D15a x-embedding preregistration, before any actual D15a physical execution. Interior R1 derivative jumps generate distributional GE05 Euler terms not included in smooth interval collocation.",
+  "original_D15a_predata_SHA256": "c5cb22394dc8eabf12c9fe8d5f6acd57a24d90f356976122864723ec73513745",
+  "original_D15a_smooth_clock_source_SHA256": "14da31797282fb7959c44793f04751f1dd0ff25765424e566ca6015e759a82ae",
+  "original_source": "Frozen original GE05 Lq=NLR^2/4[(Aq)^2-(omega*q-sqrt(w)*Xphi)^2]; normalized first-order physical current J_z=a^3 dz_step/dt, E_q10=-sqrt(w)/(2omega)*[d_t J_z+a^3 omega^2(z_step-Xtrue)].",
+  "reason": "The same original frozen R1 z,v states are continuous at a step boundary x_i but x-embedded physical derivative dz_step/dt=gamma*v/tau uses interval-specific gamma=tau H_true(x_i)/hmid. Left and right interval hmid need not agree. Thus J_z has an interior jump and d_t J_z contains a delta distribution.",
+  "exact_interior_action_identity": "At original internal knot i=1..Nt-2, gamma_minus=tau H_true(x_i)/hmid_(i-1), gamma_plus=tau H_true(x_i)/hmid_i. Delta J_z(i)=a_i^3*v_i/tau*(gamma_plus-gamma_minus). The normalized E_q10 impulse coefficient is -sqrt(w)/(2omega)*Delta J_z times delta(t-t_i).",
+  "original_signed_interface_W": "Save 4*sum_j E_q10_impulse_coefficient(j,i)*partial_chi q_j10(x_i) as signed complex original +/- six-mode Fourier m0..40 coefficient, with conservative noncancelling unsigned source-node/mode-pair envelope. Coefficient multiplies delta(t-t_i) and has different units from smooth interval W: never add its Euclidean time-grid norm to smooth W as if they were same observable.",
+  "original_scope": "Same original C_min/C_star/C_max x Nt128/Nt64 x Nq2048/Nq1024, original R1 trace, original Repair13 H and original H3F drive endpoints, original six positive and negative Fourier modes, no high-phase node exclusion, no amended previous D13/D14 state.",
+  "science_boundary": "Interior distributional jump is an exact piecewise-x-embedded field identity but is not automatically an original external GE05 bath boundary term or an allowed physical impulsive force. Its nonzero value is an obstruction to using the unmodified original frozen R1 field as a classical C1 continuous GE05 solution. Original external action boundary, true X10 interior, true state propagation, continuous on-shell and full H4 Ward all remain open.",
+  "no_observation_tuning": true,
+  "original_Repair37_SCIENCE_FAIL_immutable": true,
+  "Z21_certified": false,
+  "lensing_licensed": false
+}

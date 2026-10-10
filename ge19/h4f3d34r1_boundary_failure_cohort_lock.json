@@ -1,0 +1,8 @@
+{
+  "sha256_local_files": {
+    "ge19/h4f3d34r1_boundary_failure_cohort.py": "a24e178e8dc0357bffdafb1c818d7af0876bd6faf61a24640328df8421972470",
+    "ge19/h4f3d34r1_boundary_failure_cohort_prereg.json": "aabdd6754a324b1152eba409192179c841f4e5e9cadcbdc27e048ea635b87db9",
+    "ge19/h4f3d34r1_boundary_failure_cohort_static_test.py": "41f7ad3781689a0a2a530babd8cff749b5bf73c36d4c7634658eb8b2edd522e9",
+    "ge19/run_local_h4f3d34r1_boundary_failure_cohort.sh": "c17f4ead567c605a619abb04fa1687939740d7f5375c3209f9721b31f35f24ad"
+  }
+}

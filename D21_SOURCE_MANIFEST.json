@@ -1,0 +1,39 @@
+{
+  "classification": "GE19_H4F3D21_SOURCE_ACTION_GE05_PT_CHAIN_RULE_PACKAGE_FROZEN",
+  "files": {
+    "README_D21.md": {
+      "bytes": 1426,
+      "sha256": "3e66bb9433eadd9a0778d36ac6e3ada54acbc304897b782244fbe1b4fe9c9edb"
+    },
+    "docs/ge19_h4f3d21_GE05_phase_safe_M2_freeze.md": {
+      "bytes": 2907,
+      "sha256": "5ea51c47828efeefe1256d2a9a5fe79c5d513ce55bc8ef9c7885f49084b060ed"
+    },
+    "ge19/h4f3d21_GE05_phase_safe_M2_core.py": {
+      "bytes": 3270,
+      "sha256": "8aefd593af4a54a0134551d962c7a4aa59f7c9ca553805f601cebef40ef1fab7"
+    },
+    "ge19/h4f3d21_actual_GE05_phase_safe_M2_reclosure.py": {
+      "bytes": 17341,
+      "sha256": "a31f7ef8c9f02c047dcaabaf96576205c79c5a18919f768b549a52549626cdef"
+    },
+    "ge19/h4f3d21_predata_GE05_phase_safe_M2_reclosure.json": {
+      "bytes": 4880,
+      "sha256": "0806b43cff7477dd547cde1d813a17fd2ca38bd31a9d583114add05a573df17c"
+    },
+    "ge19/h4f3d21_static_GE05_phase_safe_M2_test.py": {
+      "bytes": 2493,
+      "sha256": "31166de5254b6df7df39d85869cc487bf790d512de53f02be4dc4fa60983a55a"
+    },
+    "ge19/h4f3d21_static_source_contract_test.py": {
+      "bytes": 1349,
+      "sha256": "9ac4119d0d1f138cbc3d537779aca2e1d96021a3fc2c8e0e5735243fa5e7a1a7"
+    },
+    "ge19/run_local_h4f3d21_GE05_phase_safe_M2_source.sh": {
+      "bytes": 4126,
+      "sha256": "e645e4ed84ed7d78cf9a11ebdd1d137e9193b0c6450c172c92bf50ad703e35a0"
+    }
+  },
+  "no_overwrite": true,
+  "science_boundary": "D20R1 original knot FD4 for GE05 M2 scalar temporal current is replaced by original-action exact chain derivative only. q20/Z11, full Ward, Z21 and lensing remain OPEN."
+}

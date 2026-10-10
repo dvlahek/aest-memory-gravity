@@ -1,0 +1,9 @@
+{
+  "classification": "GE19_D29_ORIGINAL_ACTION_QUADRATIC_HARMONIC_LOCK",
+  "sha256_local_files": {
+    "ge19/h4f3d29_analytic_quadratic_support.py": "c9e061dc3ef2ad334468aaea1d36b7d5c9068e73b5678d66e99093c3a4d854d1",
+    "ge19/h4f3d29_analytic_quadratic_support_prereg.json": "d5a171a3d268a4f9f4089eed5384083eef951825b4e30b941444295b708f9142",
+    "ge19/h4f3d29_analytic_quadratic_support_static_test.py": "92a10b43342791cfc1ae26f1f94743366aea2822abfa53c159edf90894af6a7b",
+    "ge19/run_local_h4f3d29_analytic_quadratic_support.sh": "44a0351c3ef006bfb9818c276548a853ca642930eddb1ec8a4a16bbce252a826"
+  }
+}

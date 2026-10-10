@@ -1,0 +1,66 @@
+{
+  "allow_production_source_replacement": false,
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D30_PREEXEC_ORIGINAL_GE06_DIRECT_SIGNED_PAIR_DIAGNOSTIC",
+  "diagnostic_modes": [
+    1,
+    14,
+    23,
+    30,
+    35,
+    40
+  ],
+  "expected_support": {
+    "1": false,
+    "14": false,
+    "23": true,
+    "30": true,
+    "35": true,
+    "40": true
+  },
+  "first_order_modes": [
+    3,
+    5,
+    8,
+    10,
+    15,
+    20
+  ],
+  "frozen_outputs_sha256": {
+    "ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.npz": "6952a2cde9a39367d29b75b63aca53a97a8feb622e7cbe7b33a468ae2b9a1632",
+    "ge19_h4f3d27r2_signed_fft_sector_roundoff.npz": "c150e7e7fc1a616f4f8999eff836481c41527d54b656e344b345f322a96142fd",
+    "ge19_h4f3d28_ge06_shift_two_term_provenance.npz": "393229a83f9a1875c58406d32c672da3a831d40732ddf24443d028b3ba212ffb",
+    "ge19_h4f3d29r1_analytic_quadratic_support.json": "59ba5328eaa63004570718c49a0270d3ed27c71de67800894531e35d02b8e426",
+    "ge19_h4f3d29r1_analytic_quadratic_support.npz": "df70403e488ad9ceacee84306cc707916df8feef17f416fb3e9ad6e856567d07"
+  },
+  "frozen_source_sha256": {
+    "ge19/h4f3d28_ge06_shift_two_term_provenance.py": "b118905784884f76ca433a7aed6289b70fc4753fe3d59b0418afff3d97d9437d",
+    "ge19/h4f3d29r1_analytic_quadratic_support.py": "b388f2af140a1e9237a7241812264d99b3269280e30faba811ddd2b30651740c"
+  },
+  "in_support_other_modes": "Report signed direct-vs-original discrepancies only, never post-hoc relabel an original gate.",
+  "negative_controls": [
+    "m1/m14 no support with six frozen modes",
+    "adding synthetic m4 or m11 enables m1 or m14",
+    "wrong off-diagonal factor 1/4 rejected",
+    "m40 original-action source replay",
+    "immutable original full D22A H3F source replay",
+    "nonanalytic Stage E Y retained and reported"
+  ],
+  "no_mode_exclusion": true,
+  "no_observational_tuning": true,
+  "not_licensed": [
+    "No correction of production H3F source or original relative shift science gate",
+    "No rigorous finite-precision error budget or full H3 constraint propagation certificate",
+    "No H1 on-shell or full H4 Ward",
+    "No Z11/Z20/q20/B20/Z21/lensing certification"
+  ],
+  "original_H3F_source_replay_relative_limit": 1e-11,
+  "original_m40_direct_replay_relative_limit": 1e-11,
+  "pair_rule": "p=q -> f_c2(vp); p<q -> [f_c2(vp+vq)-f_c2(vp-vq)]/2",
+  "preserve_original_D22A_shift_FAIL": true,
+  "preserve_original_D27_local_triplet_FAIL": true,
+  "preserve_original_D29_malformed_SHA_FAIL": true,
+  "required_D29R1_classification": "GE19_D29R1_ORIGINAL_ACTION_QUADRATIC_HARMONIC_SELECTION_AND_M40_DIRECT_REPLAY_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "scope": "Frozen original-action Cstar Nt128 D17 H1, GE06 analytic second-directional source only. Exact signed quadratic mode support m0..40; full original D22A H3F source independently replayed. No source or H3 solve change.",
+  "source_equation": "Original GE06 frozen f_c2 second directional coefficient, with original FD4 temporal and ik spatial Euler assembly."
+}

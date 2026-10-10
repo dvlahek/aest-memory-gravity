@@ -1,0 +1,68 @@
+{
+  "H4_Z21_lensing_licensed": false,
+  "classification": "GE19_D25_PREDATA_FROZEN_SOURCE_ORIGINAL_ACTION_FIRST_INTERVAL_SUBSTEP_DIAGNOSTIC",
+  "frozen_D22A_science_FAIL": true,
+  "frozen_git_blobs": {
+    "ge19/h3f_corrected_y_source_adapter.py": "395294868191111b9b01201315cd2e6a30e47578",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair14_self_consistent_reduced_h3_z20_particular.py": "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de",
+    "ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py": "c7b3a5c689bd78a65a8150c26e1fbfae108cb580"
+  },
+  "local_source_sha256": {
+    "ge19/h4f3d17_original_action_dense_H1_core.py": "5dc876539c08146d0bf204e5cbaf4b8e824d335f4458093c975453a3365608b2",
+    "ge19/h4f3d20r1_recompute_five_sources_and_bath_ward.py": "6dcaae0648dda370f8c84483b60594556c8e38dd8d7f162ed57dca0dcc1b7e41",
+    "ge19/h4f3d22a_action_parent_reclosure.py": "ca3bd645bb3bf9f5755a55f1168501de57f93c8e39aa8da8f50e78c9a75f23f2",
+    "ge19/h4f3d25_first_interval_shift_substep_decision.py": "869ec3c2b582da3b04807bd9ff7741568f605b0a89874d67363b1b29daaa8fb5"
+  },
+  "modes_beta": [
+    [
+      14,
+      0.1
+    ],
+    [
+      1,
+      1.0
+    ],
+    [
+      40,
+      0.1
+    ]
+  ],
+  "no_observation_tuning": true,
+  "parent_archives": {
+    "D17_JSON": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.json",
+      "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294"
+    ],
+    "D17_NPZ": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
+      "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"
+    ],
+    "D22A_JSON": [
+      "ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.json",
+      "158207d747e9fa617c335f4a30d860c011264b2da1dcde34870bad762ec5bbf4"
+    ],
+    "D22A_NPZ": [
+      "ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.npz",
+      "6952a2cde9a39367d29b75b63aca53a97a8feb622e7cbe7b33a468ae2b9a1632"
+    ],
+    "D23_JSON": [
+      "ge19_h4f3d23_action_constraint_boundary_transport.json",
+      "207be9d3658ca53848a7584d72abe0e316efee574ea7f14c92b55309d5f13640"
+    ],
+    "D24_JSON": [
+      "ge19_h4f3d24_dense_first_interval_H3_source_resolution.json",
+      "cb12dd9c07871d47c804ed077309a155a37286dcf52672d08d072d4c67694041"
+    ],
+    "R13_NPZ": [
+      "ge19_repair13_self_consistent_reduced_background_h1_reclosure.npz",
+      "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3"
+    ]
+  },
+  "radau_substeps": [
+    1,
+    2,
+    4,
+    8
+  ]
+}

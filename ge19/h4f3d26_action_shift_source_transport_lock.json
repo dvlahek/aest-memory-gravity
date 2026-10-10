@@ -1,0 +1,9 @@
+{
+  "classification": "GE19_D26_LOCK_PREEXECUTION_ONLY",
+  "sha256_local_files": {
+    "ge19/h4f3d26_action_shift_source_transport_ledger.py": "aec660be900f8c70c4663cee310573f3f19d94c711a9444948cf2fa658525be0",
+    "ge19/h4f3d26_action_shift_source_transport_prereg.json": "f5e09fbfbc6d588f2283806839e8f02c2d96060f6dd9d546f876775cbfe216fe",
+    "ge19/h4f3d26_action_shift_source_transport_static_test.py": "92afd1ef98fec36ae6b95ce05b79a721dc5f13bf77da89d8c8f3d2e39e997bf8",
+    "ge19/run_local_h4f3d26_action_shift_source_transport.sh": "492450cac1f80f7a4f092b89667a5bb49c295a89e07ae17d891ddf562c935f52"
+  }
+}

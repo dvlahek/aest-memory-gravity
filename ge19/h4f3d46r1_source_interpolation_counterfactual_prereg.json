@@ -1,0 +1,43 @@
+{
+  "D35_m26_posthoc_momentum_unchanged": true,
+  "D43_original_driver_sha256": "adcb8bfe55ee9f9b7a09ed101f10cc52540af1f19b845a275dbbf0da4139fdd0",
+  "D45_original_driver_sha256": "81c6273996c0c08afb005c24a76fb59feb30eaeaa38dc3f8f6409fb315a5b8f3",
+  "H1_on_shell_verified": false,
+  "H3_full_window_certified": false,
+  "Z21_certified": false,
+  "betas": [
+    1.0,
+    0.5,
+    0.1
+  ],
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D46R1_PREEXEC_FROZEN_D33_PCHIP_VS_LINEAR_SOURCE_INTERPOLATION_COUNTERFACTUAL_SHA_REPAIR",
+  "clock_nodes": 128,
+  "diagnostic_modes": [
+    1,
+    6,
+    14,
+    26,
+    40
+  ],
+  "do_not_promote_linear_source_to_physical_truth": true,
+  "expected_alt_new_endpoints": 1905,
+  "frozen_original_parent_sha256": {
+    "ge19_h4f3d33_direct_ge07_paired_first_interval.json": "9b1d649964a975e4a25a00e17ad1348346bea815a4640dbe5a93cba1787ffafb",
+    "ge19_h4f3d33_direct_ge07_paired_first_interval.npz": "41c75b883b7df7b1f57b72f0309d71e1c7c3779f291e524f33fa7532861eb264",
+    "ge19_h4f3d41_full_window_two_constraint_audit.npz": "17a64a7f0329a362d73f16705a547027c3743d2f146cbaa70ce65dd8bf95f82c",
+    "ge19_h4f3d42r2_lapse_substep_convergence.npz": "5d949fe54a706cf1ebfe0702233ee416ae8c3e96615243dab0015d5fedb10218",
+    "ge19_h4f3d43_full_40_mode_n2_n4_lapse.json": "b948f0b6cb92a99ce9aef5e80212ebf72dff59e1698a1b26c4a47984c5b41234",
+    "ge19_h4f3d43_full_40_mode_n2_n4_lapse.npz": "1d2c54effc07cf860080489ceed04b9d2b30ece49d3d650f27cc58e16ee1d63d",
+    "ge19_h4f3d45_h1_offclock_source_audit.json": "701c3fde59172e87c4364a7d5422029e2de6135b1aa38675f7a39b18cb296f2b",
+    "ge19_h4f3d45_h1_offclock_source_audit.npz": "44757665c4c058ae10a9dca28aa6d58a4a71bec081eecdc7abddb3f82ae67796",
+    "ge19_repair13_self_consistent_reduced_background_h1_reclosure.npz": "011c0ae54fd21d70c0e2c695ce62e7b74a3c5529a07c9023c882a447d5b40ca3"
+  },
+  "lensing_licensed": false,
+  "n_substeps": 4,
+  "original_D22A_D34_D34R1_failure_immutable": true,
+  "original_D33_41_mode_source_retained": true,
+  "original_D43_n4_frozen_reference_only": true,
+  "original_shift_gate": 1e-06,
+  "scope": "Read-only frozen original D33 41-mode source knots/action; independent five-mode n4 alternative time evolution with linear source interpolation only off knots. D42R2/D43 PCHIP n4 state and D45 midpoint replay immutable. No parameter/gate/boundary tuning and no physical-source truth claim."
+}

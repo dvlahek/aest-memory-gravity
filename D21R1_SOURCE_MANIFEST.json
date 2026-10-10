@@ -1,0 +1,33 @@
+{
+  "classification": "GE19_H4F3D21R1_UNDEFINED_PROPER_IMPLEMENTATION_REPAIR_PACKAGE_FROZEN",
+  "files": {
+    "README_D21R1.md": {
+      "bytes": 1839,
+      "sha256": "f7bdd33666fe1f480f7da6cbb0ad2f61930d5c2f394a69c39df3804557645783"
+    },
+    "docs/ge19_h4f3d21r1_undefined_proper_predata_freeze.md": {
+      "bytes": 1126,
+      "sha256": "55a90b5191e09cd29e9acf50933e51c8b31a58cc3475a46f3fd2c87be438fd76"
+    },
+    "ge19/h4f3d21r1_actual_GE05_phase_safe_M2_reclosure.py": {
+      "bytes": 17495,
+      "sha256": "61d52f4ae1dad6ec7ac3a1449bf6331b3b73d7c5ce6db773e106659c7ee1615b"
+    },
+    "ge19/h4f3d21r1_predata_undefined_proper_repair.json": {
+      "bytes": 5781,
+      "sha256": "ae12e51da8feaa01cf7ef42110a37b955469bae0333251954a8e234c5a166022"
+    },
+    "ge19/h4f3d21r1_static_undefined_proper_repair_test.py": {
+      "bytes": 2797,
+      "sha256": "c83dd4ae34f899220a2c556c103b588635043f08258bc816a249fe993317503f"
+    },
+    "ge19/run_local_h4f3d21r1_undefined_proper_repair.sh": {
+      "bytes": 4610,
+      "sha256": "919bb8558a35392971108913d1fbb7cf0fcf77c25d8a05451f2efd3a31c25298"
+    }
+  },
+  "no_overwrite": true,
+  "original_D21_predata_sha256": "0806b43cff7477dd547cde1d813a17fd2ca38bd31a9d583114add05a573df17c",
+  "original_D21_source_sha256": "a31f7ef8c9f02c047dcaabaf96576205c79c5a18919f768b549a52549626cdef",
+  "preserved_original_source_action": true
+}

@@ -1,0 +1,10 @@
+{
+  "classification": "GE19_D31R1_SOURCE_PREREG_STATIC_RUNNER_SHA256_LOCK",
+  "historical_D31_fail_immutable": true,
+  "sha256_local_files": {
+    "ge19/h4f3d31r1_paired_direct_ge06_first_interval.py": "223f4b3c8e15a7fc59e5268bb74b1c3e6fbe9f7048cafc0a44c31a124671224a",
+    "ge19/h4f3d31r1_paired_direct_ge06_first_interval_prereg.json": "494c61c2cc3cc07db6fdbd43128b4a7aa5f701d794ad0a14b0c10cf692c724ea",
+    "ge19/h4f3d31r1_paired_direct_ge06_first_interval_static_test.py": "683f9dfc7f80ee0980a5fb9ce25eca68e9ab0e51e5945a1e76546a9d07241144",
+    "ge19/run_local_h4f3d31r1_paired_direct_ge06_first_interval.sh": "0de3e0cd23f3d0192becaf70f3805b5a5568511b1c91bfd32c132f030c541aee"
+  }
+}

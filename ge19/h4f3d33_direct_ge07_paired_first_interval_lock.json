@@ -1,0 +1,9 @@
+{
+  "classification": "GE19_D33_SOURCE_PREREG_STATIC_RUNNER_SHA256_LOCK",
+  "sha256_local_files": {
+    "ge19/h4f3d33_direct_ge07_paired_first_interval.py": "529196f16fa8fe152d7df66466300cb9c45754bfff09501c1a45c9543143759e",
+    "ge19/h4f3d33_direct_ge07_paired_first_interval_prereg.json": "905d79477b2379ac2a303e1d2a876d037f2e25b476dc0f0404d9e08781ca423c",
+    "ge19/h4f3d33_direct_ge07_paired_first_interval_static_test.py": "98e0de8e2a5f70aecd0bfc3e7b0713bc76b507d2bf2a595e8c30f89e7e3ef2d4",
+    "ge19/run_local_h4f3d33_direct_ge07_paired_first_interval.sh": "9c00fd7873f8f84ce0834108f12577528a4cc1d9dcc6c9b75fa6a972efaf89a0"
+  }
+}

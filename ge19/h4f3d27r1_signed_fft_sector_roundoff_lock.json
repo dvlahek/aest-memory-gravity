@@ -1,0 +1,12 @@
+{
+  "classification": "GE19_D27R1_LOCK_ADDITIVE_ONLY",
+  "sha256_local_files": {
+    "ge19/h4f3d27_h3f_shift_sector_provenance.py": "5d5303eadf48fe5076c3f8e9de0d18b95b47cbaaf23f579e9e3af0ee3ac8b495",
+    "ge19/h4f3d27_h3f_shift_sector_provenance_prereg.json": "e58cc5ee7eea52e3eb2a52b0fd91534c707c7f5d2f74814306e30117546f0e2f",
+    "ge19/h4f3d27_h3f_shift_sector_provenance_static_test.py": "47a20e1a7dfb8bd1736122ff50191541427e53ed7215ba8f60070d89e08e6a9c",
+    "ge19/h4f3d27r1_signed_fft_sector_roundoff_audit.py": "700abcf1c0123a1f808b50f97ff75b14b450950ef3422558478569a3b545b33a",
+    "ge19/h4f3d27r1_signed_fft_sector_roundoff_prereg.json": "9eaa5753362224a2f0db87f84ed809f4c81cc34bffff8210d71ec0e46bb481c8",
+    "ge19/h4f3d27r1_signed_fft_sector_roundoff_static_test.py": "3048758d8eac475402dbf6eec6e405f4adae7603af571268f30c95794dedbc81",
+    "ge19/run_local_h4f3d27r1_signed_fft_sector_roundoff.sh": "2a13795e931ef8f77863d3556910c2a611f4e3c7443a823fd7d1bf25f7657e55"
+  }
+}

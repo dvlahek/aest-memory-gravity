@@ -1,0 +1,15 @@
+{
+  "classification": "GE19_D25R1_IMPLEMENTATION_ONLY_BETA_COLUMN_REPAIR_AFTER_D25_FAIL",
+  "no_parent_certification": true,
+  "old_D25_archived_replay_gate_retained": true,
+  "original_D25_runtime_fail_immutable": true,
+  "physical_D25R1_execution_status": "NOT_RUN_LOCAL_PHYSICS",
+  "repair_description": "D25 r0 broadcasts one-beta projected y0 (8x1) against all 3 beta source columns (8x3), then integrates and selects y[:,0]. D25R1 selects the intended beta column before Radau and forbids mismatched shapes. No equations, sources, boundary data, thresholds, or original D25 files changed.",
+  "sha256_local_files": {
+    "D25_SOURCE_MANIFEST.json": "fe5567da07bbdc4c92ce11b3e508e6f446cc8c60f190b7ea6349609c9edd9f3a",
+    "ge19/h4f3d25_first_interval_shift_substep_decision.py": "869ec3c2b582da3b04807bd9ff7741568f605b0a89874d67363b1b29daaa8fb5",
+    "ge19/h4f3d25r1_first_interval_shift_substep_decision.py": "75ad3a50db6fead1508f95ae836ec335e29162613cdab5bce4b41e3e1178b46a",
+    "ge19/h4f3d25r1_static_beta_column_test.py": "a04d403dc5df42c4d338e0ca617f96b639e9396d84bef2b8cacbe461617fe7f7",
+    "ge19/run_local_h4f3d25r1_beta_aligned_shift_substeps.sh": "0a73959f8ac16559a641e10816da2f528628359ca57360562b4362c2269ba041"
+  }
+}

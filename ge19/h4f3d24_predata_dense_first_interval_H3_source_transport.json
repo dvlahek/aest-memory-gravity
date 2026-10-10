@@ -1,0 +1,21 @@
+{
+  "classification": "GE19_D24_PREDATA_DENSE_H1_FIRST_INTERVAL_H3_SOURCE_RESOLUTION",
+  "scope": "D17 original-action H1 on first 9/509 sub4 nodes; H3F original GE06/GE07/Lambda and complete Stage E source on those 9 knots; compare original coarse vs dense source and one frozen original Radau first step only for (m,beta)=(14,0.1),(1,1),(40,0.1). No full 40-mode or bath re-solve.",
+  "repair26_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+  "archives": {
+    "D17_NPZ": ["ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz", "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"],
+    "D22A_JSON": ["ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.json", "158207d747e9fa617c335f4a30d860c011264b2da1dcde34870bad762ec5bbf4"],
+    "D22A_NPZ": ["ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.npz", "6952a2cde9a39367d29b75b63aca53a97a8feb622e7cbe7b33a468ae2b9a1632"],
+    "D23_JSON": ["ge19_h4f3d23_action_constraint_boundary_transport.json", "207be9d3658ca53848a7584d72abe0e316efee574ea7f14c92b55309d5f13640"],
+    "D23_NPZ": ["ge19_h4f3d23_action_constraint_boundary_transport.npz", "ebe1e17a1d3cfc23ad5e66ba8d225ea4dd5e1480233eac77b4ef978bfd36917b"]
+  },
+  "frozen_git_blobs": {
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair14_self_consistent_reduced_h3_z20_particular.py": "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de",
+    "ge19/h3f_corrected_y_source_adapter.py": "395294868191111b9b01201315cd2e6a30e47578",
+    "ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py": "c7b3a5c689bd78a65a8150c26e1fbfae108cb580"
+  },
+  "D22A_SCIENCE_FAIL_immutable": true,
+  "no_science_gate_relaxation": true,
+  "no_observation_tuning": true
+}

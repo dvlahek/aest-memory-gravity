@@ -1,0 +1,34 @@
+{
+  "D17_and_D19R1_parent_sha256": {
+    "D17_JSON": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.json",
+      "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294"
+    ],
+    "D17_NPZ": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
+      "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"
+    ],
+    "D19_JSON": [
+      "ge19_h4f3d19r1_actual_Cstar_Nt128_Nq2048_numerical_reclosure.json",
+      "56027906e54bae8430203b796ab31182ae3ed743639714857bf6a6af38ec73de"
+    ],
+    "D19_NPZ": [
+      "ge19_h4f3d19r1_actual_Cstar_Nt128_Nq2048_numerical_reclosure.npz",
+      "31a03042d467732d1463312c4a850c349c88411a0048a03d655caa16fc7dca86"
+    ]
+  },
+  "classification": "GE19_D20R1_SOURCE_AND_TEST_ARTIFACT_MANIFEST",
+  "date": "2026-09-26",
+  "frozen_original_D20_failed_sha256": {
+    "ge19/h4f3d20_predata_dependency_reclosure.json": "37677f4f4d6c60dca1c902ea6097504efc5ee05f63a6f73d3578b7b0c7ef109a",
+    "ge19/h4f3d20_recompute_five_sources_and_bath_ward.py": "a81871e76b32c81c16367330a16bc081219e2aa9779ecf5baf8433d51bed88f7"
+  },
+  "sha256": {
+    "README_D20R1.md": "03750827c4e660bbfef19c1785a6a2924b3824220e1af1960eaad1664d8baad3",
+    "docs/ge19_h4f3d20r1_canonical_backward_freeze.md": "f295b420a9ff064ff9fa45f45d0aad3c85e053a5eef91b51290ec5100e9b8aeb",
+    "ge19/h4f3d20r1_predata_canonical_backward_repair.json": "2e0fa8c227d66ecac1365729714ce09192924c30734e60c97f3a8da2f86ed088",
+    "ge19/h4f3d20r1_recompute_five_sources_and_bath_ward.py": "6dcaae0648dda370f8c84483b60594556c8e38dd8d7f162ed57dca0dcc1b7e41",
+    "ge19/h4f3d20r1_static_canonical_backward_test.py": "04c9159760d6a2d698cfa733dc922acb0999c82111376df6c5ff00203c4e7868",
+    "ge19/run_local_h4f3d20r1_canonical_backward_source_GE05_ward_subset.sh": "1b64749c38bb1dd03343fe52a04b3323da917dc4874f89fc3c549d09852cf9bb"
+  }
+}

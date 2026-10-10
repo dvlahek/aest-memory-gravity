@@ -1,0 +1,9 @@
+{
+  "classification": "GE19_D27_LOCK_PREEXECUTION_ONLY",
+  "sha256_local_files": {
+    "ge19/h4f3d27_h3f_shift_sector_provenance.py": "5d5303eadf48fe5076c3f8e9de0d18b95b47cbaaf23f579e9e3af0ee3ac8b495",
+    "ge19/h4f3d27_h3f_shift_sector_provenance_prereg.json": "e58cc5ee7eea52e3eb2a52b0fd91534c707c7f5d2f74814306e30117546f0e2f",
+    "ge19/h4f3d27_h3f_shift_sector_provenance_static_test.py": "47a20e1a7dfb8bd1736122ff50191541427e53ed7215ba8f60070d89e08e6a9c",
+    "ge19/run_local_h4f3d27_h3f_shift_sector_provenance.sh": "9756f9daad369019912d3fcc31e3f477433abaef49b789213550d1df1863b70f"
+  }
+}

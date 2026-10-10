@@ -1,0 +1,40 @@
+{
+  "classification": "GE19_H4F3D16_PREDATA_ORIGINAL_H1DOT_HERMITE_TRUE_ACTION_CLOCK_BATH_SURROGATE_DIAGNOSTIC",
+  "date": "2026-09-26",
+  "original_hypothesis": "The physical-clock, source-anchored first-order bath propagation must be evaluated without the original R1 x-embedded artificial interface impulses. Use original H3F on-shell H1dot endpoints, original Repair13 H(x), and original Repair24 frozen step propagator with physical true-time substep increments. Do not promote an endpoint Hermite interpolant to a true continuous H1 solution.",
+  "frozen_parents_SHA256": {
+    "D13_JSON": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+    "D13_NPZ": "1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89",
+    "D14_JSON": "8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e",
+    "D14_NPZ": "f79d87f10dc1561ef2c61997b7952d62d85eda6674abaa015e5d38e161b55c48",
+    "D15A_JSON": "cad2a1c548582177d49019153fab34aa5b0ab520c7dd62f361c9e780af22794d",
+    "D15A_NPZ": "f7f9c94a341ec514d7d97ade297097b29102754231746531cde4485b61b2273c",
+    "Repair26_R1_trace": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+  },
+  "original_source_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair13_self_consistent_reduced_background_h1_reclosure.py": "362d63d03d7b850fceae393f535353ded79aeea7",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "ge19/h3f_corrected_y_parent_core.py": "7e1da10ae8d79b6269b306f5483783de0fd3fd30",
+    "ge19/h3f_corrected_y_z20_science_reclosure.py": "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0",
+    "ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_archive_audit.json": "3f7acc17aee24c6b776578ef2b654a40b2db6af0"
+  },
+  "H1_parent": "Certified original H3F primary Nt128 and control Nt64 H1_state [mode,field,x], H1dot [mode,Sdot,udot,phidot,Tdot,x]. No re-solving or interpolation of on-shell H1 to claim physical H1 precision.",
+  "original_action_X10_and_derivative": "X=Q*u+(i*k/a)*phi; X_x=(-3*KQ/KQQ)*u+Q*udot/H+(i*k/a)*(phidot/H-phi), using original Repair13 H,Q,KQ,KQQ and original H3F H1dot. Never replace H1dot with a finite difference.",
+  "conditional_Hermite": "For each original x_i,x_{i+1}, cubic Hermite matches source-bound X_i,X_xi,X_i+1,X_xi+1. Its interior deviation from the true original on-shell continuous X10 is UNKNOWN without a source-derived H1 evolution/enclosure. Nt128/Nt64 differences are diagnostic only.",
+  "original_physical_clock": "For every numerical substep [xa,xb], delta_s = integral_xa^xb dx/(tau H_action(x)) with fixed Gauss16 quadrature and h_eff=(xb-xa)/delta_s. Original step_linear_nd(z,v,r,h_eff,Xa,Xb,delta_s) is used exactly without changing omega, weights, phases, C, or boundary. The carried v=dz/ds is continuous at each substep and original knot. Gauss8/16 clock differences are not rigorous quadrature bounds.",
+  "frozen_numerical_controls": {
+    "substeps_per_original_R1_interval_Hermite": [4, 8, 16],
+    "substeps_per_original_R1_interval_linear_control": 16,
+    "Gauss_legendre_order_for_clock": 16,
+    "original_cohorts": "3 original C tags x Nt128/Nt64 x Nq2048/Nq1024, all +/- original 6 modes and output m0..40, no high-phase deletion",
+    "original_baseline": "Original full Repair24 R1 with frozen geometric mean hmid, original affine X10 and original Repair26 R1 trace",
+    "endpoint_source": "For Hermite16 substep physical-time state, retain separately both one-sided smooth original GE05 Euler source E_q=-sqrt(w)/(2omega)*3a^3/tau*(H_action-h_eff/tau)*v at original knots and signed +4 E_q partial_chi q plus conservative unsigned envelope. Endpoints satisfy Xlin_sub=X_Hermite there. No internal delta(t-t_i) because v is propagated continuously in physical substep time.",
+    "error_diagnostics": "Keep independent signed/unsigned W one-sided outputs, raw z/v 4->8 and 8->16 differences, high-phase>=pi actual-original-node comparison without deleting high-phase nodes, Hermite-vs-original-linear under same action clock, new physical-H-linear-vs-original-R1 (clock change), Nq2048/1024, and true-H1 uncertainty OPEN. No relative-only numerical error certification."
+  },
+  "non_overwrite": true,
+  "immutable_original_Repair37_SCIENCE_FAIL": true,
+  "no_observation_tuning": true,
+  "forbidden_claims": "No exact continuous original X10, no certified all-interval H1/Hermite error, no true original bath on-shell, no full original GE05/H4 Ward, no E_i00*dchi(F_i21) or external action boundary, no Z21, no lensing. Never add impulse coefficients and smooth W norms."
+}

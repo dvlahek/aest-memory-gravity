@@ -1,0 +1,51 @@
+{
+  "D16R1_parents": {
+    "JSON": [
+      "ge19_h4f3d16r1_actual_original_H1dot_Hermite_physical_bath.json",
+      "4843901cf7b03e6a2657a55f1918d04641c4d84fde1b6d60f847b079b615d352"
+    ],
+    "NPZ": [
+      "ge19_h4f3d16r1_actual_original_H1dot_Hermite_physical_bath.npz",
+      "915709b21bae65c53f9521325a3920d4e0320b650e43458cad03109733d27a36"
+    ]
+  },
+  "Repair26_trace_SHA256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+  "classification": "GE19_H4F3D17_PREDATA_ORIGINAL_ACTION_DENSE_CANONICAL_H1_NUMERICAL_DIAGNOSTIC",
+  "date": "2026-09-26",
+  "forbidden_claims": "No rigorous source continuous H1/X10 enclosure, no certified canonical ODE residual supremum, no rigorous Radau integration error bound, no true original continuous bath GE05 on-shell, no external action boundary/E_i00*dchi(F_i21), no full H4 Ward, Z21 or lensing.",
+  "frozen_problem": "D16R1 propagated bath on physical action clock using endpoint-H1dot Hermite X10, but the exact source-continuous H1 drive has no enclosure. Original H1 canonical integrator evaluates PCHIP-interpolated H,Q,Z off knots; original action scalar-charge/Lambda H,Q,Z are independently source-defined.",
+  "frozen_source_operator": "Original Repair07 _canonical_operator_matrices, original GE06/GE07 directional generators, original first-order zero source. Replace only numerical off-knot background callback in a distinct D17 process, using D15a original scalar-charge/Lambda action H,Q,Z; restore original callback/cache even on exception.",
+  "local_source_SHA256": {
+    "ge19/h4f3d16_original_H1dot_Hermite_physical_bath_core.py": "43f16e8d503d8e58313dd524bf7fa17dc1c5e4aca538c86bb41a0b6973ad3276",
+    "ge19/h4f3d16_predata_original_H1dot_Hermite_physical_bath_bridge.json": "60307c4abfba8a476b966b5148132c694daf3806170d28445d5c98ed90170280",
+    "ge19/h4f3d16r1_actual_original_H1dot_Hermite_physical_bath.py": "ef046df2698585a253085c8b58e3ffeea64fe4138130f29074aa6bde64644618",
+    "ge19/h4f3d16r1_predata_repair26_bracket_initialization.json": "6a2855ee34c91e6bb43ad82799396fc91ece0ee6afbc8ca300cfaf2ada01b92e",
+    "ge19/h4f3d17_original_action_dense_H1_core.py": "5dc876539c08146d0bf204e5cbaf4b8e824d335f4458093c975453a3365608b2"
+  },
+  "no_observation_tuning": true,
+  "non_overwrite": true,
+  "numerical_scope": {
+    "RadauIIA_substeps_per_original_H3F_interval": [
+      1,
+      2,
+      4
+    ],
+    "canonical_state": "y=(S,u,phi,T,pS,pu,pphi,pT)",
+    "cohorts": "3 original C tags x Nt128/Nt64 x six positive original Fourier modes, no mode deletion. Bath Nq and high-phase remain original D16R1 frozen; D17 does not rerun bath.",
+    "initial_condition": "From immutable original H3F state and H1dot at first knot via original Repair07 _initial_canonical_state, zero first-order source.",
+    "sampled_residual": "Piecewise cubic-Hermite canonical 8D y4 at the midpoint of every fine substep; directly evaluate original canonical M_action(x), never call this an interval enclosure.",
+    "saved_dense_substeps_per_interval": 4
+  },
+  "original_D16R1_diagnostic_immutable": true,
+  "original_action_background": "KQ(x)=I0 exp(-3x); Z exp(Z^2)=KQ/(4K2 Z0), Q=Q0+Z0 Z; Q_x=-3 Z0 Z/(1+2Z^2). H action from independent D15a positive Exp Repair13/Lambda. Check all original source knots and sample original PCHIP-action differences.",
+  "original_repair37_SCIENCE_FAIL_immutable": true,
+  "source_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/h3f_corrected_y_parent_core.py": "7e1da10ae8d79b6269b306f5483783de0fd3fd30",
+    "ge19/h3f_corrected_y_z20_science_reclosure.py": "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0",
+    "ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_archive_audit.json": "3f7acc17aee24c6b776578ef2b654a40b2db6af0",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair13_self_consistent_reduced_background_h1_reclosure.py": "362d63d03d7b850fceae393f535353ded79aeea7",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb"
+  }
+}

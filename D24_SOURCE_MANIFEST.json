@@ -1,0 +1,10 @@
+{
+  "classification": "GE19_D24_SOURCE_MANIFEST_LOCKED",
+  "files_sha256": {
+    "README_D24.md": "0b613267a8c20a036655731b2196c7cc59185f0ab1bfd3835d68256d66ccf4d0",
+    "ge19/h4f3d24_dense_first_interval_H3_source_transport.py": "d7d1994e04a5262b8aea898ca9010874a99a4238248dc335f514db9aa674cf11",
+    "ge19/h4f3d24_predata_dense_first_interval_H3_source_transport.json": "adc9cf2d020594d07c146b0cf1fddb96223b9c12a684bebee2fd0ee24381ae2a",
+    "ge19/h4f3d24_static_first_interval_test.py": "c04795c58035958e036ed6cebf3b6fd319d7e514ad6de2eb219759e37649dad7",
+    "ge19/run_local_h4f3d24_dense_first_interval_H3_source_resolution.sh": "7a90be72922d7ec8882b56734a0f345c8f9dfc98168980055f773807c95bac51"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "classification": "GE19_D23_PREDATA_ACTION_CONSTRAINT_BOUNDARY_AND_H3_TRANSPORT_DIAGNOSTIC",
+  "scope": "Frozen C_star Nt128 original-action H2 initial lapse+shift projection from truly reconstructed R2; one six-mode numerical H2 diagnostic only if initial constraints close; H3 archived m14 beta0.1 first-interval source/operator transport plus m1/m40 controls. No new bath, 40-mode Z20 solve, q20, full H4, Z21 or lensing.",
+  "archived_files": {
+    "D22A_JSON": ["ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.json", "158207d747e9fa617c335f4a30d860c011264b2da1dcde34870bad762ec5bbf4"],
+    "D22A_NPZ": ["ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.npz", "6952a2cde9a39367d29b75b63aca53a97a8feb622e7cbe7b33a468ae2b9a1632"],
+    "D22R3_JSON": ["ge19_h4f3d22r3_fresh_R2_boundary_decision.json", "7d1fb6142a52e95002fa9cf789949318194540caf9f4897d9ba55f4c233975bb"],
+    "D22R3_NPZ": ["ge19_h4f3d22r3_fresh_R2_boundary_decision.npz", "fa4c8030f7d31e18c85d6765df24758ebade671f0c229c5ac37579673fbceae3"],
+    "D22AR2_JSON": ["ge19_h4f3d22a_r2_shift_forensic.json", "8ea15a3d3ca433551efeb8c2e445a4f14f2a0c6c246d54c6195899b180c03210"]
+  },
+  "frozen_original_local_shift_gate": 1e-6,
+  "R2_boundary_deviation_is_always_reported_not_fitted_to_observations": true,
+  "R2_error_budget_certification_not_assumed": true,
+  "D22A_SCIENCE_FAIL_immutable": true,
+  "D19R1_D21R1_immutable": true
+}

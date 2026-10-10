@@ -1,0 +1,32 @@
+{
+  "classification": "GE19_H4F3D15A_PREDATA_ORIGINAL_GE05_CLOCK_CONSISTENT_X_EMBEDDED_R1_CONDITIONAL_COLLOCATION",
+  "date": "2026-09-26",
+  "amends_not_replaces": "ge19/h4f3d15_predata_original_GE05_continuous_R1_step_defect.json",
+  "original_actual_parent_SHA256": {
+    "D13_JSON": "2b4dfbd30ec6466292e0dcf62eeed8b723555d1890a127a5e0a6ff761d2ebe76",
+    "D13_NPZ": "1608fe98dd924b2b235ecf0f8fce768f2f3a2fa4a2854de04a56fe622ad3df89",
+    "D14_JSON": "8d8244cf810447c96df82f6ece6c161a4dd0553f707e3a698ed0b29f37ff3c6e",
+    "D14_NPZ": "f79d87f10dc1561ef2c61997b7952d62d85eda6674abaa015e5d38e161b55c48",
+    "R1_TRACE": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8"
+  },
+  "original_source_git_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/repair13_self_consistent_reduced_background_h1_reclosure.py": "362d63d03d7b850fceae393f535353ded79aeea7",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair24_q20_construction.py": "fc271987d1bddcd023cc9c057ddcad036b1d72fb",
+    "ge19/h4f3d13_actual_original_r1_signed_interval_bath_parent.py": "5cce06a82869d5b7ff70c12a92e70b9257073c42",
+    "ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath.py": "cb823960e9b2cf1b82b1accd458ec75f4acf4547",
+    "ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_archive_audit.json": "3f7acc17aee24c6b776578ef2b654a40b2db6af0"
+  },
+  "original_clock": "Original R1 step s=t/tau evolves dz/ds=v, dv/ds=-3*hmid*v-r^2*(z-Xlin) with dx/ds=hmid on each interval, hmid=tau*sqrt(H_i*H_i+1). Physical background has dx/ds=tau*H_true(x).",
+  "original_x_embedded_state": "At any original interval x sample, reconstruct original frozen step z_step(x),v_step(x) with delta_s=(x-x_i)/hmid. Physical derivative is dz_step/dt=gamma*v_step/tau with gamma=tau*H_true(x)/hmid, not the D13 internal-clock v_step/tau unless gamma=1.",
+  "exact_clock_consistent_GE05_Euler": "R_GE05=d_t[a^3*dz_step/dt]+a^3*(r/tau)^2*(z_step-Xtrue)=a^3*(r/tau)^2*[(1-gamma^2)*(z_step-Xlin)+(Xlin-Xtrue)]+a^3*gamma*H_x*v_step/tau. This exact identity requires differentiable source H_true(x), source Xtrue(x) and original action normalization.",
+  "known_clock_component": "R_clock=a^3*(r/tau)^2*(1-gamma^2)*(z_step-Xlin)+a^3*gamma*H_x*v_step/tau",
+  "unknown_drive_component": "R_drive=a^3*(r/tau)^2*(Xlin-Xtrue). If eps_X>=|Xlin-Xtrue| for all original six input modes, the absolute signed Fourier bath drive contribution is bounded by U_X*eps_X, where U_X is the original source-node/mode-pair absolute-sum coefficient at each collocation point.",
+  "action_background": "Use original Repair13 H^2=(Q*KQ-K)/3+C/a^3+rho_lambda and H_x=(-Q*KQ-3C/a^3)/(2H), same original stable positive Exp branch and I0=a^3 KQ. Cross-check all original knots with frozen Repair13 H and constant rho_lambda; never silently replace original H with CLASS H or an arbitrary interpolant.",
+  "fixed_collocation_theta": [0,0.5,1],
+  "original_scope": "Original C_min/C_star/C_max x Nt128/Nt64 x Nq2048/Nq1024; six positive and conjugate negative Fourier modes; full original six-mode signed m0..40 convolution; no original high-phase node discarded, no full m0..64 bath archive claimed.",
+  "archive_checks": "Original SHA D13/D14 JSON/NPZ and R1 trace, source blob locks and certified H3F/H3G/Z11/Repair13 parents, D13 same physical sampled signed bath parent and phase arrays, exact original interval endpoint R1 step reproduction, original action H source knot reconstruction.",
+  "meaning_of_PASS": "Conditional sampled x-embedded original-action bath clock and drive-coefficient diagnostic only. Finite collocation points do not establish a full-interval supremum or original first-order GE05 bath on-shell. The true continuous X10 parent and state-propagation/time/quadrature error budgets remain open.",
+  "immutable_science_stops": {"original_Repair37_SCIENCE_FAIL":true,"original_D10_FAIL":true,"original_GE05_bath_first_order_on_shell_certified":false,"original_full_H4_Ward_certified":false,"Z21_certified":false,"lensing_licensed":false,"no_observation_tuning":true}
+}

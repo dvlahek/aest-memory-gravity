@@ -1,0 +1,15 @@
+{
+  "classification": "GE19_D22R3_DIRECT_SOURCE_INDEPENDENT_R2_INITIAL_JET_REPAIR",
+  "constraint_max_original_D22A_unchanged": 1e-06,
+  "frozen_D22AR2_json_sha256": "8ea15a3d3ca433551efeb8c2e445a4f14f2a0c6c246d54c6195899b180c03210",
+  "frozen_D22A_json_sha256": "158207d747e9fa617c335f4a30d860c011264b2da1dcde34870bad762ec5bbf4",
+  "frozen_D22A_npz_sha256": "6952a2cde9a39367d29b75b63aca53a97a8feb622e7cbe7b33a468ae2b9a1632",
+  "frozen_R28_npz_sha256": "101c38d91344d12071ecb343c35769326f80975e013b7d159f573aae73879705",
+  "full_H4_Z21_lensing_claim": false,
+  "original_D22A_science_fail_immutable": true,
+  "source_sha256": {
+    "ge19/h4f3d22r3_direct_R2_boundary_reclosure.py": "3fe08c2296067c17c41a240a29e6d95302dfcd0ff31da99dd368814d53201536",
+    "ge19/h4f3d22r3_static_test.py": "15228dc421638a81125571a29c6a29cce1463f4f17d9a4613fecad6733900ac1",
+    "ge19/run_local_h4f3d22r3_direct_R2_boundary.sh": "6c5659742f183a8146006e7ae20a704da36b2c3e00f884e2ee0de38025a8b25c"
+  }
+}

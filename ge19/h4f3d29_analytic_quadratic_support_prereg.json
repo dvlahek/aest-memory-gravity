@@ -1,0 +1,23 @@
+{
+  "classification": "GE19_D29_PREEXEC_ORIGINAL_ACTION_ANALYTIC_QUADRATIC_HARMONIC_SUPPORT",
+  "branch": "physics-first-gravitational-elasticity",
+  "scope": "Frozen C_star Nt128 original D17 H1 with modes 3,5,8,10,15,20; GE06 smooth second-directional original action c2 only; selected m14 beta0.1, m1 beta1, m40 beta0.1; direct frozen f_c2 complex positive-mode m20+m20 replay at m40. Original H3 source/state unchanged.",
+  "source_theory": "The frozen GE06 f_c2[k] is the SECOND derivative in epsilon of a smooth original-action local partial, with every first-order directional input linear in epsilon and homogeneous background. Hence it is exactly homogeneous quadratic in first-order mode amplitudes; time-only coefficients and linear Fourier/time differentiation preserve pair support.",
+  "frozen_source_code_sha256": {
+    "ge19/h4f3d28_ge06_shift_two_term_provenance.py": "b118905784884f76ca433d59b0418afff3d97d9437d"
+  },
+  "frozen_outputs_sha256": {
+    "ge19_h4f3d28_ge06_shift_two_term_provenance.json": "a1882051a3707bcece4e6c3b58f2880daad50e4e70a221c6357f79138a002b49",
+    "ge19_h4f3d28_ge06_shift_two_term_provenance.npz": "393229a83f9a1875c58406d32c672da3a831d40732ddf24443d028b3ba212ffb",
+    "ge19_h4f3d27r2_signed_fft_sector_roundoff.npz": "c150e7e7fc1a616f4f8999eff836481c41527d54b656e344b345f322a96142fd",
+    "ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.npz": "6952a2cde9a39367d29b75b63aca53a97a8feb622e7cbe7b33a468ae2b9a1632"
+  },
+  "first_order_modes": [3,5,8,10,15,20],
+  "selected_modes": [14,1,40],
+  "expected_GE06_quadratic_support": {"m14": false, "m1": false, "m40": true},
+  "allowed_mode_control": "Direct evaluate unchanged frozen complex f_c2 partials on +m20 D17 H1 first-order jets, apply unchanged original GE06 Fourier derivative and original FD4 Dt. Replay the archived original m40 signed b_f and +dx_bx, and report full signed main/constraint row comparison.",
+  "in_support_b_term_replay_relative_limit": 1e-11,
+  "in_support_global_row_replay_relative_limit": 1e-9,
+  "negative_controls": ["Add synthetic mode 11, enabling m14 via 3+11", "Add synthetic mode 4, enabling m1 via 5-4", "Switch sign on the b_f direct replay"],
+  "not_licensed": ["No reinterpretation of existing D22A original relative shift FAIL", "No posthoc exclusion of m1/m14", "No fitted source or changed tolerance", "No GE05/H1 on-shell, full H4 Ward, Z20/Z21 or lensing certification"]
+}

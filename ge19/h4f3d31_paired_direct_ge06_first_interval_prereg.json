@@ -1,0 +1,82 @@
+{
+  "D25R1_json": "ge19_h4f3d25r1_first_interval_shift_substep_decision.json",
+  "D25R1_npz": "ge19_h4f3d25r1_first_interval_shift_substep_decision.npz",
+  "D30_json": "ge19_h4f3d30_direct_ge06_mode_pair_audit.json",
+  "D30_npz": "ge19_h4f3d30_direct_ge06_mode_pair_audit.npz",
+  "baseline_y_replay_limit": 1e-08,
+  "branch": "physics-first-gravitational-elasticity",
+  "cases": [
+    [
+      14,
+      0.1
+    ],
+    [
+      1,
+      1.0
+    ],
+    [
+      40,
+      0.1
+    ]
+  ],
+  "classification": "GE19_D31_PREEXEC_PAIRED_DIRECT_GE06_FIRST_INTERVAL",
+  "expected_offsupport": [
+    1,
+    14
+  ],
+  "expected_support_all": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    10,
+    11,
+    12,
+    13,
+    15,
+    16,
+    17,
+    18,
+    20,
+    23,
+    25,
+    28,
+    30,
+    35,
+    40
+  ],
+  "frozen_code_sha256": {
+    "ge19/h4f3d22a_action_parent_reclosure.py": "ca3bd645bb3bf9f5755a55f1168501de57f93c8e39aa8da8f50e78c9a75f23f2",
+    "ge19/h4f3d25r1_first_interval_shift_substep_decision.py": "75ad3a50db6fead1508f95ae836ec335e29162613cdab5bce4b41e3e1178b46a",
+    "ge19/h4f3d27_h3f_shift_sector_provenance.py": "5d5303eadf48fe5076c3f8e9de0d18b95b47cbaaf23f579e9e3af0ee3ac8b495",
+    "ge19/h4f3d30_direct_ge06_mode_pair_audit.py": "a59aadf817ce200c674b3b731303588a4e51054f0be82dd167b738f248906ec5"
+  },
+  "frozen_results_sha256": {
+    "ge19_h4f3d25r1_first_interval_shift_substep_decision.json": "e7461d7c1ef6830e10adcda0604697b2a4952e95302f26478416bd6f0146e7b1",
+    "ge19_h4f3d25r1_first_interval_shift_substep_decision.npz": "109f8c090b048beb9ccb92d50726947f2813417b385ef6e9f9b85e79687b6774",
+    "ge19_h4f3d30_direct_ge06_mode_pair_audit.json": "599e237e3f7f778df5daa860140534f0116c861df0bc3cd13d3e9acdcd4e42a5",
+    "ge19_h4f3d30_direct_ge06_mode_pair_audit.npz": "87ec12870d55763ab3574928b918825dd5d3635d5448cdcf42cc626ad4c8ba8c"
+  },
+  "global_supported_GE06_relative_limit": 1e-10,
+  "m40_unchanged_action_relative_limit": 1e-11,
+  "non_GE06_remainder_relative_limit": 1e-10,
+  "original_D22A_npz": "ge19_h4f3d22a_actual_Cstar_action_B10_Z11_Z20_parent_candidates.npz",
+  "original_D22A_replay_limit": 1e-11,
+  "original_D30_GE06_all_beta_replay_limit": 1e-11,
+  "original_boundary_backward_gate": 1e-06,
+  "original_shift_gate": 1e-06,
+  "required_D25R1_classification": "GE19_D25R1_FIRST_INTERVAL_SHIFT_SUBSTEP_BETA_ALIGNED_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "required_D30_classification": "GE19_D30_FROZEN_ORIGINAL_ACTION_DIRECT_SIGNED_GE06_MODE_PAIR_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "required_nonanalytic_y_modes": [
+    1,
+    14
+  ],
+  "scope": "Frozen Cstar Nt128 original-action H3F first interval only. Original D22A and D25R1 replay vs D30 direct-GE06-only candidate with same original lapse/shift momentum projection rule, m14/beta0.1, m1/beta1, m40/beta0.1, n1/n8. No observed-data tuning, source overwrite, gate relaxation, full H3/H4 certification.",
+  "substeps": [
+    1,
+    8
+  ]
+}

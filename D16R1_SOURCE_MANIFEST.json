@@ -1,0 +1,16 @@
+{
+  "classification": "GE19_H4F3D16R1_SOURCE_PACKAGE_IMPLEMENTATION_ORDER_REPAIR_ONLY",
+  "date": "2026-09-26",
+  "files_SHA256": {
+    "README_D16R1.md": "194da17f1c3c9fed00156f23e06f6cd973572560e69714384084e657f68f9b39",
+    "docs/ge19_h4f3d16r1_repair26_bracket_implementation_freeze.md": "2c0518cefd6cf793f2947fad256007213f28763a22ff522cb3b06703de960a4a",
+    "ge19/h4f3d16r1_actual_original_H1dot_Hermite_physical_bath.py": "ef046df2698585a253085c8b58e3ffeea64fe4138130f29074aa6bde64644618",
+    "ge19/h4f3d16r1_predata_repair26_bracket_initialization.json": "6a2855ee34c91e6bb43ad82799396fc91ece0ee6afbc8ca300cfaf2ada01b92e",
+    "ge19/h4f3d16r1_static_repair26_bracket_order_test.py": "6b518478a04eb31c1f7caa19a5921768cbd12d6251c43d27f61b640be4f85d1b",
+    "ge19/run_local_h4f3d16r1_repair26_bracket_H1dot_Hermite_physical_bath.sh": "484b1c4520d420a604f6c88ee9739b725a8367c82b1403f7f681998aeddd19d8"
+  },
+  "immutable_original_D16_driver_SHA256": "59b0744421f93209ece1e4062bb56d2b6612f6c3aef303af21cd859dd1acfa31",
+  "original_D16_core_SHA256": "43f16e8d503d8e58313dd524bf7fa17dc1c5e4aca538c86bb41a0b6973ad3276",
+  "original_D16_predata_SHA256": "60307c4abfba8a476b966b5148132c694daf3806170d28445d5c98ed90170280",
+  "science_claim": "NONE until actual D16R1 physical execution"
+}

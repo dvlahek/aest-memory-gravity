@@ -1,0 +1,92 @@
+{
+  "betas": [
+    1.0,
+    0.5,
+    0.1
+  ],
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D35_PREEXEC_M26_PRECISION_REPROJECTION_AUDIT",
+  "frozen_original_D34R1_code_sha256": {
+    "ge19/h4f3d34r1_boundary_failure_cohort.py": "a24e178e8dc0357bffdafb1c818d7af0876bd6faf61a24640328df8421972470",
+    "ge19/h4f3d34r1_boundary_failure_cohort_prereg.json": "aabdd6754a324b1152eba409192179c841f4e5e9cadcbdc27e048ea635b87db9",
+    "ge19/h4f3d34r1_boundary_failure_cohort_static_test.py": "41f7ad3781689a0a2a530babd8cff749b5bf73c36d4c7634658eb8b2edd522e9",
+    "ge19/run_local_h4f3d34r1_boundary_failure_cohort.sh": "c17f4ead567c605a619abb04fa1687939740d7f5375c3209f9721b31f35f24ad"
+  },
+  "frozen_original_D34R1_output_sha256": {
+    "ge19_h4f3d34r1_boundary_failure_cohort.json": "382a6aa7950fbc53a6b5c3b127f362b421f659ea7dfc29c228d1ff8a207f147b",
+    "ge19_h4f3d34r1_boundary_failure_cohort.npz": "9d3fda836e7fdcd4d288c76ac488a89af87540494d56f669185b24401a5994f3",
+    "ge19_h4f3d34r1_boundary_failure_cohort_FULL.log": "3dde011fe821cbcee834d0f76cee0a05c9f1fd8e5bdf52e1a943c998d9738454"
+  },
+  "modes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40
+  ],
+  "no_mode_exclusion": true,
+  "no_parent_certification": true,
+  "no_physics_threshold_change": true,
+  "no_production_source_edit": true,
+  "original_boundary_backward_gate": 1e-06,
+  "original_shift_gate": 1e-06,
+  "preregistered_method": "On only m26, where both original candidate-C constraint source rows are exactly zero at every 128 clock knots, reproduce the original rank-two Repair18 minimum-norm projection, then set to exact zero only originally nonzero canonical momentum components whose absolute value is <=16*float64_epsilon*max_abs_p. Do not optimize the selected component using the downstream gate. Re-evaluate original source-aware lapse/shift boundary equations with unchanged tolerance. Run original D25R1 n1/n8 Radau only if BOTH original lapse/shift boundary metrics and original shift_at metric pass. Combine only truly evaluated new m26 endpoints with frozen original D34R1 234 endpoints. Every original D34/D34R1 failure remains immutable. A posthoc precision diagnostic, not the original minimum-norm solve or full-window H3 certificate.",
+  "required_D34R1_classification": "GE19_D34R1_BOUNDARY_COHORT_INCOMPLETE_SHIFT_DIAGNOSTIC_PARENTS_UNCERTIFIED",
+  "required_original_failures": [
+    [
+      26,
+      1.0
+    ],
+    [
+      26,
+      0.5
+    ],
+    [
+      26,
+      0.1
+    ]
+  ],
+  "strict_source_retention": true,
+  "substeps": [
+    1,
+    8
+  ],
+  "target_is_outside_smooth_quadratic_support": true,
+  "target_mode": 26,
+  "tiny_component_multiplier_of_float64_epsilon": 16
+}

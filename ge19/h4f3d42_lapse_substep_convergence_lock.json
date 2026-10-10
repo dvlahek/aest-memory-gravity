@@ -1,0 +1,9 @@
+{
+  "classification": "GE19_D42_SELF_LOCK",
+  "sha256_local_files": {
+    "ge19/h4f3d42_lapse_substep_convergence.py": "e590deb370849556d6419b145fc70218fd9fc6c621d0b691a6e5b05f8993a392",
+    "ge19/h4f3d42_lapse_substep_convergence_prereg.json": "7729ccb27242ec67d7f1400f38e1c146f0fb3db4e0355729d105a4b342b3ab48",
+    "ge19/h4f3d42_lapse_substep_convergence_static_test.py": "798102454e1d14a3ac9e95f5122608d97d8d7b74c82de468f049b1fbfa0a8dc6",
+    "ge19/run_local_h4f3d42_lapse_substep_convergence.sh": "a5c042a015af16456dde33a1104c067a62e1d41ffaa2bbf48159e6960274f05a"
+  }
+}

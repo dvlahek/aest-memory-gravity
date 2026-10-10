@@ -1,0 +1,57 @@
+{
+  "D27R2_json": "ge19_h4f3d27r2_signed_fft_sector_roundoff.json",
+  "D30_npz": "ge19_h4f3d30_direct_ge06_mode_pair_audit.npz",
+  "D31R1_json": "ge19_h4f3d31r1_paired_direct_ge06_first_interval.json",
+  "D31R1_npz": "ge19_h4f3d31r1_paired_direct_ge06_first_interval.npz",
+  "archived_A_metric_replay_limit": 1e-08,
+  "archived_candidate_A_replay_limit": 1e-08,
+  "branch": "physics-first-gravitational-elasticity",
+  "cases": [
+    [
+      14,
+      0.1
+    ],
+    [
+      1,
+      1.0
+    ],
+    [
+      40,
+      0.1
+    ]
+  ],
+  "classification": "GE19_D32_PREEXEC_INDEPENDENT_SIGNED_SECTOR_FIRST_INTERVAL",
+  "frozen_local_code_sha256": {
+    "ge19/h4f3d31r1_paired_direct_ge06_first_interval.py": "223f4b3c8e15a7fc59e5268bb74b1c3e6fbe9f7048cafc0a44c31a124671224a",
+    "ge19/h4f3d31r1_paired_direct_ge06_first_interval_prereg.json": "494c61c2cc3cc07db6fdbd43128b4a7aa5f701d794ad0a14b0c10cf692c724ea"
+  },
+  "frozen_results_sha256": {
+    "ge19_h4f3d27r2_signed_fft_sector_roundoff.json": "6275835d0ac23f962eab7108424883638cc2502097fa9776a5aacc91963bdee3",
+    "ge19_h4f3d31r1_paired_direct_ge06_first_interval.json": "b81acace4554b0f4971879210bcac2b93bc7c9015d081abf5efe9a34dc4fbf4b",
+    "ge19_h4f3d31r1_paired_direct_ge06_first_interval.npz": "af09d404e5e8e44db6135d84b35491b2fc7d477f9a8f04c0baab26c6779470b9"
+  },
+  "full_H3_or_H4_or_Z21_certification": false,
+  "independent_GE07_replay_limit": 1e-11,
+  "lensing_licensed": false,
+  "m40_endpoint_state_relative_limit": 1e-08,
+  "m40_source_relative_limit": 1e-11,
+  "no_observational_tuning": true,
+  "off_support_modes": [
+    1,
+    14
+  ],
+  "original_D22A_shift_failure_immutable": true,
+  "original_D31R1_shift_failure_immutable": true,
+  "original_boundary_backward_gate": 1e-06,
+  "original_shift_gate": 1e-06,
+  "original_source_replay_limit": 1e-11,
+  "preregistered_decision": "Report original gate for candidate B without reclassification. Offsupport relative gate can be ill-conditioned because the physical constraint source is small. Do not introduce a new physical tolerance from the observed B residual. In-support m40 serves as mandatory original-action control. Any original source/parent SHA, Y retention or D31R1 baseline replay failure aborts without output.",
+  "production_source_unchanged": true,
+  "required_D27R2_classification": "GE19_D27R2_FROZEN_H3F_SIGNED_FFT_SPLIT_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "required_D31R1_classification": "GE19_D31R1_PAIRED_DIRECT_GE06_FIRST_INTERVAL_DIAGNOSTIC_COMPLETE_PARENTS_UNCERTIFIED",
+  "scope": "Frozen original-action Cstar Nt128 first-interval paired numerical representation diagnostic, cases (14,0.1),(1,1.0),(40,0.1), n=1 and 8. Candidate B = original-action D30 direct smooth GE06 + original GE07 + Lambda + original beta-specific nonanalytic Stage E Y, all m0..40, no original subtractive finite FFT remainder. Compare to immutable D31R1 candidate A and D27R2 signed shift FFT remainder. Never mutate original source or any previous results.",
+  "substeps": [
+    1,
+    8
+  ]
+}

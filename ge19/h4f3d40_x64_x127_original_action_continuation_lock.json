@@ -1,0 +1,8 @@
+{
+  "sha256_local_files": {
+    "ge19/h4f3d40_x64_x127_original_action_continuation.py": "856aa34b4539d79dedfdd6f0c3d4fec10f355e8efd1646705eca03f24ccc1ae5",
+    "ge19/h4f3d40_x64_x127_original_action_continuation_prereg.json": "29223398e93a9734f36c438c81ab11845cbecc3396f2cf705ba80d5d824d2d77",
+    "ge19/h4f3d40_x64_x127_original_action_continuation_static_test.py": "add92c5ecad0e592a442c5134083b65ce61ecf3c590cad121fe5424b76a9c0cc",
+    "ge19/run_local_h4f3d40_x64_x127_original_action_continuation.sh": "1df6932daab549215407347598660f0d312fdfa60034dde148bf944cf47e8c2d"
+  }
+}

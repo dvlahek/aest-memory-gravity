@@ -1,0 +1,9 @@
+{
+  "classification": "GE19_D22AR1_ARCHIVED_SHIFT_FAILURE_LOCALIZATION_SOURCE_ONLY",
+  "files": {
+    "README_D22AR1.md": "85ae793f16c87cfe610c7046e1609274e6f59a7fb61e985b2b331e819a7414db",
+    "ge19/h4f3d22a_r1_shift_constraint_localization.py": "96b640912b0dffe026a4238342a069615d3165f11f85b1f1c174ea333d45e74c",
+    "ge19/run_local_h4f3d22a_r1_shift_constraint_localization.sh": "d95ad9837893a94d92610c8cb2fd7f36f369918b68f870342c3eec60a96fab27"
+  },
+  "original_D22A_science_fail_immutable": true
+}

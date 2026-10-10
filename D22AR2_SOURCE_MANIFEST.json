@@ -1,0 +1,14 @@
+{
+  "changes": [
+    "Z20 worst-mode index converted to native int",
+    "strict NumPy scalar JSON conversion at both diagnostic outputs"
+  ],
+  "classification": "GE19_D22AR2_JSON_SCALAR_SERIALIZATION_ONLY_REPAIR_D22A_FAIL_IMMUTABLE",
+  "files": {
+    "README_D22AR2.md": "0bd049f28d9a83c40c7266fbefe1a2c387ec21270c924e0d7c83f2027180d77f",
+    "ge19/h4f3d22a_r2_shift_constraint_serialization_repair.py": "5e435bdb823a70277d7021e06564fc47e7402fe1923a6d0e8b0bbea10c15f83b",
+    "ge19/run_local_h4f3d22a_r2_shift_constraint_serialization_repair.sh": "e919149701336b9a3053e0ccb4b21969f6a71714e03381a1399de44de34ad771"
+  },
+  "original_D22A_science_fail_immutable": true,
+  "parent_D22AR1_python_sha256": "96b640912b0dffe026a4238342a069615d3165f11f85b1f1c174ea333d45e74c"
+}

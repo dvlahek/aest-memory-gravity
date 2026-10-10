@@ -1,0 +1,14 @@
+{
+  "classification": "GE19_D27_PREDATA_ORIGINAL_ACTION_GE06_GE07_SHIFT_SECTOR_PROVENANCE",
+  "frozen_D26_outputs": {
+    "D26_JSON": {"filename": "ge19_h4f3d26_action_shift_source_transport_ledger.json", "sha256": "368031a71fb98185135931ed528fce20c516fb474a6931a66c512ee415cf9cf2"},
+    "D26_NPZ": {"filename": "ge19_h4f3d26_action_shift_source_transport_ledger.npz", "sha256": "1e141e108e89a6a7bb668267c80870ad5cfad23bd638a5e2010eaf5d305c2eb2"}
+  },
+  "target": "Single original-action GE06/GE07 constraint-source provenance replay and aggregate-versus-sector PCHIP derivative for the three existing first-interval D26 modes. Decompose initial canonical source forcing without another H3 solve.",
+  "modes_beta": [[14,0.1],[1,1.0],[40,0.1]],
+  "nx": 1024,
+  "nt": 128,
+  "source_replay_relative_limit": 1e-11,
+  "signed_sector_relative_limit": 1e-11,
+  "physical_claim_boundary": "D27 is source provenance diagnostic only. No change of action/background/H1/source/threshold/boundary; no continuum source-derivative or theory-inconsistency certificate; no H3/H4/Z21/lensing. PCHIP derivatives are representations, not field equations. Original D22A/D25 failures immutable."
+}

@@ -1,0 +1,8 @@
+{
+  "sha256_local_files": {
+    "ge19/h4f3d36_second_interval_continuation.py": "c67dc8d3503b3971889634c4926435b6ffeadea1c9b8ddca0e166ff6c375fb42",
+    "ge19/h4f3d36_second_interval_continuation_prereg.json": "7e00b5ce89c89709c5006e5c246ca1209696b7c9ff20e9bf28939422f18d1448",
+    "ge19/h4f3d36_second_interval_continuation_static_test.py": "8ee1abce595280c40dd83cae1527f446880b51098e0412cbbfd45768a68c1a1c",
+    "ge19/run_local_h4f3d36_second_interval_continuation.sh": "9c96bdfe871a620e68ec347ad946d9f505b00a30fb55bdbb3ea9788e73c7eb9a"
+  }
+}

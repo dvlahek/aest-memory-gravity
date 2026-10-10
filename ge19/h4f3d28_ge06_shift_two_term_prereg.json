@@ -1,0 +1,24 @@
+{
+  "classification": "GE19_D28_PREEXEC_ORIGINAL_GE06_EB_TWO_TERM_PROVENANCE",
+  "source": "Frozen original GE06 f_c2 through Repair07 assemble_ga_local; original action background and D17 canonical H1 exactly as D27R2",
+  "original_assembler_identity": "Eb_GE06 = b_f - spectral_dx(b_x, original_kfund)",
+  "signed_H3_source_components": ["-b_f", "+spectral_dx(b_x, original_kfund)"],
+  "frozen_D27R2_outputs": {
+    "ge19_h4f3d27r2_signed_fft_sector_roundoff.json": "6275835d0ac23f962eab7108424883638cc2502097fa9776a5aacc91963bdee3",
+    "ge19_h4f3d27r2_signed_fft_sector_roundoff.npz": "c150e7e7fc1a616f4f8999eff836481c41527d54b656e344b345f322a96142fd"
+  },
+  "D27R2_source_sha256": "e51d22ac1aeae572494b002e39aee03c5359965a5519833d11d7067735feb349",
+  "cases": [[14, 0.1], [1, 1.0], [40, 0.1]],
+  "C_tag": "C_star",
+  "nt": 128,
+  "nx": 1024,
+  "source_replay_limit": 1e-11,
+  "precommitted_discriminant": "Report signed first-interval changes and PCHIP first-knot derivatives of original GE06 -b_f and +dx(b_x); compare to frozen D27R2 selected GE06 source without modifying any source or H3 state. The raw-term magnitudes/cancellations direct the following test, but are not by themselves a source of physical inconsistency.",
+  "gates": ["Exact original real-space GE06 Eb=b_f-dx(b_x)", "D22A original H3F source replay", "Exact D27R2 GE06 Fourier 128-point replay", "First-node D27R2 GE06 PCHIP replay", "All frozen D26/D27R2 code and parents SHA256"],
+  "history_immutable": ["Repair37 SCIENCE_FAIL", "D22A SCIENCE_FAIL", "Original D25 replay FAIL", "Original D27 per-mode relative triplet FAIL", "D27R1 NameError FAIL"],
+  "no_source_fit": true,
+  "no_threshold_change": true,
+  "no_H3_solver_rerun": true,
+  "no_parent_certification": true,
+  "no_H4_Z21_or_lensing": true
+}

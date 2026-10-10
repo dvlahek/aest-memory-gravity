@@ -1,0 +1,29 @@
+{
+  "classification": "GE19_D20_PACKAGE_PROVENANCE",
+  "files": {
+    "README_D20.md": {
+      "bytes": 2882,
+      "sha256": "4d80b4d76202101bf36ed6b50d0edcf4abcdc75f0b0b50ced1ef0f30796a9661"
+    },
+    "docs/ge19_h4f3d20_physics_freeze.md": {
+      "bytes": 2629,
+      "sha256": "57f8596b0cf69de406b728e8b78ac4b5128d98bfba571044c96ef5ccea8179bb"
+    },
+    "ge19/h4f3d20_predata_dependency_reclosure.json": {
+      "bytes": 3550,
+      "sha256": "37677f4f4d6c60dca1c902ea6097504efc5ee05f63a6f73d3578b7b0c7ef109a"
+    },
+    "ge19/h4f3d20_recompute_five_sources_and_bath_ward.py": {
+      "bytes": 18399,
+      "sha256": "a81871e76b32c81c16367330a16bc081219e2aa9779ecf5baf8433d51bed88f7"
+    },
+    "ge19/h4f3d20_static_dependency_test.py": {
+      "bytes": 2930,
+      "sha256": "8f8545178f3238acbf6eb83c29662a7d41bc119a0016816e9bc25d6791a4f9cc"
+    },
+    "ge19/run_local_h4f3d20_five_sources_GE05_ward_subset.sh": {
+      "bytes": 3222,
+      "sha256": "884852eb007a3e44812b9daf8121b65b1331baa3acac4de55a94c50e2423c951"
+    }
+  }
+}

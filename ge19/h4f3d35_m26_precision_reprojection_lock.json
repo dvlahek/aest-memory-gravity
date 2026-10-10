@@ -1,0 +1,8 @@
+{
+  "sha256_local_files": {
+    "ge19/h4f3d35_m26_precision_reprojection.py": "e29d5b9a7868fc58eb29ae002e4c7ea199d0b538dc07ee7089b8d7c2f55452f5",
+    "ge19/h4f3d35_m26_precision_reprojection_prereg.json": "ce74226449a4b4005991246b4ad1f40db39150fdf6e44cbfb6f2ce41e7657df5",
+    "ge19/h4f3d35_m26_precision_reprojection_static_test.py": "8610f234c2f48b47e3bbd97bba240b85e79010428d56c6f7fa281b42e23e8822",
+    "ge19/run_local_h4f3d35_m26_precision_reprojection.sh": "d2c258872045dbf92dddb469c96ac1799cd7d44d7f5a6164bd15e1cb4aa68a74"
+  }
+}

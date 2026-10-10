@@ -1,0 +1,29 @@
+{
+  "D43_lapse_reference_report_only": 1e-06,
+  "betas": [
+    1.0,
+    0.5,
+    0.1
+  ],
+  "branch": "physics-first-gravitational-elasticity",
+  "classification": "GE19_D45_PREEXEC_ORIGINAL_ACTION_OFFCLOCK_HOMOGENEOUS_H1_AND_SOURCE_INTERPOLATION_DIAGNOSTIC",
+  "clock_nodes": 128,
+  "full_original_source_modes": 41,
+  "method": "Original frozen Cstar action off-clock background evaluated at 127 interval midpoints, independently compared against exact scalar-charge/Exp-branch/Friedmann reconstruction anchored at 128 original knot data; immutable original D33 full beta-specific 41-mode PCHIP compared to linear only as interpolation choice sensitivity, NOT independent true continuous source or physically licensed replacement. Original D43/D44 and historical fails unchanged.",
+  "midpoints": 127,
+  "no_H3_H4_Z21_lensing_promotion": true,
+  "no_full_H1_on_shell_certification": true,
+  "no_new_evolution_or_projections": true,
+  "no_new_source_evaluation_claim": true,
+  "no_observation_tuning": true,
+  "original_d44_archive_report_sha256": "c405a127f2136094843661ba17f55d7991ddd96ddecc198a3c588f9f9089af56",
+  "original_parent_results_sha256": {
+    "ge19_h4f3d33_direct_ge07_paired_first_interval.json": "9b1d649964a975e4a25a00e17ad1348346bea815a4640dbe5a93cba1787ffafb",
+    "ge19_h4f3d33_direct_ge07_paired_first_interval.npz": "41c75b883b7df7b1f57b72f0309d71e1c7c3779f291e524f33fa7532861eb264",
+    "ge19_h4f3d41_full_window_two_constraint_audit.npz": "17a64a7f0329a362d73f16705a547027c3743d2f146cbaa70ce65dd8bf95f82c",
+    "ge19_h4f3d43_full_40_mode_n2_n4_lapse.json": "b948f0b6cb92a99ce9aef5e80212ebf72dff59e1698a1b26c4a47984c5b41234",
+    "ge19_h4f3d43_full_40_mode_n2_n4_lapse.npz": "1d2c54effc07cf860080489ceed04b9d2b30ece49d3d650f27cc58e16ee1d63d"
+  },
+  "original_shift_gate_unchanged": 1e-06,
+  "reduced_modes": 40
+}

@@ -1,0 +1,56 @@
+name: GE19 H4F3d15a Original GE05 Clock-Consistent Conditional Static Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [physics-first-gravitational-elasticity]
+    paths:
+      - 'ge19/h4f3d15a_*'
+      - 'ge19/run_local_h4f3d15a_original_GE05_clock_conditional.sh'
+      - '.github/workflows/ge19-h4f3d15a-original-clock-conditional-static.yml'
+
+jobs:
+  ge05-original-clock-conditional:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install symbolic and numerical dependencies
+        run: python3 -m pip install numpy scipy sympy
+      - name: Validate original prereg and new source raw hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          check() { test "$(sha256sum "$1" | awk '{print $1}')" = "$2"; }
+          check ge19/h4f3d15a_predata_original_GE05_clock_consistent_conditional_collocation.json c5cb22394dc8eabf12c9fe8d5f6acd57a24d90f356976122864723ec73513745
+          check ge19/h4f3d15a_original_GE05_clock_embedded_source.py 14da31797282fb7959c44793f04751f1dd0ff25765424e566ca6015e759a82ae
+          check ge19/h4f3d15a_actual_original_R1_clock_conditional.py 7006c5afc9cea07ee2d076ea518ad81d0722c5f19236e73d34f4f8818c1496ec
+          check ge19/h4f3d15a_static_clock_source_test.py 0a313f7fc4e49e56236e8673e58c523607b6c6ca309df6e22668b5a71947de21
+          check ge19/h4f3d15a1_predata_original_GE05_interface_current_jump.json da56f2c42e11ce480ee72a888f725d422c71a2e7a3c2c19d8b19cabda752874c
+          check ge19/h4f3d15a1_original_GE05_interface_current_jump.py d5e55055348cfeb9462d566d436e91da563d77c7b3f6d36b914a73c7711cce2c
+          check ge19/h4f3d15a1_static_interface_test.py e8fc7f30203acc75c271f1187fa930a4c3cd7a51500ff259fa2a1298cd515add
+          check ge19/run_local_h4f3d15a_original_GE05_clock_conditional.sh c1852131294ab39aa53808db39998546daa8d9b5d7158f7d844f70ef6a4d444c
+          test "$(git rev-parse HEAD:ge05/memory_directional_source_generator.py)" = 40837d77f89028da30c28899e2d0530a4401844e
+          test "$(git rev-parse HEAD:ge19/repair13_self_consistent_reduced_background_h1_reclosure.py)" = 362d63d03d7b850fceae393f535353ded79aeea7
+          test "$(git rev-parse HEAD:ge19/repair24_q20_construction.py)" = fc271987d1bddcd023cc9c057ddcad036b1d72fb
+          test "$(git rev-parse HEAD:ge19/h4f3d14_actual_original_r1_source_weighted_phase_bath_independent_archive_audit.json)" = 3f7acc17aee24c6b776578ef2b654a40b2db6af0
+          bash -n ge19/run_local_h4f3d15a_original_GE05_clock_conditional.sh
+          python3 -m py_compile ge19/h4f3d15a_original_GE05_clock_embedded_source.py ge19/h4f3d15a_actual_original_R1_clock_conditional.py
+          python3 -B -m ge19.h4f3d15a_static_clock_source_test
+          python3 -B -m ge19.h4f3d15a1_static_interface_test
+          python3 - <<'PY'
+          import ast, json
+          from pathlib import Path
+          p=Path('ge19/h4f3d15a_predata_original_GE05_clock_consistent_conditional_collocation.json')
+          pre=json.loads(p.read_text())
+          assert pre['classification']=='GE19_H4F3D15A_PREDATA_ORIGINAL_GE05_CLOCK_CONSISTENT_X_EMBEDDED_R1_CONDITIONAL_COLLOCATION'
+          assert pre['fixed_collocation_theta']==[0,.5,1]
+          ext=json.loads(Path('ge19/h4f3d15a1_predata_original_GE05_interface_current_jump.json').read_text())
+          assert ext['classification']=='GE19_H4F3D15A1_PREDATA_ORIGINAL_GE05_X_EMBEDDED_R1_INTERNAL_INTERFACE_CURRENT_JUMP'
+          t=ast.parse(Path('ge19/h4f3d15a_actual_original_R1_clock_conditional.py').read_text())
+          names={f.name for f in t.body if isinstance(f,ast.FunctionDef)}
+          assert {'clock_slip','step_at_fraction','original_physical_files','main'}<=names
+          assert 'original_GE05_interior_current_jump' in Path('ge19/h4f3d15a_actual_original_R1_clock_conditional.py').read_text()
+          assert pre['immutable_science_stops']['original_GE05_bath_first_order_on_shell_certified'] is False
+          print('GE19_H4F3D15A_ORIGINAL_GE05_CLOCK_CONDITIONAL_STATIC_PASS_PHYSICAL_OPEN')
+          PY

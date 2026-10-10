@@ -1,0 +1,36 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 1841,
+      "sha256": "bcb2db67f9326a639f5596ec58c4e15de12e4d27fd1f10fa642420a60ac33864"
+    },
+    "docs/ge19_h4f3d16_source_physics_freeze.md": {
+      "bytes": 3890,
+      "sha256": "7dc2c10688d5ac86317c06661e6151ee22b536d41c780be61e45224e26fc8263"
+    },
+    "ge19/h4f3d16_actual_original_H1dot_Hermite_physical_bath.py": {
+      "bytes": 14465,
+      "sha256": "59b0744421f93209ece1e4062bb56d2b6612f6c3aef303af21cd859dd1acfa31"
+    },
+    "ge19/h4f3d16_original_H1dot_Hermite_physical_bath_core.py": {
+      "bytes": 7170,
+      "sha256": "43f16e8d503d8e58313dd524bf7fa17dc1c5e4aca538c86bb41a0b6973ad3276"
+    },
+    "ge19/h4f3d16_predata_original_H1dot_Hermite_physical_bath_bridge.json": {
+      "bytes": 4778,
+      "sha256": "60307c4abfba8a476b966b5148132c694daf3806170d28445d5c98ed90170280"
+    },
+    "ge19/h4f3d16_static_source_and_physical_clock_test.py": {
+      "bytes": 5501,
+      "sha256": "d6c878593866be5c8e60d434d9e09adaaed00bf41ebedbddedac8deb75f25c50"
+    },
+    "ge19/run_local_h4f3d16_original_H1dot_Hermite_physical_bath.sh": {
+      "bytes": 4356,
+      "sha256": "484590778d6cf7b7b5e958755c965542b032464b9aeac0cd54dfcc14ac05fb2e"
+    }
+  },
+  "no_original_action_or_historical_source_overwrite": true,
+  "original_actual_D16_executed": false,
+  "root_unzip": "~/aest-memory-gravity",
+  "stage": "GE19_H4F3D16_PREDATA_AND_SYNTHETIC_STATIC_ONLY"
+}

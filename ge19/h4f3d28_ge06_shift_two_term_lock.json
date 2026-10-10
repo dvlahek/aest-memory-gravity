@@ -1,0 +1,13 @@
+{
+  "D27R2_source_sha256": "e51d22ac1aeae572494b002e39aee03c5359965a5519833d11d7067735feb349",
+  "all_old_D27R2_SHA_LOCKS_ENFORCED_BY_D28": true,
+  "classification": "GE19_D28_ORIGINAL_ACTION_GE06_TWO_TERM_SHA256_LOCK",
+  "new_physics_source_changes": false,
+  "original_D27_D27R1_failures_immutable": true,
+  "sha256_local_files": {
+    "ge19/h4f3d28_ge06_shift_two_term_prereg.json": "c92b733782bbbc805687835efc3e9857b4e701d643dc90fad4d687f1658edcec",
+    "ge19/h4f3d28_ge06_shift_two_term_provenance.py": "b118905784884f76ca433a7aed6289b70fc4753fe3d59b0418afff3d97d9437d",
+    "ge19/h4f3d28_ge06_shift_two_term_static_test.py": "b31e4b765542b9f17f576b72634ff27c9ef669341b6e085e3a4fd0e76c3be1c8",
+    "ge19/run_local_h4f3d28_ge06_shift_two_term.sh": "650a7521a36c860f4ec571908850a38ec6e481b7e11135b01288c6d11bfeebf7"
+  }
+}

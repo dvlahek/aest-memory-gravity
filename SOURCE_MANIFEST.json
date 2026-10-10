@@ -1,0 +1,54 @@
+{
+  "Z21_certified": false,
+  "classification": "GE19_H4F3D15A_RELEASE_SOURCE_AND_SYNTHETIC_STATIC_PASS_ORIGINAL_R1_PHYSICAL_OPEN",
+  "date": "2026-09-26",
+  "files": {
+    ".github/workflows/ge19-h4f3d15a-original-clock-conditional-static.yml": {
+      "bytes": 4066,
+      "sha256": "a6feb1b1f6357b3c573cca5e938ab423497f32ee9278a8ec22061c5883f03e6a"
+    },
+    "README.md": {
+      "bytes": 2716,
+      "sha256": "084ce62fc4c8fe4634f13693f2be88cd86c79c7e98e3b918f647021f0fc1a5e9"
+    },
+    "docs/ge19_h4f3d15a_original_clock_consistent_GE05_conditional_freeze.md": {
+      "bytes": 7843,
+      "sha256": "384570035a0b26050c994e13481fe28c988ba9d49313355b5e042f7f2f175f20"
+    },
+    "ge19/h4f3d15a1_original_GE05_interface_current_jump.py": {
+      "bytes": 2789,
+      "sha256": "d5e55055348cfeb9462d566d436e91da563d77c7b3f6d36b914a73c7711cce2c"
+    },
+    "ge19/h4f3d15a1_predata_original_GE05_interface_current_jump.json": {
+      "bytes": 2726,
+      "sha256": "da56f2c42e11ce480ee72a888f725d422c71a2e7a3c2c19d8b19cabda752874c"
+    },
+    "ge19/h4f3d15a1_static_interface_test.py": {
+      "bytes": 2295,
+      "sha256": "e8fc7f30203acc75c271f1187fa930a4c3cd7a51500ff259fa2a1298cd515add"
+    },
+    "ge19/h4f3d15a_actual_original_R1_clock_conditional.py": {
+      "bytes": 17148,
+      "sha256": "7006c5afc9cea07ee2d076ea518ad81d0722c5f19236e73d34f4f8818c1496ec"
+    },
+    "ge19/h4f3d15a_original_GE05_clock_embedded_source.py": {
+      "bytes": 7556,
+      "sha256": "14da31797282fb7959c44793f04751f1dd0ff25765424e566ca6015e759a82ae"
+    },
+    "ge19/h4f3d15a_predata_original_GE05_clock_consistent_conditional_collocation.json": {
+      "bytes": 4195,
+      "sha256": "c5cb22394dc8eabf12c9fe8d5f6acd57a24d90f356976122864723ec73513745"
+    },
+    "ge19/h4f3d15a_static_clock_source_test.py": {
+      "bytes": 5742,
+      "sha256": "0a313f7fc4e49e56236e8673e58c523607b6c6ca309df6e22668b5a71947de21"
+    },
+    "ge19/run_local_h4f3d15a_original_GE05_clock_conditional.sh": {
+      "bytes": 5848,
+      "sha256": "c1852131294ab39aa53808db39998546daa8d9b5d7158f7d844f70ef6a4d444c"
+    }
+  },
+  "full_H4_Ward_certified": false,
+  "lensing_licensed": false,
+  "physical_on_shell_certified": false
+}

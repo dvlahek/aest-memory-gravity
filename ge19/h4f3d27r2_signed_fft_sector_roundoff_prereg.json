@@ -1,0 +1,43 @@
+{
+  "D27R1_execution_fail_immutable": true,
+  "D27R1_original_failed_log_sha256": "f91176d23fba495612712bc657c4bfdc5ce40a73270ef2004f1551542d69dd09",
+  "D27_original_selected_triplet_FAIL_immutable": true,
+  "classification": "GE19_D27R2_PREEXEC_ORIGINAL_SHIFT_REAL_SPACE_AND_FFT_SPLIT_AUDIT",
+  "frozen_D26_outputs": {
+    "D26_JSON": {
+      "filename": "ge19_h4f3d26_action_shift_source_transport_ledger.json",
+      "sha256": "368031a71fb98185135931ed528fce20c516fb474a6931a66c512ee415cf9cf2"
+    },
+    "D26_NPZ": {
+      "filename": "ge19_h4f3d26_action_shift_source_transport_ledger.npz",
+      "sha256": "1e141e108e89a6a7bb668267c80870ad5cfad23bd638a5e2010eaf5d305c2eb2"
+    }
+  },
+  "modes_beta": [
+    [
+      14,
+      0.1
+    ],
+    [
+      1,
+      1.0
+    ],
+    [
+      40,
+      0.1
+    ]
+  ],
+  "nt": 128,
+  "nx": 1024,
+  "original_D27R1_source_sha256": "700abcf1c0123a1f808b50f97ff75b14b450950ef3422558478569a3b545b33a",
+  "original_D27_local_relative_limit": 1e-11,
+  "original_D27_source_sha256": "5d5303eadf48fe5076c3f8e9de0d18b95b47cbaaf23f579e9e3af0ee3ac8b495",
+  "original_sector_triplet_gate_unchanged_and_reported": true,
+  "real_space_shift_Eb_identity": "At each original t,x: original full GE06+GE07 Eb equals original GE06-only Eb plus original GE07-only Eb, verified by exact NumPy float-array equality before any FFT; mismatch STOP.",
+  "repair_scope": "Implementation-only: previous D27R1 failed before writing results because nx is undefined at real sector L1 scale. Declare original Nx from prereg and validate full 3x128x1024 real triplet. No changed physics or threshold.",
+  "replacement_for_failed_physical_gate": false,
+  "scope": "No source or solver rerun, only original GE06/GE07 H3F source rebuild on frozen D17 H1. Original action and parent locks unchanged; no threshold adjustment, no observational tuning, no H3/H4/Noether/Z21/lensing claim. Failure in exact real-space identity or archived D22A/D26 replay remains STOP.",
+  "signed_fft_remainder": "For each selected Fourier time series record total-fft(GE06)-fft(GE07), unchanged. Signed remainder is not a new source or a fitted correction. Store original D27 selected-relative failure unmodified and separately compute PCHIP derivative of signed remainder.",
+  "source_replay_relative_limit_unchanged": 1e-11,
+  "why_additive_repair": "Original D27 failed at first selected Fourier mode relative GE06+GE07 triplet 0.007910034849188244 after original D22A full-source replay PASS. Its global Fourier check is not a selected-mode cancellation-safe test. Retain original D27 FAIL and diagnose in untransformed real-space original Eb identity before independently measuring signed FFT arithmetic remainder."
+}

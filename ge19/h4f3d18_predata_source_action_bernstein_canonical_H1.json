@@ -1,0 +1,31 @@
+{
+  "D17_parents": {
+    "JSON": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.json",
+      "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294"
+    ],
+    "NPZ": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
+      "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"
+    ]
+  },
+  "D17_prereg_sha256": "44661484ab84c84a6413e80a9adba0e2448d29e74866bb13bac102b585fe9358",
+  "action_operator_curvature_bound": "UNAVAILABLE; not inferred from D17 differences or midpoint probes",
+  "action_operator_remainder_bound": "UNAVAILABLE; true action H1/X10 not certified",
+  "classification": "GE19_H4F3D18_PREDATA_SOURCE_ACTION_AFFINE_OPERATOR_BERNSTEIN_CONDITIONAL_H1",
+  "cohorts": "3 original source C tags x Nt128/Nt64 x all original six positive modes, all 4-sub D17 fine intervals",
+  "conditional_Gronwall_profile": "affine-only scenario in log10(1+E) only, never actual original-action error bound",
+  "date": "2026-09-26",
+  "external_original_action_boundary_open": true,
+  "forbidden_claims": "No original continuous-action H1/X10/X10_x enclosure, GE05 bath on-shell, H4 Ward, original Repair37 replacement, Z21, lensing or observations.",
+  "immutable_earlier_D16R1": true,
+  "local_sha256": {
+    "ge19/h4f3d18_actual_source_action_Bernstein_canonical_H1.py": "60c4012e5223ce96c3df82587a200e26513023782e9b84e795022b913f149e93",
+    "ge19/h4f3d18_bernstein_affine_canonical_H1_core.py": "f8a1757790cb2bee8e14b1bd4b4e04563ed0e5354782dfbe409c58db52f2d489",
+    "ge19/h4f3d18_static_bernstein_test.py": "87cf7b522fefa81de01cd9f6a2c1e287edc0abc05edc5f7a773ac167fd4a99dc"
+  },
+  "next_source_verified_certificate": "symbolic/interval-valued M_action_xx enclosure or direct M_action-Maff interval bound, outward coefficient evaluation, source initial-state bound and D18 residual propagation",
+  "no_observation_tuning": true,
+  "non_overwrite": true,
+  "surrogate_degree4_residual_Bernstein_control": "exact mathematical convex hull for linear-endpoint-M surrogate on every fine interval; computed float64 numbers not outward rounded"
+}

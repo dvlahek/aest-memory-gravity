@@ -1,0 +1,67 @@
+{
+  "classification": "GE19_D22A_PREDATA_D17_D19R1_CSTAR_ORIGINAL_ACTION_PARENT_CANDIDATES",
+  "frozen_git_blobs": {
+    "ge19/h3f_corrected_y_source_adapter.py": "395294868191111b9b01201315cd2e6a30e47578",
+    "ge19/repair07_window_retarded_reduced_h3_z20_particular.py": "e34d28a2062c748f48bc82fa928844b02631de25",
+    "ge19/repair14_self_consistent_reduced_h3_z20_particular.py": "06c5ced952c2370cfa4aaadb6ef8f72d2d7221de",
+    "ge19/repair18_zero_coordinate_constraint_projected_momentum_boundary.py": "c7b3a5c689bd78a65a8150c26e1fbfae108cb580",
+    "ge19/repair32b_factor2_corrected_reduced_h2_z11_reconstruction.py": "6ece578e8a30f48faaded8808687a9bd5c114608",
+    "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py": "45d203a092f9ac71cc612b15df5f0c0c630f5898"
+  },
+  "frozen_thresholds": {
+    "H3F_spatial_Nx1024_Nx2048": 0.0005,
+    "boundary": 1e-08,
+    "constraints": 1e-06,
+    "initial": 1e-08,
+    "linear": 1e-08
+  },
+  "gates_are_numerical_not_continuum_certification": true,
+  "local_sha256": {
+    "ge19/h4f3d17_original_action_dense_H1_core.py": "5dc876539c08146d0bf204e5cbaf4b8e824d335f4458093c975453a3365608b2",
+    "ge19/h4f3d20r1_recompute_five_sources_and_bath_ward.py": "6dcaae0648dda370f8c84483b60594556c8e38dd8d7f162ed57dca0dcc1b7e41",
+    "ge19/h4f3d22a_action_parent_reclosure.py": "ca3bd645bb3bf9f5755a55f1168501de57f93c8e39aa8da8f50e78c9a75f23f2"
+  },
+  "negative_controls": [
+    "stale H3G q20 forbidden",
+    "X20 may not be relabelled B20",
+    "source-aware momentum is nonzero when required",
+    "old source-dependent algebraic Z11 boundary not reused"
+  ],
+  "parent_archives": {
+    "D17_JSON": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.json",
+      "05154b61dfe9e6a35bd3d4c86a3fe46cbbc5d09bf2143d0e55de4e4310b00294"
+    ],
+    "D17_NPZ": [
+      "ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
+      "cd3bcf8cf5ac9ab14385baa4d90bd53400daae9f2bb89d4d22bfa2a581846359"
+    ],
+    "D19_JSON": [
+      "ge19_h4f3d19r1_actual_Cstar_Nt128_Nq2048_numerical_reclosure.json",
+      "56027906e54bae8430203b796ab31182ae3ed743639714857bf6a6af38ec73de"
+    ],
+    "D19_NPZ": [
+      "ge19_h4f3d19r1_actual_Cstar_Nt128_Nq2048_numerical_reclosure.npz",
+      "31a03042d467732d1463312c4a850c349c88411a0048a03d655caa16fc7dca86"
+    ],
+    "D20_JSON": [
+      "ge19_h4f3d20r1_actual_Cstar_five_sources_GE05_ward_subset.json",
+      "89b3da03257916f1d522574b6ab1747a7ed96892ec88d6c387624115fabdf6f9"
+    ],
+    "D20_NPZ": [
+      "ge19_h4f3d20r1_actual_Cstar_five_sources_GE05_ward_subset.npz",
+      "1b44036ab9362015bf6e0b8faa1af78f58c050edc308a592eb787f7b26f309dc"
+    ],
+    "D21_JSON": [
+      "ge19_h4f3d21r1_actual_Cstar_GE05_phase_safe_M2_source.json",
+      "483ab6b02eb62f23f8db4de5060600a40c7473e2ff7c034a09c7ccd2f75dc598"
+    ],
+    "D21_NPZ": [
+      "ge19_h4f3d21r1_actual_Cstar_GE05_phase_safe_M2_source.npz",
+      "e9a401239a176aa514e9409a0ac7f837826ec8e14bbf6b0aa8dd0d8fe373585f"
+    ]
+  },
+  "q20_B20_H4_Z21_lensing_still_open": true,
+  "repair26_trace_sha256": "608ee0b4c868a701db6976f756b9a551cd9ddffe1e8e4ab37c5cd2361405a6f8",
+  "scope": "C_star Nt128; D17 original-action H1; D19R1 Nq2048 z10/v10 sub256; Z11 inherited original Repair32B R2 initial eta tangent; Z20 H3F complete Y with new H1; source-aware Repair18 momentum. Never substitute frozen H3G q20 or B20."
+}

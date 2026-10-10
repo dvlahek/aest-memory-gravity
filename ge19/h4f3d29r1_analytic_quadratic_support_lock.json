@@ -1,0 +1,15 @@
+{
+  "classification": "GE19_D29R1_ORIGINAL_ACTION_QUADRATIC_HARMONIC_CANONICAL_SHA_LOCK",
+  "original_D29_execution_FAIL_immutable": true,
+  "repair_only_bad_43_character_D28_hash": true,
+  "sha256_local_files": {
+    "ge19/h4f3d28_ge06_shift_two_term_lock.json": "0dc0cd86b504db335c22b690e8de08b341385fa7f56f42c373ed74692363162b",
+    "ge19/h4f3d29_analytic_quadratic_support.py": "c9e061dc3ef2ad334468aaea1d36b7d5c9068e73b5678d66e99093c3a4d854d1",
+    "ge19/h4f3d29_analytic_quadratic_support_lock.json": "9d884deeb0d37053fde29d4ea6260dd666d46f3b8507a7aec760247fa66edeef",
+    "ge19/h4f3d29_analytic_quadratic_support_prereg.json": "d5a171a3d268a4f9f4089eed5384083eef951825b4e30b941444295b708f9142",
+    "ge19/h4f3d29r1_analytic_quadratic_support.py": "b388f2af140a1e9237a7241812264d99b3269280e30faba811ddd2b30651740c",
+    "ge19/h4f3d29r1_analytic_quadratic_support_prereg.json": "c9d9390b10389d0845a1218aaf7558c0bc9e402889156a1d4f858a6feef540f2",
+    "ge19/h4f3d29r1_analytic_quadratic_support_static_test.py": "cd071f6451f446686d0636a13115bf03048440cbe0d35e8992bc5a509fc391ad",
+    "ge19/run_local_h4f3d29r1_analytic_quadratic_support.sh": "c175693f79788e1003964d21411311d534fba0994d843e50ed9ccc4b3dae2b27"
+  }
+}

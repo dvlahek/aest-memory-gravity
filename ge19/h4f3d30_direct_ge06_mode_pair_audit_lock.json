@@ -1,0 +1,10 @@
+{
+  "classification": "GE19_D30_SOURCE_PREREG_STATIC_RUNNER_SHA256_LOCK",
+  "immutable_original_action_and_all_historical_failures": true,
+  "sha256_local_files": {
+    "ge19/h4f3d30_direct_ge06_mode_pair_audit.py": "a59aadf817ce200c674b3b731303588a4e51054f0be82dd167b738f248906ec5",
+    "ge19/h4f3d30_direct_ge06_mode_pair_audit_prereg.json": "2eb1dc05d4407ca6507d8bfb42c2669d77e0faa5bca7afd109362bf1a875a30e",
+    "ge19/h4f3d30_direct_ge06_mode_pair_audit_static_test.py": "b1947c2ffab8c66b8e8ca8f392ab8a0240f6217c0f2debc6d3d9221453473237",
+    "ge19/run_local_h4f3d30_direct_ge06_mode_pair_audit.sh": "0b0eba477962248a0f022a6aec1a7fe12fc60ff392d8c7626f167b521c916696"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "classification": "GE19_D42R1_EXACT_PATH_IMPLEMENTATION_REPAIR_STATIC_PACKAGE_PHYSICAL_OPEN",
+  "files_sha256": {
+    "ge19/h4f3d42r1_lapse_substep_convergence.py": "1c0637d23efc4d48d91a8dc494ea7c7feae9a621712be54b15901433d5b9c3ab",
+    "ge19/run_local_h4f3d42r1_lapse_substep_convergence.sh": "6db2027296c247152e58c1161495f9c890184920a507110dea196ea26d58d633"
+  },
+  "old_D42_lock_sha256": "3bfde3b663c5a8f0db27b2ebd5e749ff4362196048d7ffb77a4908fe60fd1c53",
+  "old_D42_pre_sha256": "7729ccb27242ec67d7f1400f38e1c146f0fb3db4e0355729d105a4b342b3ab48",
+  "old_D42_source_sha256": "e590deb370849556d6419b145fc70218fd9fc6c621d0b691a6e5b05f8993a392",
+  "one_line_after": "j41=json.loads((rd/'ge19_h4f3d41_full_window_two_constraint_audit.json').read_text())",
+  "one_line_before": "j41=json.loads((rd/STEM.replace('d42_lapse_substep_convergence','d41_full_window_two_constraint_audit')+'.json').read_text())",
+  "original_D42_implementation_fail_is_immutable": true,
+  "repaired_D42R1_source_sha256": "1c0637d23efc4d48d91a8dc494ea7c7feae9a621712be54b15901433d5b9c3ab",
+  "results_previously_executed_in_this_package": false,
+  "root_cause": "Python PosixPath + str on D41 JSON path in D42 check_inputs, before physics",
+  "science_scope": "No change to original-action source, H3F forcing, initial state, phase, fixed clocks, modes, betas, substeps, 1e-6 original shift gate, error metrics or output classification. Original D42 failed run immutable; separate D42R1 result filename. Five-mode D41 lapse numerical diagnostic only, not certified H3/H4/Z21/lensing."
+}
