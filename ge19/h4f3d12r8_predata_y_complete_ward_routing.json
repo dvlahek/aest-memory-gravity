@@ -1,0 +1,38 @@
+{
+  "classification": "GE19_H4F3D12R8_PREDATA_Y_COMPLETE_WARD_ROUTING_EXACT_ZERO",
+  "locked_parent_HEAD": "3e27c996cfa8d0ba59de726408a9879fb6b5b9f9",
+  "purpose": "Close only the NL0C/Y contribution to the mixed-H4 spatial Ward numerical budget by combining the already-frozen zero-background/zero-linear-Euler structure with the exact Stage-E mixed source row support. The physical H4 Y u/phi source remains present. No full Ward residual is read.",
+  "frozen_git_blobs": {
+    "ge19/h4f3d8_independent_nonbath_euler_and_boundary.py": "861cd5a81c17380a727777a4e1ff08cd7e857522",
+    "ge19/h4f3d8_predata_independent_nonbath_euler_and_boundary.json": "007bec20e450dd67263d32a33476dcb8a5c33996",
+    "ge19/h4_stagee_versioned_y_source_rows.py": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "ge19/h4f2b_signed_mixed_ward_template.py": "ab783ffe8242d8ff455647df8664a074f725ee81",
+    "ge19/h4f3d12r2_exact_background_onshell_elimination.py": "df5d0b384747edefaab2878e1a9fe6d174d2da29",
+    "ge19/h4f3d12r2_predata_exact_background_onshell_elimination.json": "d34de3b2befe1820bcfc2619aadc508378d0f5f9",
+    "ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json": "98e6fd8835fdbe3bd169d062431eefe80a3e9232"
+  },
+  "proof_obligations": [
+    "Use the exact mixed parent E00*F21_chi+2*E10*F11_chi+2*E11*F10_chi.",
+    "Use the exact signed L/b lower boundary.",
+    "Require D12R2 exact background E00 elimination without assigning F21/L21/b21.",
+    "Prove J(X)=X|X| has zero first-order Euler coefficient at X0=0 for both first-order directions.",
+    "Preserve the nonzero mixed H4 tangent 2|g10|g11.",
+    "Require Stage-E Y mixed H4 support only in u and phi rows and zero shift/isotropic/anisotropy rows.",
+    "Do not turn the nonzero Y H4 field source off.",
+    "Do not use D12R6 numerical modulus as a fitted Ward tolerance."
+  ],
+  "expected_consequence": {
+    "Y_background_parent": "exact_zero",
+    "Y_first_order_parent_crosses": "exact_zero",
+    "Y_lower_boundary": "exact_zero",
+    "Y_direct_source_Ward": "exact_zero",
+    "Y_full_Ward_error_budget_contribution": "exact_zero",
+    "Y_H4_u_phi_source": "retained_nonzero_in_general"
+  },
+  "forbidden_promotions": {
+    "full_Ward_certified": false,
+    "B_total_defined": false,
+    "Z21_certified": false,
+    "lensing_licensed": false
+  }
+}

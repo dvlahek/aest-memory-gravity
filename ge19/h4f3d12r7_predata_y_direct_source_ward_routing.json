@@ -1,0 +1,41 @@
+{
+  "classification": "GE19_H4F3D12R7_PREDATA_Y_DIRECT_SOURCE_WARD_ROUTING",
+  "locked_parent_HEAD": "3e27c996cfa8d0ba59de726408a9879fb6b5b9f9",
+  "purpose": "Prove from the frozen corrected Stage-E Y row support and the frozen physical source-Ward projection that the direct Y six-source Ward contribution is identically zero, while preserving the independently required Y nonbath-parent Euler/current budget as open.",
+  "frozen_git_blobs": {
+    "ge19/h4_stagee_versioned_y_source_rows.py": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+    "ge19/h4f2g_action_completed_six_piece_source_ledger.py": "d9778da0bb6cc52a15015238810c79978527ffc5",
+    "ge19/h4f2h_physical_time_source_ward_bridge.py": "65ce1e68a2f77e063c4bb8848d770abb4baeeebf",
+    "ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json": "98e6fd8835fdbe3bd169d062431eefe80a3e9232",
+    "ge19/h4f3d_predata_actual_operator_all_parent_ward_closure.json": "f1bd4eb52b7da96ac2d50ed9136e3e1a74635f51"
+  },
+  "required_structural_facts": {
+    "StageE_Y_only_equation_rows": [
+      "u",
+      "phi"
+    ],
+    "StageE_Y_only_row_indices": [
+      2,
+      3
+    ],
+    "physical_source_Ward_row_indices": [
+      1,
+      6,
+      7
+    ],
+    "required_disjoint_support": true,
+    "Y_source_scheme_remains_registered_as": "fd8"
+  },
+  "logical_consequence_to_test": "Because the exact Y source support {2,3} is disjoint from the source-Ward rows {1,6,7}, S_b,Y=S_iso,Y=S_aniso,Y=0 identically. Therefore W_six_source,Y=0 exactly and the D9 direct-source FD8 truncation term involving M9(S_shift,Y) is identically zero. This does not remove Y from the nonbath-parent Euler/current budget.",
+  "expected_outcome": "GE19_H4F3D12R7_Y_DIRECT_SOURCE_WARD_ROUTING_PASS_PARENT_BUDGET_OPEN",
+  "forbidden_promotions": {
+    "B_total_defined": false,
+    "candidate_full_Ward_residual_read": false,
+    "registered_hotspot_full_Ward_defect_read": false,
+    "full_Ward_execution_licensed": false,
+    "full_original_H4_Ward_certified": false,
+    "H4_Z21_solve_performed": false,
+    "Z21_certified": false,
+    "lensing_licensed": false
+  }
+}

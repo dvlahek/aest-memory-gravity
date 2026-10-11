@@ -1,0 +1,34 @@
+{
+  "classification": "GE19_H4F3D12R8R1_PREDATA_D12R2_JSON_LOOKUP_IMPLEMENTATION_REPAIR",
+  "expected_outcome": "GE19_H4F3D12R8R1_Y_COMPLETE_WARD_ROUTING_EXACT_ZERO_PASS_NONY_BUDGETS_OPEN",
+  "forbidden": {
+    "B_total_defined": false,
+    "Z21_solve": false,
+    "full_Ward_residual_read": false,
+    "lensing": false,
+    "overwrite_D12R8": false
+  },
+  "historical_D12R8": {
+    "classification": "IMPLEMENTATION_FAIL_D12R2_JSON_LOOKUP_PATH",
+    "failure": "D12R8 read D12R2 elimination flags from nonexistent top-level 'gates' instead of 'arbitrary_unknown_state_elimination'.",
+    "implementation_sha256": "c25e9ed1b873f96d03c3c859e804b166e96d07b69943df7177213009622c86cc",
+    "predata_sha256": "936af43eb823ace28a06643574b7a8d13c0212daf6a8200621719616019fd400",
+    "preserved_immutable": true,
+    "runner_log_sha256": "eba117b49ef0a1559065dd31a6b6594966575cf08a68dd97d278c510f244dbfc"
+  },
+  "parent_HEAD": "3e27c996cfa8d0ba59de726408a9879fb6b5b9f9",
+  "repair": {
+    "D12R7_interpretation_changed": false,
+    "Ward_formula_changed": false,
+    "Y_algebra_changed": false,
+    "only_change": "Read the two already-certified D12R2 exact elimination booleans from d12r2['arbitrary_unknown_state_elimination'].",
+    "physics_changed": false,
+    "science_arrays_added": false,
+    "source_changed": false,
+    "threshold_changed": false
+  },
+  "required_D12R2_keys": [
+    "arbitrary_unknown_state_elimination.E00_times_dchi_F21_exact_zero_without_F21",
+    "arbitrary_unknown_state_elimination.L21_EL00_minus_b21_Eb00_exact_zero_without_L21_b21"
+  ]
+}
