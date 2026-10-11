@@ -1,0 +1,32 @@
+{
+  "D12R6_result": {
+    "execution_HEAD": "69e0cc5eb20793574d4dbbcda94799417f8aff7b",
+    "path": "results/ge19_h4f3d12r6_matched_x10_physical_hermite_enclosure.json",
+    "preserved_immutable": true,
+    "sha256": "c114b208b03cb34ebd4af05e3b3f55bfa90c0f8de6bbc87819db973d0aabb9d3"
+  },
+  "claim_boundary": "This artifact freezes the representation-level M0,L0,M1,L1 constants and their candidate Y-flux Lipschitz coefficient. It does not promote that coefficient to the D9 physical FD8 error budget. The exact original FD8 lower-regularity error bound and physical-parent uncertainty remain open.",
+  "classification": "GE19_H4F3D12R6R1_Y_MODULUS_REPRESENTATION_LEVEL_LOCK_PASS_PHYSICAL_FD8_BOUND_OPEN",
+  "next_route": "DERIVE_EXACT_ORIGINAL_FD8_LOWER_REGULARITY_BOUND_FOR_FOURIER_PROJECTED_Y_AND_SEPARATE_PHYSICAL_PARENT_ERROR",
+  "representation_level_bounds": {
+    "L0": 0.003279978516545157,
+    "L1": 0.00041197692282146653,
+    "M0": 0.0018118302455718551,
+    "M1": 9.602384961260314e-05,
+    "Y_flux_Lipschitz_candidate": 2.1227768261017124e-06,
+    "formula": "2*(M1*L0 + M0*L1)"
+  },
+  "status": {
+    "B_total_defined": false,
+    "FD8_lower_regularity_error_bound_derived": false,
+    "Y_flux_representation_Lipschitz_candidate_frozen": true,
+    "Y_zero_set_lower_regularity_modulus_for_D9_certified": false,
+    "Z21_certified": false,
+    "full_Ward_execution_licensed": false,
+    "lensing_licensed": false,
+    "physical_H1_continuum_error_enclosed": false,
+    "physical_H2_continuum_error_enclosed": false,
+    "representation_level_M0_L0_certified": true,
+    "representation_level_M1_L1_certified": true
+  }
+}
