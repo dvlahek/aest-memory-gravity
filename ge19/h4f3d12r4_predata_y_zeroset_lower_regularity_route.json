@@ -1,0 +1,99 @@
+{
+  "B_total_defined": false,
+  "Y_zero_set_lower_regularity_modulus_numerically_certified": false,
+  "Z21_certified": false,
+  "analytic_contract": {
+    "H4_Y_flux": "F_Y = 2*abs(g10)*g11",
+    "continuum_zero_inference": "A strict sign change of real-space g10 on a time interval implies at least one continuum zero by continuity of the finite Fourier reconstruction of certified continuous X10.",
+    "g10": "Q*u10 + phi10_x/a = X10",
+    "g11": "Q*u11 + phi11_x/a",
+    "generic_simple_zero_regularization": "If g10 has a simple zero and g11 is nonzero there, 2*abs(g10)*g11 is continuous but generically not C1. Therefore global C9 cannot be assumed from smooth g10/g11.",
+    "important_limit": "This formula freezes the correct lower-regularity route but does not yet certify numerical M0,M1,L0,L1 envelopes.",
+    "safe_lower_regularity_modulus": "|F_Y(t)-F_Y(s)| <= 2*(M1*L0 + M0*L1)*|t-s|, where M0>=sup|g10|, M1>=sup|g11|, L0 is a Lipschitz constant for g10 and L1 for g11 on the stencil interval.",
+    "zero_crossing_detection": "Strict opposite endpoint signs only, plus exact floating zero nodes. No near-zero epsilon threshold."
+  },
+  "classification": "GE19_H4F3D12R4_PREDATA_Y_ZEROSET_LOWER_REGULARITY_ROUTE",
+  "date": "2026-10-10",
+  "frozen_artifacts": {
+    "D12R3_result": {
+      "path": "results/ge19_h4f3d12r3_full_ward_numerical_budget_prelock.json",
+      "sha256": "9a0cf82e4a635d592a685585d3e957bea72c344c3f7dae27e14fd80164af4929"
+    },
+    "H3F_json": {
+      "path": "results/ge19_h3f_corrected_y_z20_science_reclosure.json",
+      "sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b"
+    },
+    "H3F_npz": {
+      "path": "results/ge19_h3f_corrected_y_z20_science_reclosure.npz",
+      "sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542"
+    },
+    "H3G_json": {
+      "path": "results/ge19_h3g_corrected_y_q20_reconstruction.json",
+      "sha256": "9b93534e3ee90e1ce588bdbd3f271afd041f738b8dc6f62c4ec0d1413c27f2c4"
+    },
+    "H3G_npz": {
+      "path": "results/ge19_h3g_corrected_y_q20_reconstruction.npz",
+      "sha256": "9e1bf36e1d81122225ff8c03f663501de7601a8fc9376fd86312e0ae1d809452"
+    },
+    "Z11_json": {
+      "path": "results/ge19_repair32c_artifact_only_reduced_z11_certification.json",
+      "sha256": "037314effa33c5bfaf51f6f3c72459de43cb486c6ef5e9a94f5b1984a68611b9"
+    },
+    "Z11_npz": {
+      "path": "results/ge19_repair32b_factor2_corrected_reduced_h2_z11_reconstruction.npz",
+      "sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327"
+    }
+  },
+  "frozen_git_blobs": {
+    "D12R3_code": {
+      "blob": "18fdab402468b21ceb9ab4980b335d3ce23f4c64",
+      "path": "ge19/h4f3d12r3_full_ward_numerical_budget_prelock.py"
+    },
+    "D12R3_predata": {
+      "blob": "1b6b26fe85eb9dfbdb820b8279aee2bf0ed1854f",
+      "path": "ge19/h4f3d12r3_predata_full_ward_numerical_budget_prelock.json"
+    },
+    "D9_compiler": {
+      "blob": "03864a08110e341038056dd4cefd5842d4a5eb1e",
+      "path": "ge19/h4f3d9_exact_original_fd4_fd8_stencil_budget_compiler.py"
+    },
+    "D9_predata": {
+      "blob": "98e6fd8835fdbe3bd169d062431eefe80a3e9232",
+      "path": "ge19/h4f3d9_predata_original_fd4_fd8_structural_error_budget.json"
+    },
+    "H4F2G_six_piece": {
+      "blob": "d9778da0bb6cc52a15015238810c79978527ffc5",
+      "path": "ge19/h4f2g_action_completed_six_piece_source_ledger.py"
+    },
+    "H4F3B_actual_source": {
+      "blob": "0423cbc64f6cda3b2a9aeb67c734935ef3ae7f9c",
+      "path": "ge19/h4f3b_actual_corrected_six_piece_source.py"
+    },
+    "Repair37": {
+      "blob": "45d203a092f9ac71cc612b15df5f0c0c630f5898",
+      "path": "ge19/repair37_cancellation_safe_fd8_h4_z21_reclosure.py"
+    },
+    "StageE_Y": {
+      "blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+      "path": "ge19/h4_stagee_versioned_y_source_rows.py"
+    }
+  },
+  "full_Ward_execution_licensed": false,
+  "gates": {
+    "audit_all_original_C_Nt_parent_cohorts": true,
+    "audit_all_three_beta_cohorts_for_Y_gradient_invariance": true,
+    "bind_realspace_g10_to_certified_X10_modes": true,
+    "no_B_total": true,
+    "no_Z21": true,
+    "no_full_Ward_residual": true,
+    "no_observational_tuning": true,
+    "no_zero_epsilon_threshold": true
+  },
+  "lensing_licensed": false,
+  "outcomes": {
+    "NO_DISCRETE_ZERO_WITNESS_CONTINUUM_SEPARATION_OPEN": "No discrete witness is found. This does NOT prove g10 stays away from zero continuously. A rigorous nonzero enclosure would still be required before using global C9.",
+    "ZEROSET_WITNESS_LOWER_REGULARITY_REQUIRED": "At least one exact node zero or strict time sign change is found. Freeze the lower-regularity branch. Do not use the global C9 FD8 Taylor remainder for Y across such intervals."
+  },
+  "parent_HEAD": "17330d6f33886534e3538dd8c63fb09b91a23355",
+  "purpose": "Determine the mathematically valid regularity route for the action-completed H4 Y flux F_Y=2|g10|g11 before any integrated full H4 Ward residual is evaluated. Bind Stage-E g10 to the already-certified continuous X10 representation, search only for exact-node zeros and strict adjacent sign changes, and freeze the lower-regularity modulus formula required if the zero set is encountered."
+}
