@@ -1,0 +1,98 @@
+{
+  "claim_boundary": {
+    "B_total_defined": false,
+    "Y_M0_L0_to_be_certified": true,
+    "Y_M1_L1_inherited_from_D12R5R1": true,
+    "Y_full_modulus_not_frozen_here": true,
+    "Z21_certified": false,
+    "exact_continuum_H1_solution_error_enclosed": false,
+    "full_Ward_execution_licensed": false,
+    "lensing_licensed": false,
+    "matched_continuous_X10_numerical_representation": true
+  },
+  "classification": "GE19_H4F3D12R6_PREDATA_MATCHED_X10_PHYSICAL_HERMITE_ARB",
+  "frozen_artifacts": {
+    "D12R4R1_JSON": {
+      "path": "results/ge19_h4f3d12r4r1_y_spatial_zeroset_structural_repair.json",
+      "sha256": "5e7e120aa06e5ffb61bed50947c1d0ef5a17781dd709b67f192bca3fa05b5e92"
+    },
+    "D12R5R1_JSON": {
+      "path": "results/ge19_h4f3d12r5r1_continuous_x11_collocation_enclosure.json",
+      "sha256": "f0ac82d826028531efa75d94cef0c6d2ded42acc50b39dc8b2f69a001e351eb2"
+    },
+    "H3F_JSON": {
+      "path": "results/ge19_h3f_corrected_y_z20_science_reclosure.json",
+      "sha256": "0616188d2bb7a6c09b2b56433a1f8a1860f360b2e54d2cb84e1ae214a407866b"
+    },
+    "H3F_NPZ": {
+      "path": "results/ge19_h3f_corrected_y_z20_science_reclosure.npz",
+      "sha256": "90840755fa9febb1d8cb84609d9e58f67dec2a0a01cd6bf8e47685b45caa4542"
+    }
+  },
+  "frozen_git_blobs": {
+    "D12R4R1": {
+      "blob": "fbf9e86f7b9baf20059b7c5303ca53328e1f25e5",
+      "path": "ge19/h4f3d12r4r1_y_spatial_zeroset_structural_repair.py"
+    },
+    "D12R5R1": {
+      "blob": "9443cd46804151e2ef840694e52eaa4c7a7bdc07",
+      "path": "ge19/h4f3d12r5r1_continuous_x11_collocation_enclosure.py"
+    },
+    "D12R5R2": {
+      "blob": "d65ac814885e6d9c2e9f555ee1bd94599147d39f",
+      "path": "ge19/h4f3d12r5r2_artifact_only_canonical_state_metadata_repair.json"
+    },
+    "H3F_science": {
+      "blob": "31e36aaf16c8d68f0ad1ffaff97459d67a23a8b0",
+      "path": "ge19/h3f_corrected_y_z20_science_reclosure.py"
+    },
+    "Repair07": {
+      "blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+      "path": "ge19/repair07_window_retarded_reduced_h3_z20_particular.py"
+    },
+    "Repair31": {
+      "blob": "4d8c60c1f3953a179e6a4081ac3f0f507d03e8b9",
+      "path": "ge19/repair31_repair30_h2_dictionary_monitor_audit.py"
+    }
+  },
+  "method_lock": [
+    "Use only H3F-certified H1 and H1dot endpoint arrays.",
+    "Do not reconstruct or gate on canonical momenta.",
+    "Use frozen Q_action,H,a backgrounds for each C x Nt case.",
+    "Use frozen PCHIP Q_action derivative only at original time nodes.",
+    "Treat every binary64 endpoint value as exact input to Arb.",
+    "Use 192-bit Arb and 64 closed subsegments per original time interval.",
+    "Bound both the cubic Hermite X10 polynomial and its x derivative.",
+    "No observational data, no full Ward residual, no B_total, no Z21."
+  ],
+  "next_if_pass": "ARTIFACT_ONLY_FREEZE_Y_LOWER_REGULARITY_MODULUS_2_TIMES_M1L0_PLUS_M0L1",
+  "parent_HEAD": "aed42bc14ee01dd70f8b56a0e440d1712d8fa098",
+  "representation": {
+    "clock": "x = ln(a)",
+    "continuous_interpolant": "cubic Hermite on each frozen H3F time interval using g10 and dg10/dx at both endpoints",
+    "endpoint_derivative": "dg10/dx = Q_x*u + Q*(udot/H) + i*k/a*(phidot/H - phi)",
+    "quantity": "g10 = X10 = Q_action*u10 + i*k*phi10/a",
+    "realspace_bound": "positive Fourier modes completed by conjugates: sup_chi |g| <= 2*sum_m |g_m|"
+  },
+  "scope": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "Nt": [
+      128,
+      64
+    ],
+    "arb_precision_bits": 192,
+    "modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "subsegments_per_original_step": 64
+  }
+}
