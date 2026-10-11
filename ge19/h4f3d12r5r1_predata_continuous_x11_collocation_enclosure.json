@@ -1,0 +1,105 @@
+{
+  "claim_boundary": {
+    "B_total_defined": false,
+    "Y_M0_L0_certified": false,
+    "Y_M1_L1_to_be_certified": true,
+    "Z21_certified": false,
+    "continuous_frozen_Z11_collocation_representation": true,
+    "exact_physical_H2_solution_error_enclosed": false,
+    "full_Ward_execution_licensed": false,
+    "full_Y_modulus_certified": false,
+    "lensing_licensed": false,
+    "no_observational_tuning": true
+  },
+  "classification": "GE19_H4F3D12R5R1_PREDATA_CANONICAL_MOMENTUM_IMPLEMENTATION_REPAIR",
+  "frozen_artifacts": {
+    "D12R4R1_JSON": {
+      "path": "results/ge19_h4f3d12r4r1_y_spatial_zeroset_structural_repair.json",
+      "sha256": "5e7e120aa06e5ffb61bed50947c1d0ef5a17781dd709b67f192bca3fa05b5e92"
+    },
+    "Repair32B_NPZ": {
+      "path": "results/ge19_repair32b_factor2_corrected_reduced_h2_z11_reconstruction.npz",
+      "sha256": "5d4a0a72c08d09d096a8de0b428b3c8443fc33e8ad442ed6d997d6bf2bc6e327"
+    },
+    "Repair32C_JSON": {
+      "path": "results/ge19_repair32c_artifact_only_reduced_z11_certification.json",
+      "sha256": "037314effa33c5bfaf51f6f3c72459de43cb486c6ef5e9a94f5b1984a68611b9"
+    }
+  },
+  "frozen_git_blobs": {
+    "D12R4R1": {
+      "blob": "fbf9e86f7b9baf20059b7c5303ca53328e1f25e5",
+      "path": "ge19/h4f3d12r4r1_y_spatial_zeroset_structural_repair.py"
+    },
+    "Repair07": {
+      "blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+      "path": "ge19/repair07_window_retarded_reduced_h3_z20_particular.py"
+    },
+    "Repair31": {
+      "blob": "4d8c60c1f3953a179e6a4081ac3f0f507d03e8b9",
+      "path": "ge19/repair31_repair30_h2_dictionary_monitor_audit.py"
+    },
+    "Repair32B": {
+      "blob": "6ece578e8a30f48faaded8808687a9bd5c114608",
+      "path": "ge19/repair32b_factor2_corrected_reduced_h2_z11_reconstruction.py"
+    },
+    "Repair32C": {
+      "blob": "b2e89fe8e3dc66a430ee47e4d0ba085b82e9ad57",
+      "path": "ge19/repair32c_artifact_only_reduced_z11_certification.py"
+    },
+    "StageE_Y": {
+      "blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+      "path": "ge19/h4_stagee_versioned_y_source_rows.py"
+    }
+  },
+  "implementation_error": {
+    "correct_mapping": "canonical y is (S,u,phi,T,pS,pu,pphi,pT)",
+    "momentum_reconstruction": "For archived w=(N,dr,S,u,phi,T,Sdot,udot,phidot,Tdot), compute p=Cmat[0:4]@w using the frozen local GE06/GE07 map.",
+    "physics_changed": false,
+    "source_changed": false,
+    "threshold_changed": false,
+    "wrong_D12R5_mapping": "canonical y was reconstructed as (S,u,phi,T,Sdot,udot,phidot,Tdot)"
+  },
+  "method_lock": [
+    "Preserve every D12R5 parent, grid, Arb precision, subsegment count, forcing interpolation and replay gate.",
+    "Replace only the incorrect canonical-node mapping.",
+    "Reconstruct pS,pu,pphi,pT from the frozen local linear map Cmat[0:4]@w.",
+    "Require reconstructed canonical y to map back to archived w through WY*y+WR*source before accepting the repair.",
+    "Do not reinterpret or overwrite the historical D12R5 failure.",
+    "Do not read the full H4 Ward residual."
+  ],
+  "method_reference_package": {
+    "execution_dependency": false,
+    "path": "results/ge19_D12R5_CONTINUOUS_X11_ARB_SOURCE_PACKAGE.txt",
+    "sha256": "ad6876c00ec520583d126548f476b609c297b93e99ed8969701b7f5be8bc5723"
+  },
+  "next_if_pass": "CERTIFY_X10_M0_L0_ON_MATCHED_CONTINUOUS_REPRESENTATION_THEN_FORM_Y_LOWER_REGULARITY_MODULUS",
+  "parent_HEAD": "f79f65052c2916615f3da71d154f8b216c2c557b",
+  "repair_of": {
+    "failed_execution_log": "results/ge19_H4F3D12R5_LOCAL_runner.log",
+    "failed_execution_log_sha256": "7d21338372b3e9f09e9dbbddd4867cc7401f5c0375816fb44381f531a1449714",
+    "observed_failure": "Radau endpoint replay fail on C_min/m3/step0 with relative replay 0.8295159476584808",
+    "stage": "H4F3D12R5"
+  },
+  "scope": {
+    "C": [
+      "C_min",
+      "C_star",
+      "C_max"
+    ],
+    "Nt": [
+      128,
+      64
+    ],
+    "arb_precision_bits": 192,
+    "modes": [
+      3,
+      5,
+      8,
+      10,
+      15,
+      20
+    ],
+    "subsegments_per_Radau_step": 64
+  }
+}
