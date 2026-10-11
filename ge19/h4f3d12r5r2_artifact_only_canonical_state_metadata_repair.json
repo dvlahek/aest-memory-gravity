@@ -1,0 +1,42 @@
+{
+  "D12R5R1_result": {
+    "classification": "GE19_H4F3D12R5R1_CONTINUOUS_X11_COLLOCATION_ARB_PASS_Y_M1_L1_CERTIFIED_PHYSICAL_H2_ERROR_OPEN",
+    "execution_HEAD": "f337f390301d9c90636ccadb7a64fe7fc3111968",
+    "path": "results/ge19_h4f3d12r5r1_continuous_x11_collocation_enclosure.json",
+    "preserved_immutable": true,
+    "sha256": "f0ac82d826028531efa75d94cef0c6d2ded42acc50b39dc8b2f69a001e351eb2"
+  },
+  "certified_D12R5R1_values": {
+    "L1_Lipschitz_dx_upper": 0.00041197692282146653,
+    "M1_sup_abs_g11_upper": 9.602384961260314e-05,
+    "all_18_C_beta_Nt_cohorts_covered": true,
+    "all_6_C_Nt_cases_certified": true,
+    "max_endpoint_replay_relative": 2.4110249457676577e-15,
+    "max_endpoint_stitch_abs": 4.067311961255809e-17
+  },
+  "claim_boundary": "This artifact repairs only the stale canonical-state label in the D12R5R1 result. The executed implementation already used canonical momenta pS,pu,pphi,pT. The original D12R5R1 JSON and all numerical values remain immutable. No science calculation is rerun and no full H4 Ward residual is evaluated.",
+  "classification": "GE19_H4F3D12R5R2_ARTIFACT_ONLY_CANONICAL_STATE_METADATA_REPAIR_PASS_NO_RERUN",
+  "metadata_correction": {
+    "correct_field": "y=(S,u,phi,T,pS,pu,pphi,pT)",
+    "implementation_evidence": [
+      "p=Cmat[0:4]@w",
+      "Y[4:,it]=p",
+      "w_back=WY@Y[:,it] + WR@src"
+    ],
+    "numerical_values_changed": false,
+    "rerun_performed": false,
+    "science_classification_changed": false,
+    "stale_D12R5R1_field": "y=(S,u,phi,T,Sdot,udot,phidot,Tdot)"
+  },
+  "next_route": "CERTIFY_MATCHED_X10_M0_L0_THEN_FORM_Y_LOWER_REGULARITY_MODULUS",
+  "repair_type": "artifact_only_metadata_correction",
+  "still_open": {
+    "B_total_defined": false,
+    "Y_M0_L0_certified": false,
+    "Y_full_M0_M1_L0_L1_modulus_certified": false,
+    "Z21_certified": false,
+    "continuous_physical_H2_solution_error_enclosed": false,
+    "full_Ward_execution_licensed": false,
+    "lensing_licensed": false
+  }
+}
