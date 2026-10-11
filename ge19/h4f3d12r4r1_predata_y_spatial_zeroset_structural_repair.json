@@ -1,0 +1,37 @@
+{
+  "D12R4_result": {
+    "path": "results/ge19_h4f3d12r4_y_zeroset_lower_regularity_route.json",
+    "sha256": "616f7371bbcba3c8c25bf315c4b3316381f3396c33472d47fced5e678778f41e"
+  },
+  "classification": "GE19_H4F3D12R4R1_PREDATA_Y_SPATIAL_ZEROSET_STRUCTURAL_REPAIR",
+  "consequence": "Global separation |g10|>0 is impossible. Do not pursue the D12R4 continuum-separation route. The safe Y budget must use the preregistered lower-regularity modulus unless a separate high-order cancellation theorem is proven at every zero.",
+  "forbidden": [
+    "No rerun of D12R4.",
+    "No full H4 Ward residual.",
+    "No B_total.",
+    "No Z21.",
+    "No observation tuning.",
+    "Do not relabel or delete the original D12R4 result."
+  ],
+  "frozen_git_blobs": {
+    "D12R4_code": {
+      "blob": "3201d76c08b67064d63a014f1897adc4986c6716",
+      "path": "ge19/h4f3d12r4_y_zeroset_lower_regularity_route.py"
+    },
+    "D12R4_predata": {
+      "blob": "82ae37e7a5548653d3c18d14a75abe06311c3970",
+      "path": "ge19/h4f3d12r4_predata_y_zeroset_lower_regularity_route.json"
+    },
+    "Repair07": {
+      "blob": "e34d28a2062c748f48bc82fa928844b02631de25",
+      "path": "ge19/repair07_window_retarded_reduced_h3_z20_particular.py"
+    },
+    "StageE": {
+      "blob": "282166ea5840d7fba4dbc328d40d7687afa6fa0f",
+      "path": "ge19/h4_stagee_versioned_y_source_rows.py"
+    }
+  },
+  "parent_HEAD": "6b3eecf335d46f1a525f1748039bf0df8695e251",
+  "purpose": "Repair only the zero-set route interpretation after D12R4. D12R4 checked exact nodes and adjacent TIME sign changes but did not exploit the exact no-DC spatial Fourier structure. No physical parent is recomputed.",
+  "structural_theorem": "g10 is reconstructed entirely from nonzero periodic Fourier modes m={3,5,8,10,15,20}. Therefore its spatial mean is exactly zero at every time. A continuous real zero-mean periodic function has a spatial zero at every time: if it is nonzero it must take both signs; if identically zero the claim is trivial."
+}
