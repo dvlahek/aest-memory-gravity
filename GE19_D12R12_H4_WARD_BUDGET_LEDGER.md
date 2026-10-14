@@ -109,6 +109,10 @@ Classification:
 
 `GE19_D12R12B0_HIGH_DERIVATIVE_SOURCE_JET_CONTRACT_PASS_VALIDATED_JET_ENGINE_REQUIRED`
 
+Uploaded result JSON SHA256:
+
+`4bbbdc925115e8aa10e89928ad1dae7037927444d0917465b9e4836cc903710c`
+
 Uploaded result confirms the D12R12A remaining family set exactly and freezes the high-order parent dependencies without reading the full Ward residual or promoting sampled Nt64/Nt128 values into derivative bounds.
 
 Key consequences:
