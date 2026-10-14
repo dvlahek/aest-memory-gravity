@@ -207,20 +207,50 @@ w^(n) = sum_j binom(n,j) WY^(j) y^(n-j).
 
 No sampled derivative is promoted into a bound, no science threshold changes, and no observational tuning is used.
 
-## Remaining D9 obligations after D12R12B1B smoke
+### All 36 trajectories
 
-1. Run D12R12B1B over all 36 trajectories and freeze H1 canonical jets through order 10 and physical reconstruction jets through order 9.
-2. Propagate bath and B10 jets through the required orders.
-3. Propagate Z11 forcing/state jets through order 10.
-4. Use those jets to certify GE06 M9, GE07 M9 and GE05-M2 M5.
-5. Non-Y operator M5 envelopes for the exact D1 products.
-6. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
-7. Operation-level roundoff propagation.
-8. Freeze `B_total` independently of the observed full-Ward residual.
-9. Execute the integrated physical H4 Ward test.
-10. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
-11. Lensing remains blocked until Z21 is certified.
+**CLOSED / global H1 high-jet certificate**
+
+Classification:
+
+`GE19_D12R12B1B_H1_STATE_JETS_ORDER10_ALL_TRAJECTORIES_PASS_BATH_Z11_JETS_OPEN`
+
+Uploaded all-trajectories JSON SHA256:
+
+`eda6e114669e82764d13ba905abe7008d91f65cd76c1e0d46052a653a264142a`
+
+Coverage and gates:
+
+```text
+trajectory count = 36
+all B1A/D17 clocks match = true
+all D17 nodes contained by true zero-order bounds = true
+all outputs finite = true
+H1_state_jets_order10_certified = true
+```
+
+The global maxima remain on `Nt64 / C_min / m20`:
+
+```text
+max |y^(10)| <= 1.113757787773478e16
+max |w^(9)|  <= 2.6780135723218228e14
+```
+
+B1B performs no new H1 ODE solve. It propagates derivative magnitude bounds from the certified continuous H1 enclosure and B1A exact-action operator/reconstruction derivative envelopes. Bath jets, B10 jets, Z11 jets and source M9/M5 remain open.
+
+## Remaining D9 obligations after D12R12B1B
+
+1. D12R12B1C: propagate the frozen production bath representation and B10 through the required continuous-time jet orders, keeping continuum/quadrature parent error separate from the temporal-derivative truncation budget.
+2. Propagate Z11 forcing/state jets through order 10.
+3. Use those jets to certify GE06 M9, GE07 M9 and GE05-M2 M5.
+4. Non-Y operator M5 envelopes for the exact D1 products.
+5. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11 and the previously certified GE05 continuum-bath closure.
+6. Operation-level roundoff propagation.
+7. Freeze `B_total` independently of the observed full-Ward residual.
+8. Execute the integrated physical H4 Ward test.
+9. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
+10. Lensing remains blocked until Z21 is certified.
 
 ## Next route
 
-`D12R12B1B_ALL_36_TRAJECTORIES`
+`D12R12B1C_BATH_AND_B10_JETS_ORDER10`
