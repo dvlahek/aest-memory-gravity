@@ -8,7 +8,7 @@ Frozen science HEAD used by the D12R11 campaign:
 
 `6282ed54e35d4db6b58fcd13d1c7403419f8afb7`
 
-This ledger is maintained on a documentation branch so documenting results does not advance the frozen science HEAD and invalidate scripts that lock that commit.
+This ledger is maintained on a documentation branch so documentation commits do not advance the frozen science HEAD.
 
 ## High-level project position
 
@@ -18,39 +18,37 @@ The main project frontier is **pre-Z21**, not H2 in isolation.
 corrected H3 / Z20 / q20                 CLOSED
 six-source H4 source construction        CLOSED
 Y mixed-H4 Ward sector                   CLOSED exactly
+D12R10/D12R11 continuous Z11 parent      CLOSED
 full non-Y numerical H4 Ward budget      OPEN
 full integrated physical H4 Ward         OPEN
 final Z21 solve under frozen gate         NOT YET LICENSED
 lensing                                   BLOCKED UNTIL Z21
 ```
 
-The final science gate remains
+Frozen science gate:
 
 ```text
 H4_active_shift_Nt128_Linf <= 1e-6
 ```
 
-Historical Repair37 remains FAIL and must not be relabeled:
+Historical Repair37 remains FAIL and is never relabeled:
 
 ```text
 1.1749387207106255e-06
 ```
 
-On October 10 the project was correctly summarized at headline level as **finish the full H4 Ward proof, then perform the final Z21 solve**. Z21 was not actually licensed because D9 required numerical derivative/error budgets that the existing sampled/PCHIP parent representations could not rigorously support.
+The October 10 project headline remains correct: finish the full H4 Ward proof, then perform the final Z21 solve. D12R10/D12R11 were opened only because the D9 prelock showed that sampled/PCHIP parent representations were insufficient for a rigorous non-Y Ward error budget.
 
-After D12R8 closed the Y mixed-H4 Ward contribution exactly, D12R9 identified the non-Y numerical certification bottleneck. D12R10/D12R11 are subordinate prerequisites inside this pre-Z21 H4-Ward closure, not a new main project phase.
+## Campaign rules
 
-## Non-negotiable campaign rules
-
-- Do not change `H4_active_shift_Nt128_Linf <= 1e-6`.
+- Do not change the `1e-6` H4 science gate.
 - Do not use observations or lensing to tune theory.
 - Do not relabel historical FAIL results.
-- Do not reopen a CLOSED audit unless a parent SHA changes or a concrete contract conflict is found.
-- Do not rerun the Cr12i 12/24/48 convergence ladder.
+- Do not reopen a CLOSED audit unless a parent SHA changes or a concrete contract conflict appears.
+- Do not rerun the Cr12i 12/24/48 ladder.
 - Do not rebuild a new Z11 approximant unless a frozen parent is shown invalid.
-- Do not reuse the D55 Ward H-channel bath certificate as the H2 `weighted_z10` forcing functional.
 - Keep route/provenance audits distinct from science certificates.
-- After a CLOSED result, record it here before starting another proof.
+- Record each CLOSED result here before moving to the next open mathematical link.
 
 ## Inherited CLOSED parents
 
@@ -63,8 +61,6 @@ After D12R8 closed the Y mixed-H4 Ward contribution exactly, D12R9 identified th
 
 ### D12R10 canonical H1/H2 machinery
 
-Inherited and not to be repeated:
-
 - D12R10B5 Lambda-inclusive operator closure: CLOSED.
 - D12R10C pointwise interval canonical operator: CLOSED.
 - D12R10D1 all-interval operator regularity: CLOSED.
@@ -73,7 +69,7 @@ Inherited and not to be repeated:
 - D12R10D3B2 componentwise propagation: CLOSED.
 - D12R10D3C4 frozen physical-parent initial binding: CLOSED.
 
-Frozen D3 weight vector:
+Frozen D3 weights:
 
 ```text
 [1.0,
@@ -88,22 +84,24 @@ Frozen D3 weight vector:
 
 ### Exact H2 forcing contract
 
-Repair32B / Cr12AAR1 established:
+Repair32B / Cr12AAR1:
 
 ```text
 L_GE06 Z11 = -2 M1_GE05[Z10,q10]
 B10 = X10 - weighted_z10
 ```
 
-Same-parent direct-action M1 reproduces the Repair32B source, the factor 2 is exact, and the same-parent relative defect is approximately `2.48e-16`.
-
-This identity is CLOSED.
+Same-parent direct-action M1 reproduces the Repair32B source, the factor 2 is exact, and the same-parent relative defect is about `2.48e-16`.
 
 ### H2 initial boundary
 
-Fresh-R2 work showed the physical initial derivative is bound to the R2 parent. The fresh-R2 versus inherited Z11 initial derivative difference is approximately `4.27e-22`.
+Fresh-R2 versus inherited Z11 initial dynamic derivative difference:
 
-The final D12R11 propagation still has to include the initial contribution explicitly.
+```text
+4.268123713790712e-22
+```
+
+The same frozen Repair32B boundary is retained.
 
 ## D12R11 proof ledger
 
@@ -111,13 +109,13 @@ The final D12R11 propagation still has to include the initial contribution expli
 
 **CLOSED / route audit**
 
-Retained the exact M1 source and H2 operator. Identified PCHIP/IVP assumptions that cannot serve as continuum certificates.
+Retained the exact M1 source and H2 operator. Identified PCHIP/IVP assumptions that could not by themselves serve as continuum certificates.
 
 ### D12R11B — Cr12i approximant audit
 
 **CLOSED / route audit**
 
-Cr12i already supplies the selected fine48 Z11 approximant. No new convergence campaign is required.
+Cr12i already provides the selected fine48 Z11 approximant. No new convergence campaign is required.
 
 Parent classification:
 
@@ -127,7 +125,7 @@ Parent classification:
 
 **CLOSED / contract audit**
 
-Confirmed Repair32B equation, exact B10/M1 contract, and that D55Cr11f Ward H-channel is not the pointwise H2 `weighted_z10` functional.
+Confirmed Repair32B equation, exact B10/M1 contract, and that the D55 Ward H-channel certificate is not the pointwise H2 `weighted_z10` functional.
 
 ### D12R11D — full fine48 Z11 artifact replay
 
@@ -161,8 +159,6 @@ NPZ  = 2c83c285541f1bea17dd789e926ffaa6d2211370d272fa61a4c3c5252042adf2
 
 **CLOSED / rigorous nominal residual certificate**
 
-Six modes, 6096 intervals each, total 36576 intervals.
-
 ```text
 global max weighted residual upper = 5.623409858451296e-09
 global minimum Az pivot lower ~= 8.1457101547e-04
@@ -171,13 +167,15 @@ worst component = 5
 worst interval = final interval
 ```
 
-Claim boundary: residual against nominal fine48 PCHIP forcing only. True-continuum B10/M1 forcing error is outside this certificate.
+JSON SHA256:
+
+`438c42ff33372f4665ecdb3e2690fafb2f3c08ce86837dd6b414beee4fceb64d`
 
 ### D12R11F1A — original majorant inheritance audit
 
 **HISTORICAL FAIL / PRESERVED**
 
-Compared different start epochs. Contract error, not a physics failure. Do not relabel.
+Compared different start epochs. Contract error, not a physics failure. Never relabel.
 
 ### D12R11F1A-R1 — corrected full-history majorant binding
 
@@ -187,8 +185,6 @@ Compared different start epochs. Contract error, not a physics failure. Do not r
 global max delta-X sup upper ~= 7.46e-09
 global max relative B-energy inflation ~= 2.4660e-03
 ```
-
-No bath solve.
 
 ### D12R11F1 — continuum-r weighted-z10 node enclosure
 
@@ -201,7 +197,6 @@ Classification:
 ```text
 global max node error upper ~= 2.3866933783e-06
 worst mode = 20
-worst node = final node
 ```
 
 ### D12R11F1B — continuous-in-step nominal-drive weighted-z10
@@ -215,20 +210,16 @@ Classification:
 ```text
 global continuous-in-step upper ~= 6.2801129568e-06
 worst mode = 20
-worst interval = final interval
 ```
-
-No new bath propagation and no H2 solve.
 
 ### D12R11F2A — true-X reference / majorant contract
 
 **CLOSED / route-provenance audit**
 
-Established that Cr10 already contains the continuous-in-step X10 certificate for the D17 collocation reference, Cr11b `B_energy` is nominal-path only, and common-node D17/fine48 agreement is not itself a continuous proof.
+Cr10 contains the continuous-in-step X10 certificate for the D17 collocation reference. Cr11b `B_energy` is nominal-path only. Common-node agreement is not itself a continuous proof.
 
 ```text
 global common-node |Xfine48-XD17| ~= 1.3691072562e-11
-worst mode = 20
 ```
 
 ### D12R11F2B0 — Cr10 continuous-reference source contract
@@ -246,22 +237,9 @@ Classification:
 `GE19_D12R11F2B_D17_COLLOCATION_TO_FINE48_AFFINE_CONTINUOUS_X10_BINDING_PASS`
 
 ```text
-common clock max abs = 1.1102230246251565e-16
-maximum D17 endpoint replay relative = 0
 global max D17 -> fine48 affine upper = 8.937207651715796e-08
 global max true -> fine48 affine upper = 8.943637276453392e-08
 worst mode = 20
-```
-
-Per-mode true-to-fine48 continuous upper:
-
-```text
-m3  = 6.943141985919195e-10
-m5  = 4.095450630188486e-09
-m8  = 1.2863676398411737e-08
-m10 = 2.2488462362623306e-08
-m15 = 6.817607763932665e-08
-m20 = 8.943637276453392e-08
 ```
 
 NPZ SHA256:
@@ -276,30 +254,10 @@ Classification:
 
 `GE19_D12R11F2C_TRUE_X10_TOTAL_VARIATION_DIRECT_B10_ERROR_ENCLOSURE_PASS`
 
-Key identity:
-
-```text
-B10 = X10 - integral(z_r dmu)
-    = - integral((z_r-X10) dmu)
-```
-
-Global results:
-
 ```text
 global max direct true-drive B10 error upper = 4.495551894006195e-08
 global max total true-continuum B10 to finite-reference upper = 6.325068475693854e-06
 worst mode = 20
-```
-
-Per-mode total true-continuum B10 upper:
-
-```text
-m3  = 4.977496681421009e-08
-m5  = 2.913937143931808e-07
-m8  = 9.106954135548411e-07
-m10 = 1.593544800724346e-06
-m15 = 4.826348367920702e-06
-m20 = 6.325068475693854e-06
 ```
 
 Hashes:
@@ -317,8 +275,6 @@ Classification:
 
 `GE19_D12R11F2D_EXACT_REPAIR32B_CANONICAL_H2_FORCING_ERROR_PASS`
 
-Frozen exact map:
-
 ```text
 raw aether = Q*a^3*B10
 raw scalar = -a^2*(i*k)*B10
@@ -327,46 +283,126 @@ canonical pphi = -raw_scalar/H
 normalization factor = 2 exactly
 ```
 
-The canonical source-map contract defect is exactly zero.
-
-Global result:
+Canonical source-map contract defect: exactly zero.
 
 ```text
 global max canonical H2 forcing error upper = 2.374712650678017e-03
 worst mode = 20
-worst component = p_phi (canonical component 6)
+worst component = p_phi
 worst interval = 6095
 ```
 
-Per-mode maximum canonical `p_phi` forcing upper:
+NPZ SHA256:
+
+`a9e7075525fc6e9c0a41d1efe7e664ca6b3d62a316b99bd3133a68242ef48687`
+
+### D12R11G — physical continuum Z11 error propagation
+
+**CLOSED / rigorous physical continuum Z11 certificate**
+
+Classification:
+
+`GE19_D12R11G_PHYSICAL_CONTINUUM_Z11_ERROR_ENCLOSURE_PASS_H4_RECLOSURE_PARENT_READY`
+
+G combines D12R11E nominal residual, the true B10/H2 forcing error, the PL→PCHIP bridge, the D22R3 initial-boundary bridge, and frozen D3 componentwise stability.
 
 ```text
-m3  = 2.803161193272819e-06
-m5  = 2.735054737180669e-05
-m8  = 1.367662614154325e-04
-m10 = 2.991438758524397e-04
-m15 = 1.359019736118874e-03
-m20 = 2.374712650678017e-03
+global PL -> PCHIP B10 upper = 2.0506309900867423e-11
+global true -> PCHIP B10 upper = 6.325088982003756e-06
+global continuous weighted-inf Z11 upper = 1.1365337328877092e-04
+global continuous physical state upper = 266.79155380398845
+global continuous physical derivative upper = 1.2319323690969992
+worst mode = 20
 ```
 
-The corresponding `p_u` channel is much smaller; for mode 20 its maximum is `1.469519376174590e-06`.
+The large physical `u` readout is a valid but coarse scalar continuous-norm conversion, not a physical blow-up.
 
 Hashes:
 
 ```text
-NPZ = a9e7075525fc6e9c0a41d1efe7e664ca6b3d62a316b99bd3133a68242ef48687
-Repair32B source parent = 7023f57d9ae7f50872d270a2fcc5f3463477e2d3e16fb2c2c4a3c043867acd47
+JSON = 782f9d85f730abf91a88c6a10ba11650cfe05ed25a33e4ef4d682af46efcb0f2
+NPZ  = 8f01ee3f8d6d2cea95e08916b6a91065101599592ab07889db4383bdecfe3343
 ```
 
-Claim boundary: the true continuous H2 forcing error is CLOSED. It still has to be propagated through the already frozen D3 weighted componentwise stability enclosure, together with D12R11E nominal residual and the certified initial-boundary error.
+G remains valid and is not relabeled.
+
+### D12R11G1 — tight continuous componentwise Z11 enclosure
+
+**CLOSED / preferred H4 parent certificate**
+
+Classification:
+
+`GE19_D12R11G1_TIGHT_CONTINUOUS_COMPONENTWISE_Z11_ENCLOSURE_PASS_H4_PARENT_READY`
+
+G1 changes only the continuous-in-step readout. It preserves the same H2 approximant, forcing, physics, endpoint propagation, science gate, and parent chain. The scalar continuous norm is replaced by a rigorous componentwise augmented-Metzler whole-interval bound:
+
+```text
+exp(A t) = exp(-alpha t) exp(K t),  K=A+alpha I >= 0
+exp(A t) <= exp(K t) <= exp(K h),  0 <= t <= h
+```
+
+Validation:
+
+```text
+all outputs finite = true
+endpoint replay = PASS
+operator scalar fallback total = 0
+new componentwise continuous bound <= old scalar bound = true
+new physical bounds <= old scalar physical bounds = true
+```
+
+Endpoint replay is essentially exact:
+
+```text
+global endpoint replay max abs = 5.8140341499535175e-18
+global endpoint replay max relative = 1.1736360450783432e-12
+```
+
+Tight global results:
+
+```text
+old scalar continuous weighted-inf upper = 1.1365337328877092e-04
+tight componentwise continuous weighted-inf upper = 5.041273260960460e-06
+tightening factor = 22.54457701567198
+
+tight continuous physical state upper = 2.5801248476877237
+worst state = mode 20, u
+
+tight continuous physical derivative upper = 2.542065710968569e-02
+worst derivative = mode 20, udot
+```
+
+For mode 20, the tight continuous weighted component vector is:
+
+```text
+[2.8712450121161085e-08,
+ 1.099134842407077e-06,
+ 5.815812280745985e-08,
+ 6.2771902537448294e-09,
+ 3.061196276055288e-08,
+ 5.041273260960460e-06,
+ 3.3316623818902575e-06,
+ 4.134944880936828e-09]
+```
+
+Hashes:
+
+```text
+JSON = 7bb4bcbbc3d3e45c5555b0437321785bc4f6150e40c68b2821a3f69ba3e4159e
+NPZ  = 82f49da27b08a96dc6919c14549af408e1737e9ee652c81f847de840809be787
+```
+
+Claim boundary: D12R11G1 is now the preferred continuous physical Z11 parent for H4 error-budget work. It does not certify the full original H4 Ward identity or Z21.
+
+## D12R11 closure decision
+
+**D12R11 is CLOSED. Do not open G2 or another H2/Z11 campaign unless a parent SHA changes or a concrete contradiction is found.**
+
+The preferred parent for the remaining H4 numerical budget is D12R11G1.
 
 ## Current real frontier
 
-```text
-D12R11G  D12R11E residual + F2D forcing + initial boundary through D3   OPEN
-```
-
-After D12R11G, return immediately to the actual pre-Z21 frontier:
+Return immediately to the actual pre-Z21 line:
 
 ```text
 remaining non-Y D9 numerical budgets / high derivatives / roundoff
@@ -376,16 +412,17 @@ remaining non-Y D9 numerical budgets / high derivatives / roundoff
         -> only then lensing
 ```
 
-Do not treat D12R11 as the main project objective. It exists only to close one rigorous parent/error-budget requirement needed before the full H4 Ward and Z21 reclosure.
+The next work must be an H4/D9 task, not another D12R11 audit.
 
-## Historical project checkpoints relevant to Z21
+## Historical checkpoints relevant to Z21
 
-- 2026-09-24: corrected H3/Z20 work underway; Z21 not started because source/Ward prerequisites were incomplete.
-- 2026-09-25: Z20 and q20 certified; six-source H4 construction available; physical all-parent Ward still open; Z21 and lensing blocked.
+- 2026-09-24: corrected H3/Z20 work underway; Z21 blocked by source/Ward prerequisites.
+- 2026-09-25: Z20 and q20 certified; six-source H4 construction available; physical all-parent Ward still open.
 - 2026-10-10: D12R2 background/F21 work closed. Project headline: full H4 Ward next, then final Z21 solve.
-- 2026-10-10 to 2026-10-11: D9 prelock exposed missing rigorous numerical budgets. D12R8 removed the Y sector structurally. D12R9 showed the remaining non-Y parents could not be justified from sampled/PCHIP representations.
-- D12R10/D12R11 were opened to repair those proof foundations. They are prerequisites for the pre-Z21 Ward closure, not a replacement for Z21.
+- 2026-10-10 to 2026-10-11: D9 prelock exposed missing rigorous numerical budgets. D12R8 removed the Y sector structurally. D12R9 showed that sampled/PCHIP representations were insufficient for the remaining non-Y parent proof.
+- D12R10/D12R11 repaired that foundation.
+- 2026-10-14: D12R11G1 closes the continuous physical Z11 parent with a tight componentwise whole-interval enclosure. The project returns to the non-Y D9/full-H4-Ward frontier.
 
 ## Stop condition for repeated work
 
-Before starting any new audit, check this ledger. If the relevant contract is CLOSED and all parent SHAs are unchanged, do not repeat it. Move to the next OPEN mathematical link.
+Before starting any new audit, check this ledger. If the relevant contract is CLOSED and all parent SHAs are unchanged, do not repeat it. Move to the next OPEN H4/Z21 link.
