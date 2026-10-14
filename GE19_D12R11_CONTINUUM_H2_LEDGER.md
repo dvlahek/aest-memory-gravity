@@ -1,6 +1,6 @@
 # GE19 D12R11 continuum-H2 proof ledger
 
-Status date: 2026-10-13
+Status date: 2026-10-14
 
 Frozen science branch: `physics-first-gravitational-elasticity`
 
@@ -13,8 +13,6 @@ This ledger is maintained on a documentation branch so documenting results does 
 ## High-level project position
 
 The main project frontier is **pre-Z21**, not H2 in isolation.
-
-The actual high-level sequence established in the October 10–11 conversations is:
 
 ```text
 corrected H3 / Z20 / q20                 CLOSED
@@ -38,9 +36,9 @@ Historical Repair37 remains FAIL and must not be relabeled:
 1.1749387207106255e-06
 ```
 
-On October 10 the project was correctly summarized at headline level as **“finish the full H4 Ward proof, then perform the final Z21 solve.”** Z21 was not actually licensed yet because D9 required numerical derivative/error budgets that the existing sampled/PCHIP parent representations could not rigorously support.
+On October 10 the project was correctly summarized at headline level as **finish the full H4 Ward proof, then perform the final Z21 solve**. Z21 was not actually licensed because D9 required numerical derivative/error budgets that the existing sampled/PCHIP parent representations could not rigorously support.
 
-After D12R8 closed the Y mixed-H4 Ward contribution exactly, D12R9 identified the non-Y numerical certification bottleneck. That is why the project descended into D12R10/D12R11. D12R11 is therefore a **subordinate prerequisite inside the pre-Z21 H4-Ward closure**, not a new main project phase.
+After D12R8 closed the Y mixed-H4 Ward contribution exactly, D12R9 identified the non-Y numerical certification bottleneck. D12R10/D12R11 are subordinate prerequisites inside this pre-Z21 H4-Ward closure, not a new main project phase.
 
 ## Non-negotiable campaign rules
 
@@ -141,8 +139,6 @@ Classification:
 
 Selected trajectory: sub48 / `Nt=6097`.
 
-Key replay controls:
-
 ```text
 H1_state_relL2 = 0
 H1_dot_relL2 = 0
@@ -161,8 +157,6 @@ JSON = 4a772409dd7ec8f61097922f3d6dbf57a10a288b718e6f45ebbb77c97bf61f1d
 NPZ  = 2c83c285541f1bea17dd789e926ffaa6d2211370d272fa61a4c3c5252042adf2
 ```
 
-Claim boundary: artifact identity only.
-
 ### D12R11E — nominal continuous Z11 residual
 
 **CLOSED / rigorous nominal residual certificate**
@@ -177,7 +171,7 @@ worst component = 5
 worst interval = final interval
 ```
 
-Claim boundary: residual against nominal fine48 PCHIP forcing only. True-continuum B10/M1 forcing error remains outside this certificate.
+Claim boundary: residual against nominal fine48 PCHIP forcing only. True-continuum B10/M1 forcing error is outside this certificate.
 
 ### D12R11F1A — original majorant inheritance audit
 
@@ -204,8 +198,6 @@ Classification:
 
 `GE19_D12R11F1_FINE48_DRIVE_CONTINUUM_R_WEIGHTED_Z10_NODE_ENCLOSURE_PASS_CONTINUOUS_TIME_AND_TRUE_X_OPEN`
 
-All 6097 fine48 target nodes certified.
-
 ```text
 global max node error upper ~= 2.3866933783e-06
 worst mode = 20
@@ -228,22 +220,14 @@ worst interval = final interval
 
 No new bath propagation and no H2 solve.
 
-Claim boundary: nominal frozen fine48 drive. True physical X10 uncertainty is not included.
-
 ### D12R11F2A — true-X reference / majorant contract
 
 **CLOSED / route-provenance audit**
 
-Established:
-
-- Cr10 already contains the rigorous continuous-in-step X10 certificate for the D17 collocation reference.
-- Cr11b `B_energy` is built from the nominal Repair26→D17 drive path and does not include the Cr10 true-X uncertainty.
-- fine48 and D17 are very close at common nodes, but common-node agreement alone is not a continuous reference proof.
-
-Common-node diagnostic:
+Established that Cr10 already contains the continuous-in-step X10 certificate for the D17 collocation reference, Cr11b `B_energy` is nominal-path only, and common-node D17/fine48 agreement is not itself a continuous proof.
 
 ```text
-global max |Xfine48-XD17| ~= 1.3691072562e-11
+global common-node |Xfine48-XD17| ~= 1.3691072562e-11
 worst mode = 20
 ```
 
@@ -251,9 +235,7 @@ worst mode = 20
 
 **CLOSED / route audit**
 
-Confirmed Cr10 uses 508 D17 steps and 64 rigorous subsegments per step, signed center/radius propagation, the Radau-2 collocation polynomial, and continuous contraction with the original-action X10 functional.
-
-No new H1 solve, bath propagation, or H2 solve.
+Confirmed 508 D17 steps, 64 rigorous subsegments per step, signed center/radius propagation, Radau-2 collocation polynomial, and continuous original-action X10 functional.
 
 ### D12R11F2B — D17 collocation to fine48 affine continuous X10 binding
 
@@ -263,14 +245,7 @@ Classification:
 
 `GE19_D12R11F2B_D17_COLLOCATION_TO_FINE48_AFFINE_CONTINUOUS_X10_BINDING_PASS`
 
-The certificate reconstructs the same Radau-2 quadratic collocation state used by Cr10 and compares it continuously against the frozen fine48 piecewise-affine bath drive.
-
-Key global results:
-
 ```text
-D17 steps = 508
-fine48 steps = 6096
-fine48 steps per D17 step = 12
 common clock max abs = 1.1102230246251565e-16
 maximum D17 endpoint replay relative = 0
 global max D17 -> fine48 affine upper = 8.937207651715796e-08
@@ -289,24 +264,72 @@ m15 = 6.817607763932665e-08
 m20 = 8.943637276453392e-08
 ```
 
-Output NPZ SHA256:
+NPZ SHA256:
 
 `71143ebef61fb3e6078c5339d7525664652437ff5bf311932bbd3adf3964c1ad`
 
-Claim boundary: continuous physical X10 is now enclosed relative to the frozen fine48 affine bath drive. The bath response to that drive uncertainty remains open.
+### D12R11F2C — true-X10 total variation and direct B10 error
+
+**CLOSED / rigorous continuous B10 certificate**
+
+Classification:
+
+`GE19_D12R11F2C_TRUE_X10_TOTAL_VARIATION_DIRECT_B10_ERROR_ENCLOSURE_PASS`
+
+The key identity is kept intact instead of separately bounding X and weighted-z:
+
+```text
+B10 = X10 - integral(z_r dmu)
+    = - integral((z_r-X10) dmu)
+```
+
+For `delta u = delta z - delta X` with the identical frozen bath initial state, the Cr11b energy estimate gives
+
+```text
+sqrt(r^2 |delta u|^2 + |delta v|^2)/r
+    <= |delta X(start)| + TV(delta X)
+```
+
+and the bath measure has total mass 1.
+
+Global results:
+
+```text
+global max direct true-drive B10 error upper = 4.495551894006195e-08
+global max total true-continuum B10 to finite-reference upper = 6.325068475693854e-06
+worst mode = 20
+```
+
+Per-mode total true-continuum B10 upper:
+
+```text
+m3  = 4.977496681421009e-08
+m5  = 2.913937143931808e-07
+m8  = 9.106954135548411e-07
+m10 = 1.593544800724346e-06
+m15 = 4.826348367920702e-06
+m20 = 6.325068475693854e-06
+```
+
+The direct true-drive term is much smaller than the nominal continuum-bath term; for mode 20 it is `4.49555e-08` versus `6.28011e-06`.
+
+Hashes:
+
+```text
+JSON = 01362b7214ce61fd45b8c7de93d1ccd98194e9254c0c14f3883f5ae22d6172d9
+NPZ  = 3d31e0c1447750b7819bb218a3d2eb5e49797d1e7b82f8829dee09f1f0000842
+```
+
+Claim boundary: the continuous physical `B10` error is CLOSED. It has not yet been mapped through the exact Repair32B canonical H2 forcing coefficients.
 
 ## Current real frontier
 
-The immediate D12R11 chain is now:
-
 ```text
-D12R11F2C  true-X10 perturbation -> bath-response error        OPEN
-D12R11F2D  combine nominal bath error + true-X bath response   OPEN
-D12R11F2E  true B10 -> exact M1 -> H2 forcing error            OPEN
-D12R11G    residual + forcing + initial boundary through D3    OPEN
+D12R11F2D  true B10 -> exact Repair32B canonical H2 forcing error   OPEN
+D12R11G    residual + forcing + initial boundary through D3         OPEN
 ```
 
-After D12R11G, return to the **actual high-level pre-Z21 frontier**:
+After D12R11G, return immediately to the actual pre-Z21 frontier:
 
 ```text
 remaining non-Y D9 numerical budgets / high derivatives / roundoff
@@ -316,13 +339,13 @@ remaining non-Y D9 numerical budgets / high derivatives / roundoff
         -> only then lensing
 ```
 
-Do not treat D12R11 as the main project objective. It exists only to close one of the rigorous parent/error-budget requirements needed before the full H4 Ward and Z21 reclosure.
+Do not treat D12R11 as the main project objective. It exists only to close one rigorous parent/error-budget requirement needed before the full H4 Ward and Z21 reclosure.
 
 ## Historical project checkpoints relevant to Z21
 
 - 2026-09-24: corrected H3/Z20 work underway; Z21 not started because source/Ward prerequisites were incomplete.
 - 2026-09-25: Z20 and q20 certified; six-source H4 construction available; physical all-parent Ward still open; Z21 and lensing blocked.
-- 2026-10-10: D12R2 background/F21 work closed. Project was summarized at headline level as full H4 Ward next, then final Z21 solve.
+- 2026-10-10: D12R2 background/F21 work closed. Project headline: full H4 Ward next, then final Z21 solve.
 - 2026-10-10 to 2026-10-11: D9 prelock exposed missing rigorous numerical budgets. D12R8 removed the Y sector structurally. D12R9 showed the remaining non-Y parents could not be justified from sampled/PCHIP representations.
 - D12R10/D12R11 were opened to repair those proof foundations. They are prerequisites for the pre-Z21 Ward closure, not a replacement for Z21.
 
