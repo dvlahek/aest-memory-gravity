@@ -276,21 +276,12 @@ Classification:
 
 `GE19_D12R11F2C_TRUE_X10_TOTAL_VARIATION_DIRECT_B10_ERROR_ENCLOSURE_PASS`
 
-The key identity is kept intact instead of separately bounding X and weighted-z:
+Key identity:
 
 ```text
 B10 = X10 - integral(z_r dmu)
     = - integral((z_r-X10) dmu)
 ```
-
-For `delta u = delta z - delta X` with the identical frozen bath initial state, the Cr11b energy estimate gives
-
-```text
-sqrt(r^2 |delta u|^2 + |delta v|^2)/r
-    <= |delta X(start)| + TV(delta X)
-```
-
-and the bath measure has total mass 1.
 
 Global results:
 
@@ -311,8 +302,6 @@ m15 = 4.826348367920702e-06
 m20 = 6.325068475693854e-06
 ```
 
-The direct true-drive term is much smaller than the nominal continuum-bath term; for mode 20 it is `4.49555e-08` versus `6.28011e-06`.
-
 Hashes:
 
 ```text
@@ -320,13 +309,61 @@ JSON = 01362b7214ce61fd45b8c7de93d1ccd98194e9254c0c14f3883f5ae22d6172d9
 NPZ  = 3d31e0c1447750b7819bb218a3d2eb5e49797d1e7b82f8829dee09f1f0000842
 ```
 
-Claim boundary: the continuous physical `B10` error is CLOSED. It has not yet been mapped through the exact Repair32B canonical H2 forcing coefficients.
+### D12R11F2D — exact Repair32B canonical H2 forcing error
+
+**CLOSED / rigorous continuous H2 forcing certificate**
+
+Classification:
+
+`GE19_D12R11F2D_EXACT_REPAIR32B_CANONICAL_H2_FORCING_ERROR_PASS`
+
+Frozen exact map:
+
+```text
+raw aether = Q*a^3*B10
+raw scalar = -a^2*(i*k)*B10
+canonical pu = -raw_aether/H
+canonical pphi = -raw_scalar/H
+normalization factor = 2 exactly
+```
+
+The canonical source-map contract defect is exactly zero.
+
+Global result:
+
+```text
+global max canonical H2 forcing error upper = 2.374712650678017e-03
+worst mode = 20
+worst component = p_phi (canonical component 6)
+worst interval = 6095
+```
+
+Per-mode maximum canonical `p_phi` forcing upper:
+
+```text
+m3  = 2.803161193272819e-06
+m5  = 2.735054737180669e-05
+m8  = 1.367662614154325e-04
+m10 = 2.991438758524397e-04
+m15 = 1.359019736118874e-03
+m20 = 2.374712650678017e-03
+```
+
+The corresponding `p_u` channel is much smaller; for mode 20 its maximum is `1.469519376174590e-06`.
+
+Hashes:
+
+```text
+NPZ = a9e7075525fc6e9c0a41d1efe7e664ca6b3d62a316b99bd3133a68242ef48687
+Repair32B source parent = 7023f57d9ae7f50872d270a2fcc5f3463477e2d3e16fb2c2c4a3c043867acd47
+```
+
+Claim boundary: the true continuous H2 forcing error is CLOSED. It still has to be propagated through the already frozen D3 weighted componentwise stability enclosure, together with D12R11E nominal residual and the certified initial-boundary error.
 
 ## Current real frontier
 
 ```text
-D12R11F2D  true B10 -> exact Repair32B canonical H2 forcing error   OPEN
-D12R11G    residual + forcing + initial boundary through D3         OPEN
+D12R11G  D12R11E residual + F2D forcing + initial boundary through D3   OPEN
 ```
 
 After D12R11G, return immediately to the actual pre-Z21 frontier:
