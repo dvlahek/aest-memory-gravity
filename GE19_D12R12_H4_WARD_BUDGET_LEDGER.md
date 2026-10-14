@@ -101,20 +101,81 @@ D12R12A closes only temporal finite-difference truncation obligations whose froz
 
 No science threshold changed. No observational tuning was used.
 
-## Remaining D9 obligations after D12R12A
+## D12R12B0 — high-derivative source jet contract
 
-1. Rigorous continuum source-shift derivative envelopes:
+**CLOSED / dependency-contract certificate**
+
+Classification:
+
+`GE19_D12R12B0_HIGH_DERIVATIVE_SOURCE_JET_CONTRACT_PASS_VALIDATED_JET_ENGINE_REQUIRED`
+
+Uploaded result confirms the D12R12A remaining family set exactly and freezes the high-order parent dependencies without reading the full Ward residual or promoting sampled Nt64/Nt128 values into derivative bounds.
+
+Key consequences:
+
+```text
+2Q_GE06_cross:
+  FD8 source derivative order = 9
+  required H1 temporal jet order = 10
+  required Z11 temporal jet order = 10
+
+2Q_GE07_cross:
+  FD8 source derivative order = 9
+  required H1 temporal jet order = 10
+  required Z11 temporal jet order = 10
+
+2M2_GE05_mapped:
+  FD4 source derivative order = 5
+  required H1 temporal jet order = 6
+  required bath temporal jet order = 6
+```
+
+For Z11, the first-order H2 system implies that a state jet through order 10 requires the H2 forcing jet through order 9. Since the forcing is built from
+
+```text
+B10 = X10 - weighted_z10
+```
+
+the weighted bath state also requires validated high-order jets.
+
+D12R12B0 explicitly records:
+
+```text
+existing order-6/order-10 validated parent jet certificate = false
+M5/M9 certified = false
+B_total defined = false
+full H4 Ward execution licensed = false
+Z21 certified = false
+```
+
+It also explicitly forbids two invalid shortcuts:
+
+```text
+sampled source magnitudes used as M5/M9 bound = false
+Nt128/Nt64 difference used as M5/M9 bound = false
+```
+
+### Claim boundary
+
+D12R12B0 is not an M5/M9 proof. It freezes the exact high-derivative dependency graph for the three remaining source temporal truncation terms. The next mathematical requirement is a validated continuous parent/bath jet engine through order 10.
+
+No science threshold changed. No observational tuning was used.
+
+## Remaining D9 obligations after D12R12B0
+
+1. Build and validate the continuous order-10 parent/bath jet engine.
+2. Use it to certify:
    - GE06 M9
    - GE07 M9
    - GE05 M2 M5
-2. Non-Y operator M5 envelopes for the exact D1 products.
-3. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
-4. Operation-level roundoff propagation.
-5. Freeze `B_total` independently of the observed full-Ward residual.
-6. Execute the integrated physical H4 Ward test.
-7. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
-8. Lensing remains blocked until Z21 is certified.
+3. Non-Y operator M5 envelopes for the exact D1 products.
+4. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
+5. Operation-level roundoff propagation.
+6. Freeze `B_total` independently of the observed full-Ward residual.
+7. Execute the integrated physical H4 Ward test.
+8. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
+9. Lensing remains blocked until Z21 is certified.
 
 ## Next route
 
-`D12R12B_GE06_GE07_M9_AND_GE05_M2_M5_CONTINUUM_SOURCE_SHIFT_BOUNDS`
+`D12R12B1_VALIDATED_CONTINUOUS_PARENT_BATH_JET_ENGINE_ORDER10`
