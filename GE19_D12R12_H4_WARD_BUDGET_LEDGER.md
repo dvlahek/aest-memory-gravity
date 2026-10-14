@@ -135,19 +135,92 @@ These are rigorous derivative envelopes for the exact original-action canonical 
 
 B1A reuses the frozen D12R10 exact symbolic C matrix, verified interval Az solve and exact original-action background identities. No H1/Z11/bath solve is performed, no science threshold changes, and no observational tuning is used.
 
-## Remaining D9 obligations after D12R12B1A
+## D12R12B1B — H1 state jets through order 10
 
-1. D12R12B1B: certify continuous H1 state jets through order 10 from the D17 continuous approximant, D12R10 componentwise H1 error enclosure and the B1A operator jets.
-2. Propagate bath and Z11 forcing/state jets through the required orders.
-3. Use those jets to certify GE06 M9, GE07 M9 and GE05-M2 M5.
-4. Non-Y operator M5 envelopes for the exact D1 products.
-5. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
-6. Operation-level roundoff propagation.
-7. Freeze `B_total` independently of the observed full-Ward residual.
-8. Execute the integrated physical H4 Ward test.
-9. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
-10. Lensing remains blocked until Z21 is certified.
+### Smoke
+
+**CLOSED / smoke validation**
+
+Classification:
+
+`GE19_D12R12B1B_H1_STATE_JETS_ORDER10_SMOKE_PASS_ALL_TRAJECTORIES_OPEN`
+
+Uploaded smoke JSON SHA256:
+
+`a68edfdd73c55af6b96dc9785242bf569e31bb6da577743282d5ac0c74a97a45`
+
+Smoke trajectory:
+
+```text
+Nt = 64
+C = C_min
+mode = 20
+child intervals = 252
+```
+
+The route is fully parent-conditioned and performs no new H1 solve:
+
+```text
+D17 exact-action endpoint-slope Hermite Bernstein hull
++ D12R10D3B2 certified componentwise continuous canonical H1 error
++ D12R10D3C4 frozen GE15/GE18 initial-state binding
++ D12R12B1A operator/reconstruction-map derivatives
+```
+
+Validation results:
+
+```text
+B1A/D17 clock max mismatch = 0
+all D17 nodes contained by true zero-order H1 bounds = true
+all H1 order-0..10 and physical-w order-0..9 bounds finite = true
+```
+
+Smoke derivative maxima:
+
+```text
+max |y^(10)| <= 1.113757787773478e16
+max |w^(9)|  <= 2.6780135723218228e14
+```
+
+These are H1 state/reconstruction derivative bounds only. They are not GE06/GE07 M9 or GE05-M2 M5 certificates. The smoke deliberately retains:
+
+```text
+H1_state_jets_order10_certified = false
+bath_jets_order10_certified = false
+Z11_state_jets_order10_certified = false
+GE06_M9_certified = false
+GE07_M9_certified = false
+GE05_M2_M5_certified = false
+```
+
+The exact recurrence is
+
+```text
+y^(n+1) = sum_j binom(n,j) M^(j) y^(n-j)
+```
+
+and physical reconstruction uses
+
+```text
+w^(n) = sum_j binom(n,j) WY^(j) y^(n-j).
+```
+
+No sampled derivative is promoted into a bound, no science threshold changes, and no observational tuning is used.
+
+## Remaining D9 obligations after D12R12B1B smoke
+
+1. Run D12R12B1B over all 36 trajectories and freeze H1 canonical jets through order 10 and physical reconstruction jets through order 9.
+2. Propagate bath and B10 jets through the required orders.
+3. Propagate Z11 forcing/state jets through order 10.
+4. Use those jets to certify GE06 M9, GE07 M9 and GE05-M2 M5.
+5. Non-Y operator M5 envelopes for the exact D1 products.
+6. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
+7. Operation-level roundoff propagation.
+8. Freeze `B_total` independently of the observed full-Ward residual.
+9. Execute the integrated physical H4 Ward test.
+10. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
+11. Lensing remains blocked until Z21 is certified.
 
 ## Next route
 
-`D12R12B1B_H1_STATE_JETS_ORDER10`
+`D12R12B1B_ALL_36_TRAJECTORIES`
