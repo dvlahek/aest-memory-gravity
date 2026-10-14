@@ -51,55 +51,17 @@ JSON = 1ec88fd3fd6b81bf30614b0cb78d722a02dd4f745e1f22cb9b8f956a44bac6c1
 NPZ  = 787d5d177838b05078057aa932f379dd529449ce203f5664c36cf723acb0116b
 ```
 
-Frozen source-code blobs:
-
-```text
-Repair37 = 45d203a092f9ac71cc612b15df5f0c0c630f5898
-h4f2g    = d9778da0bb6cc52a15015238810c79978527ffc5
-h4f2h    = 65ce1e68a2f77e063c4bb8848d770abb4baeeebf
-```
-
-The physical source Ward differentiates only source row 6, the shift row.
-
-Actual saved H4F3B source arrays were checked in all 18 C/beta/Nt cohorts. The following temporal derivative truncation obligations close exactly because their shift row is structurally and bitwise zero:
-
-```text
-2Q_Lambda_cross                     FD8 temporal truncation = exactly zero
-2DY2_action_complete_Y_u_and_phi    FD8 temporal truncation = exactly zero
-2M1_GE05_mapped                     FD4 temporal truncation = exactly zero
-```
-
-Observed actual shift-row maxima:
-
-```text
-Lambda = 0
-Y      = 0
-M1     = 0
-```
+The physical source Ward differentiates only source row 6, the shift row. Lambda, Y and GE05-M1 have structurally and actually zero shift rows in all 18 frozen H4F3B cohorts, so their temporal FD truncation contributions close exactly.
 
 The only remaining source temporal-derivative budgets are:
 
 ```text
-2Q_GE06_cross   -> FD8 -> require rigorous continuum M9 shift envelope
-2Q_GE07_cross   -> FD8 -> require rigorous continuum M9 shift envelope
-2M2_GE05_mapped -> FD4 -> require rigorous continuum M5 shift envelope
+2Q_GE06_cross   -> FD8 -> rigorous continuum M9 shift envelope
+2Q_GE07_cross   -> FD8 -> rigorous continuum M9 shift envelope
+2M2_GE05_mapped -> FD4 -> rigorous continuum M5 shift envelope
 ```
 
-Actual saved shift-row maxima, report-only and not used as derivative bounds:
-
-```text
-GE06 = 1.9117449658448746e-04
-GE07 = 2.4812747894409690e-13
-M2   = 2.0057880026144538e-07
-```
-
-These sampled maxima are not M9/M5 certificates and must not be promoted into the D9 tolerance.
-
-### Claim boundary
-
-D12R12A closes only temporal finite-difference truncation obligations whose frozen H4 source shift row is structurally and actually zero. It does not bound GE06, GE07 or GE05-M2 temporal derivative error, operator M5, parent/boundary error, roundoff, the full H4 Ward identity, or Z21.
-
-No science threshold changed. No observational tuning was used.
+Sampled source magnitudes are report-only and are never promoted into M9/M5 certificates.
 
 ## D12R12B0 — high-derivative source jet contract
 
@@ -113,59 +75,19 @@ Uploaded result JSON SHA256:
 
 `4bbbdc925115e8aa10e89928ad1dae7037927444d0917465b9e4836cc903710c`
 
-Uploaded result confirms the D12R12A remaining family set exactly and freezes the high-order parent dependencies without reading the full Ward residual or promoting sampled Nt64/Nt128 values into derivative bounds.
-
-Key consequences:
+Frozen dependency consequences:
 
 ```text
-2Q_GE06_cross:
-  FD8 source derivative order = 9
-  required H1 temporal jet order = 10
-  required Z11 temporal jet order = 10
-
-2Q_GE07_cross:
-  FD8 source derivative order = 9
-  required H1 temporal jet order = 10
-  required Z11 temporal jet order = 10
-
-2M2_GE05_mapped:
-  FD4 source derivative order = 5
-  required H1 temporal jet order = 6
-  required bath temporal jet order = 6
+GE06: source derivative order 9 -> H1 and Z11 temporal jets through order 10
+GE07: source derivative order 9 -> H1 and Z11 temporal jets through order 10
+M2:   source derivative order 5 -> H1 and bath temporal jets through order 6
 ```
 
-For Z11, the first-order H2 system implies that a state jet through order 10 requires the H2 forcing jet through order 9. Since the forcing is built from
+For Z11, the forcing is built from `B10 = X10 - weighted_z10`, so high-order bath jets are part of the proof chain. B0 does not certify M5/M9 and explicitly forbids sampled-grid or Nt64/Nt128 differences as derivative suprema.
 
-```text
-B10 = X10 - weighted_z10
-```
+## D12R12B1A — order-9 operator/source-map Taylor jet engine
 
-the weighted bath state also requires validated high-order jets.
-
-D12R12B0 explicitly records:
-
-```text
-existing order-6/order-10 validated parent jet certificate = false
-M5/M9 certified = false
-B_total defined = false
-full H4 Ward execution licensed = false
-Z21 certified = false
-```
-
-It also explicitly forbids two invalid shortcuts:
-
-```text
-sampled source magnitudes used as M5/M9 bound = false
-Nt128/Nt64 difference used as M5/M9 bound = false
-```
-
-### Claim boundary
-
-D12R12B0 is not an M5/M9 proof. It freezes the exact high-derivative dependency graph for the three remaining source temporal truncation terms. The next mathematical requirement is a validated continuous parent/bath jet engine through order 10.
-
-No science threshold changed. No observational tuning was used.
-
-## D12R12B1A — order-9 operator/source-map Taylor jet engine smoke
+### Smoke
 
 **CLOSED / smoke validation**
 
@@ -177,58 +99,55 @@ Uploaded smoke JSON SHA256:
 
 `9e9299e0c84422faab3321327a54ad8b32e9ba18ff04936366447d085c49d421`
 
-Smoke trajectory:
+Smoke trajectory `Nt64 / C_min / m20` used 252 sub4 child intervals. All 16128 midpoint M0 reference checks were contained, verified-solve `q_inf <= 8.867822383763307e-03`, and all order-0..9 derivative bounds were finite.
+
+### All 36 trajectories
+
+**CLOSED / validated operator-source-map jet engine**
+
+Classification:
+
+`GE19_D12R12B1A_ORDER9_OPERATOR_SOURCE_MAP_JET_ENGINE_ALL_TRAJECTORIES_PASS_H1_Z11_STATE_JETS_OPEN`
+
+Uploaded all-trajectories JSON SHA256:
+
+`9ee27cc613b0173d20648a63e997657586a83f00ed379e568f619b0d06a65dbf`
+
+Coverage:
 
 ```text
-Nt = 64
-C  = C_min
-mode = 20
-subsplit = 4
-child intervals = 252
+trajectory count = 36
+child interval count = 13680
+midpoint M0 reference checks = 875520 / 875520 contained
+all verified-solve q_inf < 1 = true
+all operator/map derivative bounds finite = true
 ```
 
-Validation results:
+The global worst verified-solve contraction and order-9 operator/map bounds occur on `Nt64 / C_min / m3`:
 
 ```text
-verified-solve q_inf upper max = 8.867822383763307e-03
-midpoint M0 reference checks = 16128 / 16128 contained
-all order-0..9 derivative bounds finite = true
+q_inf max            = 8.867822383763307e-03
+max |M^(9)| upper    = 7.301968054456321e+15
+max |F^(9)| upper    = 1.777692843756749e+17
 ```
 
-The smoke builds normalized Taylor coefficients `c[n]=f^(n)/n!` through order 9 for the exact original-action canonical operator `M`, source map `F`, and reconstruction maps `WY/WR` using the frozen D12R10 symbolic C-matrix and verified interval Az solve.
+These are rigorous derivative envelopes for the exact original-action canonical operator/source map. They are not GE06/GE07 source M9 certificates. B1A still leaves H1 state jets, Z11 state jets and bath jets open.
 
-Largest smoke trajectory operator/map derivative bounds at order 9 were:
+B1A reuses the frozen D12R10 exact symbolic C matrix, verified interval Az solve and exact original-action background identities. No H1/Z11/bath solve is performed, no science threshold changes, and no observational tuning is used.
 
-```text
-max |M^(9)| <= 7.301967984783361e15
-max |F^(9)| <= 3.9998088777830405e15
-```
+## Remaining D9 obligations after D12R12B1A
 
-These are operator/source-map derivative bounds, not GE06/GE07 source M9 certificates. No science conclusion is drawn from their absolute size at this stage.
-
-The smoke does not yet certify H1 state jets, Z11 state jets, bath jets, GE06 M9, GE07 M9, or GE05-M2 M5.
-
-### Claim boundary
-
-D12R12B1A smoke validates the jet-engine construction and its order-zero replay on one deliberately hard trajectory. The next step is the same frozen engine over all 36 `(Nt,C,mode)` trajectories. No science threshold changed and no observational tuning was used.
-
-## Remaining D9 obligations after D12R12B1A smoke
-
-1. Run D12R12B1A over all 36 trajectories and freeze the order-9 operator/source-map jet envelopes.
-2. Propagate H1 state jets through order 10.
-3. Propagate bath and Z11 forcing/state jets through the required orders.
-4. Use those jets to certify:
-   - GE06 M9
-   - GE07 M9
-   - GE05 M2 M5
-5. Non-Y operator M5 envelopes for the exact D1 products.
-6. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
-7. Operation-level roundoff propagation.
-8. Freeze `B_total` independently of the observed full-Ward residual.
-9. Execute the integrated physical H4 Ward test.
-10. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
-11. Lensing remains blocked until Z21 is certified.
+1. D12R12B1B: certify continuous H1 state jets through order 10 from the D17 continuous approximant, D12R10 componentwise H1 error enclosure and the B1A operator jets.
+2. Propagate bath and Z11 forcing/state jets through the required orders.
+3. Use those jets to certify GE06 M9, GE07 M9 and GE05-M2 M5.
+4. Non-Y operator M5 envelopes for the exact D1 products.
+5. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
+6. Operation-level roundoff propagation.
+7. Freeze `B_total` independently of the observed full-Ward residual.
+8. Execute the integrated physical H4 Ward test.
+9. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
+10. Lensing remains blocked until Z21 is certified.
 
 ## Next route
 
-`D12R12B1A_ALL_36_TRAJECTORIES`
+`D12R12B1B_H1_STATE_JETS_ORDER10`
