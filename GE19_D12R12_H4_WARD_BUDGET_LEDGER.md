@@ -165,21 +165,70 @@ D12R12B0 is not an M5/M9 proof. It freezes the exact high-derivative dependency 
 
 No science threshold changed. No observational tuning was used.
 
-## Remaining D9 obligations after D12R12B0
+## D12R12B1A — order-9 operator/source-map Taylor jet engine smoke
 
-1. Build and validate the continuous order-10 parent/bath jet engine.
-2. Use it to certify:
+**CLOSED / smoke validation**
+
+Classification:
+
+`GE19_D12R12B1A_ORDER9_OPERATOR_SOURCE_MAP_JET_ENGINE_SMOKE_PASS_ALL_TRAJECTORIES_OPEN`
+
+Uploaded smoke JSON SHA256:
+
+`9e9299e0c84422faab3321327a54ad8b32e9ba18ff04936366447d085c49d421`
+
+Smoke trajectory:
+
+```text
+Nt = 64
+C  = C_min
+mode = 20
+subsplit = 4
+child intervals = 252
+```
+
+Validation results:
+
+```text
+verified-solve q_inf upper max = 8.867822383763307e-03
+midpoint M0 reference checks = 16128 / 16128 contained
+all order-0..9 derivative bounds finite = true
+```
+
+The smoke builds normalized Taylor coefficients `c[n]=f^(n)/n!` through order 9 for the exact original-action canonical operator `M`, source map `F`, and reconstruction maps `WY/WR` using the frozen D12R10 symbolic C-matrix and verified interval Az solve.
+
+Largest smoke trajectory operator/map derivative bounds at order 9 were:
+
+```text
+max |M^(9)| <= 7.301967984783361e15
+max |F^(9)| <= 3.9998088777830405e15
+```
+
+These are operator/source-map derivative bounds, not GE06/GE07 source M9 certificates. No science conclusion is drawn from their absolute size at this stage.
+
+The smoke does not yet certify H1 state jets, Z11 state jets, bath jets, GE06 M9, GE07 M9, or GE05-M2 M5.
+
+### Claim boundary
+
+D12R12B1A smoke validates the jet-engine construction and its order-zero replay on one deliberately hard trajectory. The next step is the same frozen engine over all 36 `(Nt,C,mode)` trajectories. No science threshold changed and no observational tuning was used.
+
+## Remaining D9 obligations after D12R12B1A smoke
+
+1. Run D12R12B1A over all 36 trajectories and freeze the order-9 operator/source-map jet envelopes.
+2. Propagate H1 state jets through order 10.
+3. Propagate bath and Z11 forcing/state jets through the required orders.
+4. Use those jets to certify:
    - GE06 M9
    - GE07 M9
    - GE05 M2 M5
-3. Non-Y operator M5 envelopes for the exact D1 products.
-4. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
-5. Operation-level roundoff propagation.
-6. Freeze `B_total` independently of the observed full-Ward residual.
-7. Execute the integrated physical H4 Ward test.
-8. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
-9. Lensing remains blocked until Z21 is certified.
+5. Non-Y operator M5 envelopes for the exact D1 products.
+6. Non-Y parent/lower-boundary discretization budget using the certified continuous parents, including D12R11G1 for Z11.
+7. Operation-level roundoff propagation.
+8. Freeze `B_total` independently of the observed full-Ward residual.
+9. Execute the integrated physical H4 Ward test.
+10. If the Ward certificate passes, solve final window-local particular Z21 and apply the unchanged `1e-6` science gate.
+11. Lensing remains blocked until Z21 is certified.
 
 ## Next route
 
-`D12R12B1_VALIDATED_CONTINUOUS_PARENT_BATH_JET_ENGINE_ORDER10`
+`D12R12B1A_ALL_36_TRAJECTORIES`
