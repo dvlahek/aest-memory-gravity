@@ -64,9 +64,8 @@ For the standard sweep
 
 `h = 0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001`,
 
-the expected crossover products are approximately
+the expected crossover products `h R_cross` are approximately
 
-- `4?` no: B2 has `h R_cross` approaching `2.1305793531`
 - at `h=0.1`: `2.1295969861`
 - at `h=0.05`: `2.1303325467`
 - at `h=0.02`: `2.1305398093`
