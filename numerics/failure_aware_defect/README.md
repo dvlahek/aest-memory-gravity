@@ -24,6 +24,18 @@ For a first-derivative stencil D_h, the target object is
 
 Instead of bounding E_h through a global ninth- or fifth-derivative supremum, the direct route encloses the source values at the stencil nodes together with the exact first derivative at the target point.
 
+## Gravity-independent theorem core
+
+The methods branch now contains two benchmarks that establish the core mechanism before any gravity case study is used.
+
+- `b0_analytic_separation.py` studies `f_kappa(x)=kappa^(-beta) sin(kappa x)` for `1 < beta < 9`. The standard FD8 high-jet certificate grows like `kappa^(9-beta)`, while an elementary direct certificate tends to zero.
+- `b1_continuum_symbol_defect.py` studies `F_R(x)=int_1^R sin(r x)/[r^2(1+r^2)] dr`. The standard ninth-derivative certificate grows like `R^6`, while an explicit direct continuum-defect certificate is uniform in the spectral cutoff `R`.
+- `THEOREM_CORE.md` records the separation theorem, the direct continuum defect identity, the parameter-uniform corollary, the explicit FD8 symbol bound, the failure-aware route-selection rule, and the stability-lift requirement.
+
+For the default B1 setting `h=1e-2`, the explicit direct certificate has a finite `R -> infinity` limit of approximately `1.1960211073e-4`.
+
+The nonrigorous high-accuracy quadrature values printed by B1 are diagnostics only. The rigorous benchmark claim is based on the closed-form direct envelope, not on QUADPACK error estimates.
+
 ## Observed failure ladder from AeST
 
 The current numerical evidence is intentionally retained as a case-study seed, not as a completed proof.
@@ -53,19 +65,22 @@ The intended novelty is not a new finite-difference stencil. The novelty target 
 
 The paper should not rely on the gravity example alone. The clean benchmark plan is:
 
-1. A synthetic stiff continuum oscillator with a known or very-high-precision reference.
-2. A Maxwell/viscoelastic memory model.
-3. The AeST memory-gravity case as the hard scientific stress test.
+1. B0 analytical separation witness.
+2. B1 continuum spectral benchmark.
+3. A generalized Maxwell/viscoelastic memory model.
+4. A manufactured Volterra memory equation.
+5. The AeST memory-gravity case as the hard scientific stress test.
 
-For each benchmark, sweep stiffness, grid spacing, quadrature resolution and stencil order. Compare:
+For each numerical benchmark, sweep stiffness, grid spacing, quadrature resolution where applicable, and stencil order. Compare:
 
 - actual defect from a trusted reference,
 - conventional Taylor derivative bound,
-- signed bound,
-- regularized bound,
 - direct stencil-defect enclosure,
 - certificate-width / actual-error ratio,
+- high-jet / direct-certificate ratio,
 - runtime and enclosure width.
+
+The actual defect is a diagnostic metric. Route selection must use only certified quantities and the requested certification tolerance.
 
 ## Branch boundary
 
