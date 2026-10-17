@@ -1,0 +1,27 @@
+{
+  "benchmark": "B3 manufactured Volterra ramp-memory benchmark",
+  "status": "LOCKED_CONFIRMED",
+  "source_json_sha256": "e5cf19cf212e2984d33ab6cab9af6e83c940e8adc86b122d04a16ccddb6dd471",
+  "source_csv_sha256": "1dda5500933a32c533ec62a002bda14325d180686564a43be02a2ae7c2d5e6e4",
+  "h": 0.01,
+  "rho_star": 2.258910484064123,
+  "R_cross": 225.88966216320622,
+  "rho_cross_hR": 2.2588966216320623,
+  "relative_rho_error": 6.136777954997833e-06,
+  "certificate_at_crossover": 3.5145810982220497e-06,
+  "certificate_at_crossover_over_h2": 0.0351458109822205,
+  "certificate_over_h2_limit_expected": 0.03514813830095348,
+  "certificate_scaled_relative_error": 6.621456627527072e-05,
+  "direct_uniform_limit": 3.955494398925867e-06,
+  "largest_sampled_R": 10000.0,
+  "direct_at_largest_sampled_R": 3.955399807669633e-06,
+  "direct_fraction_of_uniform_limit_at_largest_R": 0.9999760861104342,
+  "route_rule_inconsistencies": 0,
+  "verification": {
+    "all_reported_route_labels_consistent_with_gamma": true,
+    "direct_certificate_monotone_on_reported_post_split_rows": true,
+    "rho_cross_consistent_with_asymptotic_theory": true,
+    "claim_uses_only_closed_form_certificates": true
+  },
+  "claim_boundary": "QUADPACK actual-defect values remain diagnostic only. The frozen rigorous B3 result concerns the high-jet and direct-split certificate formulas and their route transition."
+}
