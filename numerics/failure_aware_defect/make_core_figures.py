@@ -51,12 +51,20 @@ def figure2_b1_phase(outdir: Path) -> None:
     mesh = ax.pcolormesh(X, Y, Z, shading="auto")
 
     # Exact finite-h transition contour from the audited ratio field.
-    contour = ax.contour(X, Y, Z, levels=[0.0], linewidths=1.8)
-    contour.collections[0].set_label(r"finite-$h$ transition $\Gamma=1$")
+    # Do not access QuadContourSet.collections here: that attribute is not
+    # available in all supported Matplotlib versions. A proxy line is used
+    # only for the legend; the contour itself remains the actual Gamma=1 set.
+    ax.contour(X, Y, Z, levels=[0.0], linewidths=1.8)
+    finite_proxy, = ax.plot(
+        [],
+        [],
+        linewidth=1.8,
+        label=r"finite-$h$ transition $\Gamma=1$",
+    )
 
     # Asymptotic transition law derived from the scaled certificates.
     rho = ac.asymptotic_rho_star("b1")
-    ax.plot(
+    asymptotic_line, = ax.plot(
         rho / hs,
         hs,
         linewidth=1.8,
@@ -70,7 +78,7 @@ def figure2_b1_phase(outdir: Path) -> None:
     ax.set_ylabel(r"grid spacing $h$")
     ax.set_title(r"B1 route phase diagram: $\log_{10}(B_T/B_D)$")
     fig.colorbar(mesh, ax=ax, label=r"$\log_{10}(B_T/B_D)$")
-    ax.legend(fontsize=8)
+    ax.legend(handles=[finite_proxy, asymptotic_line], fontsize=8)
     save(fig, outdir, "figure2_b1_phase_diagram")
 
 
