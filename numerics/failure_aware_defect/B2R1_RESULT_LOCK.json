@@ -1,0 +1,24 @@
+{
+  "benchmark": "B2R1 rigorous Maxwell certificate-route transition phase diagram",
+  "status": "LOCKED_CONFIRMED",
+  "source_json_sha256": "a59f9ecede584b459b1253a2c9f2556c424510574ef40fb2aea30c887b2bae7f",
+  "source_csv_sha256": "807a1e663c178b9be008edb7a1320c4abda4241c9d995be137caf023396cfa05",
+  "grid_row_count": 1267,
+  "rho_star": 2.1305793530674104,
+  "loglog_fit": {
+    "slope": -1.000075246457217,
+    "prefactor": 2.1296581419278455,
+    "expected_slope": -1.0,
+    "expected_prefactor_as_h_to_0": 2.1305793530674104
+  },
+  "route_rule_inconsistencies": 0,
+  "verification": {
+    "all_grid_route_labels_consistent_with_gamma": true,
+    "rho_cross_converges_to_rho_star": true,
+    "crossover_taylor_direct_relative_mismatch_max": 3.5534953587848216e-10,
+    "certificate_over_h_limit_expected": 0.045190319200392993,
+    "smallest_h_certificate_over_h": 0.04519029054011734,
+    "smallest_h_relative_rho_error": 4.6517476130693695e-08
+  },
+  "claim_boundary": "Uses only rigorous closed-form B2 certificate formulas. No actual-error reference or observationally tuned threshold enters route selection."
+}
