@@ -1,0 +1,80 @@
+{
+  "benchmark": "B1R1 rigorous certificate-route transition phase diagram",
+  "claim_boundary": "Uses only rigorous closed-form certificate formulas. No actual-error reference and no observationally tuned threshold enters the route decision.",
+  "finite_h_crossover": [
+    {
+      "R_cross": 40.394568578240765,
+      "certificate_at_crossover": 0.011482781819133748,
+      "certificate_over_h2": 1.1482781819133745,
+      "h": 0.1,
+      "relative_rho_error": 0.0008172815602111722,
+      "rho_cross_hR": 4.039456857824077
+    },
+    {
+      "R_cross": 80.8386314773267,
+      "certificate_at_crossover": 0.0028832498845436628,
+      "certificate_over_h2": 1.1532999538174649,
+      "h": 0.05,
+      "relative_rho_error": 0.0002051464169232056,
+      "rho_cross_hR": 4.041931573866335
+    },
+    {
+      "R_cross": 202.13140419705286,
+      "certificate_at_crossover": 0.00046188619249045446,
+      "certificate_over_h2": 1.154715481226136,
+      "h": 0.02,
+      "relative_rho_error": 3.2860672978709584e-05,
+      "rho_cross_hR": 4.042628083941057
+    },
+    {
+      "R_cross": 404.2727714627606,
+      "certificate_at_crossover": 0.00011549180392729567,
+      "certificate_over_h2": 1.1549180392729568,
+      "h": 0.01,
+      "relative_rho_error": 8.216453785461067e-06,
+      "rho_cross_hR": 4.042727714627606
+    },
+    {
+      "R_cross": 808.5505254435159,
+      "certificate_at_crossover": 2.8874217295540426e-05,
+      "certificate_over_h2": 1.1549686918216169,
+      "h": 0.005,
+      "relative_rho_error": 2.0541824086661362e-06,
+      "rho_cross_hR": 4.042752627217579
+    },
+    {
+      "R_cross": 2021.3797897332959,
+      "certificate_at_crossover": 4.619931338894522e-06,
+      "certificate_over_h2": 1.1549828347236306,
+      "h": 0.002,
+      "relative_rho_error": 3.3450391908139257e-07,
+      "rho_cross_hR": 4.042759579466592
+    },
+    {
+      "R_cross": 4042.760551071087,
+      "certificate_at_crossover": 1.154984818454994e-06,
+      "certificate_over_h2": 1.154984818454994,
+      "h": 0.001,
+      "relative_rho_error": 9.417199962553067e-08,
+      "rho_cross_hR": 4.042760551071087
+    }
+  ],
+  "grid_row_count": 1267,
+  "loglog_fit": {
+    "expected_prefactor_as_h_to_0": 4.042760931785968,
+    "expected_slope": -1.0,
+    "prefactor": 4.039663109382115,
+    "slope": -1.0001333768232672
+  },
+  "rho_star": 4.042760931785968,
+  "route_rule_inconsistencies": 0,
+  "source_csv_sha256": "7d00be8a9bc40d52dcfdd16dcc8a8b4d4315d5d79a81efcd81de0149740f4e1d",
+  "source_json_sha256": "84aedc751866652ff138ccce6b2e2e189b7f0e3a3449890457cd2093f29abbe9",
+  "status": "LOCKED_CONFIRMED",
+  "verification": {
+    "all_grid_route_labels_consistent_with_gamma": true,
+    "certificate_over_h2_limit_expected": 1.15498557706002,
+    "crossover_taylor_direct_relative_mismatch_max": 4.332425237519035e-10,
+    "rho_cross_converges_to_rho_star": true
+  }
+}
