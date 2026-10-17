@@ -1,0 +1,45 @@
+{
+  "status": "frozen post-audit mathematical core",
+  "date": "2026-10-17",
+  "branch": "numerics/failure-aware-defect-certification",
+  "tests": {
+    "count": 14,
+    "status": "PASS",
+    "reported_runtime_seconds": 0.003
+  },
+  "math_audit_stable": {
+    "sha256": "5917c26c21b9a8675f8d7360fb56bd26df4e05dfe802ab5a41cb0c081a8b21c4",
+    "fd8_moment9": -576,
+    "b1": {
+      "rho_star": 4.042760931785983,
+      "fit_prefactor": 4.0396630785843985,
+      "fit_slope": -1.0001333790285978,
+      "rho_cross_h_1e_minus_3": 4.042760599468471
+    },
+    "b2": {
+      "rho_star": 2.1305793530674104,
+      "fit_prefactor": 2.1296581418225782,
+      "fit_slope": -1.0000752464708595,
+      "rho_cross_h_1e_minus_3": 2.130579254181785
+    },
+    "b3": {
+      "rho_star": 2.2589104840641232,
+      "fit_prefactor": 2.2576190615126164,
+      "fit_slope": -1.0000995002610302,
+      "rho_cross_h_1e_minus_3": 2.2589103453243462
+    }
+  },
+  "figure_hashes": {
+    "figure1_b0_separation.pdf": "971db8ce4edb91867696acba7b6f46b728c2e263c80d736f673e9a98796e026f",
+    "figure1_b0_separation.png": "df630ebe4b8915587537e754a6a266e506da502933bde8da77f702800633bdc4",
+    "figure2_b1_phase_diagram.pdf": "440a42687c249eb6ab512920c69a5cb1bb35a34b2c738aaf1ae0d23d15170f4d",
+    "figure2_b1_phase_diagram.png": "80e74512afdf1a53407e32b7e7a90b794a1f1cd03eea6db4a8c6b48eaeb658fc",
+    "figure3a_b2_transition_collapse.pdf": "cb30cb862e15524d1af350cfe264bbc216326cf44603c801e1c8ef121238b451",
+    "figure3a_b2_transition_collapse.png": "321dd37f0f180b0941a4e702310ca8ce70be208f62d11a8ed4152997fb5cf0d1",
+    "figure3b_b3_transition_collapse.pdf": "ceefba2c72f5e28a9d9ab8bda9d53cb3ae5c00f66c2ff919b1062322dd31aec4",
+    "figure3b_b3_transition_collapse.png": "04e9947080bcbe02787c99c4d0d34177601ccf8de5dde5e38b04fd4a82f19e01",
+    "figure4_cross_benchmark_crossover.pdf": "0440ba81fbdfa4d1695beb66c5294d17b7b22fce7213b08c7264b9476c90758a",
+    "figure4_cross_benchmark_crossover.png": "9162776cb8bbd58c358735077cba7ad262284c025ebd6145063cf50c8d07ab9d"
+  },
+  "claim_boundary": "The lock certifies the gravity-independent B0-B3 mathematical core and audited figure provenance. It does not certify a full AeST continuum theorem or a global solution-error theorem."
+}
