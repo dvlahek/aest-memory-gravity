@@ -1,0 +1,24 @@
+{
+  "benchmark": "B3R1 rigorous Volterra certificate-route transition phase diagram",
+  "status": "LOCKED_CONFIRMED",
+  "source_json_sha256": "826788c08101641ab351655568f47416f78466d80678ce9dd9267c95dd0fc2d9",
+  "source_csv_sha256": "efa4bcac2744774186572c45234d7eaaa51136b8d0b31fb27c47a4b382d9503e",
+  "grid_row_count": 1267,
+  "route_rule_inconsistencies": 0,
+  "rho_star": 2.258910484064123,
+  "loglog_fit": {
+    "prefactor": 2.257619127345665,
+    "slope": -1.0000994920100499,
+    "expected_prefactor_as_h_to_0": 2.258910484064123,
+    "expected_slope": -1.0
+  },
+  "verification": {
+    "all_grid_route_labels_consistent_with_gamma": true,
+    "rho_cross_converges_monotonically_to_rho_star": true,
+    "certificate_over_h2_limit_expected": 0.03514813830095348,
+    "certificate_over_h2_at_h_1e_minus_3": 0.03514810061324841,
+    "relative_rho_error_at_h_1e_minus_3": 1.1660813162645066e-07,
+    "max_relative_taylor_direct_mismatch_at_reported_crossover": 1.5728323790735432e-07
+  },
+  "claim_boundary": "B3R1 uses only the rigorous closed-form B3 certificate formulas. No actual-error reference enters route selection. The small crossover mismatch at the finest h values is a floating-point root-evaluation effect and does not change route classification or the asymptotic law."
+}
