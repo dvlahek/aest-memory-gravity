@@ -1,0 +1,56 @@
+{
+  "project": "failure-aware defect certification for stiff continuum-memory models",
+  "base_science_head": "6282ed54e35d4db6b58fcd13d1c7403419f8afb7",
+  "status": "methods-project seed; not a completed continuum certificate",
+  "evidence": {
+    "B1C_naive_absolute_high_jet": {
+      "classification": "finite diagnostic PASS but too loose for D9",
+      "weighted_z10_order5": 1.0360710264162484e16,
+      "weighted_z10_order9": 3.1250360006399426e34,
+      "weighted_z10_order10": 1.3025851293332702e39,
+      "B10_order5": 1.0360710264178956e16,
+      "B10_order9": 3.125036000639943e34,
+      "B10_order10": 1.3025851293332704e39,
+      "interpretation": "absolute UV majorization creates proof-width explosion; do not promote as physical instability"
+    },
+    "R1A_signed_finite_production": {
+      "classification": "finite signed diagnostic PASS; continuous certificate still open",
+      "signed_weighted_z_order5_approx": 6.3954e9,
+      "signed_weighted_z_order9_approx": 1.8973599136698e28,
+      "signed_weighted_z_order10_approx": 7.89208e32,
+      "compact_core_order9_approx": 87.97,
+      "compact_core_order10_approx": 2505.0,
+      "interpretation": "large improvement over B1C but high-order signed/absolute values are nearly identical; UV stiffness, not node cancellation, dominates"
+    },
+    "B2A_B2B_direct_defect_reduction": {
+      "old_route": "GE06/GE07 M9 and GE05-M2 M5 derivative suprema",
+      "new_route": "continuous source values at stencil nodes plus exact first derivative at target node",
+      "maximum_parent_derivative_order": 2,
+      "maximum_bath_derivative_order": 1,
+      "interpretation": "derivative-order collapse is a central methods result"
+    },
+    "B2C2A_regularized_UV": {
+      "classification": "GE19_D12R12B2C2A_REGULARIZED_B10X_UV_BOUNDARY_DIAGNOSTIC_PASS_RIGOROUS_BOUNDARY_ENCLOSURE_REQUIRED",
+      "UV_r_min": 163.29099776134683,
+      "UV_r_max": 462165.06702980126,
+      "slope_abs_u": -1.1802993594298545,
+      "slope_abs_us": 0.04835311268245815,
+      "slope_abs_p": -1.9860606625240613,
+      "slope_abs_q": -1.9516468873175423,
+      "slope_sqrt_Eq": -0.07574187622450122,
+      "UV_max_abs_v": 0.004796514660006949,
+      "UV_max_abs_v_minus_Xs": 0.0015285466249469937,
+      "UV_max_sqrt_Eq": 0.019890073686792163,
+      "finite_quadrature_absolute_B10x_UV_proxy": 6.045006812672477e-8,
+      "original_JSON_SHA256": "9113129acc7612a625ba695693ff8136b5c1b834f3655f2ed758b98b3db46adb",
+      "original_NPZ_SHA256": "cc56d81a0b05c9cb5b0cd54bdcff4c11ab2d8a8f72c9a46ade155092a3634d5b",
+      "critical_caveat": "global fitted slope of sqrt(Eq) hides extreme-UV growth of r|u| on the last nodes; uniform-Eq continuum proof is NOT established"
+    }
+  },
+  "paper_claim_boundary": [
+    "Do not claim a new FD8 stencil.",
+    "Do not claim the AeST full Ward or Z21 is certified from this branch.",
+    "Do not infer a continuum theorem from finite quadrature diagnostics.",
+    "The current novelty target is failure-aware certification and direct-defect reformulation under stiffness."
+  ]
+}
