@@ -23,8 +23,19 @@ def integral_inv_r_1pr2(a: float, b: float | None = None) -> float:
 
 
 def _j2_tail(r: float) -> float:
-    # Integral_r^infinity ds/[s^2(1+s^2)].
+    """Integral from r to infinity of 1/[s^2(1+s^2)], evaluated stably."""
     x = 1.0 / r
+    # x - atan(x) loses all relative accuracy when x is tiny.
+    # Use its alternating Taylor series in that regime.
+    if abs(x) < 1e-3:
+        x2 = x * x
+        return x**3 * (
+            1.0 / 3.0
+            - x2 / 5.0
+            + x2 * x2 / 7.0
+            - x2 * x2 * x2 / 9.0
+            + x2**4 / 11.0
+        )
     return x - math.atan(x)
 
 
