@@ -1,0 +1,27 @@
+{
+  "benchmark": "B2 generalized Maxwell ramp-memory benchmark",
+  "status": "LOCKED_CONFIRMED",
+  "source_json_sha256": "ac45bb1469bb488cf5f40c1444927b57bf1cdb5b35eeb7a3f7042ca1325da80c",
+  "source_csv_sha256": "7842fcd4adf71313250fbef0245e8be12864050f9f729f0e0a70335cc2624673",
+  "h": 0.01,
+  "rho_star": 2.1305793530674104,
+  "R_cross": 213.05694651544198,
+  "rho_cross_hR": 2.13056946515442,
+  "relative_rho_error": 4.640950348259997e-06,
+  "certificate_at_crossover": 0.00045187457494175485,
+  "certificate_at_crossover_over_h": 0.045187457494175486,
+  "certificate_over_h_limit_expected": 0.045190319200392993,
+  "certificate_scaled_relative_error": 6.33256473542022e-05,
+  "direct_uniform_limit": 0.0006374181371302911,
+  "largest_sampled_R": 10000.0,
+  "direct_at_largest_sampled_R": 0.0006355413709401959,
+  "direct_fraction_of_uniform_limit_at_largest_R": 0.9970556749474613,
+  "route_rule_inconsistencies": 0,
+  "verification": {
+    "all_reported_route_labels_consistent_with_gamma": true,
+    "direct_certificate_monotone_on_reported_post_split_rows": true,
+    "rho_cross_consistent_with_asymptotic_theory": true,
+    "claim_uses_only_closed_form_certificates": true
+  },
+  "claim_boundary": "QUADPACK actual-defect values remain diagnostic only. The frozen rigorous B2 result concerns the high-jet and direct-split certificate formulas and their route transition."
+}
