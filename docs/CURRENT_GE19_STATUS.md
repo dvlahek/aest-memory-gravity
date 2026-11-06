@@ -35,6 +35,12 @@ The complete actual **source + linear-operator + all-parent Euler + boundary** m
 3. **Only if Ward PASSes**, conduct one final action-completed Z21 science solve with unchanged active-shift gate and perturbative-consistency checks.
 4. **Only if Z21 PASSes**, derive/calculate a gauge-invariant weakly nonlinear Weyl/null-geodesic lensing prediction and then compare with prepared observations using frozen theory parameters.
 
+## 2026-11-06: integrated Ward analytical gap map (documentation, not a new science PASS)
+
+Source-bound review of H4F3D1/D3/D4, D9, D10R1, D12R2 and D12R3 identifies the *specific outstanding* full-H4 action-realization tasks: (G1) physical first-order parent Euler residuals on common corrected H4 grids, including per-node GE05 bath; (G2) complete signed actual operator+parent+boundary Ward balance; (G3) pre-residual FD4/FD8 derivative/regularity/roundoff budget and defined B_total; (G4) only then one preregistered full-cohort structural test. The exact formal eta-bath parent `4*sum E_q10*d_x q10` and unknown-state background elimination are already proven in their frozen scopes; do not rederive them. No V12/V13 replay or Z21 science solve licensed.
+
+Full source-bound integration map: [`docs/ge19_h4_integrated_ward_gap_map_2026-11-06.md`](ge19_h4_integrated_ward_gap_map_2026-11-06.md). This adds documentation/navigation and **does not change** `full_H4_Ward_certified=false`, `Z21_certified=false`, `lensing_licensed=false`.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
