@@ -41,6 +41,12 @@ Source-bound review of H4F3D1/D3/D4, D9, D10R1, D12R2 and D12R3 identifies the *
 
 Full source-bound integration map: [`docs/ge19_h4_integrated_ward_gap_map_2026-11-06.md`](ge19_h4_integrated_ward_gap_map_2026-11-06.md). This adds documentation/navigation and **does not change** `full_H4_Ward_certified=false`, `Z21_certified=false`, `lensing_licensed=false`.
 
+## 2026-11-06: formal linear Ward syzygy and Y-source support (ANALYTIC SCOPE ONLY)
+
+The existing H4F3D4 spatial Noether identity together with D12R2 on-shell background yields the **conditional continuum linear operator syzygy** `-d_t E_b10-a d_x E_L10=0` for arbitrary first-order fields, **provided** the linear Euler rows are derived from the same frozen covariant action. Independent certification of this identity for the actual production `Cmat` remains open. Stage E H4 Y forcing has only `u` and `phi` rows: hence its **direct** H4 source-Ward projection in shift/isotropic/anisotropy rows is exactly zero. This avoids needing a Y zero-crossing FD8 derivative envelope *for that direct term only*; it does not close all Y-dependent regularity or amend D12R3's frozen prerequisites.
+
+Source-bound result: [`docs/ge19_h4_linear_syzygy_y_support_analytic_2026-11-06.md`](ge19_h4_linear_syzygy_y_support_analytic_2026-11-06.md); independent SymPy check `ge19/h4f3d_ward_syzygy_y_support_scope_analytic.py`. This narrows G2/G3 proof scope, but **no physical Ward PASS** and no license for a new Z21 solve or lensing.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
