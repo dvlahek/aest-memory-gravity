@@ -47,6 +47,14 @@ The existing H4F3D4 spatial Noether identity together with D12R2 on-shell backgr
 
 Source-bound result: [`docs/ge19_h4_linear_syzygy_y_support_analytic_2026-11-06.md`](ge19_h4_linear_syzygy_y_support_analytic_2026-11-06.md); independent SymPy check `ge19/h4f3d_ward_syzygy_y_support_scope_analytic.py`. This narrows G2/G3 proof scope, but **no physical Ward PASS** and no license for a new Z21 solve or lensing.
 
+## 2026-11-07: GE06+Lambda / GE07 background lapse cancellation — analytic progress
+
+Source-bound symbolic derivation gives `E_N00^(GE06+Lambda)=+6C` and `E_N00^GE07=-6C` on the exact frozen Repair13 background, using `varrho_dust_action=3*C/a^3`. Thus the **total** homogeneous lapse Euler factor vanishes exactly, while neither of these two contributions vanishes separately. An explicit GE07 off-shell Euler Ward calculation and first-order expansion show that dropping the dust `E_N00*partial_x(N10)` term before combining sectors leaves a spurious defect `+6C*partial_x(N10)`. This identifies a real potential false-FAIL in a sector-by-sector Cmat test.
+
+Analytic details and precise claim boundary: [`docs/ge19_linear_euler_background_sector_cancellation_2026-11-07.md`](ge19_linear_euler_background_sector_cancellation_2026-11-07.md). Source-bound read-only symbolic audit: `ge19/h4f3d_linear_sector_background_lapse_audit.py`. Independent local SymPy algebra checks passed on the source formulas; the committed audit has **not yet been executed on the actual checkout** and is not a new CI or full Cmat Ward PASS.
+
+**Next physics gate:** derive and verify the combined GE06+GE07+Lambda arbitrary-jet linear Ward identity for the original 16x10 canonical Cmat with its exact time/row/momentum conventions. Do not assume separate sectors are on shell, rerun Z21, change source weights, adjust FD tolerance or interpret V11 split cancellations as physical lensing. `full_H4_Ward_certified=false`, `Z21_certified=false`, `lensing_licensed=false`.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
