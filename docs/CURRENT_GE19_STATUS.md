@@ -93,6 +93,12 @@ For frozen Stage E `F(g)=g|g|` with `g=g10+eta*g11`, a new mathematical proof gi
 
 **Next focused step:** run the single G1B immutable H3F-vs-Repair22 H1 parent comparison. If arrays match, then trace whether the D47 R5g continuous H1 certificate applies to this precise parent lineage; if not, identify the difference before G1 Euler residual interval proof. Z11 continuous residuals, Repair26 q10/D55 scope transport, G3 physical error budget and all H4 science flags remain OPEN. Original source and original `1e-6`/temporal-order gates unchanged.
 
+## 2026-11-07: G1B initial local run — IMPLEMENTATION FAIL, corrected without changing science
+
+Researcher-provided `results/ge19_g1b_h1_parent_lineage_20261107.log` reports `UnboundLocalError: cannot access local variable 're' where it is not associated with a value`, at regex compilation in `ge19/h4f3d_g1b_frozen_h1_parent_lineage_identity.py`. Root cause: the later local `re=` relative-L2 assignment made Python regard the standard-library module name `re` as local throughout `main()`. The run stopped **before loading or comparing any H1/H1dot arrays** and produced no valid science classification or frozen JSON. This is **G1B_IMPLEMENTATION_FAIL**, not a difference of parent lineages and not a GE19 physics FAIL.
+
+One-line-logic code correction committed as `5aa6e02c7e26d21e89983f2b816381f51c8a41ba`: `import re as regex`, `match=regex.compile(...)`. Original H3F/Repair22 NPZ SHA locks, all source pins, comparison semantics, and existing PASS/FAIL science gates remain unchanged. The corrected script is **not yet locally re-executed**. Re-run with a new output name only if previous output exists; otherwise reuse the intended JSON and save fresh log as `results/ge19_g1b_h1_parent_lineage_20261107_r1.log`.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
