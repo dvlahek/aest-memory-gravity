@@ -13,7 +13,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import re
+import re as regex
 import subprocess
 from pathlib import Path
 
@@ -84,7 +84,7 @@ def main():
         hashes[key]={"path":str(p),"expected":want,"observed":actual,
                      "exact":True,"bytes":p.stat().st_size}
     with np.load(paths["h3f"],allow_pickle=False) as h,         np.load(paths["repair22"],allow_pickle=False) as r:
-        match=re.compile(r"^(.+)_H1_(primary|control)$")
+        match=regex.compile(r"^(.+)_H1_(primary|control)$")
         hk={k for k in h.files if match.match(k)}
         rk={k for k in r.files if match.match(k)}
         if not hk or hk!=rk:
