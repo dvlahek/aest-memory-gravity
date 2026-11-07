@@ -1,6 +1,6 @@
 # GE19 current scientific status
 
-Last updated: 2026-11-06 (new checkpoint)
+Last updated: 2026-11-07 (living checkpoint)
 Branch: `physics-first-gravitational-elasticity`.
 This is the **canonical living GE19 checkpoint**. Read it first when resuming the GravitationalElasticy / AeST Memory Gravity project. Earlier frozen results and classifications are immutable; the 2026-10-10 snapshot is preserved at the end.
 
@@ -54,6 +54,12 @@ Source-bound symbolic derivation gives `E_N00^(GE06+Lambda)=+6C` and `E_N00^GE07
 Analytic details and precise claim boundary: [`docs/ge19_linear_euler_background_sector_cancellation_2026-11-07.md`](ge19_linear_euler_background_sector_cancellation_2026-11-07.md). Source-bound read-only symbolic audit: `ge19/h4f3d_linear_sector_background_lapse_audit.py`. Independent local SymPy algebra checks passed on the source formulas; the committed audit has **not yet been executed on the actual checkout** and is not a new CI or full Cmat Ward PASS.
 
 **Next physics gate:** derive and verify the combined GE06+GE07+Lambda arbitrary-jet linear Ward identity for the original 16x10 canonical Cmat with its exact time/row/momentum conventions. Do not assume separate sectors are on shell, rerun Z21, change source weights, adjust FD tolerance or interpret V11 split cancellations as physical lensing. `full_H4_Ward_certified=false`, `Z21_certified=false`, `lensing_licensed=false`.
+
+## 2026-11-07: local sector-Ward proof executed PASS; 16 Cmat jet conditions now explicit
+
+Uploaded local script result `GE19_LINEAR_GE06_LAMBDA_GE07_LAPSE_BACKGROUND_EXACT_PASS_TOTAL_CMAT_OPEN` has all source pins and symbolic gates PASS; frozen locally verified JSON SHA-256 `72d1376a28d75d18b8b34f3239fef1cf4f9c681f2861f78432ff931768af2dcf`, log SHA-256 `0182b737ffb78efd936e39a5a1f70700938ae7b59ec24a25bb562f5c3dd8bc27`. GE06+Lambda lapse background Euler `+6C` cancels GE07 `-6C`. Dust-only operator Ward has `+6 i k C N10`, so a sector-wise test after falsely imposing `E_N00^dust=0` is invalid.
+
+Source-derived `Cmat` Ward `W=-d_t(Bw)-ika[Jw-d_t(Pw)]` with `B=C10+C11`, `P=C14`, `J=(C6+2(C12+C13))/3` has **16 independent integrable-jet coefficient conditions** (not 20 independent w/wdot coefficients). Formal coefficient-map algebra checked independently; **actual source-derived production Cmat all-16 evaluation remains OPEN**. Reference: [`docs/ge19_h4f3d_linear_audit_freeze_and_cmat_jet_gate_2026-11-07.md`](ge19_h4f3d_linear_audit_freeze_and_cmat_jet_gate_2026-11-07.md), companion source `ge19/h4f3d_cmat_integrable_jet_analytic_gate.py`. No new H4 science PASS, no Z21 or lensing license; D9/D12R3 budget still OPEN.
 
 ## Progress recording convention (apply going forward)
 
