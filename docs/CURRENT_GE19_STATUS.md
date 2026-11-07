@@ -61,6 +61,12 @@ Uploaded local script result `GE19_LINEAR_GE06_LAMBDA_GE07_LAPSE_BACKGROUND_EXAC
 
 Source-derived `Cmat` Ward `W=-d_t(Bw)-ika[Jw-d_t(Pw)]` with `B=C10+C11`, `P=C14`, `J=(C6+2(C12+C13))/3` has **16 independent integrable-jet coefficient conditions** (not 20 independent w/wdot coefficients). Formal coefficient-map algebra checked independently; **actual source-derived production Cmat all-16 evaluation remains OPEN**. Reference: [`docs/ge19_h4f3d_linear_audit_freeze_and_cmat_jet_gate_2026-11-07.md`](ge19_h4f3d_linear_audit_freeze_and_cmat_jet_gate_2026-11-07.md), companion source `ge19/h4f3d_cmat_integrable_jet_analytic_gate.py`. No new H4 science PASS, no Z21 or lensing license; D9/D12R3 budget still OPEN.
 
+## 2026-11-07: 16 integrable-jet analytic gate executed locally PASS
+
+Researcher-supplied **local** log and JSON of `ge19/h4f3d_cmat_integrable_jet_analytic_gate.py` agree: `GE19_CMAT_INTEGRABLE_JET_FORMAL_CONTRACT_PASS_ACTUAL_CMAT_OPEN`. All five frozen source blob pins and seven source-row binding gates match; exact symbolic 16-jet decomposition, product rule and GE07 dust-only `+6ikC*N` obstruction PASS. JSON SHA-256 **`bbc8b998a7d135522695ae4c4961ffab3ff5da66b12a2604109f0adeab627aae`** (2260 bytes); log SHA-256 **`fef8e1dd9eba7960a553fbe9ae52b3887eeccbb71cbd15fe5d46f296a96b42d2`** (172 bytes). These are user-local uploads, not claimed as GitHub CI artifacts.
+
+**Crucial:** `production_Cmat_16_coefficients_evaluated=false`; `full_H4_Ward_certified=false`; `Z21_certified=false`; `lensing_licensed=false`. Next gate must evaluate the **actual frozen GE06+GE07+Lambda production Cmat** all-16 identities with the full Repair13 background derivatives, including independent L momentum and integrated jet relations; do not spend time on more abstract formal Ward replays.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
