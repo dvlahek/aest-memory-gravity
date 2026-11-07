@@ -81,6 +81,10 @@ Researcher-executed source-bound analytic check `ge19/h4f3d_actual_cmat_16jet_so
 
 Full dated proof record: [`docs/ge19_actual_cmat_16jet_operator_ward_pass_2026-11-07.md`](ge19_actual_cmat_16jet_operator_ward_pass_2026-11-07.md). **Next focus is G1/G3** (actual all-interval H1/Z11/GE05 parent Euler and lower-boundary closure; preregistered FD4/FD8 M5/M9/roundoff structural `B_total`). Prior D12R9B/C/D provenance reports have not been re-audited from exact local files in this turn; never infer that they certified the missing envelopes. Once G1+G3 close, attempt one integrated full physical H4 Ward. Preserve all historical FAILs and original `1e-6` active shift criterion.
 
+## 2026-11-07: Stage E Y zero-gradient analytic tangent bound (scope limited)
+
+For frozen Stage E `F(g)=g|g|` with `g=g10+eta*g11`, a new mathematical proof gives `|F(g10+eta*g11)-F(g10)-2eta|g10|g11|<=eta^2|g11|^2` **uniformly at all zero crossings**. At fixed Fourier cutoff `|k|<=K`, `||d_x P_K remainder||_L2 <= K eta^2 ||g11||_L4^2`. The direct Y source-Ward remains identically zero from its exact shift/isotropic/anisotropy support. This proof does **not** provide C9 regularity of the Y flux or time-domain M9 bounds of the FD8 actual-grid parent scheme, and therefore **does not close G3**. Full proof and claim boundary: [`docs/ge19_stagee_y_flux_uniform_tangent_bound_2026-11-07.md`](ge19_stagee_y_flux_uniform_tangent_bound_2026-11-07.md). No solver executed or physical H4 certification promoted.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
