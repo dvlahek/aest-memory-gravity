@@ -67,6 +67,12 @@ Researcher-supplied **local** log and JSON of `ge19/h4f3d_cmat_integrable_jet_an
 
 **Crucial:** `production_Cmat_16_coefficients_evaluated=false`; `full_H4_Ward_certified=false`; `Z21_certified=false`; `lensing_licensed=false`. Next gate must evaluate the **actual frozen GE06+GE07+Lambda production Cmat** all-16 identities with the full Repair13 background derivatives, including independent L momentum and integrated jet relations; do not spend time on more abstract formal Ward replays.
 
+## 2026-11-07: next single gate prepared — original production Cmat all-16 analytic syzygy (NOT YET RUN)
+
+New read-only source-bound analytic test `ge19/h4f3d_actual_cmat_16jet_source_bound_analytic.py` at commit `15ec059f` reconstructs exactly the three Ward-relevant original GE19 canonical rows **B=C10+C11, J=(C6+2(C12+C13))/3, P=C14** directly from the pinned GE06 and GE07 first-action-variation generators and the Repair11 Lambda L row, with the exact same (w=(N,drho,S,u,phi,T,Sdot,udot,phidot,Tdot)) and Fourier jet map. Analytic background chain rule uses Repair13 `Hdot=-(Q*K_Q+3C/a^3)/2`, `Qdot=-3H*K_Q/K_QQ`, `adot=aH`, and tests all 16 exact coefficients modulo the frozen Friedmann `H^2` relation. **This program has been committed but not yet executed**; it is the next source-realization test, not another V-series single-mode replay or a full actual H4 Ward.
+
+If 16 conditions PASS, it closes only the **continuum canonical linear operator syzygy** portion of G2. G1 physical parents and G3 physical FD4/FD8 tolerance remain open, and `full_H4_Ward_certified=false`, `Z21_certified=false`, `lensing_licensed=false` stay unchanged. A failed/unfinished analytic test must be frozen as UNRESOLVED; do not modify the original source coefficients or scientific thresholds.
+
 ## Progress recording convention (apply going forward)
 
 - Update this living document **at every material scientific gate** (new analytic proof, actual certified PASS, genuine science FAIL, interpretation correction, physical observable). Clearly distinguish formal / source-only / exploratory / numerical / certified claims, and record date, exact file path, input SHA and fixed gate when available.
