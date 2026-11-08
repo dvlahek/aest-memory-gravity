@@ -31,7 +31,7 @@ PINS={
   "ge19/h4f3d_g1c2_d17_h3f_physical_field_bridge.py":
       "1ae67ca13456374b8efe853fe17809229588cb10",
   "ge19/h4f3d12r3_predata_full_ward_numerical_budget_prelock.json":
-      "DEFER_TO_GIT" # read once without changing original frozen scientific inputs
+      "1b6b26fe85eb9dfbdb820b8279aee2bf0ed1854f"
 }
 LOCKED_INPUTS={
   "D17":("results/ge19_h4f3d17_actual_original_action_dense_canonical_H1.npz",
@@ -63,9 +63,9 @@ def source_locks():
         got=subprocess.check_output(
             ["git","rev-parse","HEAD:"+path],cwd=ROOT,text=True).strip()
         require(len(got)==40,"MISSING_SOURCE_"+path)
-        if want!="DEFER_TO_GIT":require(got==want,"SOURCE_BLOB_CHANGED_"+path)
+        require(got==want,"SOURCE_BLOB_CHANGED_"+path)
         result[path]={"git_blob":got,
-                      "exact":got==want if want!="DEFER_TO_GIT" else True}
+                      "exact":got==want}
     d17=(ROOT/"ge19/h4f3d17_actual_original_action_dense_canonical_H1.py").read_text()
     require("saved[prefix+'X10_original_action_dense_sub4']=Xdense" in d17 and
             "saved[prefix+'X10_x_original_action_dense_sub4']=Xxdense" in d17 and
@@ -113,7 +113,7 @@ def hermite_exact(x0,x1,v0,v1,d0,d1,x):
     t=(x-x0)/h
     require(ZERO<=t<=ONE,"FINE_NODE_OUTSIDE_COARSE_INTERVAL")
     t2=t*t;t3=t2*t
-    v=lin((2*t3-3*t2+1,v0),(t3-2*t2+t,h and d0),
+    v=lin((2*t3-3*t2+1,v0),(t3-2*t2+t,mul(h,d0)),
           (-2*t3+3*t2,v1),(t3-t2,mul(h,d1)))
     derivative=lin(((6*t2-6*t)/h,v0),
                    (3*t2-4*t+1,d0),
