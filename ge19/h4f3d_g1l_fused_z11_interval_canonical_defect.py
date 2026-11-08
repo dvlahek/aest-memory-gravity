@@ -444,7 +444,7 @@ def main():
                   "canonical_defect_each_row_abs_upper":byrow,
                   "source_polynomial_and_y_hermite_bernstein_full_subinterval":True
                 })
-                print("GE19_G1K j=%d subdiv=%d q=%.7g ||r||inf<=%.9g"%(
+                print("GE19_G1L j=%d subdiv=%d q=%.7g ||r||inf<=%.9g"%(
                      j,step,q,defect),flush=True)
                 r7._CANONICAL_LOCAL_CACHE.clear()
         finally:
@@ -453,7 +453,7 @@ def main():
     integral_up=g1j.ub(integral_iv)
     report={
       "classification":
-        "GE19_G1L_EXACT_INPUT_FULL_SUBINTERVAL_CANONICAL_Z11_POLYNOMIAL_DEFECT_ENCLOSED_TRUE_Z11_ERROR_OPEN",
+        "GE19_G1L_FUSED_EXACT_INPUT_CONTINUOUS_Z11_CANONICAL_DEFECT_BOUND_TRUE_IVP_ERROR_OPEN",
       "scope":{"tag":args.tag,"grid":args.grid,"Nt":nt,
                "m":args.mode,"j":args.interval,
                "subdivisions":args.subdivisions,
