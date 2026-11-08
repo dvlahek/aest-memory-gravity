@@ -144,8 +144,32 @@ def selftest():
     bad,qbad=neumann_test(B,as_iv_matrix(np.eye(2)))
     need(bad is None and qbad>=iv.mpf(1),
          "SINGULAR_INTERVAL_INCORRECTLY_CERTIFIED")
+    # Test the actual hyperbolic interval replacements, rather than merely
+    # testing the independent inverse bound: symbolic lambdify must retain
+    # interval inputs and enclose both endpoint values.
+    z=sp.symbols("z",real=True)
+    eval_hyper=sp.lambdify(
+        (z,),sp.cosh(z)+sp.sinh(z),
+        modules=[{"cosh":iv_cosh,"sinh":iv_sinh,"exp":iv.exp},
+                 "mpmath"],cse=True)
+    test_range=iv.mpf([-1,1])
+    y=eval_hyper(test_range)
+    need(y.a<=iv.exp(iv.mpf(-1)).a and
+         y.b>=iv.exp(iv.mpf(1)).b,
+         "HYPERBOLIC_INTERVAL_LAMBDIFY_ENCLOSURE_FAILED")
     return {"interval_neumann_nonsingular_pass":True,
-            "interval_neumann_singular_rejected":True}
+            "interval_neumann_singular_rejected":True,
+            "interval_hyperbolic_lambdify_endpoint_enclosure":True}
+
+def iv_cosh(z):
+    """Cosh enclosure via directed interval exp; mpmath.iv has no .cosh."""
+    return (iv.exp(z)+iv.exp(-z))/iv.mpf(2)
+
+
+def iv_sinh(z):
+    """Sinh enclosure via directed interval exp; mpmath.iv has no .sinh."""
+    return (iv.exp(z)-iv.exp(-z))/iv.mpf(2)
+
 
 def expr_compilers(mod6,mod7):
     # Original Repair07 builds a source-locked GE06 stable-Z symbolic c1.
@@ -160,8 +184,11 @@ def expr_compilers(mod6,mod7):
     args6=tuple(byname.get(name,sp.Symbol(name)) for name in names)
     need(all(e.free_symbols.issubset(set(args6)) for e in expr6.values()),
          "GE06_UNRECOGNIZED_SYMBOLS")
+    # Interval context deliberately lacks sinh/cosh methods in several
+    # released mpmath versions. Build them from certified interval exp,
+    # never fall back to scalar mpmath functions on interval arguments.
     use={"mpf":iv.mpf,"exp":iv.exp,"sqrt":iv.sqrt,
-         "cosh":iv.cosh,"sinh":iv.sinh}
+         "cosh":iv_cosh,"sinh":iv_sinh}
     six={name:sp.lambdify(args6,ex,modules=[use,"mpmath"],cse=True)
          for name,ex in expr6.items()}
     seven={name:sp.lambdify(mod7.direction_args,ex,
