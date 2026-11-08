@@ -294,7 +294,7 @@ def main():
             r7._bg_point=orig_point
             r7._CANONICAL_LOCAL_CACHE=orig_cache
         report={
-          "classification":"GE19_G1E_ORIGINAL_ACTION_Z11_EULER_AND_GE05_SOURCE_OFFCLOCK_SAMPLED_DIAGNOSTIC_PASS_INTERVAL_PROOF_OPEN",
+          "classification":"GE19_G1E_ORIGINAL_ACTION_Z11_EULER_AND_GE05_SOURCE_OFFCLOCK_SAMPLED_DIAGNOSTIC_COMPLETED_G1_OPEN",
           "scope":{"C":tag,"Nt":nt,"grid":args.grid,"modes":list(MODES),
                    "interval_stride":args.interval_stride,
                    "intervals_per_mode":len(checked_intervals),
