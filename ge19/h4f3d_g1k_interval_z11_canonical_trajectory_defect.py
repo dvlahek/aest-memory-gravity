@@ -75,6 +75,19 @@ def fnum(z):
     z=complex(z)
     return Q.from_float(z.real),Q.from_float(z.imag)
 
+
+def enclosing_float(fr,side):
+    """Outward nearest float bounding exact Fraction, no ulp guesses."""
+    z=float(fr)
+    need(math.isfinite(z),"NONFINITE_EXACT_SUBINTERVAL_ENDPOINT")
+    rat=Q.from_float(z)
+    if side=="lo" and rat>fr:z=math.nextafter(z,-math.inf)
+    if side=="hi" and rat<fr:z=math.nextafter(z,math.inf)
+    need((side=="lo" and Q.from_float(z)<=fr) or
+         (side=="hi" and Q.from_float(z)>=fr),
+         "FAILED_EXACT_ENDPOINT_ENCLOSURE")
+    return z
+
 def bernstein_split(ctrl,t):
     """Exact de Casteljau split of degree-n rational complex Bernstein."""
     left=[ctrl[0]];right=[ctrl[-1]]
@@ -185,7 +198,6 @@ def original_interval_MF(C,box,Cmid):
     # Numeric midpoint is permitted to choose any z0; only the interval
     # residual and contraction q certify its error enclosure.
     Y=np.zeros((6,16),complex)
-    Y[:,:4]=-Cmid[:0].reshape(0,10) if False else 0  # overwritten below
     A_qmid=np.vstack([Cmid[:4],Cmid[5:6],
                        Cmid[12:13]+Cmid[13:14]])[:,g1j.QIDX]
     Y[:,:4]=-A_qmid
@@ -349,17 +361,15 @@ def main():
                 bs,_=g1i.bernstein(coeffs,h)
                 sctrl.append(bs)
             for row in range(2):sctrl.append((ZERO,ZERO,ZERO,ZERO))
-            largest=0.;integral_up=0.;q_max=0.;correction_max=0.
+            largest=0.;integral_iv=iv.mpf(0);q_max=0.;correction_max=0.
             for step in range(args.subdivisions):
                 aa=Q(step,args.subdivisions)
                 bb=Q(step+1,args.subdivisions)
-                xa=float(x[j])+float(h)*float(aa)
-                xb=float(x[j])+float(h)*float(bb)
-                # Ensure interval encloses exact dyadic sub-endpoints:
-                # a rounded x coordinate can be slightly inside; expand
-                # outward by one float ulp (inside original interval).
-                xa=max(float(x[j]),math.nextafter(xa,-math.inf))
-                xb=min(float(x[j+1]),math.nextafter(xb,math.inf))
+                xleft=Q.from_float(float(x[j]))
+                # Exact rational normalized interval boundaries, outward
+                # converted to float BEFORE passing them into original G1J.
+                xa=max(float(x[j]),enclosing_float(xleft+h*aa,"lo"))
+                xb=min(float(x[j+1]),enclosing_float(xleft+h*bb,"hi"))
                 box=g1j.bg_box(r7,bg,args.tag,xa,xb)
                 CI=g1j.interval_C(funcs6,funcs7,r7,args.tag,k,box)
                 xm=(xa+xb)*.5
@@ -371,7 +381,7 @@ def main():
                 sbox=[hull_controls(restrict(c,aa,bb)) for c in sctrl]
                 defect,byrow=validated_defect(M,F,ybox,dybox,sbox)
                 dx=h*(bb-aa)
-                integral_up+=math.nextafter(float(dx)*defect,math.inf)
+                integral_iv+=rational_iv(dx)*g1j.fi(defect)
                 largest=max(largest,defect)
                 q_max=max(q_max,q)
                 correction_max=max(correction_max,correction)
@@ -393,6 +403,7 @@ def main():
         finally:
             r7._bg_point=saved_callback
             r7._CANONICAL_LOCAL_CACHE=saved_cache
+    integral_up=g1j.ub(integral_iv)
     report={
       "classification":
         "GE19_G1K_EXACT_INPUT_FULL_SUBINTERVAL_CANONICAL_Z11_POLYNOMIAL_DEFECT_ENCLOSED_TRUE_Z11_ERROR_OPEN",
