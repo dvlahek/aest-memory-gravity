@@ -65,13 +65,12 @@ A mathematically valid conditional error inequality is, for fixed action backgro
 
 ```text
 e'=M e + F(s_true-s_h)-r.
-||e(x)|| <= exp(INT_{x0}^x L) [
-       ||e(x0)|| + INT_{x0}^x
-       (||r(s)|| + ||F(s)|| ||s_true-s_h||) ds
-     ]
+||e(x)|| <= exp(INT_{x0}^x mu(t) dt) ||e(x0)||
+       + INT_{x0}^x exp(INT_s^x mu(t) dt)
+           ( ||r(s)|| + ||F(s)|| ||s_true(s)-s_h(s)|| ) ds
 ```
 
-with `L(s)` a **certified** upper bound of a suitable induced matrix/logarithmic norm of `M(s)`. Each term must be a truly enclosed continuous quantity. This formula is not itself proof that the necessary envelopes exist or are tight enough.
+with `mu(t)` a **certified** upper bound on the logarithmic norm of `M(t)` for the chosen compatible norm, or a rigorously upper-bounding nonnegative function `L(t)>=||M(t)||` instead. The time-dependent propagator weight must remain inside the forcing integral; pulling out an exponential with a potentially negative logarithmic norm can be unsound. Each term must be a truly enclosed continuous quantity. This formula is not itself proof that the necessary envelopes exist or are tight enough.
 
 ## Frozen claim boundary
 
