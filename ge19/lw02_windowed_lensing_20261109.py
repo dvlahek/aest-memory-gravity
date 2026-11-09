@@ -161,9 +161,13 @@ def get_geometry(class_root, z_query, source_z, expected_head):
         chib = np.asarray(bg["comov. dist."],float)
         order = np.argsort(zb)
         zb, chib = zb[order], chib[order]
+        # At enormous early-time redshifts comoving distances can round to
+        # the same floating-point value. Only [0,z_source] is relevant here.
+        local = (zb <= source_z)
         require(np.all(np.diff(zb)>0) and
                 np.all(np.isfinite(chib)) and
-                np.all(np.diff(chib)>0),
+                np.count_nonzero(local)>10 and
+                np.all(np.diff(chib[local])>0),
                 "CLASS_BACKGROUND_GEOMETRY")
         require(zb[0] <= min(z_query) and source_z <= zb[-1],
                 "CLASS_BACKGROUND_REDSHIFT_COVERAGE")
