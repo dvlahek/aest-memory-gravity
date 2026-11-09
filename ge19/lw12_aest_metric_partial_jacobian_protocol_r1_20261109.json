@@ -1,0 +1,95 @@
+{
+  "classification": "GE19_LW12_PARTIAL_CONSTRAINED_AEST_METRIC_JACOBIAN_FORMULA_LOCK",
+  "date": "2026-11-09",
+  "prior_knowledge": "LW11 positive conditional short-time E-to-Weyl Green jet already derived and checked; this verification is not independent blinded confirmation. No DES data were viewed.",
+  "goal": "Assemble and verify the full five-variable AeST+Phi direct Jacobian BLOCK, its exact dependence on external ordinary-species momentum and anisotropic stress, identify missing off-diagonal radiation/matter feedback, and verify LW11 source-to-Weyl Taylor coefficient in that block. Do not falsely call this the full Einstein–AeST effective Jacobian.",
+  "sources": {
+    "local_lw10_sha256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851",
+    "official_class_head": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "official_class_perturbations_blob": "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0",
+    "aest_patch": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "memory_patch": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "variational_patch": "00c3f5da5a1b7734c67c82aa9181a443736101bf"
+  },
+  "state": {
+    "basis": [
+      "delta_A",
+      "theta_A",
+      "alpha_A",
+      "E_A",
+      "Phi"
+    ],
+    "driver_F_E": "-a Q Braw_chi/(2 K_B) added in E_A' row",
+    "source_column": [
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "external_stress": "S=9/2*a²/k²*Sigma_shear_non_AeST; M=3/2*a²/k²*Sigma_theta_non_AeST",
+    "Weyl_observer": "W=Phi-S/2",
+    "background": "a, Hconf=a_prime/a, Hphys, rho_A, w_A, c_a², Q, KQ, K_B, k>0",
+    "subblock_limitation": "Other-species stress S,M are dynamical functions of photons/baryons/neutrinos and their CLASS approximations. The five-variable block is an exact partial Jacobian with external species perturbations held fixed, not the entire A_eff."
+  },
+  "expected": {
+    "chi": "Q*(a*theta_A/k²+alpha_A)",
+    "Pi": "c_a²*delta_A+L*(K_B*E_A+(2-K_B)*chi), L=c_a² k²/(3a²rho_A)",
+    "Phi_prime": "-Hconf*(Phi-S)+(3/2)*a²*rho_A*(1+w_A)*theta_A/k²+M",
+    "delta_prime": "3Hconf*(w_A delta_A-Pi)-(1+w_A)*(theta_A-3Phi_prime)",
+    "theta_prime": "(3c_a²-1)*Hconf*theta_A+k² Pi/(1+w_A)+k²*(Phi-S)",
+    "alpha_prime": "a*(E_A-Phi+S)",
+    "E_prime": "a/K_B*(KQ*chi-(2-K_B)*(Q*Pi/(1+w_A)+(Hphys+Q)*chi-3c_a²*Hphys*Q*alpha_A))-Hconf*E_A+F_E",
+    "direct_external_columns_S_M": {
+      "row_order": [
+        "delta_A",
+        "theta_A",
+        "alpha_A",
+        "E_A",
+        "Phi"
+      ],
+      "S": [
+        "3*(1+w_A)*Hconf",
+        "-k²",
+        "a",
+        "0",
+        "Hconf"
+      ],
+      "M": [
+        "3*(1+w_A)",
+        "0",
+        "0",
+        "0",
+        "1"
+      ]
+    },
+    "CAe": "0",
+    "CA2e": "c_a²*K_B*k²/2",
+    "leading_impulse_G_WE": "c_a²*K_B*k²*Delta²/4+O(Delta³), conditional no E-to-shear jet at order two",
+    "leading_physical_bath_convolution": "-a(s)*Q(s)*c_a²(s)*k²*Delta²*Braw(s)/8 (explicit K_B prefactor cancels; full model is still K_B dependent)"
+  },
+  "checks": {
+    "original_LW10_all_local_source_markers": true,
+    "analytic_all_five_jacobian_rows": true,
+    "analytic_external_stress_columns": true,
+    "nonzero_direct_pi_E": true,
+    "first_CAe_zero": true,
+    "second_CA2e_equals_previous_LW11": true,
+    "full_species_closure": false,
+    "all_Einstein_constraints_certified": false,
+    "full_global_Green_evaluated": false,
+    "physical_pair_admissible": false,
+    "observational_fit": false
+  },
+  "status_on_success": "GE19_LW12_EXACT_AEST_PHI_DIRECT_JACOBIAN_BLOCK_PASS_FULL_AEFF_OPEN",
+  "status_on_failure": "GE19_LW12_AEST_PHI_BLOCK_RECONSTRUCTION_FAIL",
+  "stop": "One symbolic fixed-source test only. Do not declare full constrained Einstein system closed, do not run CLASS or DES, do not adjust dynamics to force history-pair observability. Scientific next task is the exact AO/OA/OO species blocks and Hamiltonian/Noether constraint propagation.",
+  "corrected_preexecution_protocol": {
+    "original_path": "ge19/lw12_aest_metric_partial_jacobian_protocol_20261109.json",
+    "original_blob_sha1": "99c4d5ebd5ef92b5c08de45cbc3c18825c3e2314",
+    "original_commit": "024da78afe291f425de7e9686fad1945fdd3e2b8",
+    "reason": "The original placeholder for S/M columns was incorrectly zero; corrected using already-known original CLASS metric-continuity and Euler coupling before code/result execution. Original protocol remains preserved.",
+    "physical_parameters_changed": false,
+    "success_gates_changed": false
+  }
+}
