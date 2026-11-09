@@ -1,8 +1,16 @@
 # GE19 current scientific status
 
-Last updated: 2026-11-07 (living checkpoint)
+Last updated: 2026-11-09 (living checkpoint)
 Branch: `physics-first-gravitational-elasticity`.
 This is the **canonical living GE19 checkpoint**. Read it first when resuming the GravitationalElasticy / AeST Memory Gravity project. Earlier frozen results and classifications are immutable; the 2026-10-10 snapshot is preserved at the end.
+
+## 2026-11-09: LW01 local CLASS restored; exact physical-k input mismatch fixed (NO SCIENCE PASS)
+
+Researcher-supplied local CLASS bootstrap succeeded: original pinned v077 CLASS HEAD `e85808324f51fc694d12e3ed7439552a3c3f9540`, nine original AeST patches, compiled `class` and `classy`; synthetic LW01 test PASS. Frozen positive-Drude forcing 512/1024 control PASS: relative L2 `5.356772360739694e-07`, cosine `0.9999999999998567`, 22,032 rows / 918 histories. First signed `+10` CLASS run aborted `EXIT=94`: `AEST_TANGENT_FORCE_K_MISS query=0.13466492781697323 nearest=0.13447612655668839 rel=1.402e-03`.
+
+**Source-derived root cause:** forcing trace `k_output_values` incorrectly used values in h/Mpc as 1/Mpc; signed CLASS path used `k_output_values=K_H*(H0/100)`. The failed query is exactly `0.2*(H0/100)`; this violates the intended frozen v075/v077 shared k grid. At commit `fcd166270e28d652a0ba5d86b3186dd1cda6f4a1`, LW01 now uses the single physical-`k` array `REQ_KPHYS=REQ_KH*H` on both paths; no action, CLASS C patch, model, R4 sampling density, quadrature or thresholds changed. See `docs/ge19_lw01_20261109_k_grid_implementation_closeout.md`.
+
+One bounded corrected local run may use `--output-prefix results/ge19_linear_weyl_native_tangent_20261109_kgridfix` to retain failed-run evidence. **NOT YET EXECUTED:** no native signed Weyl tangent, lensing spectrum or observation result is certified; v068/H4 historical FAILs unchanged; `full_H4_Ward_certified=false`, `Z21_certified=false`, `linear_lensing_prediction_certified=false`, `observational_detection=false`. Focus remains the linear-Weyl route, not reopening H4 numerics.
 
 ## 2026-11-06: established theory and current frontier
 
