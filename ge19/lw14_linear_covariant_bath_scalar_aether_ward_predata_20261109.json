@@ -1,0 +1,44 @@
+{
+  "classification": "GE19_LW14_OLD_NL0B_LINEAR_WARD_OBLIGATION_REVISIT_PRELOCK",
+  "date": "2026-11-09",
+  "prior_evidence_acknowledgment": "NL0B Identity 1-8, especially Identity 7 (no additional independent scalar constraint) was already classified PASS in docs/nl0b_covariant_memory_completion_result.md. H4F1/G2B/H4F3d4 have separate spatial/mixed formal Ward PASS scopes. LW14 only audits a reduced first-order rank-one source identity against current LW13 concern, NOT a new complete covariant Noether proof or independent discovery.",
+  "original_sources": {
+    "nl0b_predata_blob": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "nl0b_result_blob": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "canonical_action_note_blob": "d4a774074ad6c69142bb6f00f5426949e98ca67b",
+    "original_class_memory_patch_blob": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "original_class_aest_patch_blob": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "prior_LW13_doc_blob": "19f51583aee9e2aedc2aa186c3eec37d68d7d1bc",
+    "h4f1_spatial_bath_ward_doc_blob": "5aa99f10383a253e934c0c2833230fa714c3ef1d",
+    "g2b_reduced_spatial_offshell_doc_blob": "fa78d49a573c321eeeb73f8e5afed5b4a3714c8f"
+  },
+  "reduced_linear_model": {
+    "background": "FLRW with X=0, auxiliary U=0, phi_dot=Q, eta fixed but tangent considered at eta=0; k/a positive",
+    "chi": "varphi+Q alpha",
+    "x": "kappa chi, kappa=k/a",
+    "per_node_normalized_potential": "Lpot=-eta/4*(omega*q-sqrt(w)*kappa*(varphi+Q*alpha))**2",
+    "Bchi": "w*chi-omega*sqrt(w)*q/kappa",
+    "variation": "dLpot/dvarphi=-eta*kappa**2*Bchi/2, dLpot/dalpha=Q*dLpot/dvarphi",
+    "rank_one": "Hessian with respect to (varphi,alpha) at fixed q has rank 1 for eta*w*kappa² nonzero, annihilates (-Q,1)",
+    "direct_bath_linear_stress": "vanishes from quadratic action on X=U=0 background, within restricted original spatial-mode reduction"
+  },
+  "gates": {
+    "exact_scalar_aether_source_proportionality": true,
+    "orthogonal_source_zero": true,
+    "Hessian_rank_one": true,
+    "derivative_matches_Bchi": true,
+    "negative_control_scalar_partner_omitted_detected": true,
+    "no_direct_linear_memory_Einstein_stress_structural": true,
+    "original_CLASS_E_source_anchor": true,
+    "actual_physical_JD_JT_from_complete_action": false,
+    "full_background_aest_action_Noether_verified": false,
+    "full_CLASS_approximation_branch_Ward": false,
+    "full_retarded_metric_observer": false
+  },
+  "labels": {
+    "valid_restricted": "GE19_LW14_REDUCED_LINEAR_BATH_SCALAR_AETHER_WARD_PASS_TOTAL_ACTION_CLOSURE_OPEN",
+    "invalid": "GE19_LW14_REDUCED_BATH_WARD_SOURCE_CONSISTENCY_FAIL"
+  },
+  "explicit_scientific_stop": "Do not relabel the previously frozen NL0B eight-identity PASS or prior H4 Ward scope. A rank-one bath source identity plus vanishing direct linear bath metric stress is not independently sufficient to conclude the actually implemented full fluid Einstein sources have physical J_D=J_T=0. Need verify that the CLASS effective-fluid/constraint dictionary fully includes the bath-linked scalar force rather than merely writing conservation-form equations.",
+  "compute": "One tiny exact SymPy analytic audit only; no CLASS solving, no DES residuals, no H4 re-run."
+}
