@@ -16,8 +16,8 @@ from pathlib import Path
 import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
-PRE=ROOT/"ge19/lw07b_des_y3_nz_only_predata_20261109.json"
-PRE_BLOB="a3b34e070eef54c18bd0355d37209f6c9e08d92c"
+PRE=ROOT/"ge19/lw07b_des_y3_nz_only_predata_officialname_20261109.json"
+PRE_BLOB="1566d00f34105497c1f1c13d8e364331d9f60fe0"
 TINY=1e-300
 
 
