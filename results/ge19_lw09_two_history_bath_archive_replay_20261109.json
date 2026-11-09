@@ -1,0 +1,44 @@
+{
+  "analytic_identity": "B(0)=integral_-T^-eps f_H_prime(-s)*X(s) ds<0, from positive exact Drude relaxation spectrum; the reference zero X has B=0.",
+  "audit_type": "Independent local analytic-spectrum quadrature replay, not a GitHub WSL runner execution",
+  "bath_history_A_B0": 0.0,
+  "bath_history_B_B0_192": -0.15126758553352643,
+  "bath_history_B_B0_96": -0.15126758553352906,
+  "checks": {
+    "all_instantaneous_derivatives_coincide": "analytical: support of pulse is separated from observation t0 by eps>0",
+    "analytic_strict_bounds": true,
+    "positive_normalized_spectrum": true,
+    "quadrature_stability_1e-8": true,
+    "strict_negative_memory": true
+  },
+  "classification": "GE19_LW09_SMOOTH_TWO_HISTORY_BATH_MEMORY_PASS_METRIC_OBSERVER_OPEN",
+  "date": "2026-11-09",
+  "dimensionless_parameters": {
+    "H": 0.12,
+    "T": 5.0,
+    "Xamp": 1.0,
+    "eps": 0.5,
+    "tau": 1.7
+  },
+  "frozen_predata_commit": "af7d11b1adb28fc8e71cf9ec8452cbe76ee0b9d8",
+  "instantaneous_driver_jets_at_t0": {
+    "history_A": "all zero",
+    "history_B": "all zero"
+  },
+  "model": "Original NL0B constant-H positive continuum Drude relaxed retarded response",
+  "positive_absolute_memory_lower_bound_192": 0.038245288165211465,
+  "positive_absolute_memory_upper_bound_192": 0.693489269012113,
+  "pulse": "X(t)=exp(4-1/(u*(1-u))) for -T<t<-eps, u=(t+T)/(T-eps), zero otherwise",
+  "pulse_mass_192": 1.7271776879812344,
+  "relative_96_192_quadrature_difference": 1.7431227411905376e-14,
+  "scientific_limitations": {
+    "cosmological_observation": false,
+    "finite_eta_model_fit": false,
+    "full_coupled_Einstein_AeST_Green_operator_evaluated": false,
+    "gauge_invariant_Weyl_metric_difference_for_pair_certified": false,
+    "status": "Analytic causal bath history discrimination only; no metric observable yet",
+    "two_source_histories_dynamically_admissible_in_full_AeST": false
+  },
+  "spectral_mass_192": 1.0000000000000002,
+  "spectral_mass_96": 1.0
+}
