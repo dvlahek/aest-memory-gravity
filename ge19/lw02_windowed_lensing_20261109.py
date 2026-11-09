@@ -70,9 +70,9 @@ def signed_projection_on_chi(ell, chi, chi_s, k_native, w, dw, As, ns, log_k=Tru
     integrand = weight * primordial_power * W**2
     derivative_integrand = weight * primordial_power * 2 * W * dW
     # Integrate strictly across the supplied *native* redshift slices.
-    Cphi = float(np.trapz(integrand, chi))
-    dCphi = float(np.trapz(derivative_integrand, chi))
-    abs_dCphi = float(np.trapz(np.abs(derivative_integrand), chi))
+    Cphi = float(np.trapezoid(integrand, chi))
+    dCphi = float(np.trapezoid(derivative_integrand, chi))
+    abs_dCphi = float(np.trapezoid(np.abs(derivative_integrand), chi))
     return Cphi, dCphi, abs_dCphi
 
 
