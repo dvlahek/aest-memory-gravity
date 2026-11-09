@@ -4,6 +4,16 @@ Last updated: 2026-11-09 (living checkpoint)
 Branch: `physics-first-gravitational-elasticity`.
 This is the **canonical living GE19 checkpoint**. Read it first when resuming the GravitationalElasticy / AeST Memory Gravity project. Earlier frozen results and classifications are immutable; the 2026-10-10 snapshot is preserved at the end.
 
+## 2026-11-09: LW06 archived native matter–Weyl cross transfer PASS — not galaxy shear
+
+**Status:** `GE19_LW06_NATIVE_MATTER_WEYL_SIGNED_CROSS_NUMERICAL_PASS_OBSERVATIONAL_OPEN` on independently recomputed archived LW01 native arrays, predata frozen in advance at commit `15e6d9282c8c410b9dd931353a517ce960621ae2`; canonical strict WSL script at `ge19/lw06_native_matter_weyl_cross_20261109.py` (commit `c5bb8019`), scientific archive `docs/ge19_lw06_matter_weyl_signed_cross_result_freeze_2026-11-09.md` (latest formatter commit `3880f97`). **The new GitHub script has not yet been executed on researcher WSL; independent container archive replay did produce actual numerical output.**
+
+Using original 322 k×8 z native Newtonian-gauge CLASS `d_m` and `W=(phi+psi)/2`, compute `P_deltaW=P_R3D*d_m*W` and formal signed `eta=0` tangent `dP_deltaW=P_R3D*(T_dm*W+d_m*T_W)` at each original λ∈[10,5,2.5,1.25]. All six prospective numeric gates PASS. Max global additive four-lambda affinity `3.0857103e-4` vs preregistered cap 0.005; signed-cross derivative norm / baseline-cross norm `0.003517022` (not observational deviation). Algebraic product rule closure L2 `1.254e-16`, single-common-adiabatic-mode cross-power bound `1.342e-16`. Primary baseline signed cross power is negative on all 2576 original native nodes in this CLASS gauge, derivative positive on 429 and negative on 2147 nodes. **No inferred galaxy-shear sign.**
+
+The posthoc exploratory (NOT preregistered) two derivative components are near-identical: Euclidean cosine 0.999999998, normalized difference to summed tangent 3.36e-5. So a cross power alone may yield little *independent* matter-vs-metric memory information. An amplitude-only native-grid projection retains ~98.97% of the signed derivative L2, but this is unweighted and **not a cosmological covariance-weighted forecast**. Physical gauge/tracer mapping, lens n(z), broad γ_t angular mixing, finite eta, bias, nuisance and alternative instantaneous gravity remain unaddressed.
+
+Original `LW03` radial FAIL, `LW04` source-grid PASS, `LW05` full LOS BLOCK and H4/Z21 uncertified remain intact. Next no-new-CLASS physics check is a complete **gauge-consistent galaxy-tracer/source selection and bandlimited observable feasibility** using public DES metadata only; do not inspect observed residuals before a forecast and no-go tests.
+
 ## 2026-11-09: LW05 domain audit — full cosmic-shear LOS blocked; g×κ narrow-lens pivot proposed
 
 Analytic read-only domain feasibility from frozen uploaded LW01/LW02/LW03/LW04 (no new CLASS and no observed residual inspection), predata committed BEFORE calculation: ge19/lw05_line_of_sight_domain_audit_predata_20261109.json (commit 0dd033d); executable ge19/lw05_line_of_sight_domain_audit_20261109.py (commit d7cd5f2); scientific freeze docs/ge19_lw05_full_los_support_result_and_galaxy_lensing_pivot_2026-11-09.md (commit 8bbda7e).
