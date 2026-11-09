@@ -38,6 +38,9 @@ LAMBDAS=np.array([10.0,5.0,2.5,1.25],float)
 R4={"label":"r4","k_per_decade_for_pk":80.0,"k_per_decade_for_bao":560.0}
 REQ_KH=np.array([0.03,0.05,0.08,0.10,0.15,0.20])
 H=float(v63.START["H0"])/100.0
+# CLASS k_output_values uses 1/Mpc, whereas REQ_KH is in h/Mpc.
+# Match exactly the frozen v075/v077 K_REQ = K_H * h recipe.
+REQ_KPHYS=REQ_KH*H
 AS=float(v63.START["A_s"])
 NS=float(v63.START["n_s"])
 K_PIVOT=0.05
@@ -162,7 +165,7 @@ def forcing_once(class_root,prefix):
         txt=re.sub(r"(?m)^\s*lensing\s*=\s*\w+\s*$","lensing = no",txt)
     else:
         txt+="\nlensing = no\n"
-    txt+="k_output_values = "+", ".join(f"{x:.17g}" for x in REQ_KH)+"\n"
+    txt+="k_output_values = "+", ".join(f"{x:.17g}" for x in REQ_KPHYS)+"\n"
     txt+=f"k_per_decade_for_pk = {R4['k_per_decade_for_pk']:.17g}\n"
     txt+=f"k_per_decade_for_bao = {R4['k_per_decade_for_bao']:.17g}\n"
     ini.write_text(txt)
@@ -205,7 +208,7 @@ def compute_run(force,lam):
         pars=dict(v63.class_params())
         pars.update({
             "output":"mPk,mTk","lensing":"no",
-            "k_output_values":", ".join(f"{kh*H:.17g}" for kh in REQ_KH),
+            "k_output_values":", ".join(f"{k:.17g}" for k in REQ_KPHYS),
             "k_per_decade_for_pk":80.0,
             "k_per_decade_for_bao":560.0,
             "P_k_max_h/Mpc":2.0,"z_max_pk":5.0,
