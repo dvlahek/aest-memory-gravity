@@ -1,0 +1,59 @@
+{
+  "classification": "GE19_LW08_SOURCE_RELATIVE_GEOMETRY_MATTER_RESPONSE_DIAGNOSTIC_PREDATA",
+  "date": "2026-11-09",
+  "predata_after_prior_exploratory_diagnostic": true,
+  "historical_information_leakage": "An LW06 posthoc exploratory archive check ALREADY observed near-alignment of the two derivative terms (~3.36e-5 normalized difference). Thus LW08 is a CONFIRMATORY FORMULA/PROVENANCE replay of a KNOWN archival pattern, not a prospectively novel independent test.",
+  "hypothesis": "If the frozen tangent approximately rescales Weyl and total matter together, the antisymmetric relative-response determinant is small compared with the symmetric cross-power tangent on shared native nodes.",
+  "original_model": {
+    "KB": 0.0665,
+    "tauH0": 10,
+    "p": 0,
+    "finite_eta_coupling_calibrated": false,
+    "CLASS_head": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "parent_sha256": {
+    "lw01_json": "ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b",
+    "lw01_npz": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "lw06_replay_json": "b8d3dce8531519aa08822aa88525a4f5bae5de25ae6a801258b2fc67feca705a",
+    "lw06_replay_npz": "de93e118ec8f4b012aeab0511aa57d75b87a78e6b25896235382798c9e56bdfa"
+  },
+  "formulas": {
+    "signed_native_matter_tangent": "Td=(d_m(+lambda)-d_m(-lambda))/(2*lambda)",
+    "signed_native_weyl_tangent": "Tw=(W(+lambda)-W(-lambda))/(2*lambda)",
+    "primordial_P": "(2pi²/k³)*As*(k/0.05 Mpc^-1)^(ns-1)",
+    "symmetric": "S=P_R*(Td*W + d_m*Tw)=d(P_deltaW)/deta",
+    "antisymmetric": "A=P_R*(d_m*Tw - Td*W)",
+    "response_ratio": "||A||2 / ||S||2 using all primary native 322k x 8z nodes (no local ratios)",
+    "pair_alignment": "<term_dm,term_W>/(||term_dm||2||term_W||2); terms P_R*Td*W and P_R*d_m*Tw",
+    "by_z": "Report L2 ratio A/S at each original native z node, and vector sign counts for A; no selected bins",
+    "lambda_breakout": "Report each original lambda as independent numerical amplification diagnostic; never combine as physical finite eta",
+    "transfer_baseline": "W=(phi+psi)/2, d_m original CLASS Newtonian gauge",
+    "note": "The antisymmetric determinant is NOT equal to the DES Jhat growth-history null statistic, nor a physical gauge-invariant observed shear response without further derivation."
+  },
+  "primary_gates": {
+    "sha_lock_all_parent_data": true,
+    "exact_primary_nodes": 2576,
+    "source_lambdas": [
+      10,
+      5,
+      2.5,
+      1.25
+    ],
+    "product_rule_L2_error_max": 1e-12,
+    "symmetric_reconstruction_vs_archived_LW06_L2_error_max": 1e-12,
+    "all_finite": true
+  },
+  "interpretation": {
+    "source_replay_pass": "GE19_LW08_RELATIVE_SOURCE_TANGENT_REPLAY_PASS_NOT_AN_OBSERVABLE",
+    "numerical_fail": "GE19_LW08_SOURCE_REPLAY_NUMERICAL_INTEGRITY_FAIL",
+    "small_ratio": "A small antisymmetric fraction suggests correlated matter/Weyl tangent response. It does NOT alone imply zero observational distinguishability because joint kernels, bias, gauge, noise, physical eta and other modes are not modeled.",
+    "no_go": "Do not claim an observation, detection, full lensing, independence from instantaneous gravity, or a paper-level novelty based on this ratio."
+  },
+  "published_literature_warning": [
+    "Tutusaus, Bonvin & Grimm, Nature Communications 15, 9295 (2024), DOI 10.1038/s41467-024-53363-6, already measured Jhat Weyl evolution in DES Y3.",
+    "Bonvin, Grimm & Tutusaus, Astronomy & Astrophysics (2026), DOI 10.1051/0004-6361/202659165, already tested Weyl-vs-density growth and found no significant discrepancy.",
+    "Rosatello et al. (2026), arXiv:2605.22599, showed evolving-dark-energy effects can reduce apparent Weyl tension.",
+    "The 2024 Jhat reconstruction assumes modified model approaches GR at early z*=10; test AeST background/perturbation history and scale-dependence before treating published Jhat as a universal likelihood."
+  ],
+  "stop_rule": "Exactly one SHA-frozen read-only signed native transfer replay, no CLASS, no fresh radiation integral, no DES shear/covariance, no fit, no H4. This only determines if current observable distinctiveness premise is already weak at source level."
+}
