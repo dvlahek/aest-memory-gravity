@@ -1,0 +1,131 @@
+{
+  "classification": "GE19_LW12_EXACT_AEST_PHI_DIRECT_JACOBIAN_BLOCK_PASS_FULL_AEFF_OPEN",
+  "date": "2026-11-09",
+  "calculation": "Independent SymPy 1.14.0 symbolic algebra replay from original source-derived LW12 equations, without executing newly committed canonical local GitHub script; no CLASS runs or observations.",
+  "protocol_r1_commit": "c4a9adcd5bf27094e2f36a3c48fe556a4047ed93",
+  "protocol_r1_blob": "4490f60447ffc21204cad5763097a0fbc62c5904",
+  "original_protocol_correction": "The first frozen JSON contained incorrect zero placeholders for the external S,M input columns. Original protocol remains in history and a corrected r1 was committed BEFORE formal verification. No physical model or pass/fail gate changed.",
+  "source_LW10_researcher_sha256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851",
+  "fixed_source_basis": [
+    "delta_A",
+    "theta_A",
+    "alpha_A",
+    "E_A",
+    "Phi"
+  ],
+  "external_dynamic_sources": [
+    "S=9*a²*Sigma_shear_other/(2*k²)",
+    "M=3*a²*Sigma_theta_other/(2*k²)"
+  ],
+  "definitions": {
+    "g": "1+w_A",
+    "L": "c_a²*k²/(3*a²*rho_A)",
+    "gamma": "2-K_B",
+    "beta": "3*a²*rho_A*g/(2*k²)",
+    "chi": "Q*(a*theta_A/k²+alpha_A)",
+    "Pi": "c_a²*delta_A+L*(K_B*E_A+gamma*chi)",
+    "Psi": "Phi-S",
+    "Phi_prime": "-Hconf*Phi+beta*theta_A+Hconf*S+M"
+  },
+  "compact_A_AA": {
+    "notation": "Rows in state order [delta,theta,alpha,E,Phi]. ed,et,ea,eE,eP are basis row vectors. x=d(chi)/dy, p=d(Pi)/dy, rPhi=-Hconf*eP+beta*et.",
+    "delta": "3*Hconf*w*ed-3*Hconf*p-g*et+3*g*rPhi",
+    "theta": "(3*c_a²-1)*Hconf*et+(k²/g)*p+k²*eP",
+    "alpha": "a*eE-a*eP",
+    "E": "(a/K_B)*[(KQ-gamma*(Hphys+Q))*x-gamma*Q*p/g+3*gamma*c_a²*Hphys*Q*ea]-Hconf*eE",
+    "Phi": "rPhi"
+  },
+  "external_stress_5_by_2": {
+    "column_order": [
+      "S",
+      "M"
+    ],
+    "row_order": [
+      "delta",
+      "theta",
+      "alpha",
+      "E",
+      "Phi"
+    ],
+    "values": [
+      [
+        "3*g*Hconf",
+        "3*g"
+      ],
+      [
+        "-k²",
+        "0"
+      ],
+      [
+        "a",
+        "0"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "Hconf",
+        "1"
+      ]
+    ]
+  },
+  "observer": {
+    "state_row": [
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "external_shear_coefficient": -0.5,
+    "equation": "W=Phi-S/2"
+  },
+  "E_source_column": [
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "symbolic_exact_invariants": {
+    "C*eE": "0",
+    "C*A_AA*eE": "0",
+    "C*A_AA²*eE": "K_B*c_a²*k²/2",
+    "G_WE_impulse_local_coefficient_Delta_squared": "K_B*c_a²*k²/4",
+    "F_E": "-a*Q*B_chi_raw/(2*K_B)",
+    "physical_B_chi_raw_local_integrand_coefficient_Delta_squared": "-a*Q*c_a²*k²/8"
+  },
+  "numerical_or_symbolic_checks": {
+    "all_five_original_differential_rows_recovered": true,
+    "all_25_direct_jacobian_elements_match_compact_rows": true,
+    "both_other_species_stress_columns_derived": true,
+    "original_W_observer_shear_coefficient": true,
+    "pressure_direct_E_coefficient": true,
+    "C_eE_zero": true,
+    "C_A_eE_zero": true,
+    "C_A2_eE_matches_LW11": true,
+    "explicit_K_B_prefactor_cancels_in_short_lag_B_to_W_source": true
+  },
+  "limits": {
+    "full_A_eff_including_radiation_neutrinos_baryons": false,
+    "A_AO_A_OA_A_OO_blocks_constructed": false,
+    "Hamiltonian_momentum_Noether_constraint_propagation_certified": false,
+    "CLASS_approximation_switches_handled": false,
+    "full_global_retarded_G_WE_evaluated": false,
+    "two_dynamically_admissible_histories_constructed": false,
+    "physical_eta_amplitude_calibrated": false,
+    "DES_ACT_angular_forward_model": false,
+    "observational_detection": false,
+    "notes": "The verified A_AA is only the five-state block with all other-species perturbations held fixed. S and M are dynamically coupled to other species and metric; treating them as fixed would not yield the full Einstein-AeST system. Explicit K_B cancellation in first Taylor coefficient does not imply the full response is independent of K_B."
+  },
+  "frozen_prior_status": {
+    "LW03_radial_quadrature_FAIL": true,
+    "LW05_full_cosmic_shear_LOS_BLOCK": true,
+    "LW08_antisymmetric_source_response_UNRESOLVED": true,
+    "LW09_bath_memory_PASS_metric_pair_OPEN": true,
+    "LW10_local_source_markers_26_of_26_PASS": true,
+    "LW11_local_Green_coefficient_CONDITIONAL": true,
+    "H4_Z21_certified": false
+  }
+}
