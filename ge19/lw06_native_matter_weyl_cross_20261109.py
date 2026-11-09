@@ -211,9 +211,9 @@ def main():
     }
     output=args.output_prefix.resolve()
     jp=Path(str(output)+".json")
-    np=Path(str(output)+".npz")
+    npzout=Path(str(output)+".npz")
     require(output.parent.is_dir() and
-            not jp.exists() and not np.exists(),
+            not jp.exists() and not npzout.exists(),
             "OUTPUT_PREEXISTS_OR_PARENT_MISSING")
     jp.write_text(json.dumps(report,indent=2,sort_keys=True,
                              allow_nan=False)+"\n")
@@ -229,11 +229,10 @@ def main():
         "signed_cross_tangent_weyl_contribution_mean":
             np.mean(additive_terms[1],axis=0),
     }
-    np_module=np
-    np_module.savez_compressed(np,**np_save)
+    np.savez_compressed(npzout,**np_save)
     print("GE19_LW06_CLASSIFICATION",outcome,flush=True)
     print("GE19_LW06_MAX_AFFINITY",max(affinities),flush=True)
-    print("GE19_LW06_OUTPUT",str(jp),str(np),flush=True)
+    print("GE19_LW06_OUTPUT",str(jp),str(npzout),flush=True)
 
 
 if __name__=="__main__":
