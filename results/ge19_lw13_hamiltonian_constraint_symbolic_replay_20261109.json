@@ -1,0 +1,58 @@
+{
+  "classification": "GE19_LW13_CONDITIONAL_TOTAL_CONSERVATION_HAMILTONIAN_PROPAGATION_IDENTITY_PASS_ACTION_WARD_OPEN",
+  "date": "2026-11-09",
+  "performed": "Independent read-only SymPy 1.14.0 verification of the specified flat-FLRW Hamiltonian constraint identity with explicit nonconservation J_D,J_T. Canonical GitHub script committed, but its Git-locked WSL batch has not been run.",
+  "predata_protocol_git_commit": "e60190a5eb9a10957405caecc4975bfb4c7bb0db",
+  "predata_protocol_git_blob_sha1": "859e2a2c2f65008987c342c2ed51437b7ebf5949",
+  "parents": {
+    "LW10_original_uploaded_sha256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851",
+    "LW12_original_local_SHA256": "fdec5a67d0ba5a7f22fa9b59e22116b18e6b94dce8e18578a526c36164d0b00f",
+    "LW12_actual_8_gates_pass": true
+  },
+  "notation": {
+    "H": "a'/a",
+    "R": "rho_total+p_total",
+    "D": "delta_rho_total",
+    "P": "delta_p_total",
+    "T": "sum_i(rho_i+p_i)theta_i",
+    "S": "sum_i(rho_i+p_i)sigma_i",
+    "J_D": "additive source to total D' conservation",
+    "J_T": "additive source to total T' conservation"
+  },
+  "assumptions": [
+    "Spatially flat FLRW, scalar Newtonian gauge CLASS sign convention, k>0",
+    "CLASS metric shear Psi=Phi-(9/2)a²*S/k² and momentum Phi'=-H Psi+(3/2)a²*T/k²",
+    "Total stress sources D'= -3H(D+P)-T+3R Phi'+J_D and T'=-4H T+k² P+k² R Psi-k² S+J_T",
+    "Friedmann background derivative H'=H²-(3/2)a² R"
+  ],
+  "derived_constraint": "C=k² Phi+(3/2)a²(D+3H T/k²)",
+  "exact_identity": "C'=-H C+(3/2)a² J_D+(9/2)a² H J_T/k²",
+  "SymPy_factorized_Cprime_plus_HC": "3*a**2*(3*H*JT+JD*k2)/(2*k2)",
+  "exact_zero_residual_verified": true,
+  "pressure_coefficient_in_constraint_propagation": 0,
+  "shear_coefficient_in_constraint_propagation": 0,
+  "total_conservation_corollary": "If J_D=J_T=0, C(tau)=C(initial)*a(initial)/a(tau), and C(initial)=0 implies C identically 0 on a smooth branch.",
+  "source_entry": "F_E in E_aest' does not independently enter D' or T' in the implemented effective-fluid equations, which use Pi consistently; this is formal implemented conservation, not proof of action-level NL0B Ward identities.",
+  "gates": {
+    "symbolic_source_residual_identity": true,
+    "J_D_coefficient": true,
+    "J_T_coefficient": true,
+    "source_free_Cprime_plus_HC_zero": true,
+    "pressure_cancels": true,
+    "anisotropic_shear_cancels": true,
+    "original_LW12_parent_SHA_verified": true
+  },
+  "limitations": {
+    "original_NL0B_action_Noether_Ward_certified": false,
+    "physical_bath_direct_linear_Einstein_stress_completeness_certified": false,
+    "all_CLASS_approximation_branch_residuals_checked": false,
+    "full_Aeff_matrix_assembled": false,
+    "full_retarded_G_WE_integrated": false,
+    "physically_admissible_two_history_metric_difference": false,
+    "DES_ACT_observational_detection": false,
+    "LW03_radial_FAIL": true,
+    "LW05_LOS_BLOCK": true,
+    "LW08_differential_response_UNRESOLVED": true,
+    "H4_Z21_certified": false
+  }
+}
