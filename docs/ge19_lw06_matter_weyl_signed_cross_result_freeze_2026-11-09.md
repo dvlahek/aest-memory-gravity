@@ -78,7 +78,7 @@ set -o pipefail
 python3 -u -m ge19.lw06_native_matter_weyl_cross_20261109 \
   --output-prefix results/ge19_lw06_native_matter_weyl_cross_20261109_original \
   2>&1 | tee results/ge19_lw06_native_matter_weyl_cross_20261109_original.log
-echo "EXIT=\${PIPESTATUS[0]}"
+echo "EXIT=${PIPESTATUS[0]}"
 ```
 
 No CLASS root is needed. The runner checks the full original preregistered Git object and both original parent hashes. If the user's local LW05 JSON differs in content from the independent read-only archive hash, execution must halt rather than substitute a different source file.
