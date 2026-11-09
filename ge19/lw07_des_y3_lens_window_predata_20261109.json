@@ -1,0 +1,97 @@
+{
+  "classification": "GE19_LW07_DESY3_PUBLISHED_PHOTOZ_WINDOW_METADATA_PREDATA_LOCK",
+  "date": "2026-11-09",
+  "epistemic_scope": "Published DES Y3 photometric lens-selection bins, NOT calibrated true n(z), observed shear residuals, or angular window functions. This is a pre-observational feasibility screen only.",
+  "archived_model_lock": {
+    "lw02_json_sha256": "1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086",
+    "lw01_native_k_h_min": 0.03,
+    "lw01_native_k_h_max": 0.2,
+    "H0_km_s_Mpc": 67.3324639084866,
+    "chi_z_interpolation": "linear in original 8 pairs of LW02 z and chi values; bracketing only; not new independent background precision"
+  },
+  "DES_Y3_published_photoz_bins": {
+    "MagLim": [
+      [
+        0.2,
+        0.4
+      ],
+      [
+        0.4,
+        0.55
+      ],
+      [
+        0.55,
+        0.7
+      ],
+      [
+        0.7,
+        0.85
+      ],
+      [
+        0.85,
+        0.95
+      ],
+      [
+        0.95,
+        1.05
+      ]
+    ],
+    "redMaGiC": [
+      [
+        0.15,
+        0.35
+      ],
+      [
+        0.35,
+        0.5
+      ],
+      [
+        0.5,
+        0.65
+      ],
+      [
+        0.65,
+        0.8
+      ],
+      [
+        0.8,
+        0.9
+      ]
+    ]
+  },
+  "citations": {
+    "lens_bins_and_measurement": "DES Y3 MagLim galaxy clustering and GGL, https://www.darkenergysurvey.org/wp-content/uploads/2021/05/desy3_maglim2x2pt.pdf",
+    "tomographic_mean_redshifts": "DES Y3 high-redshift galaxy clustering and comparisons, https://academic.oup.com/mnras/article/525/3/3896/7244725",
+    "lens_redshift_pdf": "DES Y3 lens n(z) clustering-redshift calibration, https://academic.oup.com/mnras/article/513/4/5517/6594026",
+    "observed_2pt_data_FITS": "https://desdr-server.ncsa.illinois.edu/despublic/y3a2_files/datavectors/2pt_NG_final_2ptunblind_02_26_21_wnz_maglim_covupdate.fits",
+    "harmonic_space_pseudo_Cl": "DES Y3 galaxy clustering and galaxy-galaxy lensing in harmonic space, https://doi.org/10.1093/mnras/stae2654"
+  },
+  "geometry_rule": {
+    "source": "LW02 archived CLASS Newtonian-gauge background only",
+    "ell_definition": "integer ell where entire nominal photoz bin fits native z range, and k_h=(ell+0.5)/(h chi(z)) in [0.03,0.20] at all points of that nominal z interval",
+    "ell_min_formula": "ceil(k_h_min*h*chi(z_high)-0.5)",
+    "ell_max_formula": "floor(k_h_max*h*chi(z_low)-0.5)",
+    "photoz_edges_are_not_true_redshift_support": true,
+    "no_chi_extrapolation": true,
+    "no_observed_residuals": true,
+    "no_physical_eta_fit": true
+  },
+  "preregistered_tests": {
+    "exact_lw02_hash": true,
+    "native_window_8_z_nodes": true,
+    "monotone_class_background": true,
+    "all_11_original_photoz_bins_reported": true,
+    "no_photoz_bin_clipped_into_native_z_window": true,
+    "all_candidate_ell_intervals_nonempty": true,
+    "no_source_nz_support_certification_from_selection_edges": true
+  },
+  "evaluation_policy": {
+    "geometric_candidate": "METADATA_ONLY_NOMINAL_BIN_KZ_SUPPORT_CANDIDATE",
+    "disallowed": "PHOTOMETRIC_BIN_EXTENDS_BEYOND_NATIVE_CERTIFIED_Z",
+    "requires_calibrated_nz": "Any real DES lens n(z) out-of-domain mass must be measured from a released n(z) kernel (not assumed zero at z_ph selection edges).",
+    "requires_windows": "Any real DES gamma_t(theta) data bin requires a validated full Bessel angular response or documented pseudo-Cl bandpower window and leakage control. Finite ell support alone is insufficient.",
+    "classification": "GE19_LW07_NOMINAL_DESY3_PHOTOZ_GEOMETRIC_FEASIBILITY_ONLY_OBSERVATIONAL_FORWARD_MODEL_BLOCKED",
+    "note": "A derived ell interval for photoz selection is NOT a valid angular scale cut for a measured gamma_t observable."
+  },
+  "stop_rule": "Read-only published metadata, exact SHA-parent and elementary geometry only. No observed data values, no change in physics, no new CLASS. Save conservative metadata-only conclusion even if many candidate bins geometrically overlap."
+}
