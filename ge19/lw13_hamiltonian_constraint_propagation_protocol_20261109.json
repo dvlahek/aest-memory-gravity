@@ -1,0 +1,41 @@
+{
+  "classification": "GE19_LW13_TOTAL_FLUID_HAMILTONIAN_CONSTRAINT_IDENTITY_FORMULA_FROZEN",
+  "date": "2026-11-09",
+  "prior_knowledge": "Analytic identity was already sketched before this protocol was committed; this is reproducibility ordering, NOT a blind preregistered discovery.",
+  "goal": "Derive and independently check the Newtonian-gauge flat-FLRW Hamiltonian constraint propagation from conserved total stress and the original CLASS Einstein shear/momentum relations. Explicitly show what a stress nonconservation term would do. Do not conflate this conditional continuum identity with validated modified CLASS constraints or full action Ward.",
+  "parents": {
+    "actual_LW12_local_SHA256": "fdec5a67d0ba5a7f22fa9b59e22116b18e6b94dce8e18578a526c36164d0b00f",
+    "original_LW10_local_SHA256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851",
+    "CLASS_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "CLASS_perturbations_blob": "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0"
+  },
+  "notation": {
+    "conformal_H": "H=a'/a",
+    "background_R": "R=rho_total+p_total",
+    "D": "D=delta_rho_total",
+    "P": "P=delta_p_total",
+    "T": "T=Sum_i (rho_i+p_i)*theta_i",
+    "S": "S=Sum_i (rho_i+p_i)*sigma_i",
+    "k2": "k^2>0",
+    "class_psi": "Psi=Phi-(9/2)*a^2*S/k2",
+    "class_phi_prime": "Phi'=-H*Psi+(3/2)*a^2*T/k2",
+    "class_hamiltonian_constraint": "C=k2*Phi+(3/2)*a^2*(D+3*H*T/k2) [spatial curvature K=0]",
+    "total_energy_conservation": "D'=-3*H*(D+P)-T+3*R*Phi'+J_D",
+    "total_momentum_conservation": "T'=-4*H*T+k2*P+k2*R*Psi-k2*S+J_T",
+    "flat_background_relation": "H'=H^2-(3/2)*a^2*R",
+    "prescribed_constraint_identity": "C'=-H*C+(3/2)*a^2*J_D+(9/2)*a^2*H*J_T/k2",
+    "source_free_result": "J_D=J_T=0 -> C'=-H*C -> C proportional to 1/a"
+  },
+  "checks": {
+    "symbolic_exact_source_free_identity": true,
+    "symbolic_exact_source_response_identity": true,
+    "LW10_LW12_parent_SHA": true,
+    "source_time_has_no_new_CLASS_solve": true,
+    "no_observed_DES_ACT": true,
+    "no_new_H4": true,
+    "does_not_certify_all_approximation_branches": true,
+    "does_not_certify_physical_Noether_action": true
+  },
+  "provisional_expected_result": "GE19_LW13_CONDITIONAL_TOTAL_CONSERVATION_HAMILTONIAN_PROPAGATION_IDENTITY_PASS_ACTION_WARD_OPEN",
+  "hard_stop": "Proof assumes the complete total effective stress satisfies background and linear perturbed conservation. The modified CLASS AeST implementation enforces fluid continuity/Euler equations by construction, but physical NL0B action-level constraints, auxiliary bath stress, approximation transitions, and direct source energy-momentum exchange are not independently established. No claim of full A_eff closure, physical paired histories, or observed sky signal."
+}
