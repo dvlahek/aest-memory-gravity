@@ -4,6 +4,18 @@ Last updated: 2026-11-09 (living checkpoint)
 Branch: `physics-first-gravitational-elasticity`.
 This is the **canonical living GE19 checkpoint**. Read it first when resuming the GravitationalElasticy / AeST Memory Gravity project. Earlier frozen results and classifications are immutable; the 2026-10-10 snapshot is preserved at the end.
 
+## 2026-11-09: LW03 LOCAL COMPLETED — CLASS source-native closure PASS; lensing radial quadrature FAIL
+
+**Frozen classification:** `GE19_LW03_SOURCE_TIME_OPERATOR_OR_RADIAL_QUADRATURE_FAIL` (not an implementation crash). Local results uploaded: `ge19_lw03_source_time_closure_20261109_kprefixfix.{json,npz,log}`; SHA256 JSON `dcf057b8e51e4863f0c0765c11973de71db01240fce6421a691b3704869ae09d`, NPZ `f5b1334ab171e5e8df680ef6043969c91fbbafeb467bad8477d27ad4c94a0d53`, log `b438e8e3835cda914b4eb7a59dc2b94626aa8d81c0ede3c7e952a15adcfaed9e`. Results are in user's local environment and were independently read; do NOT silently rewrite frozen predata or original LW02.
+
+Three CLASS executions (baseline, ±2.5) and 262 CLASS offnative source transfer redshift queries completed. All non-quadrature gates PASS: native Fourier k prefix match `0.0`; native geometry match `0.0`; baseline W source/native L2 `6.216583398058324e-15`; same λ=2.5 signed tangent W L2 `2.2563377946040432e-14`; finite PASS.
+
+Radial gate FAIL for each `ell=100,150,200,300`; ell500 remains unsupported. LW03 65-point window ratios signed per formal eta: `ell100=+0.0002988410348`, `ell150=-0.0122934294904`, `ell200=+0.0013237341410`, `ell300=+0.0017505247483`. The preregistered 17→33 and 33→65 derivative quadrature controls exceed thresholds for all four, with sign flips across resolutions for ell100/200. Direct NPZ reproduction matches ratios within `8e-17`. Along each ell-dependent `k(chi)` path, 65-point source W changes sign (counts 3,1,3,1) while source signed tangent is positive at all sampled points, creating signed integral cancellations: `|∫S|/∫|S|=0.05033,0.67753,0.20683,0.21962` for 100/150/200/300. This is **numerical cancellation, NOT a certified physical oscillatory mode**.
+
+**Stop/go decision:** Keep LW01 **theory-only numerical Weyl transfer PASS**. Class native/source transfer alignment is confirmed by LW03, but signed physical lensing amplitude/sign cannot be claimed, full lensing window/line-of-sight coverage is absent, no observational detection, and original H4/Z21/v068 scientific boundaries unchanged. DO NOT relabel LW03 as PASS, relax fixed gates, or run repeated quadrature-only higher N sweeps; a physically independent time-source-resolution and full k/z domain test must be preregistered before any future lensing prediction/observational work. The qualified theoretical Weyl tangent can be reported without asserting a lensing detection.
+
+Detailed evidence and decisions: `docs/ge19_lw03_source_time_result_2026-11-09.md` (frozen archive commit `8b623930ce68eab8e05ddb04f99f58b7ec38aced`).
+
 ## 2026-11-09: bounded LW03 SOURCE-TIME interpolation audit prepared, NOT executed
 
 A direct post-LW02 re-integration of the **same eight native z nodes** via fixed-scope PCHIP radial interpolation (read-only in analyst environment, NOT a new physical solution) yields `dC/Cdeta` = `-0.0013858934,-0.0107923684,+0.0007183991,+0.0016353064` at ell 100/150/200/300 versus the original native trapezoid `-0.0075963659,-0.0195100921,-0.0026748079,-0.0016459351`. Posthoc linear-chi/cubic-chi interpolations similarly change sign at ell 200 and 300. This demonstrates **discretization/interpolation sensitivity**, not physical positive lensing.
