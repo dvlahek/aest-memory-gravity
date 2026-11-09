@@ -1,0 +1,72 @@
+{
+  "classification": "GE19_LW02_WINDOW_RESTRICTED_LINEAR_WEYL_LENSING_PREDATA_LOCK_BEFORE_LW02_EXECUTION",
+  "date": "2026-11-09",
+  "status": "PROTOCOL_FROZEN_BEFORE_PROJECTION_COMPUTATION",
+  "parent": {
+    "classification": "GE19_LINEAR_WEYL_NATIVE_SIGNED_TANGENT_NUMERICAL_PASS_OBSERVATIONAL_OPEN",
+    "NPZ_SHA256": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "JSON_SHA256": "ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b",
+    "n_native_k": 912,
+    "n_native_z": 24,
+    "n_primary_nodes": 2576,
+    "original_CLASS_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "physical_model": {
+    "cosmology": "v063.theory_response_map.class_params()",
+    "KB": 0.0665,
+    "tauH0": 10,
+    "p": 0,
+    "aest_eta_at_background": 0,
+    "source_plane_redshift": 2,
+    "initial_scalar_amplitude": "v063.theory_response_map.START.A_s",
+    "initial_spectral_index": "v063.theory_response_map.START.n_s",
+    "primordial_k_pivot_per_Mpc": 0.05
+  },
+  "objective": "Calculate only the delta-eta response to the *window-restricted* thin-source-plane lensing angular power under Born+Limber, from frozen LW01 native signed Newtonian Weyl transfer and original AeST CLASS background geometry.",
+  "locked_projection": {
+    "ell": [
+      100,
+      150,
+      200,
+      300,
+      500
+    ],
+    "only_native_z_in": [
+      0.2,
+      1.5
+    ],
+    "only_native_k_h_per_Mpc_in": [
+      0.03,
+      0.2
+    ],
+    "minimum_native_redshift_nodes_for_report": 4,
+    "no_extrapolation": true,
+    "no_lensing_beyond_window": true,
+    "no_new_perturbed_CLASS_solves": true,
+    "geometry_class_executions": 1,
+    "sampling": "interpolate signed W and dW/deta along native k only, separately at every original native z; log-k linear interpolation primary, linear-k comparison diagnostics; trapezoid in native chi for each contiguous available ell-specific domain",
+    "data_model": "P_W(k,z)=2*pi^2/k^3 * A_s*(k/0.05)^(n_s-1)*W(k,z)^2",
+    "tangent_model": "dP_W/deta=2*(2*pi^2/k^3)*A_s*(k/0.05)^(n_s-1)*W*dW/deta",
+    "lensing_potential": "C_ell^phiphi(window)=4*int_window dchi [(chi_s-chi)/(chi_s*chi)]^2 P_W(k=(ell+0.5)/chi,z)/chi^2",
+    "convergence": "C_ell^kappakappa(window)=[ell*(ell+1)/2]^2 C_ell^phiphi(window)"
+  },
+  "numerical_reporting": {
+    "two_interpolants": true,
+    "no_ratio_at_individual_transfer_zeros": true,
+    "report_exact_angular_support_and_z_sample_count": true,
+    "report_geometry_background_key_and_source_distance": true,
+    "report_signed_derivative_and_ratio_of_integrated_quantities_only": true,
+    "no_posthoc_ell_selection": true,
+    "no_favorable_sign_mask": true,
+    "no_claim_of_quadrature_convergence_without_separate_evidence": true
+  },
+  "stop_policy": "One geometric baseline CLASS call + one frozen signed native projection. Do not change parent LW01 grids, force, signatures, gates or theory. If background/primary data fails, retain failure without tuning. Do not claim observational detection or full lensing spectrum.",
+  "claims_excluded": [
+    "full-sky or full-line-of-sight C_ell",
+    "survey galaxy-source distribution or DES Y3 fit",
+    "cosmic-shear inference or detection significance",
+    "nonlinear Z21 or H4 certification",
+    "finite physical eta amplitudes",
+    "precision forecast from only 8 native z samples"
+  ]
+}
