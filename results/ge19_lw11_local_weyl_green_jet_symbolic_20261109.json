@@ -1,0 +1,49 @@
+{
+  "classification": "GE19_LW11_CONDITIONAL_LOCAL_E_TO_WEYL_GREEN_TAYLOR_JET_DERIVED_NOT_GLOBAL",
+  "date": "2026-11-09",
+  "method": "Read-only algebraic small-time coefficient from pinned original AeST fluid and Einstein evolution source terms; simplified independently with SymPy 1.14.0; no CLASS ODE, cosmological data or fitted memory.",
+  "preregistered_predata_commit": "508bca735601897e88317506c9313e88977dbd08",
+  "core_provenance": {
+    "local_lw10_json_sha256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851",
+    "local_lw10_classification": "GE19_LW10_IMPLEMENTED_E_TO_METRIC_STRUCTURAL_PATH_PASS_FULL_GREEN_UNCERTIFIED",
+    "original_AeST_patch": "v019/apply_patch_v019.py",
+    "original_background_source": "v019/patch/source/aest_memory.c",
+    "original_class_pin": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "exact_partial_chain": {
+    "dPi_dE": "c_a^2 K_B k^2/(3 a^2 rho_A)",
+    "dtheta_prime_dE": "k^2/(1+w_A)*dPi_dE",
+    "dPhi_prime_dtheta": "(3/2)(a^2/k^2)rho_A(1+w_A)",
+    "dPhi_second_dE_at_fixed_other_state": "(1/2)c_a^2 K_B k^2",
+    "leading_retarded_jet": "G_WE(k;s+Delta,s)=(1/4)c_a^2(s)K_B k^2 Delta^2+o(Delta^2)",
+    "direct_E_to_W": "zero at equal time in implemented Newtonian scalar stress convention",
+    "direct_E_to_Wprime": "zero at equal time if other species' shear and immediate derivative have no direct E dependence",
+    "LW11_local_result_is_conditional": true
+  },
+  "positive_background_sound_speed": {
+    "class_formula": "c_a^2=K_Q/(Q K_QQ)",
+    "class_background_relation": "K_Q=I0/a^3, I0>0; Q>0 and K_QQ>0 in valid evaluated background",
+    "implication": "c_a^2>0 for finite positive a and calibrated original AeST branch",
+    "observational_eta_normalization": "not set"
+  },
+  "assumptions": [
+    "Source F_E is independently prescribed delta impulse into linear E' equation, NOT a physically admissible independent perturbation of original memory field",
+    "Smooth Newtonian-gauge single scalar approximation regime; no CLASS hierarchy switch over short delay",
+    "All Einstein scalar constraints and stress conventions match pinned code, not an independent action/Noether verification",
+    "No E-proportional direct anisotropic shear in AeST patch; other species first two shear-time source derivatives have no direct E coefficient in the same instantaneous state",
+    "Matched linear state at impulse time and k>0, regular background",
+    "No cancellation from algebraic constraint elimination or hidden-field source restrictions has yet been certified by the full A_eff assembly"
+  ],
+  "evidence_gates": {
+    "exact_symbolic_a_rho_w_cancellation": true,
+    "LW10_local_26_of_26_static_code_anchors": true,
+    "AeST_patch_has_no_direct_shear_term": true,
+    "positive_cad2_background_formula_present": true,
+    "full_reduced_Aeff_constructed": false,
+    "all_implicit_constraints_closed": false,
+    "two_physical_history_solutions_constructed": false,
+    "full_G_WE_evaluated": false,
+    "observational_detection": false
+  },
+  "scientific_scope": "A nonzero *conditional short-time jet* of the externally forced implemented scalar source-to-Weyl response, not the full retarded kernel or a physical memory observation; LW03 FAIL, LW05 LOS BLOCK, LW08 differential source unresolved, LW09 physical two-history admission OPEN, H4/Z21 uncertified."
+}
