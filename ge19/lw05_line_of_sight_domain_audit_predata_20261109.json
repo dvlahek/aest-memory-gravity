@@ -1,0 +1,60 @@
+{
+  "classification": "GE19_LW05_STRICT_LOS_KZ_DOMAIN_GEOMETRIC_AUDIT_PREDATA_LOCKED",
+  "creation_date": "2026-11-09",
+  "scientific_question": "Can current certified LW01 native finite k,z window support the entire Born-Limber thin-source-plane lensing path z_s=2 at frozen ell values, without extrapolation, physical amplitude fitting or interpolation beyond certified domain?",
+  "frozen_parents": {
+    "lw01_npz_sha256": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "lw02_json_sha256": "1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086",
+    "lw03_json_sha256": "dcf057b8e51e4863f0c0765c11973de71db01240fce6421a691b3704869ae09d",
+    "lw04_json_sha256": "6a1dfe9923daf385a9b78d0528eddeefd8442e0a28da9b60626814d30a435ac8",
+    "class_original_head": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "geometry": {
+    "source_plane_z": 2,
+    "source_plane_chi_from_LW02_Mpc": 5313.976587436474,
+    "H0_km_s_Mpc": 67.3324639084866,
+    "native_ell": [
+      100,
+      150,
+      200,
+      300,
+      500
+    ],
+    "native_k_window_h_per_Mpc": [
+      0.03,
+      0.2
+    ],
+    "native_z_window_nominal": [
+      0.2,
+      1.5
+    ],
+    "z_limits": "actual outermost certified native z nodes, not nominal [0.2,1.5]",
+    "chi_limits": "archived LW02 original CLASS comoving distance for actual native z",
+    "limber_k_physical_1_per_Mpc": "(ell+0.5)/chi",
+    "actual_k_h_from_physical": "k_physical/h, with h=H0/100",
+    "intersection": "[chi_at_zlow,chi_at_zhigh] ∩ [(ell+0.5)/(h*k_h_max),(ell+0.5)/(h*k_h_min)] ∩ (0,chi_source)",
+    "no_extrapolation": true,
+    "include_ell500_as_missing_native_node_support_control": true
+  },
+  "preregistered_tests": {
+    "derived_h_from_H0": true,
+    "exact_archive_native_k_and_z_mask_required": true,
+    "original_LW02_n_native_z": 8,
+    "original_LW02_n_native_k": 322,
+    "source_chi_match_tolerance_Mpc": 1e-7,
+    "monotonic_native_z_to_chi": true,
+    "finite_supported_interval_each_ell": true,
+    "full_los_coverage_requires_entire_open_path_except_measure_zero_endpoints": true,
+    "full_los_fraction_absolute_tolerance": 1e-12,
+    "native_z_node_count_min_for_projection": 4,
+    "reuse_LW02_node_support_counts_without_new_CLASS": true,
+    "no_unsupported_impact_estimate": true
+  },
+  "classifications": {
+    "full_support_ready": "GE19_LW05_FULL_LOS_GEOMETRIC_DOMAIN_READY_NOT_PHYSICAL",
+    "full_support_blocked": "GE19_LW05_FULL_LOS_DOMAIN_BLOCKED_BY_CERTIFIED_KZ_SUPPORT",
+    "implementation": "GE19_LW05_IMPLEMENTATION_BLOCKED",
+    "note": "Domain support is a necessary, NOT sufficient, condition for accurate lensing, observable normalization, source redshift distribution, radial quadrature, physical eta, nonlinear scales and observation likelihood."
+  },
+  "stop_rule": "Single analytic/read-only archived source geometry audit with zero new CLASS runs and zero data fits. If full support blocked, DO NOT construct a full-lensing ratio by extrapolation, silently zero-fill unsupported regions, or fit DES/ACT. Freeze exact missing radial domains; propose separate alternative narrow-redshift cross-probe or independently certified domain-extension study before any new numerics."
+}
