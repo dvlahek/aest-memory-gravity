@@ -1,0 +1,93 @@
+{
+  "H4_Z21_certified": false,
+  "LW03_radial_FAIL_preserved": true,
+  "LW04_source_time_PASS_preserved": true,
+  "LW05_full_LOS_BLOCK_preserved": true,
+  "antisymmetric_physical_response_numerically_certified": false,
+  "antisymmetric_to_symmetric_mean_L2_ratio": 0.00003362980221740157,
+  "archive_replay_note": "Independent read-only replay from SHA-locked raw parents; canonical GitHub script with git predata check not run in this isolated container. Prior LW06 exploratory alignment was already known before predata.",
+  "by_lambda": [
+    {
+      "antisymmetric_over_symmetric_L2": 0.000008814836695034802,
+      "antisymmetric_relative_affinity_to_mean": 1.0368297771563906,
+      "lambda_numeric": 10,
+      "symmetric_relative_affinity_to_mean": 0.00019811542263813096
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.000016517684205186588,
+      "antisymmetric_relative_affinity_to_mean": 0.7411164631035398,
+      "lambda_numeric": 5,
+      "symmetric_relative_affinity_to_mean": 0.00016749079495571772
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.000040119966618847966,
+      "antisymmetric_relative_affinity_to_mean": 0.7706377654189849,
+      "lambda_numeric": 2.5,
+      "symmetric_relative_affinity_to_mean": 0.0001884184554895371
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.0000976326060590501,
+      "antisymmetric_relative_affinity_to_mean": 1.9860217367650452,
+      "lambda_numeric": 1.25,
+      "symmetric_relative_affinity_to_mean": 0.0003085710303656726
+    }
+  ],
+  "by_z": [
+    {
+      "antisymmetric_over_symmetric_L2": 0.0000275080318378606,
+      "z": 0.2476197546610166
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.0000389164885313392,
+      "z": 0.31200559713499487
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.00006603318178694,
+      "z": 0.4511588909063444
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.00010457988366410428,
+      "z": 0.6041886577745919
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.0001309855540657584,
+      "z": 0.772471983328852
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.00012222037060445,
+      "z": 0.9575556520784951
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.00014170598390988854,
+      "z": 1.1611691372188182
+    },
+    {
+      "antisymmetric_over_symmetric_L2": 0.0001626010198222679,
+      "z": 1.3852368768513288
+    }
+  ],
+  "classification": "GE19_LW08_RELATIVE_SOURCE_TANGENT_REPLAY_PASS_NOT_AN_OBSERVABLE",
+  "cosine_two_mean_terms": 0.9999999980960939,
+  "differential_shear_observable_certified": false,
+  "gates": {
+    "all_finite": true,
+    "native_nodes": true,
+    "product_rule": true,
+    "reference_reconstructed": true
+  },
+  "input_sha256": {
+    "lw01_json": "ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b",
+    "lw01_npz": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "lw06_replay_json": "b8d3dce8531519aa08822aa88525a4f5bae5de25ae6a801258b2fc67feca705a",
+    "lw06_replay_npz": "de93e118ec8f4b012aeab0511aa57d75b87a78e6b25896235382798c9e56bdfa"
+  },
+  "native_grid": [
+    322,
+    8
+  ],
+  "observational_detection": false,
+  "original_LW06_symmetric_reconstruction_relative_error": 0,
+  "predata_git_blob_sha1": "589d3cef1b66a52770db046463eb6d2be032cbfe",
+  "product_rule_relative_error": 1.253865292499393e-16,
+  "reason": "Antisymmetric differential tangent is tiny compared to symmetric response and does not reproduce stably across numeric source amplification; it is not a physical observed Jhat null test."
+}
