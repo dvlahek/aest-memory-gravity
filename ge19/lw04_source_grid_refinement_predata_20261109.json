@@ -1,0 +1,94 @@
+{
+  "protocol_classification": "GE19_LW04_FIXED_MODEL_INDEPENDENT_SOURCE_TIME_GRID_PREDATA_LOCK",
+  "date": "2026-11-09",
+  "preregistration_status": "COMMITTED_BEFORE_ANY_LW04_REFINED_CLASS_SOLVER_RUN",
+  "purpose": "One bounded fixed-physics perturbation SOURCE time-grid refinement to separate LW03 transfer interpolation dependence from radial quadrature errors. Not full line of sight, independent integrator tolerance, or detection.",
+  "prior_result_informed": true,
+  "full_observational_data_inspected": false,
+  "frozen_parent": {
+    "lw01_json_sha256": "ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b",
+    "lw01_npz_sha256": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "lw03_json_sha256": "dcf057b8e51e4863f0c0765c11973de71db01240fce6421a691b3704869ae09d",
+    "lw03_npz_sha256": "f5b1334ab171e5e8df680ef6043969c91fbbafeb467bad8477d27ad4c94a0d53",
+    "original_drude_forcing_sha256": "55b7b4cfdbe85b63182c883424a464d47cb33a8f5af7ec5e02540fb6df15a6b0",
+    "pinned_class_head": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "frozen_physics": {
+    "physical_model": "v063.theory_response_map.class_params; original AeST + NL0B positive Drude externally forced tangent",
+    "KB": 0.0665,
+    "tauH0": 10,
+    "p": 0,
+    "physical_eta_finite": false,
+    "signed_amplification_lambda": 2.5,
+    "background_and_initial_conditions": "exact v063.START/class_params; no change",
+    "forcing": "sha-locked original LW01 forcing, never regenerate, exact same signed amplitudes",
+    "CLASS_output": "mPk,mTk",
+    "CLASS_lensing": "no",
+    "k_per_decade_for_pk": 80,
+    "k_per_decade_for_bao": 560,
+    "P_k_max_h_per_Mpc": 2,
+    "z_max_pk": 5,
+    "k_output_values_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ]
+  },
+  "experiment": {
+    "historical_reference": "LW03 source-time get_transfer(z) data saved at original source precision: 65 chi nodes × 322 native Fourier k nodes for ell=100/150/200/300.",
+    "refined_source_parameter": "perturbations_sampling_stepsize",
+    "original_default_value": 0.1,
+    "refined_value": 0.025,
+    "numerical_integration_tolerance": "unchanged inherited CLASS default tol_perturbations_integration; not a tested axis",
+    "required_native_time_node_increase_factor": 2,
+    "refined_class_runs": 3,
+    "class_run_labels": [
+      "baseline",
+      "+2.5",
+      "-2.5"
+    ],
+    "original_k_window_h_per_Mpc": [
+      0.03,
+      0.2
+    ],
+    "inherited_source_plane_redshift": 2,
+    "identical_ell_windows": [
+      100,
+      150,
+      200,
+      300
+    ],
+    "native_redshift_window": [
+      0.2,
+      1.5
+    ],
+    "z_query_coordinates": "exact same LW03 NPZ z_ell_{100,150,200,300}, no new redshift-domain extrapolation",
+    "radial_chi_quadrature": "reuse exact LW03 65 original chi coordinates per ell; keep 17/33/65 historical FAIL untouched",
+    "source_of_class_param": "pinned official CLASS include/precisions.h: perturbations_sampling_stepsize default 0.1 and source/perturbations.c tau_sampling stepsize",
+    "no_new_k_or_z_window": true,
+    "no_new_physical_parameter_scan": true,
+    "no_observational_fit": true
+  },
+  "preregistered_checks": {
+    "class_get_transfer_native_k_prefix_rel_max": 1e-10,
+    "background_source_chi_relative_max": 1e-8,
+    "minimum_refined_native_time_nodes_relative_to_lw01": 2,
+    "relative_L2_fine_vs_coarse_W_per_ell_max": 0.01,
+    "relative_L2_fine_vs_coarse_signed_W_per_ell_max": 0.01,
+    "absolute_signed_integral_change_normalized_by_original_integral_abs_per_ell_max": 0.05,
+    "all_elements_finite": true,
+    "report_all_four_ells": true,
+    "no_posthoc_sign_gate_changes": true,
+    "use_additive_tangent_not_local_ratios": true
+  },
+  "outcomes": {
+    "time_source_stability_pass": "GE19_LW04_REFINED_SOURCE_GRID_AGREEMENT_PASS_LENSING_STILL_UNCERTIFIED",
+    "time_source_stability_fail": "GE19_LW04_REFINED_SOURCE_GRID_SENSITIVITY_FAIL",
+    "implementation_blocked": "GE19_LW04_NO_REFINED_SOURCE_GRID_RESULT",
+    "caveat": "A pass stabilizes W and dW on a revised source sampling grid within original windows and fixed 65-point lensing paths. It cannot rescue original LW03 radial FAIL or certify physical full lensing or detection."
+  },
+  "stop_rule": "One refined baseline/+2.5/-2.5 CLASS campaign only; preserve failures and never tune thresholds to results. If pass, separately evaluate requirements of full LOS/domain and independent integration accuracy before exposure to observed residuals; if fail, no observation claims."
+}
