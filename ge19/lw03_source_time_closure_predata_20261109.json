@@ -1,0 +1,94 @@
+{
+  "classification": {
+    "pass": "GE19_LW03_CLASS_SOURCE_TIME_OPERATOR_CONSISTENT_WINDOW_QUADRATURE_PASS_FULL_LOS_OPEN",
+    "fail": "GE19_LW03_SOURCE_TIME_OPERATOR_OR_RADIAL_QUADRATURE_FAIL",
+    "implementation": "GE19_LW03_IMPLEMENTATION_BLOCKED",
+    "explanatory": "PASS is convergence of the selected CLASS interpolation operator on the SAME original window; it is NOT independent time-integration convergence, full line-of-sight lensing, finite-eta physical signal, or observational evidence."
+  },
+  "date": "2026-11-09",
+  "motivation": "Result-informed follow-up to LW02: its 5–8 native redshift-node trapezoidal lensing integral has sign instability under alternative postrun quadratures.",
+  "parent": {
+    "lw01_json_sha256": "ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b",
+    "lw01_npz_sha256": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "lw02_json_sha256": "1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086",
+    "lw01_forcing_file_sha256": "55b7b4cfdbe85b63182c883424a464d47cb33a8f5af7ec5e02540fb6df15a6b0",
+    "class_head": "e85808324f51fc694d12e3ed7439552a3c3f9540"
+  },
+  "frozen_model": {
+    "KB": 0.0665,
+    "tauH0": 10,
+    "p": 0,
+    "cosmology": "v063.theory_response_map.class_params()",
+    "eta_background": 0,
+    "signed_amplification_lambda": 2.5,
+    "k_sampling": {
+      "k_per_decade_for_pk": 80,
+      "k_per_decade_for_bao": 560,
+      "P_k_max_h/Mpc": 2,
+      "z_max_pk": 5
+    },
+    "k_output_values_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ]
+  },
+  "replay": {
+    "class_solver_runs": 3,
+    "runs": [
+      "baseline",
+      "+2.5",
+      "-2.5"
+    ],
+    "reuse_original_forcing": true,
+    "no_force_reconstruction": true,
+    "no_action_change": true,
+    "source_operator": "classy.Class.get_transfer(z, output_format='class')",
+    "background_operator": "classy.Class.get_background()",
+    "reason": "CLASS off-native source-time interpolation versus sparse native Fourier-time array; v078 showed those operators need not coincide.",
+    "not_independent_native_time_evolution": true
+  },
+  "projection": {
+    "source_plane_z": 2,
+    "ells": [
+      100,
+      150,
+      200,
+      300,
+      500
+    ],
+    "new_redshift_domain": "preserve each LW02 ell's original first and last k-valid native z points; ell500 remains excluded by original <4 nodes rule",
+    "chi_sampling_nested": [
+      17,
+      33,
+      65
+    ],
+    "chi_sampling_mode": "uniform comoving distance for each ell-specific original LW02 chi domain",
+    "k_interpolation": "linear in log physical native k; no out-of-window extrapolation",
+    "background": "original frozen CLASS comoving distance; compare to LW02 chi for exact eight native z points",
+    "observable": "Born+Limber formal signed tangent of window-only kappa-kappa angular power",
+    "P_W": "(2*pi^2/k^3)*A_s*(k/0.05)^(n_s-1)*W^2",
+    "dP_W_deta": "2*(2*pi^2/k^3)*A_s*(k/0.05)^(n_s-1)*W*dW_deta"
+  },
+  "gates": {
+    "class_native_k_matching_relative_max": 1e-10,
+    "native_operator_baseline_W_relative_L2_max": 0.005,
+    "native_operator_signed_W_derivative_relative_L2_max": 0.005,
+    "geometry_chi_native_relative_max": 1e-8,
+    "radial_coarse_17_to_33_relative_over_abs_signed_integral_max": 0.02,
+    "radial_33_to_65_relative_over_abs_signed_integral_max": 0.005,
+    "require_same_sign_17_33_65_if_nonzero": true,
+    "minimum_original_native_z": 4,
+    "all_finite": true
+  },
+  "scientific_caveats": [
+    "This is a source-time interpolation replay; it does not yield independent new perturbation time samples.",
+    "Only one lambda pair is rerun because prior LW01 already proved four-lambda native affinity; compare the same lambda pair at original native times before interpreting.",
+    "Do not call a sign robust from this single operator unless an independent time-sampling or solver-resolution check passes.",
+    "A 33-to-65 quadrature pass is a discretization check of a single interpolation operator, not an end-to-end Boltzmann accuracy certificate.",
+    "No new k,z window, no observation-based tuning, no parameter scan, no H4 numeric reopening."
+  ]
+}
