@@ -1,0 +1,123 @@
+{
+  "classification": "GE19_LW10_CROSS_REPOSITORY_STATIC_SOURCE_ANCHORS_13OF13_PASS_OBSERVER_GREEN_NOT_EVALUATED",
+  "created_at": "2026-11-09",
+  "method": "Read-only inspection of exact GitHub canonical AeST patch blobs and pinned official CLASS source blob. Not a test of the researcher's local patched CLASS checkout, not a numerical ODE solve and not a proof of full action/constraint closure.",
+  "frozen_predata_git_blob_sha1": "ace64f2f8d60186ee1c261e83474ecfb38dd7918",
+  "official_class": {
+    "repository": "lesgourg/class_public",
+    "commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "path": "source/perturbations.c",
+    "blob": "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0"
+  },
+  "frozen_aest_patches": {
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "v019w/apply_variational_forcing_patch.py": "00c3f5da5a1b7734c67c82aa9181a443736101bf"
+  },
+  "static_source_anchors": [
+    {
+      "name": "metric_psi",
+      "source": "Pinned official CLASS perturbations.c",
+      "interpretation": "Psi=Phi-(9/2) a²/k² Sigma_shear",
+      "verified": true
+    },
+    {
+      "name": "metric_phi",
+      "source": "Pinned official CLASS perturbations.c",
+      "interpretation": "Phi'=-Hconf Psi+(3/2) a²/k² Sigma_theta",
+      "verified": true
+    },
+    {
+      "name": "phi_yprime",
+      "source": "Pinned official CLASS perturbations.c",
+      "interpretation": "dy[phi]=metric_phi_prime",
+      "verified": true
+    },
+    {
+      "name": "Pi_E",
+      "source": "v019 AeST patch",
+      "interpretation": "Pi has K_B E term",
+      "verified": true
+    },
+    {
+      "name": "Pi_pressure",
+      "source": "v019 AeST patch",
+      "interpretation": "AeST pressure included in Einstein stress",
+      "verified": true
+    },
+    {
+      "name": "theta_source",
+      "source": "v019 AeST patch",
+      "interpretation": "AeST theta' includes k² Pi/(1+w)",
+      "verified": true
+    },
+    {
+      "name": "delta_source",
+      "source": "v019 AeST patch",
+      "interpretation": "AeST delta' includes -3Hconf Pi",
+      "verified": true
+    },
+    {
+      "name": "alpha_E",
+      "source": "v019 AeST patch",
+      "interpretation": "AeST alpha'=a(E-Psi)",
+      "verified": true
+    },
+    {
+      "name": "Pi_prefactor",
+      "source": "v019 AeST patch",
+      "interpretation": "c_a² k²/(3a² rho)",
+      "verified": true
+    },
+    {
+      "name": "chi_dictionary",
+      "source": "v019 AeST patch",
+      "interpretation": "chi=Q(a theta/k²+alpha)",
+      "verified": true
+    },
+    {
+      "name": "E_source",
+      "source": "v019j memory patch",
+      "interpretation": "E_rhs reduced by Q Bchi/2",
+      "verified": true
+    },
+    {
+      "name": "tracer",
+      "source": "v019w tangent patch",
+      "interpretation": "F_E=-a Q Bchi_raw/(2 K_B)",
+      "verified": true
+    },
+    {
+      "name": "force",
+      "source": "v019w tangent patch",
+      "interpretation": "external force added to E'",
+      "verified": true
+    }
+  ],
+  "static_anchors_count": 13,
+  "static_anchors_true": 13,
+  "causal_state_form": "u'=A_eff(k,t)u+e_E F_E, W=C_W(t)u; retarded G_WE=C_W(t) Texp[integral_s^t A_eff du] e_E",
+  "primary_metric_formulae": {
+    "psi": "Psi=Phi-(9/2)*(a²/k²)*Sigma_shear",
+    "phi_prime": "Phi'=-Hconf*Psi+(3/2)*(a²/k²)*Sigma_theta",
+    "Weyl": "W=(Phi+Psi)/2=Phi-(9/4)*(a²/k²)*Sigma_shear"
+  },
+  "direct_jacobian_entries": {
+    "d_Pi_d_E": "c_a²*K_B*k²/(3a²rho_A)",
+    "d_theta_prime_d_E": "c_a²*K_B*k^4/(3a²rho_A*(1+w_A))",
+    "d_delta_prime_d_E": "-Hconf*c_a²*K_B*k²/(a²rho_A)",
+    "d_alpha_prime_d_E": "a"
+  },
+  "previous_numerical_nonzero_native_Weyl_response": "LW01 numeric signed source W tangent PASS for specific frozen externally driven eta=0 forcing on original 2576 nodes; independent evidence for at least one nonzero implemented source-to-W transfer, not two-history observer proof",
+  "status": {
+    "local_patched_CLASS_static_script_executed": false,
+    "full_Aeff_Jacobian_calculated": false,
+    "G_WE_retarded_evaluated": false,
+    "coupled_physical_paired_histories_constructed": false,
+    "G_WE_nonzero_for_LW09_pair_proven": false,
+    "physical_finite_eta_normalization": false,
+    "DES_ACT_observation": false,
+    "LW03_radial_FAIL_preserved": true,
+    "LW05_full_LOS_BLOCK_preserved": true
+  }
+}
