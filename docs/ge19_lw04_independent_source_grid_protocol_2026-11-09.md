@@ -49,3 +49,28 @@ echo "EXIT=\${PIPESTATUS[0]}"
 ```
 
 Expected results `results/ge19_lw04_source_grid_refinement_20261109.{json,npz,log}`, all under the existing local WSL checkout. For a code/compatibility failure, preserve the failed log; only change implementation if a discrete bug is demonstrated. No CLASS source modification or forcing rerun is permitted.
+
+## First LW04 local attempt — no CLASS solve started; projected-z count assertion corrected
+
+The uploaded `ge19_lw04_source_grid_refinement_20261109.log` contains a Python exception `GE19_LW04_LW03_REFERENCE_QUERY_Z_CHANGED` at the preflight comparison `query_z.size == 262`; no `GE19_LW04_CLASS_RUN` message appears. It does **not** show a Linux OOM kill or a CLASS numerical failure. Parent LW01/LW03 classifications and the frozen LW04 physical/numerical test parameters remain unchanged.
+
+Independent read of the previously uploaded `ge19_lw03_source_time_closure_20261109_kprefixfix.npz` shows four 65-point `z_ell_100/150/200/300` arrays with **257 distinct projection z values**. Original LW03 built its 262-point `query_z` by adding the eight original native z nodes, five of which were not already in these four projection arrays; these five additional source-control nodes were **not archived** in the NPZ. LW04 only promises to replay the exact archived projection paths, not all original LW03 native-control nodes. The new script now strictly checks the four 65-point monotonically increasing finite paths and their **257-element union**. Implementation repair: commit `9627691113ba0c39f1b843339a85bd52a10af1be`. No predata change.
+
+An interactive WSL/Ubuntu terminal can **close entirely** if `set -euo pipefail` was run before a command exits nonzero. For researcher reruns, **do not set `-e` interactively**: use `set +e` to ensure the terminal stays open and `set -o pipefail` to preserve a reliable exit status from `python | tee`. Actual operating-system crash is **not** established from this log.
+
+Rerun with a fresh namespaced output prefix `results/ge19_lw04_source_grid_refinement_20261109_zunionfix` and a new log, preserving the previous first-attempt log. Use only the same frozen CLASS and Drude forcing; no Actions.
+
+```bash
+cd ~/aest-memory-gravity
+set +e
+git pull --ff-only
+source .venv/bin/activate
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+python3 -u -m ge19.lw04_source_grid_refinement_20261109 --self-test
+set -o pipefail
+python3 -u -m ge19.lw04_source_grid_refinement_20261109 \
+  --class-root "$PWD/class_v077" \
+  --output-prefix results/ge19_lw04_source_grid_refinement_20261109_zunionfix \
+  2>&1 | tee results/ge19_lw04_source_grid_refinement_20261109_zunionfix.log
+echo "EXIT=${PIPESTATUS[0]}"
+```
