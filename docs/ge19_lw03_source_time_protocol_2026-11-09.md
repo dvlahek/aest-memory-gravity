@@ -47,3 +47,11 @@ echo "EXIT=${PIPESTATUS[0]}"
 ```
 
 Expected `results/ge19_lw03_source_time_closure_20261109.{json,npz}`; if failed, upload log. No Actions.
+
+## First local preflight outcome: implementation-only guard bug (no CLASS runs)
+
+The first local researcher execution returned `GE19_LW03_SOURCE_TIME_SYNTHETIC_SELFTEST_PASS`, then immediately stopped before the first baseline CLASS run with `GE19_LW03_PREDATA_NOT_LOCKED`, `EXIT=1`. The frozen JSON `classification` field is the **object** of outcome labels (pass/fail/implementation). The Python script mistakenly expected that same field to be a single protocol-label string. This inconsistency occurred when the original predata was authored; it does not invalidate the preregistered numerical thresholds or require changing the frozen JSON.
+
+Implementation-only repair commit `a1a688c82e9992b774feee077fe06ee726a80cdd`: explicitly lock the unchanged predata **Git blob SHA-1** `f66323370f526faa3e4587795d91e72d4bd68c0b` and verify the original outcome-label object. The output report distinguishes intended protocol label from frozen outcome labels. No physical parameter, CLASS source, forcing, model, scientific gate or sampling definition changed. The failed first run did **not** reach CLASS; no LW03 science outcome exists yet.
+
+Corrected local execution may use a fresh output prefix `results/ge19_lw03_source_time_closure_20261109_guardfix` and a fresh log with suffix `_guardfix.log`, preserving earlier log evidence.
