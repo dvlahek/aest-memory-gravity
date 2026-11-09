@@ -126,7 +126,11 @@ def preflight(class_root):
         require(p.exists(),"PARENT_MISSING_"+name)
         head=git(["rev-parse","HEAD:"+name],ROOT)
         work=git(["hash-object",str(p)],ROOT)
-        require(head==want and work==want,"PARENT_BLOB_CHANGED_"+name)
+        # v077's original workflow can change only the working INI lensing
+        # switch from yes to no. Freeze that input from HEAD and never use
+        # an inadvertently edited working copy for the forcing trace.
+        require(head==want and (work==want or name=="v019/ini/aest_exp.ini"),
+                "PARENT_BLOB_CHANGED_"+name)
         blobs[name]=head
     require(class_root.is_dir(),"CLASS_ROOT_MISSING")
     require((class_root/"class").is_file(),"CLASS_EXE_MISSING")
@@ -150,7 +154,8 @@ def forcing_once(class_root,prefix):
     force=Path(str(prefix)+"_forcing_force.dat")
     for p in (trace,log,ini,summary,force):
         require(not p.exists(),"OUTPUT_EXISTS_"+str(p))
-    txt=v63.rewrite_ini(v63.BASE.read_text(),
+    frozen_ini=git(["show","HEAD:v019/ini/aest_exp.ini"],ROOT)
+    txt=v63.rewrite_ini(frozen_ini,
                         "output/"+prefix.name+"_forcing_trace_")
     # The frozen v077 workflow explicitly uses lensing=no.
     if re.search(r"(?m)^\s*lensing\s*=",txt):
@@ -205,8 +210,6 @@ def compute_run(force,lam):
             "k_per_decade_for_bao":560.0,
             "P_k_max_h/Mpc":2.0,"z_max_pk":5.0,
         })
-        # v075/v077 use fixed requested k in 1/Mpc:
-        pars["k_output_values"]=", ".join(f"{kh*H:.17g}" for kh in REQ_KH)
         c=Class()
         c.set(pars)
         c.compute()
