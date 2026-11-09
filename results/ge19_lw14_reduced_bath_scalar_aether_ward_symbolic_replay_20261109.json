@@ -1,0 +1,61 @@
+{
+  "classification": "GE19_LW14_REDUCED_LINEAR_BATH_SCALAR_AETHER_WARD_PASS_TOTAL_ACTION_CLOSURE_OPEN",
+  "performed_at": "2026-11-09",
+  "actual_method": "Independent exact SymPy 1.14.0 check on original NL0B one-mode reduced quadratic potential; 6 direct gate evaluations. GitHub canonical SHA-check program separately committed but not executed in researcher's WSL.",
+  "prior_work_warning": "The scalar–aether Ward relation and no-extra-independent-scalar-source were already classified NL0B Identity 7 PASS, not a novel theoretical discovery. GE19 G2B and H4F1 independently show distinct prior restricted spatial-diffeomorphism Ward primitives. This is only explicit source algebra and negative control.",
+  "frozen_protocol": {
+    "commit": "f30c322eff1fa3e0c242fedfac28bea0cc02d830",
+    "git_blob": "b81c6399ae18ef609a40043fcd946a4b101e9826"
+  },
+  "source_documents": {
+    "original_NL0B_result_blob": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "original_NL0B_predata_blob": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "canonical_action_note_blob": "d4a774074ad6c69142bb6f00f5426949e98ca67b",
+    "original_memory_patch_blob": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "original_AeST_patch_blob": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "original_LW13_doc_blob": "19f51583aee9e2aedc2aa186c3eec37d68d7d1bc"
+  },
+  "normalized_single_mode": {
+    "driver": "chi=varphi+Q alpha, X_L=kappa chi, kappa=k/a",
+    "potential": "Lpot=-eta/4*(omega*q-sqrt(w)*kappa*(varphi+Q*alpha))**2",
+    "B_chi": "w*chi-omega*sqrt(w)*q/kappa",
+    "Euler_varphi": "-eta*kappa**2*B_chi/2",
+    "Euler_alpha": "-eta*Q*kappa**2*B_chi/2",
+    "exact_Ward": "Euler_alpha-Q*Euler_varphi=0",
+    "Hessian_phi_alpha": "-eta*w*kappa**2/2 * [[1,Q],[Q,Q**2]]",
+    "Hessian_rank": 1,
+    "null_direction": [
+      "-Q",
+      "1"
+    ],
+    "source_vector_normalization_caution": "The CLASS spatial-aether E_rhs scalar potential has gradient and aether normalization removed and should not be numerically equated to unprojected quadratic Euler_phi or Euler_alpha coefficients."
+  },
+  "checks": {
+    "chi_invariant_reduced_direction": true,
+    "Euler_varphi_matches_completed_square_Bchi": true,
+    "Euler_alpha_equals_Q_Euler_varphi": true,
+    "Hessian_rank_one": true,
+    "Hessian_annihilates_orthogonal_source_direction": true,
+    "negative_control_missing_scalar_source_fails": true,
+    "no_linear_term_in_quadratic_spatial_action": true
+  },
+  "observed_scientific_boundary": {
+    "full_covariant_metric_variation_newly_computed": false,
+    "original_NL0B_linear_stress_null_already_established": true,
+    "complete_action_Noehter_with_constraints_varied": false,
+    "full_AeST_scalar_and_aether_CLASS_dictionary_derived": false,
+    "actual_physical_total_J_D_J_T_from_action_evaluated": false,
+    "all_CLASS_approximation_branches_Ward_certified": false,
+    "LW13_conditional_Hamiltonian_identity_preserved": true,
+    "LW12_partial_Jacobian_pass_preserved": true,
+    "full_Aeff_closed": false,
+    "full_retarded_metric_Green": false,
+    "physical_history_pair_metric_response": false,
+    "observational_detection": false,
+    "LW03_radial_FAIL_preserved": true,
+    "LW05_cosmic_shear_LOS_BLOCK_preserved": true,
+    "LW08_difference_UNRESOLVED_preserved": true,
+    "H4_Z21_certified": false
+  },
+  "next_gate": "Derive mapping between full AeST scalar Euler and effective fluid D,T source rows in the original CLASS convention. Verify that the bath scalar companion implied by Euler_alpha=Q Euler_varphi is included through the effective-fluid change of variables, and that physically derived J_D=J_T=0 on-shell, not assumed by writing continuity/Euler form. No new CLASS solver or measured residual analysis."
+}
