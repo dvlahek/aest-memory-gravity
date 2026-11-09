@@ -1,0 +1,89 @@
+{
+  "classification": "GE19_LINEAR_WEYL_NATIVE_20261109_PREDATA_LOCK_BEFORE_EXECUTION",
+  "created_before_result": true,
+  "prior_source_result_informed": true,
+  "no_observational_data": true,
+  "scientific_question": "Does the same frozen AeST+NL0B linear eta=0 externally forced tangent that passed v077 for native d_m also yield a reproducible nonzero signed native Weyl transfer derivative at matched k,z nodes?",
+  "historical_provenance": {
+    "v077": "V077_NATIVE_STATE_TANGENT_AFFINITY_PASS",
+    "v078": "V078_TIME_INTERPOLATION_OPERATOR_CLOSURE_PASS",
+    "v068": "V068_LINEAR_SCALE_MEMORY_RESPONSE_MAP_FAIL",
+    "H4": "D55CR12AD frozen H4 active shift FAIL, no Z21 certification"
+  },
+  "model": {
+    "KB": 0.0665,
+    "tauH0": 10,
+    "p": 0,
+    "CLASS_original_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "cosmology_source": "v063.theory_response_map.START and class_params",
+    "memory_construction": "original v075.build_forcing_for_resolution(class_root, R4) including control512, primary1024",
+    "eta_tangent_amplifications": [
+      10,
+      5,
+      2.5,
+      1.25
+    ],
+    "physical_eta_finite": false
+  },
+  "locked_CLASS": {
+    "output": "mPk,mTk",
+    "lensing": "no",
+    "k_per_decade_for_pk": 80,
+    "k_per_decade_for_bao": 560,
+    "P_k_max_h_per_Mpc": 2,
+    "z_max_pk": 5,
+    "k_output_values_h_per_Mpc": [
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "gauge": "newtonian"
+  },
+  "measurements": {
+    "primary": "Signed native Weyl transfer W=(phi+psi)/2 from get_transfer_and_k_and_z(output_format='class',h_units=False) at each exact CLASS native (k,z) node",
+    "controls": "Same-run native d_m and phi and psi; native source-to-Fourier matter power relation on same k,z nodes",
+    "signed_odd": "(W_plus_lambda-W_minus_lambda)/(2lambda)",
+    "signed_mean": "Arithmetic mean of all four odd estimates; no per-node ratios",
+    "even": "(W_plus+W_minus-2W_base)/(2abs(lambda)*norm_signed_mean) on primary common-node mask",
+    "window": {
+      "k_h_min": 0.03,
+      "k_h_max": 0.2,
+      "z_min": 0.2,
+      "z_max": 1.5
+    },
+    "never_interpolate_time": true,
+    "never_divide_by_local_W_or_power": true,
+    "model_vs_observation_comparison": false
+  },
+  "primary_gates": {
+    "forcing_relative_L2_max": 0.01,
+    "forcing_cosine_min": 0.9999,
+    "native_k_grid_relative_mismatch_max": 1e-12,
+    "native_z_grid_absolute_mismatch_max": 1e-12,
+    "Weyl_signed_additive_lambda_affinity_max": 0.005,
+    "Weyl_signed_additive_even_residual_max": 0.005,
+    "matter_signed_additive_lambda_affinity_max": 0.005,
+    "matter_signed_additive_even_residual_max": 0.005,
+    "native_source_matter_power_rel_max": 0.00005,
+    "all_finite": true,
+    "Weyl_tangent_global_mean_L2_vs_baseline_min": 1e-12
+  },
+  "classification_rule": {
+    "pass": "All gates PASS -> GE19_LINEAR_WEYL_NATIVE_SIGNED_TANGENT_NUMERICAL_PASS_OBSERVATIONAL_OPEN",
+    "no_signal": "Numerically coherent but mean Weyl signed tangent below 1e-12 baseline L2 -> GE19_LINEAR_WEYL_NATIVE_TANGENT_UNRESOLVED",
+    "fail": "Otherwise GE19_LINEAR_WEYL_NATIVE_SIGNED_TANGENT_NUMERICAL_FAIL",
+    "implementation_fail": "Incomplete/missing patched CLASS/forcing/original source run -> implementation failure, not physics."
+  },
+  "stop_policy": "ONE local theory-only campaign: rebuild original frozen forcing and run baseline + four plus/four minus CLASS linear runs. No parameter scan, no action edits, no reruns to tune thresholds, no H4. On FAIL archive actual result and investigate only if a discrete implementation bug can be documented; observational maps and cosmological lensing blocked.",
+  "output": "results/ge19_linear_weyl_native_tangent_20261109.{json,npz}",
+  "required_provenance": [
+    "original source Git blob locks",
+    "official pinned CLASS HEAD",
+    "exact original forcing controls",
+    "all runs same native (k,z) arrays"
+  ],
+  "claim_boundary": "At most signed native Weyl transfer numerically reproducible in a frozen CLASS setup; not an observational lensing detection or a validated line-of-sight Weyl spectrum. v068 historical FAIL unchanged."
+}
