@@ -4,6 +4,14 @@ Last updated: 2026-11-09 (living checkpoint)
 Branch: `physics-first-gravitational-elasticity`.
 This is the **canonical living GE19 checkpoint**. Read it first when resuming the GravitationalElasticy / AeST Memory Gravity project. Earlier frozen results and classifications are immutable; the 2026-10-10 snapshot is preserved at the end.
 
+## 2026-11-09: LW02 computed; radial quadrature sign UNRESOLVED
+
+Local submitted `ge19_lw02_windowed_lensing_20261109.{json,log}` successfully completed one frozen, source-plane `z_s=2`, **window-only** Born+Limber Weyl projection with original pinned CLASS geometry. Exact frozen partial relative signed tangents `(dC/deta)/C`: `ell100=-0.007596365936` (8 z nodes), `ell150=-0.019510092135` (7), `ell200=-0.002674807885` (6), `ell300=-0.001645935053` (5), `ell500=INSUFFICIENT_NATIVE_Z_SUPPORT` (2). Native k-only interpolation comparison close; **no z convergence proven**.
+
+Independent **post-run read-only audit** directly re-evaluated the original NPZ/JSON and confirmed the frozen trapezoidal outputs. Crucial new caution: Simpson and left/right positive-weight integrations on those same nonuniform 5–8 z nodes produce quantitatively discordant ratios, with some sign reversals. The original LW02 classifications/results remain untouched; **do not promote a negative lensing-sign physics claim**. Distinct ell have different k-constrained redshift windows; not a multipole trend. Full lensing power, physical sign, survey likelihood, observed signal and detection remain NOT CERTIFIED. LW01 native signed transfer theory PASS remains PASS. Original H4 and v068 failures unchanged.
+
+Detailed provenance and comparison archived at `docs/ge19_lw02_windowed_lensing_result_freeze_2026-11-09.md`. Next gate is **one physically motivated fixed-model improvement of real radial/line-of-sight sampling and k-window coverage** with its numerical accuracy preregistered; not repeated H4 numerics, model tuning or observational fitting. If native redshift interpolation cannot be reliably validated, publish only the bounded LW01 theory-side result without claiming lensing observability.
+
 ## 2026-11-09: LW01 **signed native Weyl response numerical PASS** (theory only); LW02 projection frozen
 
 **New uploaded researcher evidence:** `results/ge19_linear_weyl_native_tangent_20261109_kgridfix.{json,npz,log}`. File hashes from independently inspected uploads: JSON SHA256 `ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b`, NPZ SHA256 `56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9`, log SHA256 `c5c308a6ab80d8b3d81c4c4b079ec9e4bbf47f9cb6ea1b044c2c26847d37e839`. Original pinned CLASS HEAD `e85808324f51fc694d12e3ed7439552a3c3f9540`, original source blob locks, and all ten frozen gates TRUE.
