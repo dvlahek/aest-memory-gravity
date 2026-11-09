@@ -66,8 +66,11 @@ def background_geometry(c, native_z, archived_chi):
     chi = np.asarray(b["comov. dist."], float)
     order = np.argsort(z)
     z, chi = z[order], chi[order]
-    local = z <= 2.0
-    z, chi = z[local], chi[local]
+    # Preserve one tabulated point above z_s=2 for an interpolation
+    # bracket; CLASS does not necessarily store z=2 as an exact node.
+    end = int(np.searchsorted(z, 2.0, side="right"))
+    require(end < len(z), "BACKGROUND_SOURCE_COVERAGE")
+    z, chi = z[:end+1], chi[:end+1]
     require(len(z) >= 20 and np.all(np.diff(z) > 0) and
             np.all(np.diff(chi) > 0), "BACKGROUND_MONOTONICITY")
     require(z[0] <= native_z[0] and z[-1] >= 2.0,
