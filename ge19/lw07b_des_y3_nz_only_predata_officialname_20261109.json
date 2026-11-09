@@ -1,0 +1,41 @@
+{
+  "classification": "GE19_LW07B_CALIBRATED_DESY3_LENS_NZ_METADATA_PREEXECUTION_LOCK",
+  "created_on": "2026-11-09",
+  "data_source": "Official DES Y3A2 released 2pt MagLim and redMaGiC FITS files; read ONLY NZ_LENS and no observed two-point data or covariance.",
+  "original_DES_public_directory": "https://desdr-server.ncsa.illinois.edu/despublic/y3a2_files/datavectors/",
+  "official_maglim_file": "2pt_NG_final_2ptunblind_02_26_21_wnz_maglim_covupdate.fits",
+  "official_redmagic_file": "2pt_NG_final_2ptunblind_02_24_21_wnz_redmagic_covupdate.fits",
+  "original_handed_cosmosis_MagLim_SHA256_if_identical": "83efa43f6609ff07248b9c4e411b9ab386ec569cba402364fb21edff456e8b76",
+  "original_handed_cosmosis_redmagic_SHA256_if_identical": null,
+  "parent_lw02_json_sha256": "1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086",
+  "native_k_h": [
+    0.03,
+    0.2
+  ],
+  "native_z_span": "actual LW01/LW02 8 native z nodes, read from archived LW02 parent",
+  "h": 0.673324639084866,
+  "eval_multipoles": [
+    100,
+    150,
+    200,
+    300
+  ],
+  "true_nz_mass_in_domain_informational_threshold": 0.99,
+  "no_nz_tail_truncation": true,
+  "density_kernel_name": "NZ_LENS",
+  "allowed_to_read_observed_GAMMAT": false,
+  "allowed_to_read_COVMAT": false,
+  "allow_only_metadata_HDU": true,
+  "results": {
+    "do_report": "For each calibrated lens n(z) kernel compute fraction of its normalized n(z) mass inside native z interval, and inside k,z intersection for each preregistered ell; report source file hash and read-only schema.",
+    "no_go": "Even >=99% true n(z) kernel mass does NOT authorize gamma_t(theta) or pseudoCl observable: broad angular windows, leakage, source n(z), nonlinear bias, gauge, physical eta, cross spectrum must separately pass. Missing 1% contribution cannot be set to zero without physical bound.",
+    "prohibit": "no observed two-point values, no likelihood fit, no posthoc choice based on observed residuals, no CLASS re-execution"
+  },
+  "recorded_preexecution_source_identifier_correction": {
+    "original_predata_git_blob_sha1": "a3b34e070eef54c18bd0355d37209f6c9e08d92c",
+    "original_predata_path": "ge19/lw07b_des_y3_nz_only_predata_20261109.json",
+    "reason": "Official DES NCSA directory lists redmagic file with `_wnz_redmagic_covupdate.fits`, not third-party Cobaya mirror's `_wnz_covupdate.v2.fits`. Corrected before any DES NZ_LENS values were accessed.",
+    "official_index": "https://desdr-server.ncsa.illinois.edu/despublic/y3a2_files/datavectors/",
+    "scientific_gates_changed": false
+  }
+}
