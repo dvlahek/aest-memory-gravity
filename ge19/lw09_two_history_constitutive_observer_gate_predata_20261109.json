@@ -1,0 +1,57 @@
+{
+  "classification": "GE19_LW09_TWO_HISTORY_CAUSAL_CONSTITUTIVE_TEST_PRELOCK",
+  "date": "2026-11-09",
+  "scientific_question": "Can original NL0B positive continuum Drude bath distinguish two compactly supported source histories with identical instantaneous X and all finite derivatives, and does existing evidence certify a distinct gauge-invariant metric observable for such histories?",
+  "awareness": "Post-pulse negative counterresponse is ALREADY derived in docs/ge19_physics_first_positive_drude_cosmological_algebraic_memory_tail_2026-11-09.md. Here the extension is smooth compact support/all-jets proof and an explicit coupled-observer conditional operator, not a claim of new exact Drude kernel.",
+  "original_model": {
+    "covariant_driver": "X_mu=h_mu^nu nabla_nu phi",
+    "linear_fourier_driver": "X_L=(k/a)chi",
+    "backreaction": "Delta E_rhs=-(eta Q/2)B_chi_raw",
+    "kernel": "K_H(s)=tau sqrt[s(s+3H)]/(1+tau sqrt[s(s+3H)])",
+    "fixed_constant_H_only": true,
+    "positive_continuum": true,
+    "retarded_relaxed_state": true
+  },
+  "analytically_predeclared_two_histories": {
+    "observation_time_t0": 0,
+    "history_zero": "X0(t)=0 all t",
+    "history_pulse": "X1(t)=Xamp exp[4 - 1/(u(1-u))] for -T<t<-eps, u=(t+T)/(T-eps), and 0 otherwise",
+    "choose_dimensionless_example": {
+      "H": 0.12,
+      "tau": 1.7,
+      "T": 5,
+      "eps": 0.5,
+      "Xamp": 1
+    },
+    "must_prove": "X1 and X0 and all temporal derivatives coincide exactly at t0, but B1(0)=integral_{-T}^{-eps} f'_H(-s) X1(s) ds<0, B0(0)=0.",
+    "strict_local_competitors": "Any finite-derivative instantaneous constitutive function F(t,X(t),X'(t),...,X^(N)(t)) with F(t,0,...,0)=0 cannot reproduce the nonzero B1(0). A local Markov formulation with hidden q_j CAN, and general additive/history-dependent alternatives CAN.",
+    "spectral_representation": "f_H(t)=Z exp(-alpha t)+int_0^{3H}rho_H(lam)exp(-lam t)dlam; positive rho and Z imply f'_H(t)<0.",
+    "exact_bound": "for T>eps>0 and nonnegative pulse, (-f'_H(T))*int X <= -B1(0) <= (-f'_H(eps))*int X."
+  },
+  "frozen_numerical_selftest": {
+    "method": "Gaussian quadrature of regularized theta continuum spectrum and smooth compact bump, two independent quadrature orders",
+    "quadrature_nodes": [
+      96,
+      192
+    ],
+    "relative_agreement_max": 1e-8,
+    "source_support_check": true,
+    "all_jets_equal_analytically": true,
+    "strict_negative_memory": true,
+    "exact_bounds_pass": true,
+    "no_CLASS": true,
+    "no_observational_data": true
+  },
+  "observer_bridge": {
+    "gauge": "X_mu background zero => linear delta X_mu gauge invariant by Stewart-Walker; B_mu background zero => linear B_mu gauge invariant; Bardeen Weyl W gauge invariant. Scalar amplitude/gauge dictionary must be kept explicit.",
+    "formal_equation": "L0 deltaZ = J[-Q B_chi_raw/2], deltaW = P_W deltaZ, solved with retarded Green including constraints and original fixed initial data.",
+    "requirement": "Show a nonzero physical causal source-to-Weyl observer functional under two dynamically admissible histories with identical chosen observable instantaneous descriptors; this is NOT established by bath theorem or LW01 one-history tangent alone.",
+    "no_go": "No new gauge-invariant observed metric difference, no DES likelihood, no detection, no finite eta, no extrapolation from constant H to actual evolving FLRW."
+  },
+  "proposed_result_labels": {
+    "bath_pass": "GE19_LW09_SMOOTH_TWO_HISTORY_BATH_MEMORY_PASS_METRIC_OBSERVER_OPEN",
+    "bath_fail": "GE19_LW09_TWO_HISTORY_BATH_NUMERICAL_OR_ANALYTIC_FAIL",
+    "observer_unproven": "GE19_LW09_OBSERVER_RESPONSE_NOT_ESTABLISHED"
+  },
+  "stop_policy": "One analytic and small CPU-only conditional source experiment, no new CLASS, no numerical parameter tuning. Prove/deny smooth-history property and explicit limited competitor no-go, then separate physics milestone needed for full Einstein-AeST metric observer."
+}
