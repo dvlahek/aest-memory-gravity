@@ -38,3 +38,16 @@ Primary `W` L2 differences all ~1e-5; signed derivative `TW` relative L2 differe
 5. **H4 unchanged:** original nonlinear Ward constraints and Z21 certification remain open; no earlier historical FAIL becomes PASS.
 
 **Stop/go:** Close the LW04 source-time-grid diagnostic. The next *substantive* physics gate for Nature Astronomy is not another local source-time sweep. A separate, preregistered full-support **lensing forward operator** with independent radial integration convergence and physical normalization/units must be established first. Only afterward can DES Y3 or ACT DR6 observed bandpower residuals be evaluated for a hypothesis test. Treat any future full LOS solve as a distinct program with cost/stop gates, not a retroactive LW03 repair.
+
+## Read-only LW03 LOS domain coverage diagnostic (not a signal fraction)
+
+Using the unchanged LW03 NPZ `chi_ell_*` arrays, and `chi_s=5313.976587436474 Mpc` for the illustrative thin source plane at z=2, the **linear radial distance fraction** included by the ell-dependent original LW02/LW03/LW04 native support is:
+
+| ell | low chi (Mpc) | high chi (Mpc) | retained chi-span / chi_s | excluded chi-span / chi_s |
+|---:|---:|---:|---:|---:|
+| 100 | 1035.782 | 4261.815 | 60.71% | 39.29% |
+| 150 | 1282.872 | 4261.815 | 56.06% | 43.94% |
+| 200 | 1786.006 | 4261.815 | 46.59% | 53.41% |
+| 300 | 2292.615 | 4261.815 | 37.06% | 62.94% |
+
+The included segments are not all `0<chi<chi_s` and their endpoints differ among ells. **These percentages quantify only unweighted comoving radial coverage, NOT the fraction of lensing power, derivative, observable significance or an upper bound on missing contributions.** The kernel, Weyl power, source selection, and low/high-k structure may weight the excluded segments very differently. The LW04 time-grid PASS is thus *strong evidence about one numerical axis* but does not support lifting the LOS stop-gate.
