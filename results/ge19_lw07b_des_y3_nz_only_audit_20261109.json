@@ -1,0 +1,462 @@
+{
+  "LW02_json_sha256": "1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086",
+  "classification": "GE19_LW07B_TRUE_NZ_SUPPORT_MEASURED_OBSERVATION_STILL_BLOCKED",
+  "full_angular_window_forward_model_certified": false,
+  "galaxy_source_gauge_and_bias_certified": false,
+  "native_k_h_window": [
+    0.03,
+    0.2
+  ],
+  "native_z_window": [
+    0.2476197546610166,
+    1.3852368768513288
+  ],
+  "note": "Fractions refer to calibrated lens n(z) only; geometry plus finite k,z native transfer. They are not fractions of GGL amplitude or angular bandpower. 1% tails cannot be silently discarded.",
+  "observational_detection": false,
+  "observational_likelihood_authorized": false,
+  "observed_shear_or_covariance_read": false,
+  "physical_eta_calibrated": false,
+  "predata_git_blob_sha1": "1566d00f34105497c1f1c13d8e364331d9f60fe0",
+  "rows": [
+    {
+      "bin_1based": 1,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.7146123612136736,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.7146123612136736,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.6169337913191832,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.1916738481775723,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.0030688310988656684,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "MagLim",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 2,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.9778177016183821,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9778177016183821,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9675583640163185,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.8668565618885423,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.027382855025252967,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "MagLim",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 3,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.9955732509043576,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9955732509043576,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9938522145914775,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9783863520182109,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.7296622697869247,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "MagLim",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 4,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.9967622379524206,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9967622379524206,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9963078304964734,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9927818494758363,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9755598951471407,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "MagLim",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 5,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.99590549175906,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.99590549175906,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9955583687178768,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9938187883354898,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9840444475968615,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "MagLim",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 6,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.990897779098891,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.990897779098891,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9900701973226042,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.986422491120508,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9737214974827163,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "MagLim",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 1,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.6694711128158044,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.6694711128158044,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.5626903604514176,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.03317879305702449,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 1.4641281797759694e-05,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "redMaGiC",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 2,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.9999457128419758,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999457128419758,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9998269829138413,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.8854848737671641,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 6.905248966748108e-05,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "redMaGiC",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 3,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.9999921283292333,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999921283292333,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999879377022005,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999316413685239,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.45813786009291924,
+          "informational_fraction_ge_0p99": false,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "redMaGiC",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 4,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 0.9999983963417072,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999983963417072,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999983799761685,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999969504738138,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9993458280992968,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "redMaGiC",
+      "survey_likelihood_eligible": false
+    },
+    {
+      "bin_1based": 5,
+      "calibrated_nz_tails_zeroed": false,
+      "ell_angular_window_validated": false,
+      "fraction_of_calibrated_nz_mass_in_native_z_window": 1.0,
+      "per_ell": [
+        {
+          "ell": 100,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 1.0,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.2476197546610166,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 150,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 1.0,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.26893672101306687,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 200,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9999967499961255,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.36898213323855233,
+          "supported_z_upper": 1.3852368768513288
+        },
+        {
+          "ell": 300,
+          "fraction_of_calibrated_nz_mass_inside_kz_domain": 0.9998394577337746,
+          "informational_fraction_ge_0p99": true,
+          "supported_z_lower": 0.5857171581158883,
+          "supported_z_upper": 1.3852368768513288
+        }
+      ],
+      "sample": "redMaGiC",
+      "survey_likelihood_eligible": false
+    }
+  ],
+  "source_files": [
+    {
+      "NZ_LENS_bin_count": 6,
+      "NZ_LENS_z_min_max": [
+        0.005,
+        1.585
+      ],
+      "file": "2pt_NG_final_2ptunblind_02_26_21_wnz_maglim_covupdate.fits",
+      "sample": "MagLim",
+      "sha256": "83efa43f6609ff07248b9c4e411b9ab386ec569cba402364fb21edff456e8b76"
+    },
+    {
+      "NZ_LENS_bin_count": 5,
+      "NZ_LENS_z_min_max": [
+        0.0,
+        6.0
+      ],
+      "file": "2pt_NG_final_2ptunblind_02_24_21_wnz_redmagic_covupdate.fits",
+      "sample": "redMaGiC",
+      "sha256": "a72a8ee02fa72474ad859edab27d946991901e3d9a5bdc95cc9a961b244a32a6"
+    }
+  ]
+}
