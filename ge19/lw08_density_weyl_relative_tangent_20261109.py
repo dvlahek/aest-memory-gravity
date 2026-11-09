@@ -35,8 +35,9 @@ def selftest():
     td=np.array([.3,.4,.6]);tw=np.array([.7,.8,.9])
     s=td*w+d*tw
     a=d*tw-td*w
-    require(np.array_equal(s+a,2*d*tw) and
-            np.array_equal(s-a,2*td*w), "SELFTEST_SUM_DIFFERENCE")
+    require(np.allclose(s+a,2*d*tw,rtol=1e-14,atol=1e-14) and
+            np.allclose(s-a,2*td*w,rtol=1e-14,atol=1e-14),
+            "SELFTEST_SUM_DIFFERENCE")
     require(np.all(np.isfinite(a)),"SELFTEST_FINITE")
     print("GE19_LW08_ANTISYMMETRIC_SYMMETRIC_SYNTHETIC_PASS",flush=True)
 
