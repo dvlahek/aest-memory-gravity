@@ -1,0 +1,133 @@
+{
+  "AeST_metric_state_Jacobian_partial_5x5": [
+    [
+      "3*Hconf*(-c2 + w)",
+      "(2*Hconf*KB*Q*c2*k2 - 4*Hconf*Q*c2*k2 + 9*a**3*g**2*rho**2 - 2*a*g*k2*rho)/(2*a*k2*rho)",
+      "Hconf*Q*c2*k2*(KB - 2)/(a**2*rho)",
+      "-Hconf*KB*c2*k2/(a**2*rho)",
+      "-3*Hconf*g"
+    ],
+    [
+      "c2*k2/g",
+      "(9*Hconf*a*c2*g*rho - 3*Hconf*a*g*rho - KB*Q*c2*k2 + 2*Q*c2*k2)/(3*a*g*rho)",
+      "-Q*c2*k2**2*(KB - 2)/(3*a**2*g*rho)",
+      "KB*c2*k2**2/(3*a**2*g*rho)",
+      "k2"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "a",
+      "-a"
+    ],
+    [
+      "Q*a*c2*(KB - 2)/(KB*g)",
+      "Q*(3*Hphys*KB*a**2*g*rho - 6*Hphys*a**2*g*rho - KB**2*Q*c2*k2 + 3*KB*Q*a**2*g*rho + 4*KB*Q*c2*k2 + 3*KQ*a**2*g*rho - 6*Q*a**2*g*rho - 4*Q*c2*k2)/(3*KB*g*k2*rho)",
+      "-Q*(9*Hphys*KB*a**2*c2*g*rho - 3*Hphys*KB*a**2*g*rho - 18*Hphys*a**2*c2*g*rho + 6*Hphys*a**2*g*rho + KB**2*Q*c2*k2 - 3*KB*Q*a**2*g*rho - 4*KB*Q*c2*k2 - 3*KQ*a**2*g*rho + 6*Q*a**2*g*rho + 4*Q*c2*k2)/(3*KB*a*g*rho)",
+      "-(3*Hconf*a*g*rho - KB*Q*c2*k2 + 2*Q*c2*k2)/(3*a*g*rho)",
+      "0"
+    ],
+    [
+      "0",
+      "3*a**2*g*rho/(2*k2)",
+      "0",
+      "0",
+      "-Hconf"
+    ]
+  ],
+  "C_A2_eE": "KB*c2*k2/2",
+  "C_A_eE": "0",
+  "C_eE": "0",
+  "DES_ACT_detection": false,
+  "Einstein_Hamiltonian_Noether_constraint_propagation_certified": false,
+  "G_WE_impulse_leading_short_lag_coefficient_Delta2": "KB*c2*k2/4",
+  "H4_Z21_certified": false,
+  "LW03_radial_quadrature_FAIL_preserved": true,
+  "LW05_cosmic_shear_LOS_BLOCK_preserved": true,
+  "LW08_antisymmetric_response_UNRESOLVED_preserved": true,
+  "LW10_sha256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851",
+  "SymPy_version": "1.14.0",
+  "W_external_shear_observer_coefficient": -0.5,
+  "W_state_observer": [
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "basis": [
+    "delta_A",
+    "theta_A",
+    "alpha_A",
+    "E_A",
+    "Phi"
+  ],
+  "checks": {
+    "C_A2_eE_equals_c2KBk2_over_2": true,
+    "C_A_eE_equals_zero": true,
+    "C_eE_equals_zero": true,
+    "both_external_source_columns": true,
+    "exact_all_five_rows": true,
+    "physical_source_coefficient_explicit_KB_cancels": true,
+    "pressure_direct_E": true,
+    "weyl_phi_plus_shear_observer": true
+  },
+  "classification": "GE19_LW12_EXACT_AEST_PHI_DIRECT_JACOBIAN_BLOCK_PASS_FULL_AEFF_OPEN",
+  "definitions": {
+    "L": "c_a\u00b2*k\u00b2/(3*a\u00b2*rho_A)",
+    "M": "(3/2)*(a\u00b2/k\u00b2)*Sigma_momentum_other",
+    "Pi": "c_a\u00b2*delta_A+L*(K_B*E_A+gamma*chi)",
+    "Psi": "Phi-S",
+    "S": "(9/2)*(a\u00b2/k\u00b2)*Sigma_shear_other",
+    "beta": "3*a\u00b2*rho_A*(1+w_A)/(2*k\u00b2)",
+    "chi": "Q*(a*theta_A/k\u00b2+alpha_A)",
+    "g": "1+w_A",
+    "gamma": "2-K_B"
+  },
+  "external_stress_Jacobian_5x2": [
+    [
+      "3*Hconf*g",
+      "3*g"
+    ],
+    [
+      "-k2",
+      "0"
+    ],
+    [
+      "a",
+      "0"
+    ],
+    [
+      "0",
+      "0"
+    ],
+    [
+      "Hconf",
+      "1"
+    ]
+  ],
+  "global_Aeff_closed": false,
+  "global_retarded_G_WE_evaluated": false,
+  "historical_patch_blobs": {
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "v019w/apply_variational_forcing_patch.py": "00c3f5da5a1b7734c67c82aa9181a443736101bf"
+  },
+  "hypothetical_impulse_not_dynamically_admissible": true,
+  "number_of_smooth_state_variables": 5,
+  "original_CLASS_commit": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "other_species_A_AO_A_OA_A_OO_assembled": false,
+  "physical_memory_Braw_to_W_local_convolution_Delta2": "-Q*a*c2*k2/8",
+  "physical_scope": "Five-state EXACT partial AeST+Phi block with S,M external species stress. This is NOT a closed evolution because ordinary radiation, neutrino, baryon perturbations feed metric and are themselves metric-driven.",
+  "predata_git_blob_sha1": "4490f60447ffc21204cad5763097a0fbc62c5904",
+  "source_column_eE": [
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
+  "source_perturbation": "F_E = -a Q B_chi_raw/(2K_B) in E' only at eta=0",
+  "two_physical_history_pair_certified": false
+}
