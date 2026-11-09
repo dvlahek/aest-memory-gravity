@@ -1,0 +1,56 @@
+{
+  "classification": "GE19_LW10_ACTION_BRIDGE_E_SOURCE_TO_WEYL_STRUCTURAL_PRELOCK",
+  "date": "2026-11-09",
+  "intent": "Audit the exact code-implemented linear source-to-metric chain and derive the formal constrained retarded state-space Green operator, with explicit limits on nonzero observability claims. No physical source pair simulation.",
+  "source_refs": {
+    "official_class_repo": "lesgourg/class_public",
+    "class_pinned_head": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "official_source": "source/perturbations.c",
+    "original_aest_patch": "v019/apply_patch_v019.py",
+    "original_memory_patch": "v019j/apply_memory_patch.py",
+    "variational_tangent_patch": "v019w/apply_variational_forcing_patch.py",
+    "source_action_doc": "docs/nl0b_covariant_memory_completion_result.md",
+    "prior_two_history_doc": "docs/ge19_lw09_two_history_causal_source_vs_metric_observer_2026-11-09.md"
+  },
+  "target_source_identity": {
+    "E_prime_injection": "dy[index_pt_E_aest] += external_tangent_force",
+    "exact_physical_eta_tangent_F_E": "-a(t)*Q(t)*B_chi_raw/(2*K_B)",
+    "chi": "Q*(a*theta_A/k²+alpha_A)",
+    "pressure": "Pi_A=c_a² delta_A+c_a² k²/(3a² rho_A)*(K_B E_A+(2-K_B)chi)",
+    "theta_euler": "theta_A_prime=(3c_a²-1) H_conf theta_A + k² Pi_A/(1+w_A)+k² Psi",
+    "density": "delta_A_prime=3 H_conf (w_A delta_A-Pi_A)-(1+w_A)*(theta_A-3Phi_prime)",
+    "alpha": "alpha_A_prime=a*(E_A-Psi)",
+    "psi_constraint": "Psi=Phi-(9/2)(a²/k²)Sigma_shear",
+    "phi_momentum": "Phi_prime=-H_conf Psi+(3/2)(a²/k²)Sigma_theta",
+    "Weyl": "W=(Phi+Psi)/2"
+  },
+  "derivation_claim": {
+    "direct_partial_pressure_E": "c_a²*K_B*k²/(3*a²*rho_A)",
+    "direct_partial_theta_prime_E": "c_a²*K_B*k^4/(3*a²*rho_A*(1+w_A))",
+    "direct_partial_delta_prime_E": "-H_conf*c_a²*K_B*k²/(a²*rho_A)",
+    "direct_partial_alpha_prime_E": "a",
+    "direct_partial_phi_prime_theta_A_at_fixed_others": "(3/2)*(a²/k²)*(rho_A+p_A)",
+    "matrix_form": "u_prime=A_eff(k,t)u+e_E F_E(k,t), W=C_W(k,t)u, G_WE(k;t,s)=C_W(k,t)U_A(k;t,s)e_E, U_A time-ordered state transition",
+    "caution": "Source arrows are entries in implemented state Jacobian; they do not prove full constrained Green kernel nonzero or two arbitrary X histories admissible. A_eff not explicitly assembled yet. Other species neutrino anisotropic stress, field constraints and approximation switches must remain included."
+  },
+  "frozen_verification_gates": {
+    "official_pinned_CLASS_HEAD": true,
+    "source_has_psi_shear_equation": true,
+    "source_has_phi_prime_theta_equation": true,
+    "source_has_phi_state_derivative": true,
+    "original_patch_has_Pi_E": true,
+    "original_patch_has_theta_Euler": true,
+    "original_patch_has_alpha_E": true,
+    "original_patch_has_effective_fluid_stress": true,
+    "signed_external_force_exact_injected_E": true,
+    "no_new_CLASS_run": true,
+    "no_observational_data": true,
+    "no_H4": true
+  },
+  "outcome_labels": {
+    "structural_pass": "GE19_LW10_IMPLEMENTED_E_TO_METRIC_STRUCTURAL_PATH_PASS_FULL_GREEN_UNCERTIFIED",
+    "structural_fail": "GE19_LW10_SOURCE_CLOSURE_STRUCTURE_OR_PROVENANCE_FAIL",
+    "observational": "GE19_LW10_METRIC_HISTORY_PAIR_OBSERVATION_NOT_CERTIFIED"
+  },
+  "stop_rule": "Only read-only static examination of frozen original code and pinned CLASS patch. No claimed retarded observer Green function numerically evaluated; no artificially prescribed histories substituted into physical cosmology. Any PASS is only structural, not full action/ward certification, actual Weyl pair proof or detection."
+}
