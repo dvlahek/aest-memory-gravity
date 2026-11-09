@@ -1,0 +1,47 @@
+{
+  "classification": "GE19_LW11_CONDITIONAL_SHORT_LAG_SOURCE_TO_WEYL_GREEN_JET_PREDATA",
+  "date": "2026-11-09",
+  "provenance": {
+    "class_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "class_perturbations_blob": "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0",
+    "aest_v019_patch_blob": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "aest_v019j_patch_blob": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "aest_v019w_patch_blob": "00c3f5da5a1b7734c67c82aa9181a443736101bf",
+    "local_LW10_uploaded_SHA256": "10e8dd7f3eaa988a48966ce7892e1da653f4215c4ce09499a4c62981cf350851"
+  },
+  "goal": "Derive the first potentially nonzero short-time Taylor coefficient of the retarded source-to-Weyl Green response for the original AeST E' force in a smooth fixed Newtonian scalar approximation branch; explicitly flag what a leading coefficient does NOT prove.",
+  "assumptions": [
+    "Fixed k>0, smooth original eta=0 FLRW background and consistent initial state",
+    "The local state-space linearization and original Einstein constraints hold, with no approximation-regime switch across the infinitesimal time interval",
+    "AeST effective fluid has no directly induced anisotropic shear from E at this order",
+    "Other species' shear perturbations and their first two temporal source derivatives have no direct E coefficient at the same instant, as expected from the exact Newtonian-gauge Einstein+AeST code",
+    "Q, a, rho_A, w_A, K_B and c_a² are finite, rho_A>0, 1+w_A>0, K_B>0; to conclude nonzero, require c_a²>0",
+    "Unit delta impulse in external F_E is a mathematical linear-system probe, NOT an admissible physical perturbation of X or bath history",
+    "Normalizations use CLASS conformal time and its total-fluid stress conventions, not a physical-lensing eta amplitude"
+  ],
+  "exact_algebra": {
+    "pressure_dE": "P_E=c_a² K_B k²/(3a²rho_A)",
+    "theta_prime_dE": "T_E=k² P_E/(1+w_A)",
+    "Phi_prime_dtheta": "M_theta=(3/2)*(a²/k²)*rho_A*(1+w_A)",
+    "Phi_second_dE": "M_theta*T_E=(1/2)c_a² K_B k²",
+    "W_impulse_leading_term": "G_WE(t,s)=(1/4)c_a²(s) K_B k² (t-s)²+o((t-s)²), provided shear's direct E short-time jet through this order vanishes",
+    "caution": "This is only the local nonzero Taylor jet of a mathematically independent external F_E->W control transfer. It is not the actual global Green solution and no physical X-history pair has been certified."
+  },
+  "locked_gates": {
+    "pinned_source_blob_exists": true,
+    "original_Pi_dE_identity": true,
+    "original_theta_prime_pressure_identity": true,
+    "original_phi_prime_momentum_identity": true,
+    "original_phi_state_derivative_identity": true,
+    "no_direct_AeST_anisotropic_shear_source": true,
+    "physically_correct_relaxed_source_in_Eprime": true,
+    "exact_symbolic_cancellation_of_a_rho_w": true,
+    "no_CLASS_solve": true,
+    "no_DES_ACT_values": true
+  },
+  "outcomes": {
+    "structural_local_jet": "GE19_LW11_CONDITIONAL_LOCAL_E_TO_WEYL_GREEN_TAYLOR_JET_DERIVED_NOT_GLOBAL",
+    "blocked": "GE19_LW11_LOCAL_GREEN_JET_ASSUMPTIONS_OR_SOURCE_FAIL"
+  },
+  "stop": "If any direct instantaneous E->other-species shear terms, additional metric source terms, or approximation-specific constraint structure invalidate the Taylor jet, publish only the conditional algebra and DO NOT assert nonzero physical Green. Even a positive local jet does not establish full nonlinear action Ward closure or astronomical detection."
+}
