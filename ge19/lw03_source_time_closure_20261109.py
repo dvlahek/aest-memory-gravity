@@ -172,8 +172,22 @@ def main():
         return
     require(args.class_root is not None,"CLASS_ROOT_REQUIRED")
     pre = json.loads(PRE.read_text())
-    require(pre["classification"]==
-            "GE19_LW03_OFFNATIVE_SOURCE_TIME_REPLAY_PREDATA_LOCKED",
+    # Frozen JSON uses "classification" for its outcome-label mapping.
+    # The originally intended protocol label is not the value of that
+    # field. Lock the Git blob and the actual outcome labels instead;
+    # do not edit or re-freeze the already committed predata.
+    predata_blob = subprocess.check_output(
+        ["git", "hash-object", str(PRE)], text=True).strip()
+    require(predata_blob == "f66323370f526faa3e4587795d91e72d4bd68c0b",
+            "PREDATA_BLOB_CHANGED")
+    outcomes = pre.get("classification")
+    require(isinstance(outcomes, dict) and
+            outcomes.get("pass") ==
+              "GE19_LW03_CLASS_SOURCE_TIME_OPERATOR_CONSISTENT_WINDOW_QUADRATURE_PASS_FULL_LOS_OPEN" and
+            outcomes.get("fail") ==
+              "GE19_LW03_SOURCE_TIME_OPERATOR_OR_RADIAL_QUADRATURE_FAIL" and
+            outcomes.get("implementation") ==
+              "GE19_LW03_IMPLEMENTATION_BLOCKED",
             "PREDATA_NOT_LOCKED")
     require(pre["projection"]["ells"]==[100,150,200,300,500] and
             pre["projection"]["chi_sampling_nested"]==[17,33,65],
@@ -349,7 +363,9 @@ def main():
                     "GE19_LW03_SOURCE_TIME_OPERATOR_OR_RADIAL_QUADRATURE_FAIL")
     final={
         "classification":classification,
-        "predata_classification":pre["classification"],
+        "predata_protocol":"GE19_LW03_OFFNATIVE_SOURCE_TIME_REPLAY_PREDATA_LOCKED",
+        "predata_outcome_labels":pre["classification"],
+        "predata_git_blob_sha1":predata_blob,
         "parent_sha256":{"lw01_json":sha256(j1),"lw01_npz":sha256(p1),
                          "lw02_json":sha256(j2),"forcing":sha256(force)},
         "numerical_diagnostics":{"source_time_native_baseline_relative_L2":base_rel,
