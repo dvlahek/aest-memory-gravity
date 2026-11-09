@@ -55,3 +55,13 @@ The first local researcher execution returned `GE19_LW03_SOURCE_TIME_SYNTHETIC_S
 Implementation-only repair commit `a1a688c82e9992b774feee077fe06ee726a80cdd`: explicitly lock the unchanged predata **Git blob SHA-1** `f66323370f526faa3e4587795d91e72d4bd68c0b` and verify the original outcome-label object. The output report distinguishes intended protocol label from frozen outcome labels. No physical parameter, CLASS source, forcing, model, scientific gate or sampling definition changed. The failed first run did **not** reach CLASS; no LW03 science outcome exists yet.
 
 Corrected local execution may use a fresh output prefix `results/ge19_lw03_source_time_closure_20261109_guardfix` and a fresh log with suffix `_guardfix.log`, preserving earlier log evidence.
+
+## Second local runtime outcome: full scalar-k grid versus Fourier native-k prefix
+
+The next local run passed `GE19_LW03_SOURCE_TIME_SYNTHETIC_SELFTEST_PASS`, constructed the CLASS baseline and had `query_z_count=262`, then stopped during the first `get_transfer(z)` due to `GE19_LW03_CLASS_K_GRID_SHAPE` (`EXIT=1`). No signed +2.5/-2.5 runs or radial integration followed; no science result was produced.
+
+**Source-level root cause:** official pinned CLASS `python/classy.pyx` uses `self.pt.k_size[index_md]` for the full scalar perturbation `get_transfer(z)` output, but `self.pt.k_size_pk` for the native Fourier-grid `get_transfer_and_k_and_z`. The latter samples the **initial prefix** of `self.pt.k[index_md]`, not every scalar mode. LW03 incorrectly demanded an equal number of entries.
+
+**Implementation-only repair:** commit `5ad722a521c7c38808c0d5041f655a4e9a0c35ab`. The source-time transfer `k` and Weyl arrays are restricted to the first `len(parent_native_k)` positions **only after verifying** that every shared `k) value matches the original LW01 Fourier grid at preregistered relative tolerance `1e-10`. Any prefix disagreement or too-short scalar grid aborts; no (k)-interpolation or nearest-neighbor mapping is added. Synthetic self-test now tests extra trailing modes and a deliberately wrong common-prefix mode. Frozen predata and original LW01/LW02 evidence unchanged.
+
+Run the updated script with a **new** results prefix `results/ge19_lw03_source_time_closure_20261109_kprefixfix` and retain prior failed-run logs. No CLASS recompilation necessary. This is a technical interface correction, **not** evidence for the physical lensing sign.
