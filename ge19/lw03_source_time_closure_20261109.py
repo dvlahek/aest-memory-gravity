@@ -48,14 +48,25 @@ def native_source_weyl(transfer, archived_k_h):
                  if s in transfer), None)
     require(kkey is not None and "phi" in transfer and "psi" in transfer,
             "CLASS_TRANSFER_KEYS")
-    kh = np.asarray(transfer[kkey], float)
-    require(kh.shape == archived_k_h.shape, "CLASS_K_GRID_SHAPE")
+    # classy.get_transfer(z) exposes pt.k_size[scalars] (the full scalar
+    # perturbation k array), but get_transfer_and_k_and_z() and the
+    # archived LW01 Fourier transfer use pt.k_size_pk (its INITIAL prefix).
+    # The trailing scalar modes are not LW01 Fourier nodes; never
+    # interpolate, truncate without a check, or relax k-match tolerance.
+    kh_full = np.asarray(transfer[kkey], float)
+    n_archive = archived_k_h.size
+    require(kh_full.ndim == 1 and archived_k_h.ndim == 1 and
+            kh_full.size >= n_archive, "CLASS_K_GRID_TOO_SHORT")
+    kh = kh_full[:n_archive]
     kerr = float(np.max(abs(kh-archived_k_h) /
                         np.maximum(abs(archived_k_h), TINY)))
-    W = .5*(np.asarray(transfer["phi"], float) +
-            np.asarray(transfer["psi"], float))
-    require(W.shape == kh.shape and np.all(np.isfinite(W)),
-            "WEYL_TRANSFER_NONFINITE_OR_SHAPE")
+    require(kerr <= 1.0e-10, "CLASS_NATIVE_K_PREFIX_MISMATCH")
+    phi = np.asarray(transfer["phi"], float)
+    psi = np.asarray(transfer["psi"], float)
+    require(phi.shape == psi.shape == kh_full.shape,
+            "CLASS_FULL_WEYL_TRANSFER_SHAPE")
+    W = .5*(phi[:n_archive] + psi[:n_archive])
+    require(np.all(np.isfinite(W)), "WEYL_TRANSFER_NONFINITE")
     return W, kerr
 
 
@@ -153,6 +164,27 @@ def selftest():
     levels2,_,_,same2=quadrature_levels(
         100,chi,3800.,k,W,-TW,2.1e-9,.966)
     require(same2 and levels2[65][1]<0,"SELFTEST_NEGATIVE_TANGENT")
+    # A CLASS scalar transfer may have more k modes than the archived
+    # native Fourier window. Test exact validated-prefix selection.
+    karchive = np.geomspace(0.001, 0.2, 12)
+    extra = np.array([0.21, 0.25, 0.35])
+    full = np.concatenate((karchive, extra))
+    mock = {"k (h/Mpc)":full, "phi":np.arange(15.,dtype=float),
+            "psi":np.arange(15.,dtype=float)*2.0}
+    w0, ke = native_source_weyl(mock,karchive)
+    require(w0.size==12 and ke==0 and
+            np.array_equal(w0,1.5*np.arange(12)),
+            "SELFTEST_PREFIX_EXTRA_K")
+    bad = dict(mock)
+    bad["k (h/Mpc)"] = full.copy()
+    bad["k (h/Mpc)"][4] *= 1.00001
+    try:
+        native_source_weyl(bad,karchive)
+    except RuntimeError as exc:
+        require("CLASS_NATIVE_K_PREFIX_MISMATCH" in str(exc),
+                "SELFTEST_WRONG_K_REJECTION")
+    else:
+        raise RuntimeError("GE19_LW03_SELFTEST_BAD_K_ACCEPTED")
     print("GE19_LW03_SOURCE_TIME_SYNTHETIC_SELFTEST_PASS",flush=True)
 
 
