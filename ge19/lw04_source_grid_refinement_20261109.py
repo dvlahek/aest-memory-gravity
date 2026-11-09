@@ -220,9 +220,17 @@ def main():
         for key in ("chi","z","W","TW"):
             require(f"{key}_ell_{ell}" in reference,"LW03_FIELD_MISSING")
 
+    # LW03 evaluated 262 redshifts = 257 from its four stored 65-point
+    # projection paths plus five native-z control points. Its NPZ stores
+    # ONLY the projection paths. LW04 intentionally replays those paths,
+    # and must not require the five additional unarchived control nodes.
+    for ell in ELLS:
+        zz=np.asarray(reference[f"z_ell_{ell}"],float)
+        require(zz.shape==(65,) and np.isfinite(zz).all() and
+                np.all(np.diff(zz)>0),"LW03_Z_PATH_INVALID")
     query_z=np.unique(np.concatenate([reference[f"z_ell_{e}"]
                                        for e in ELLS]))
-    require(query_z.size==262,"LW03_REFERENCE_QUERY_Z_CHANGED")
+    require(query_z.size==257,"LW03_PROJECTED_REFERENCE_QUERY_Z_CHANGED")
     h=float(v63.START["H0"])/100.
     model=dict(v63.class_params())
     model.update({
