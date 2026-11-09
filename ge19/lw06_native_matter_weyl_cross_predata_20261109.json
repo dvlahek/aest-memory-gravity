@@ -1,0 +1,93 @@
+{
+  "protocol": "GE19_LW06_SIGNED_NATIVE_MATTER_WEYL_CROSS_PREDATA_LOCKED",
+  "created_at": "2026-11-09",
+  "status": "BEFORE_NEW_LW06_NUMERICAL_RESULT",
+  "hypothesis": "Using already frozen signed LW01 CLASS native Newtonian-gauge total matter d_m and Weyl W transfers, the signed native matter-Weyl cross-power derivative is a stable numerically resolved bilinear transfer quantity under original lambda amplification, with no singular local ratios.",
+  "frozen_parent": {
+    "lw01_json_sha256": "ae49cb0d1e63d82080c092ca938beec4608afe2a0e30650b7d47b0513512014b",
+    "lw01_npz_sha256": "56172ff827d5314cbe066deaeec520f2062b4e4a646de7cb9fe509ae03c9dac9",
+    "lw05_json_sha256": "40dd40e7476816dae7f4ff81b32c72d5778ac6c8ca5c308956dd4330ef32a04a",
+    "CLASS_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "archived_classification": "GE19_LINEAR_WEYL_NATIVE_SIGNED_TANGENT_NUMERICAL_PASS_OBSERVATIONAL_OPEN",
+    "original_model": {
+      "KB": 0.0665,
+      "tauH0": 10,
+      "p": 0
+    },
+    "cosmology": {
+      "H0": 67.3324639084866,
+      "As": 2.1308864352626987e-9,
+      "ns": 0.9666229454895277,
+      "pivot_k_Mpc_inverse": 0.05
+    }
+  },
+  "sources": {
+    "code": "Original LW01 native transfer arrays (not interpolation nor CLASS rerun)",
+    "arrays": [
+      "k_native_h",
+      "z_native",
+      "primary_mask",
+      "lambdas",
+      "matter_base",
+      "matter_tangents",
+      "matter_signed_mean",
+      "weyl_base",
+      "weyl_tangents",
+      "weyl_signed_mean",
+      "phi_base",
+      "psi_base"
+    ],
+    "lambdas": [
+      10,
+      5,
+      2.5,
+      1.25
+    ],
+    "primary_native_window": {
+      "k_h_per_Mpc": [
+        0.03,
+        0.2
+      ],
+      "z": [
+        0.2,
+        1.5
+      ],
+      "n_k": 322,
+      "n_z": 8,
+      "n_nodes": 2576
+    },
+    "gauge": "original CLASS conformal Newtonian total-matter d_m and W=(phi+psi)/2",
+    "primordial_power_3D": "(2*pi**2/k_Mpc^-1**3)*As*(k_Mpc^-1/0.05)**(ns-1)",
+    "cross_power": "P_R3D * matter_base * weyl_base",
+    "cross_signed_tangent_for_lambda": "P_R3D*(matter_tangent_lambda*weyl_base + matter_base*weyl_tangent_lambda)",
+    "cross_mean": "arithmetic mean over four signed-lambda cross tangents, not a nonlinear finite eta",
+    "no_per_node_division": true,
+    "lens_projection_not_performed": true
+  },
+  "preregistered_numerical_gates": {
+    "parent_classification_and_all_gates_pass": true,
+    "parent_exact_sha256": true,
+    "parent_original_class_head": true,
+    "original_parent_mask_exact": true,
+    "exact_lambdas": true,
+    "transfer_weyl_half_phi_plus_psi_max_relative_L2": 1e-12,
+    "cross_mean_vs_mean_field_product_rule_max_relative_L2": 1e-12,
+    "linear_cross_lambda_affinity_max": 0.005,
+    "linear_cross_tangent_L2_over_baseline_min": 1e-12,
+    "algebraic_per_node_cross_power_bound_max_normalized_absolute_error": 1e-12,
+    "all_finite": true
+  },
+  "scientific_interpretation": {
+    "pass": "GE19_LW06_NATIVE_MATTER_WEYL_SIGNED_CROSS_NUMERICAL_PASS_OBSERVATIONAL_OPEN",
+    "fail": "GE19_LW06_NATIVE_MATTER_WEYL_SIGNED_CROSS_NUMERICAL_FAIL",
+    "implementation": "GE19_LW06_IMPLEMENTATION_BLOCKED",
+    "caveats": [
+      "Mathematical product of source transfer functions is conditional on a single common primordial adiabatic mode; not a demonstrated galaxy selection, tracer bias or astrophysical transfer.",
+      "Newtonian-gauge total matter d_m is not automatically the observed comoving-gauge galaxy density; gauge/source dictionary and lensing sign must be checked independently.",
+      "Lambda is a numerical source amplification, not a measured finite physical eta.",
+      "This does not provide converged redshift integral, validated source n(z), galaxy-galaxy tangential shear, angular window or a DES likelihood.",
+      "LW03 radial quadrature FAIL, LW05 full cosmic-shear LOS support BLOCK and H4/Z21 uncertified remain unchanged."
+    ]
+  },
+  "stop_rule": "Only evaluate exact archived LW01 source arrays and algebraic analytical normals. No CLASS solver, no background recomputation, no DES or ACT observed residual inspection. Freeze first-run result regardless of sign or lambda gate. No posthoc adjustment of gates."
+}
