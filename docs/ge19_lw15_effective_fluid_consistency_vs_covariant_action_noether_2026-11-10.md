@@ -6,13 +6,13 @@
 
 ## 1. Frozen provenance and independent test
 
-- Original CLASS AeST patch \`v019/apply_patch_v019.py\`, Git blob \`c78484eb916bfee2730759c0bdc813a706bf9a68\`.
-- Positive-bath injection \`v019j/apply_memory_patch.py\`, blob \`14796a5ed9e6265ed6810c792a93d7328a109364\`, whose physical memory force modifies the aether \`E_rhs_aest\` row, not direct Einstein stress.
-- Original \`v019/patch/source/aest_memory.c\`, blob \`9a522a653a1855eda3cb67e856f9fc10a1e73d54\`, defines \`rho_A=(Q K_Q-K)/3\`, \`p_A=K/3\`, \`K_Q=I0/a^3\` and \`c_a²=K_Q/(Q K_QQ)\`.
+- Original CLASS AeST patch `v019/apply_patch_v019.py`, Git blob `c78484eb916bfee2730759c0bdc813a706bf9a68`.
+- Positive-bath injection `v019j/apply_memory_patch.py`, blob `14796a5ed9e6265ed6810c792a93d7328a109364`, whose physical memory force modifies the aether `E_rhs_aest` row, not direct Einstein stress.
+- Original `v019/patch/source/aest_memory.c`, blob `9a522a653a1855eda3cb67e856f9fc10a1e73d54`, defines `rho_A=(Q K_Q-K)/3`, `p_A=K/3`, `K_Q=I0/a^3` and `c_a²=K_Q/(Q K_QQ)`.
 - Prior [NL0B eight-identity theory PASS](nl0b_covariant_memory_completion_result.md) and [LW14 rank-one scalar/aether Ward](ge19_lw14_reconcile_nl0b_linear_bath_ward_and_lw13_total_constraint_2026-11-09.md) remain in their **original** frozen scopes.
-- LW15 immutable formula protocol \`ge19/lw15_effective_fluid_action_dictionary_predata_20261110.json\` commit \`729a34c343853dd7c5616415f5e4cacc95a91b67\`, blob \`e4614f21987e1c3dd895590127525d61c7aa992e\`, created before the independent 11-gate computation.
-- Original-source-locked Python \`ge19/lw15_effective_fluid_action_dictionary_audit_20261110.py\`, commit \`c3032367d83e1bd34411b8e75717551a196dbd26\`; **not yet run in researcher's WSL**.
-- Actually executed **independent** SymPy 1.14.0 source-equation derivation: **11/11 exact algebraic gates PASS**. Saved in \`results/ge19_lw15_effective_fluid_background_conservation_independent_symbolic_20261110.json\`, commit \`68fceedae8011682dcfd909971063b643904b330\`. No CLASS solve, no observed shear residual.
+- LW15 immutable formula protocol `ge19/lw15_effective_fluid_action_dictionary_predata_20261110.json` commit `729a34c343853dd7c5616415f5e4cacc95a91b67`, blob `e4614f21987e1c3dd895590127525d61c7aa992e`, created before the independent 11-gate computation.
+- Original-source-locked Python `ge19/lw15_effective_fluid_action_dictionary_audit_20261110.py`, commit `c3032367d83e1bd34411b8e75717551a196dbd26`; **not yet run in researcher's WSL**.
+- Actually executed **independent** SymPy 1.14.0 source-equation derivation: **11/11 exact algebraic gates PASS**. Saved in `results/ge19_lw15_effective_fluid_background_conservation_independent_symbolic_20261110.json`, commit `68fceedae8011682dcfd909971063b643904b330`. No CLASS solve, no observed shear residual.
 
 ## 2. Original background identities derived independently from K(Q)
 
@@ -121,7 +121,7 @@ python3 -u -m ge19.lw15_effective_fluid_action_dictionary_audit_20261110 --self-
 set -o pipefail
 python3 -u -m ge19.lw15_effective_fluid_action_dictionary_audit_20261110 \
   2>&1 | tee results/ge19_lw15_effective_fluid_action_dictionary_audit_20261110.log
-echo "EXIT="
+echo "EXIT=${PIPESTATUS[0]}"
 ~~~
 
-The last echo is simply an optional shell status marker; it can be replaced by \`echo "LW15 check complete"\` on a shell that does not support PIPESTATUS. No new cosmological simulation is needed.
+The last echo is simply an optional shell status marker; it can be replaced by `echo "LW15 check complete"` on a shell that does not support PIPESTATUS. No new cosmological simulation is needed.
