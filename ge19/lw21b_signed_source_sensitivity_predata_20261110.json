@@ -1,0 +1,45 @@
+{
+  "classification": "GE19_LW21B_ORIGINAL_SIGNED_SOURCE_NZ_VS_NONNEGATIVE_DIAGNOSTIC_LOCK",
+  "date": "2026-11-10",
+  "status": "Post-failure robustness analysis. NOT a blind preregistration; first actual source-bin negative area was already seen in researcher log. No other source bin data or observed DES gamma_t residuals have been inspected.",
+  "known_source_input_from_log": {
+    "NZ_LENS_bins_1_to_6_integrated_negative_area": 0,
+    "NZ_SOURCE_BIN1_negative_count": 12,
+    "NZ_SOURCE_BIN1_negative_to_positive_integral": 0.00041019367457069883,
+    "NZ_SOURCE_BIN1_TV_bound": 0.00041036200246839555,
+    "original_sign_policy_limit": 0.0001,
+    "original_LW21_status": "HARD_FAIL_MUST_BE_PRESERVED"
+  },
+  "science_question": "Quantify the exact sensitivity of the purely geometric source-behind lens redshift ordering integral to signed calibrated DES NZ_SOURCE arrays rather than changing the frozen nonnegative source distribution threshold.",
+  "input": {
+    "fits_name": "2pt_NG_final_2ptunblind_02_26_21_wnz_maglim_covupdate.fits",
+    "hdu_lens": "NZ_LENS",
+    "hdu_source": "NZ_SOURCE",
+    "source_bins": 4,
+    "lens_bins": 6,
+    "lens_id": 4,
+    "ell": [
+      100,
+      150,
+      200
+    ],
+    "control_ell": 300,
+    "old_lw07b_gitblob": "5323b8457cbe7e7426c3e6eb4345183c3660cbff",
+    "old_lw20_original_sha256": "ab0b0147b4edf1a12d182628f81476e2d23443e347fe636243d51007eca962a4",
+    "original_lw21_source_blob": "cbaf749fba53be7ae612c46f8e97488d1864d4cc",
+    "original_sign_policy_gitblob": "4cd19e0ed232a0c7fe8c5673cafdc7d4c7ff4cf4"
+  },
+  "methods": {
+    "signed": "Normalize actual FITS signed source redshift response arrays by their positive signed total A-B; do not clip and do not reinterpret signed arrays as literal probability distributions.",
+    "nonnegative_comparison": "Independently normalize max(raw_nz,0) to mass A, solely for diagnostic comparison; no claim it is scientifically preferred or the official DES calibration likelihood.",
+    "geometry": "Compute P_s[z_source>z_lens] and its native lens-redshift-supported sub-integrals as functionals of the above normalized source measures, with nonnegative original MagLim lens 4.",
+    "quadrature": "For z union grid, 4-point Gauss-Legendre integrates exactly the piecewise cubic product lens n(z) times normalized signed source survival, with verified no clipping of signed integrals.",
+    "TV": "Set epsilon=B/A. Signed measure to positive-part normalized measure TV=epsilon/(1-epsilon), so for any 0<=event<=1, |I_signed-I_positive| <= TV. This is not a physical source photo-z systematic bound.",
+    "checks": "Reject nonfinite data, nonmonotonic grids, nonpositive signed total, invalid original source data hash. Report all four bins and all ells before interpreting. Require exact synthetic bound checks.",
+    "retained_failure": "LW21_6_SYNTHETIC_PASS remains but LW21 real signedness threshold 1e-4 failed. Never relabel it PASS or alter threshold.",
+    "result": "GE19_LW21B_DES_SIGNED_SOURCE_GEOMETRY_SENSITIVITY_REPORTED_NOT_GGL_FORWARD",
+    "forecast": false,
+    "detection": false
+  },
+  "stop": "No source physical lensing efficiency chi(z), no actual galaxy-shear likelihood, no eta calibration, no full Aeff, no detection. This is a separate signed-kernel sensitivity audit rather than an override of LW21."
+}
