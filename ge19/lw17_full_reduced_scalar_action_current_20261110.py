@@ -86,8 +86,10 @@ def derive():
     Jx=N*R**2*(aux*ch+2*KQexpr*sh)-b*Jt
 
     # Full off-shell source identity: no bare phi dependence
-    t_equal=sp.simplify(sp.trigsimp(sp.diff(lag,pt)-Jt))==0
-    x_equal=sp.simplify(sp.trigsimp(sp.diff(lag,px)-Jx))==0
+    # Expand first, then reduce trig; generic nested simplify can be extremely slow
+    # on the unexpanded multi-field action despite an exact zero.
+    t_equal=sp.trigsimp(sp.expand(sp.diff(lag,pt)-Jt),method="fu")==0
+    x_equal=sp.trigsimp(sp.expand(sp.diff(lag,px)-Jx),method="fu")==0
 
     ep=sp.symbols("eps",real=True)
     a,H,Qb,KQ,KQQ,I0=sp.symbols(
