@@ -1,0 +1,52 @@
+{
+  "LW25_LW29_factor_two_discrepancy_resolved": false,
+  "LW30_LW31_reduced_metric_constraints_preserved": true,
+  "classification": "GE19_LW32_COVARIANT_MULTIPLIER_ELIMINATION_EXACT_PASS_CLASS_ETA_EVOLUTION_OPEN",
+  "formulas": {
+    "EL_full": "E_z^full=E_z^0+lambda partial_z C+mu partial_z D; lambda,mu fixed by normal field Euler rows",
+    "EL_tangent": "E_z^red=E_z^0+E_A0^0 partial_z A0+E_U0^0 partial_z U0",
+    "FLRW_linear": "delta A^0=-Psi; delta U_0=0",
+    "bath_alpha_raw": "-eta*a*k^2*Q*Bchi/2",
+    "constraints": "g_mu_nu A^mu A^nu=-1, A^mu U_mu=0",
+    "full_CLASS_eta_evolution_claim": "NOT certified by this algebra alone",
+    "independent_eta_source_from_multipliers": "No extra independent scalar degree of freedom from these TWO algebraic constraints; their existing Euler/metric terms are included exactly by chain rule",
+    "jacobian_det": "-2*N^2*(A^0)^2 near regular FLRW",
+    "normal_mode_solutions": "A^0=sqrt(1+a^2 sum_i (A^i)^2)/N; U_0=-sum_i A^i U_i/A^0"
+  },
+  "full_original_covariant_3plus1_Euler_to_CLASS_normalization_closed": false,
+  "gates": {
+    "aether_background_time_perturbation_minus_Psi": true,
+    "aux_time_component_first_nonzero_quadratic": true,
+    "aux_time_component_linear_zero": true,
+    "bath_rank_one_source": true,
+    "bath_raw_euler_has_half": true,
+    "constraint_reduced_Euler_equals_full_A1": true,
+    "constraint_reduced_Euler_equals_full_A2": true,
+    "constraint_reduced_Euler_equals_full_A3": true,
+    "constraint_reduced_Euler_equals_full_N": true,
+    "constraint_reduced_Euler_equals_full_U1": true,
+    "constraint_reduced_Euler_equals_full_U2": true,
+    "constraint_reduced_Euler_equals_full_U3": true,
+    "constraint_reduced_Euler_equals_full_a": true,
+    "exact_aux_orthogonality": true,
+    "exact_unit_norm_constraint": true,
+    "local_kinetic_hessian_2KB": true,
+    "negative_omit_aux_multiplier_in_aether_normal_detected": true,
+    "negative_omit_unit_metric_N_chain_detected": true,
+    "negative_wrong_aux_temporal_sign_detected": true,
+    "rank2_constraint_implicit_Jacobian": true
+  },
+  "multiplier_independent_linear_mode_added": false,
+  "observed_gravitational_memory": false,
+  "original_CLASS_modified": false,
+  "parent_LW31_SHA256": "c7fc4aa0e57cd4a6a0665d5544da53a981120d2c7014a6cc9c35fc68e819f9cd",
+  "physical_eta_Weyl_response_found": false,
+  "predata_blob": "c62f92aa33eba2257210f9da3adb0b238ec8e50b",
+  "source_blobs": {
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "docs/nl0b_predata_covariant_memory_completion.md": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw31_action_spatial_traceless_shear_20261110.py": "6e41aebf8fdd4f1bc3339e92b9183fecb1503ed3"
+  }
+}
