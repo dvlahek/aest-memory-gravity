@@ -1,0 +1,44 @@
+{
+  "classification": "GE19_LW17_ORIGINAL_WSL_FAIL_DIAGNOSED_SYMBOLIC_SUBSTITUTION_ORDER_FIX_VALIDATED_IN_LOCAL_REPLAY",
+  "date": "2026-11-10",
+  "failure_received": "Researcher ran canonical --self-test and regular run; both raised GE19_LW17_EXACT_ACTION_SCALAR_CURRENT_FAIL at derive gate line 146; EXIT=1. Original WSL result did not write a valid output JSON.",
+  "fault_source": "ge19/lw17_full_reduced_scalar_action_current_20261110.py, initial source at blob d8a87da332d21b021ef6cff2f97fe1eab2d3dc38, post-performance-fix d41096fca4c963792fe7c0bc75b970cce9c25fb9",
+  "root_cause": "Linearized derivative of K(Qinv) is represented by SymPy as Subs(Derivative(K(_z),_z),_z,Qb). Initial script performed substitutions of K_Q, K_QQ before simplify, so derivative substitution did not match until after simplify; FLRW checks compared unresolved Derivative(K(Qb),Qb) and Derivative(K(Qb),(Qb,2)) to free symbols KQ and KQQ.",
+  "incorrect_code": [
+    "lin_t=sp.simplify(lin_t.subs(ksubs))",
+    "lin_x=sp.simplify(lin_x.subs(ksubs))"
+  ],
+  "fixed_code": [
+    "lin_t=sp.simplify(lin_t).subs(ksubs)",
+    "lin_x=sp.simplify(lin_x).subs(ksubs)"
+  ],
+  "prior_failing_gates": [
+    "linear_FLRW_charge_current_exact",
+    "linear_FLRW_spatial_current_exact"
+  ],
+  "unchanged_pass_gates": [
+    "full_offshell_action_Jt_exact",
+    "full_offshell_action_Jx_exact",
+    "phi_enters_only_via_derivatives",
+    "linear_bath_charge_current_zero",
+    "linear_bath_spatial_flux_exact",
+    "fourier_bath_Euler_matches_LW16_volume_factor",
+    "background_shift_charge_constant_when_KQ_a_minus3",
+    "wrong_bath_sign_negative_control",
+    "missing_bath_flux_negative_control"
+  ],
+  "corrected_local_replay_all_11_exact_pass": true,
+  "corrected_local_replay_scope": "Standalone independent SymPy reconstruction of exact source action equations, current definitions, FLRW substitutions and all 11 gate evaluations; NOT a new full canonical WSL run and does not include source Git-lock/provenance pass. No CLASS solver executed.",
+  "fixed_commit": "8636184113a57f15235037d1a7a25e803309f72d",
+  "modified_physics_equations": false,
+  "modified_original_KQ_background": false,
+  "modified_acceptance_thresholds": false,
+  "modified_frozen_predata": false,
+  "modified_parameters": false,
+  "additional_diagnostics": "print list of failed symbolic gate names before raising, if any remain",
+  "canonical_fixed_WSL_reproduction_done": false,
+  "full_action_to_CLASS_equivalence_certified": false,
+  "physical_two_history_Weyl_observation": false,
+  "DES_ACT_detection": false,
+  "interpretation": "The reported traceback is a genuine bug in the old reproducible code, not evidence of a physical contradiction. Claims of a fully reproduced canonical LW17 11/11 WSL PASS await rerun."
+}
