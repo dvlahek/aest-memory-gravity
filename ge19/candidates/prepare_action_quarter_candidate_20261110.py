@@ -66,10 +66,10 @@ def run():
         oldtext.splitlines(True),newtext.splitlines(True),
         fromfile="historic-v019j/source/perturbations.c",
         tofile="exploratory-v019q/source/perturbations.c"))
-    print("GE19_V019Q_SOURCE_AUDIT_PASS")
+    print("GE19_ACTION_QUARTER_SOURCE_AUDIT_PASS")
     print(diff)
     if args.check_only:
-        print("GE19_V019Q_CHECK_ONLY_NO_COPY")
+        print("GE19_ACTION_QUARTER_CHECK_ONLY_NO_COPY")
         return
     # The only project-generated changes are the candidate's C E-row and
     # this explicit, self-describing manifest. Builds must be cleaned.
@@ -99,9 +99,9 @@ def run():
     }
     (dst/"GE19_ACTION_QUARTER_CANDIDATE_MANIFEST.json").write_text(
         json.dumps(manifest,indent=2,sort_keys=True)+"\n")
-    print("GE19_V019Q_COPY_CREATED",dst)
-    print("GE19_V019Q_BUILD_STALE_REBUILD_REQUIRED")
-    print("GE19_V019Q_PHYSICAL_OBSERVER_READY False")
+    print("GE19_ACTION_QUARTER_COPY_CREATED",dst)
+    print("GE19_ACTION_QUARTER_BUILD_STALE_REBUILD_REQUIRED")
+    print("GE19_ACTION_QUARTER_PHYSICAL_OBSERVER_READY False")
 
 if __name__=="__main__":
     run()
