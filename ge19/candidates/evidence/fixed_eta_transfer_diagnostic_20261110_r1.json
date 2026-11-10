@@ -1,0 +1,70 @@
+{
+  "Einstein_constraint_propagation_verified": false,
+  "all_source_constraints_physically_certified": false,
+  "background_input_model": "frozen v019 AeST Exp",
+  "cases": [
+    "candidate_eta0",
+    "candidate_eta001",
+    "historical_eta001"
+  ],
+  "classification": "GE19_ACTION_QUARTER_FIXED_FINITE_ETA_IMPLEMENTED_TRANSFER_DIAGNOSTIC_NOT_PHYSICS_GO",
+  "density_W_definition": "product of the explicitly identified CLASS density column (d_m if available, otherwise d_tot) and W, NOT a physical matter-Weyl projected cross-power",
+  "eta_fixed": 0.01,
+  "explicit_note": "This evaluates implemented full CLASS dynamics at one fixed eta, not a perturbative derivative, theory equivalence or memory detection.",
+  "finite_eta_runs_completed": true,
+  "full_retarded_physical_eta_matter_Weyl_cross_power_certified": false,
+  "metrics": {
+    "P_k": {
+      "half_minus_quarter_scaled_by_baseline": 4.36057507849327e-06,
+      "max_abs_half_minus_quarter": 0.06257331626054707
+    },
+    "W": {
+      "half_minus_quarter_scaled_by_baseline": 5.792008214664641e-07,
+      "max_abs_half_minus_eta0": 2.4633129061535364e-07,
+      "max_abs_half_minus_quarter": 3.159558091825332e-07,
+      "max_abs_quarter_minus_eta0": 1.8996723627484613e-07,
+      "quarter_minus_eta0_scaled_by_baseline": 3.482423051083672e-07
+    },
+    "density": {
+      "half_minus_quarter_scaled_by_baseline": 3.3597544509917483e-06,
+      "max_abs_half_minus_eta0": 0.14924740720380214,
+      "max_abs_half_minus_quarter": 0.06398102878665668,
+      "max_abs_quarter_minus_eta0": 0.15118826864636503,
+      "quarter_minus_eta0_scaled_by_baseline": 7.939157405801136e-06
+    },
+    "density_W": {
+      "half_minus_quarter_scaled_by_baseline": 5.71012563979103e-06,
+      "max_abs_half_minus_eta0": 0.005085431952124964,
+      "max_abs_half_minus_quarter": 0.0042977649992508304,
+      "max_abs_quarter_minus_eta0": 0.005248819299424667,
+      "quarter_minus_eta0_scaled_by_baseline": 6.973721845075122e-06
+    },
+    "phi": {
+      "half_minus_quarter_scaled_by_baseline": 5.790854076422126e-07,
+      "max_abs_half_minus_eta0": 2.463312906431092e-07,
+      "max_abs_half_minus_quarter": 3.15955809196411e-07,
+      "max_abs_quarter_minus_eta0": 1.899938038008031e-07,
+      "quarter_minus_eta0_scaled_by_baseline": 3.482216060635495e-07
+    },
+    "psi": {
+      "half_minus_quarter_scaled_by_baseline": 5.793162813301304e-07,
+      "max_abs_half_minus_eta0": 2.4633129061535364e-07,
+      "max_abs_half_minus_quarter": 3.159558091825332e-07,
+      "max_abs_quarter_minus_eta0": 1.8994066863786685e-07,
+      "quarter_minus_eta0_scaled_by_baseline": 3.482630122020577e-07
+    }
+  },
+  "native_density_key": "d_m",
+  "native_transfer_fields": [
+    "density",
+    "phi",
+    "psi",
+    "W",
+    "density_W"
+  ],
+  "observed_DES_gamma_t_or_significance": false,
+  "source_candidate_sha256": "75bf9fe85f2aae85031edc109e131c6b5d1745dca8497300237e16e57c99f883",
+  "source_historical_sha256": "276646d913348824bddf9e24138e4213ecc3fb8b605d21525bf9280474dbca80",
+  "units": "CLASS native transfer fields, k in h/Mpc, one redshift",
+  "z_pk_fixed": 0.5
+}
