@@ -57,3 +57,21 @@ fi
 ~~~
 
 If a required original file/checkout is absent, record the exact missing input rather than substituting a different physical model. LW22 creates no observational likelihood, nuisance-marginal Asimov information, delta-Weyl evidence, or detected memory. Original LW05 full cosmic shear LOS BLOCK, LW08 antisymmetric matter-Weyl response unresolved, H4/Z21 uncertified and full 3+1 action-to-CLASS fluid closure remain open. **Next major physics gate:** one source-to-observer closure giving physical \(\partial_\eta P_{\delta,W}\) with other species and metric constraints, followed by actual gamma_t angular windows and nuisance-marginal forecast.
+
+## 2026-11-10 LW22 SHA transcription erratum (no physics change)
+
+The original LW22 Python implementation incorrectly contained a 45-character
+truncation of the original LW02 geometry SHA-256; the immutable predata freeze
+and this protocol document already contained the complete 64-character value
+`1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086`.
+A researcher WSL run produced `GE19_LW22_ORIGINAL_LW02_GEOMETRY_SHA_CHANGED`
+after synthetic self-test PASS 4, before the CLASS background calculation.
+This failure does **not** establish a physical or numerical discrepancy.
+
+Implementation correction at commit `2dc90d0d4a07b5d06caa52f5d2a7966227da5e8b`:
+use the complete original frozen hash, cross-validate it with the unchanged
+predata JSON, distinguish absent local parent files from content mismatch,
+and print the expected/actual SHA-256 for provenance diagnostics. No scientific
+constants, lensing integrals, survey data, quadrature thresholds, or
+selection choices were changed. The original LW22 failure remains recorded;
+there is no new confirmed real-data LW22 PASS until rerun on WSL.
