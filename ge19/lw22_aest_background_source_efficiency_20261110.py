@@ -100,7 +100,7 @@ def synthetic_selftest():
         np.linspace(0.,1.,101),np.ones(101),
         zbg,chibg,8)
     require(abs(float(near[0]))<1.e-14,"SOURCE_ALL_IN_FRONT")
-    signed=ns.copy();signed[0]=-0.02
+    signed=ns.copy();signed[0]=-0.2
     audit=nzlib.audit(zs,signed,"SYNTHETIC_SIGNED_SOURCE")
     raw=gaussian_source_efficiency(zl,chil,zs,signed,zbg,chibg,16)
     pos=gaussian_source_efficiency(zl,chil,zs,np.maximum(signed,0),zbg,chibg,16)
