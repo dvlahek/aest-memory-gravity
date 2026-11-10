@@ -1,0 +1,54 @@
+{
+  "classification": "GE19_LW17_GE06_GE05_COMPLETE_REDUCED_SCALAR_SHIFT_CURRENT_FORMULA_LOCK",
+  "date": "2026-11-10",
+  "data_ordering": "Action-current formulas and their exploratory derivation were already inspected before predata was committed. This preregistration is a reproducibility freeze, NOT prospective blind confirmation.",
+  "aim": "Derive full scalar shift current from original combined GE06 analytic memory-off AeST action and GE05 quadratic normalized bath action in frozen 1+1 longitudinal plane-symmetric sector, verify linearized FLRW time/space currents and exact beta scalar Euler bath source, and determine whether the CLASS effective-fluid variable map is fully certified.",
+  "sources": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "original_normalizations": {
+    "action_GE06": "L_AeST=N*L*R²*[KB*E²+2*C*E*X-C*X²+2*K(Q)], C=2-KB; analytic Y branch only",
+    "action_GE05": "L_bath=eta*N*L*R²/4*[Aq²-(omega*q-sqrt(w)*X)²] for normalized q, one positive mode",
+    "invariants": "sigma=(phi_t-b*phi_x)/N; Q=cosh(u)*sigma+sinh(u)*phi_x/L; X=sinh(u)*sigma+cosh(u)*phi_x/L; E=cosh(u)[(u_t-b*u_x)/N+N_x/(N L)]+sinh(u)[(L_t-b L_x-L b_x)/(N L)+u_x/L]; Aq=cosh(u)(q_t-b q_x)/N+sinh(u)q_x/L"
+  },
+  "expected_general_off_shell": {
+    "A": "2*C*(E-X)+eta*sqrt(w)*(omega*q-sqrt(w)*X)/2 = 2*C*(E-X)-eta*B_X/2",
+    "J_phi_t": "L*R²*[2*K_Q*cosh(u)+A*sinh(u)]",
+    "J_phi_x": "N*R²*[A*cosh(u)+2*K_Q*sinh(u)]-b*J_phi_t",
+    "Euler_phi": "-partial_t(J_phi_t)-partial_x(J_phi_x)",
+    "reason": "The combined action depends on phi only through phi_t and phi_x; scalar shift symmetry exactly enforces the divergence form, off shell, in this reduced sector."
+  },
+  "flrw_first_order": {
+    "bg": "N=1,L=R=a,b=0,u=0,phi_t=Qb,q=0,X=E=0, K_Qb=I0/a³",
+    "perturbations": "N=1+n,L=a+l,R=a+r,b=z,u=v,phi_t=Qb+pt1,phi_x=px1,u_t=ut1,N_x=nx1,q=q1; all perturbations first order",
+    "X1": "Qb*v+px1/a",
+    "E1": "ut1+nx1/a+Hphys*v",
+    "dQ": "pt1-Qb*n",
+    "dJt": "2*a³*K_QQ*(pt1-Qb*n)+2*a²*K_Q*(l+2*r)",
+    "dJx": "a²*[2*C*(E1-X1)+2*K_Q*v-eta*B_X1/2]-2*a³*K_Q*z",
+    "B_X1": "w*X1-omega*sqrt(w)*q1",
+    "bath_dJt": "0",
+    "bath_dJx": "-eta*a²*B_X1/2",
+    "scalar_mode_projection": "If B_X1=(ik/a)*Bchi, then bath scalar Euler residual E_phi,bath=-ik bath_dJx=-eta*a*k²*Bchi/2, matching a³ times LW16 raw E_phi=-eta*(k/a)²*Bchi/2."
+  },
+  "preregistered_gates": [
+    "source content anchored by exact historical Git blobs",
+    "action full Jt and Jx equal exact symbolic differentiation of GE06+eta GE05 Lagrangian",
+    "source contains phi only through derivatives",
+    "linear Jt and Jx match independent closed FLRW formulas",
+    "bath linear time charge vanishes",
+    "bath linear spatial flux nonzero for nontrivial B_X",
+    "Fourier scalar Euler residual matches volume-normalized LW16",
+    "if K_Q=I0/a³, background shift charge Jt=2 I0 is constant",
+    "negative control wrong bath sign or missing bath scalar current fails",
+    "read-only no CLASS solver, no H4, no observed DES/ACT"
+  ],
+  "limitations": "This derives COMPLETE scalar Euler current of the frozen REDUCED analytic GE06+GE05 1+1 action only. GR does not depend on phi. It does NOT derive complete three-dimensional 3+1 AeST nonlinear-Y branch, independent full temporal diffeomorphism Hamiltonian and aether multiplier Ward, all-species CLASS effective stress/variables mapping or physical J_D,J_T from full action. Numerical q is normalized, its physical eta scaling is fixed; do not conflate GE05 bare q with arbitrary finite eta.",
+  "success": "GE19_LW17_REDUCED_COMBINED_AEST_MEMORY_SCALAR_CURRENT_EXACT_PASS_FULL_CLASS_ACTION_MAP_OPEN",
+  "failure": "GE19_LW17_REDUCED_SCALAR_CURRENT_FORMULA_OR_SOURCE_FAIL",
+  "stop": "One full scalar action current calculation, not another CLASS run. After success focus on identifying full CLASS effective density/momentum correspondence and independent time Noether/constraint mapping rather than repeating rank-one Ward tests."
+}
