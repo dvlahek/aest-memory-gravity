@@ -107,8 +107,11 @@ def derive():
       sp.Derivative(K(Qb),Qb):KQ,
       sp.Derivative(K(Qb),(Qb,2)):KQQ,
     }
-    lin_t=sp.simplify(lin_t.subs(ksubs))
-    lin_x=sp.simplify(lin_x.subs(ksubs))
+    # First canonicalize Subs/Derivative from K(Qinv), THEN apply the
+    # independent background K_Q and K_QQ symbol substitutions. Otherwise
+    # Subs(Derivative(K(_z),_z),_z,Qb) survives and gives false gate FAIL.
+    lin_t=sp.simplify(lin_t).subs(ksubs)
+    lin_x=sp.simplify(lin_x).subs(ksubs)
     X1=Qb*v+px1/a
     E1=ut1+nx1/a+H*v
     B1=sw**2*X1-om*sw*q1
@@ -143,7 +146,10 @@ def derive():
       "missing_bath_flux_negative_control":
           sp.simplify(x_target-x_target.subs(eta,0))!=0,
     }
-    check(all(gates.values()),"EXACT_ACTION_SCALAR_CURRENT_FAIL")
+    if not all(gates.values()):
+        failed=[name for name,passed in gates.items() if not passed]
+        print("GE19_LW17_FAILED_SYMBOLIC_GATES",failed,flush=True)
+        check(False,"EXACT_ACTION_SCALAR_CURRENT_FAIL")
     return {
       "checks":gates,
       "sympy_version":sp.__version__,
