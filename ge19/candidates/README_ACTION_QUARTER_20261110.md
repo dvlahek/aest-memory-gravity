@@ -48,3 +48,40 @@ Assumes the original already-v019j-patched checkout exists in \`~/aest-memory-gr
 Expected source-only labels \`GE19_ACTION_QUARTER_SOURCE_AUDIT_PASS\`, \`GE19_ACTION_QUARTER_COPY_CREATED\` and \`GE19_ACTION_QUARTER_BUILD_STALE_REBUILD_REQUIRED\`; these are **source preparation**, not physics certification. The explicit `GE19_ACTION_QUARTER_` log prefix avoids confusion with the unrelated historical `v019q` research package.
 
 **Next controlled action, only after source audit:** independent build of the copied CLASS checkout and one small \(\eta=0\) reproduction/constraint/retarded-initialization check. If those fail, no observational forward. No sweeps, GitHub Actions or observed-data fitting should be run in this candidate preparation.
+
+
+## One bounded eta=0 candidate regression (after researcher source-copy PASS)
+
+The researcher uploaded the successful source-copy diff and manifest. The original files are archived as
+\`ge19/candidates/evidence/GE19_ACTION_QUARTER_CANDIDATE.diff\` (Git blob \`6049e86ccb1088b52600127f7f2b7d0824baf810\`) and
+\`ge19/candidates/evidence/GE19_ACTION_QUARTER_CANDIDATE_MANIFEST.json\` (Git blob \`b8767523dc62256f7d1dbe9dbd69dd12d724411d\`).
+GitHub readback confirms byte-identical uploads.
+
+\`ge19/candidates/run_action_quarter_eta0_regression_20261110.py\` checks the exact two source SHA-256 hashes, original CLASS HEAD and uploaded evidence, and refuses any additional C differences. It rebuilds **only the copied** candidate with two compiler jobs, runs one AeST Exp \(\eta=0\) input in the already-built original and new candidate, and compares actual background and matter power-spectrum tables. It refuses missing or mismatched output.
+
+**Limit:** this checks only the \(\eta=0\) invariance and source provenance. It does **not** measure Einstein constraint propagation or certify finite-\(\eta\) physical matter–Weyl/sky transfer. The output explicitly states those remain OPEN. No DES data, parameter sweeps or GitHub Actions.
+
+### WSL
+
+~~~bash
+cd ~/aest-memory-gravity
+source .venv/bin/activate
+git -C ../aest-memory-gravity-action-quarter fetch origin candidate/ge19-action-linear-quarter-20261110
+git -C ../aest-memory-gravity-action-quarter checkout --detach origin/candidate/ge19-action-linear-quarter-20261110
+PYTHON=../aest-memory-gravity-action-quarter/ge19/candidates/run_action_quarter_eta0_regression_20261110.py
+
+python3 "$PYTHON" \
+  --historic-class "$PWD/class_v077" \
+  --candidate-class "$PWD/class_v077_ge19_action_quarter_candidate" \
+  --preflight || exit $?
+
+set +e
+set -o pipefail
+python3 -u "$PYTHON" \
+  --historic-class "$PWD/class_v077" \
+  --candidate-class "$PWD/class_v077_ge19_action_quarter_candidate" \
+  --out-dir "$PWD/results/ge19_action_quarter_eta0_r1" \
+  2>&1 | tee results/ge19_action_quarter_eta0_r1_runner.log
+~~~
+
+Upload the runner log and \`results/ge19_action_quarter_eta0_r1/regression_result.json\`; on failure include the relevant \`candidate_build.log\`, \`historical_run.log\` or \`candidate_run.log\`. The runner will **not** edit or compile the historical original, and refuses to overwrite a previous output directory.
