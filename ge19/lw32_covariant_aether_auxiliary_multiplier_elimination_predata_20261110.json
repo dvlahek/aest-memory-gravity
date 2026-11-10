@@ -1,0 +1,42 @@
+{
+  "classification": "GE19_LW32_FULL_COVARIANT_UNIT_AETHER_AUXILIARY_ORTHOGONALITY_ELIMINATION_PRELOCK",
+  "date": "2026-11-10",
+  "exploratory_algebra_preceded_prelock": true,
+  "blind_preregistration_claim": false,
+  "original_LW31_WSL_JSON_SHA256": "c7fc4aa0e57cd4a6a0665d5544da53a981120d2c7014a6cc9c35fc68e819f9cd",
+  "source_blobs": {
+    "docs/nl0b_predata_covariant_memory_completion.md": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw31_action_spatial_traceless_shear_20261110.py": "6e41aebf8fdd4f1bc3339e92b9183fecb1503ed3"
+  },
+  "frozen_question": "Do full covariant unit-timelike aether and aether-orthogonal NL0B auxiliary vector Lagrange multipliers produce any independent omitted linear scalar Euler equation when algebraically eliminated on FLRW, and can their existence alone fix old CLASS factor 2?",
+  "full_covariant_algebraic_constraints": {
+    "C": "g_mu_nu A^mu A^nu +1 =0",
+    "D": "A^mu U_mu=0 for each mode",
+    "zero_shift_FLRW": "g00=-N^2, gij=a^2 deltaij",
+    "regular_solve": "A^0=+sqrt(1+a^2 |A^i|^2)/N; U_0=-sum_i A^i U_i/A^0",
+    "jacobian": "det d(C,D)/d(A^0,U_0)=-2*N^2*(A^0)^2 nonzero near FLRW",
+    "background": "A^0=1, U_0=0, spatial perturbations A^i,U_i first order",
+    "linear": "delta A^0=-Psi, delta U_0=0, U_0 second order=-sum_i delta A^i delta U_i",
+    "chain_rule": "reduced Euler=full constrained Euler projected onto tangent to (C,D)=0; normal multiplier Euler rows determine lambda and mu",
+    "epsilon_bath": "NL0B potential is quadratic in transverse X,U; no direct O(epsilon) lapse/shift or multiplier-normal bath source on relaxed FLRW"
+  },
+  "checks": [
+    "two_exact_constraints_zero",
+    "full_rank_constraint_jacobian",
+    "8_reduced_vs_full_multiplier_EL_identical",
+    "delta_A0_minus_Psi",
+    "delta_U0_zero",
+    "U0_quadratic_spatial_inner_product",
+    "wrong_multiplier_sign_rejected",
+    "wrong_aux_constraint_rejected",
+    "bath_source_tangent_rank_one_consistent"
+  ],
+  "limitation": "This proves algebraic constraint elimination and local scalar orientation symmetry, not that the full 3+1 gauge-fixed effective-fluid evolution/source Jacobian equals the original CLASS patch. The factor-two bridge remains REVIEW until all remaining action Euler rows and temporal Bianchi constraints mapped.",
+  "no_CLASS": true,
+  "no_numerical_sweep": true,
+  "no_DES_fit": true,
+  "no_patch_edit": true
+}
