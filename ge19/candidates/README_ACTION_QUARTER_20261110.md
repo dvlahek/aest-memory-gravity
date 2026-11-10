@@ -45,6 +45,6 @@ python3 ../aest-memory-gravity-action-quarter/ge19/candidates/prepare_action_qua
 
 Assumes the original already-v019j-patched checkout exists in \`~/aest-memory-gravity/class_v077\` with Git HEAD \`e85808324f51fc694d12e3ed7439552a3c3f9540\`. If it does not, **stop** rather than force patch application to a different source branch.
 
-Expected source-only labels \`GE19_V019Q_SOURCE_AUDIT_PASS\`, \`GE19_V019Q_COPY_CREATED\` and \`GE19_V019Q_BUILD_STALE_REBUILD_REQUIRED\`; these are **source preparation**, not physics certification. The internal log prefix V019Q is just inherited from the initial new script naming and does **not** denote the historical \`v019q\` research package.
+Expected source-only labels \`GE19_ACTION_QUARTER_SOURCE_AUDIT_PASS\`, \`GE19_ACTION_QUARTER_COPY_CREATED\` and \`GE19_ACTION_QUARTER_BUILD_STALE_REBUILD_REQUIRED\`; these are **source preparation**, not physics certification. The explicit `GE19_ACTION_QUARTER_` log prefix avoids confusion with the unrelated historical `v019q` research package.
 
 **Next controlled action, only after source audit:** independent build of the copied CLASS checkout and one small \(\eta=0\) reproduction/constraint/retarded-initialization check. If those fail, no observational forward. No sweeps, GitHub Actions or observed-data fitting should be run in this candidate preparation.
