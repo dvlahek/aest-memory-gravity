@@ -1,0 +1,53 @@
+{
+  "classification": "GE19_LW20_PHYSICS_FIRST_GGL_PREOBSERVATION_SELECTION_LOCK",
+  "date": "2026-11-10",
+  "discovery_bias_transparency": "MagLim 4/ell100,150,200 selected after examining published original LW07b lens-only n(z) support metadata; not blind with respect to n(z), but before new observed gamma_t residuals or nuisance fitting. No new observational detections are claimed.",
+  "target": {
+    "survey": "DES Y3",
+    "probe": "galaxy-galaxy lensing (lens galaxy positions x source tangential shear)",
+    "lens_sample": "MagLim",
+    "lens_bin_1based": 4,
+    "candidate_ell": [
+      100,
+      150,
+      200
+    ],
+    "excluded_ell_control": 300,
+    "information_screen_threshold_nz_mass": 0.99,
+    "threshold_is_not": "formal bound on GGL shear prediction, on ell bandpower window coverage, on signal-to-noise, or on forecast convergence"
+  },
+  "original_results": {
+    "original_lw07b_archive_path": "results/ge19_lw07b_des_y3_nz_only_audit_20261109.json",
+    "original_lw07b_git_blob": "5323b8457cbe7e7426c3e6eb4345183c3660cbff",
+    "original_lw08_archive_path": "results/ge19_lw08_density_weyl_relative_tangent_20261109_archive_replay.json",
+    "original_lw08_git_blob": "f3039640de268cd2136474f1ac716a80695b3713",
+    "original_lw19_WSL_path": "results/ge19_lw19_reduced_full_action_temporal_invariance_20261110_r1.json",
+    "original_lw19_WSL_sha256": "7a13c89f7387299f3ce20bc92716004c8096ea0f170ac7cd0739fcc50d44207e"
+  },
+  "physical_formula": {
+    "Weyl": "W=(Phi+Psi)/2 from original Newtonian CLASS; require independent gauge-matter tracer dictionary",
+    "limber": "k=(ell+0.5)/chi in 1/Mpc and chi comoving Mpc",
+    "thin_lens_GGL": "C_ell^gkappa=ell*(ell+1)*integral dchi [ n_L(chi) b_L(chi) q_s(chi) / chi^3 ] P_{delta_gauge,W}((ell+0.5)/chi,z) in one chosen W and convergence sign convention",
+    "source_geometry": "q_s(chi)=integral_chi^infinity dchi_s n_s(chi_s)*(chi_s-chi)/chi_s",
+    "source_note": "n_L is normalized per comoving length, not per redshift. The q_s geometry depends on background-source redshifts, but P_deltaW is evaluated only at lens chi where n_L is nonzero. Do not silently set uncovered n_L or source tails to zero.",
+    "derivative": "At fixed FLRW background, fixed galaxy bias and source redshift kernels, dC/deta is the same weighted projection applied to physical dP_deltaW/deta; if tracer/bias responds to eta, include that response or marginalize appropriate nuisance.",
+    "observed_shape": "gamma_t(theta) is a windowed Hankel J2 response of C_ell^gkappa plus IA, magnification and all published DES Y3 nuisance/systematic terms; the three native ell values are NOT a complete gamma_t window.",
+    "fisher": "F_marg=t^T C^-1 t - t^T C^-1 D*(D^T C^-1 D+P_prior)^-1 D^T C^-1 t, t=physical dmu/deta, D=nuisance derivatives. A valid Asimov forecast also requires full observed-vector covariance and survey window.",
+    "sensitivity_output": "Never produce sigma_eta/5sigma/percent from bare native lambda values, n(z)-mass fractions or missing covariance."
+  },
+  "provenance_gates": {
+    "source_hashes": true,
+    "fixed_ell_preselection": true,
+    "informational_nz_mass_only": true,
+    "original_LW08_antisymmetric_unresolved_preserved": true,
+    "original_LW05_cosmic_shear_LOS_BLOCK_preserved": true,
+    "full_P_deltaW_ggl_projection_ready": false,
+    "source_nz_and_window_validated": false,
+    "full_covariance_and_nuisance_validated": false,
+    "physically_calibrated_eta": false,
+    "actual_forecast_significance": false,
+    "observed_data_fit": false
+  },
+  "expected_result": "GE19_LW20_MAGLIM4_LENS_ONLY_SUPPORT_SCREEN_PASS_GGL_FORWARD_AND_FORECAST_BLOCKED",
+  "stop": "Do not claim GGL viable merely because >99% of n_L probability mass lies in native support. This is candidate-only. Cosmic shear LW05 stop cannot be automatically transferred to GGL, but the specific GGL projection must still be certified. No posthoc cosmology/eta or selection tuning after seeing observed residuals."
+}
