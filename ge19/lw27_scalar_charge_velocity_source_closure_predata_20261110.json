@@ -1,0 +1,56 @@
+{
+  "classification": "GE19_LW27_REDUCED_SCALAR_CHARGE_CLASS_VELOCITY_SOURCE_CONSISTENCY_PRELOCK",
+  "date": "2026-11-10",
+  "algebraic_insight_precedes_prelock": true,
+  "blind_independent_preregistration": false,
+  "parent_original_LW26_JSON_SHA256": "dd11a35d4124091a277e835e7edfa541691a31b63c0436dbc89ac85fd9f146fc",
+  "parent_original_LW26_JSON_GIT_BLOB": "b6c695f0f39f894c55db0a8458c5b05bcd2d1053",
+  "sources": {
+    "ge19/lw17_full_reduced_scalar_action_current_20261110.py": "df5acc2c97076736ccdd7755691cacdaaada0e22",
+    "ge19/lw24_reduced_action_class_density_pressure_dictionary_20261110.py": "d74dff8c40fed829767a6c301e8782f2d0c3089f",
+    "ge19/lw25_aether_shift_class_source_consistency_20261110.py": "961a1bf851ca6ba2579c2bb2fbf43352bfbc2072",
+    "ge19/lw26_reduced_spatial_noether_bath_metric_source_20261110.py": "6342a383ab14378c7a8334834dfcfd353a9f5a27",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "v019/patch/source/aest_memory.c": "9a522a653a1855eda3cb67e856f9fc10a1e73d54",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e"
+  },
+  "equations": {
+    "reduced_scalar_Jt": "2*a^3*K_QQ*deltaQ-6*a^3*K_Q*Phi",
+    "reduced_scalar_Jx": "i*k*a*[2*C*(E-chi)+2*K_Q*alpha-eta*Bchi/2]",
+    "reduced_density": "delta_rho=(Q*K_QQ*deltaQ-k^2/a^2*(K_B*E+C*chi))/3",
+    "pressure": "delta_p=K_Q*deltaQ/3",
+    "class_state": "theta=k^2*varphi/(a*Q), chi=varphi+Q*alpha, E=alpha_dot+Psi",
+    "aether_action_explicit_eta": "partial_eta E_dot=-Q*Bchi/(4*K_B)",
+    "class_patch_explicit_eta": "partial_eta E_dot=-Q*Bchi/(2*K_B)",
+    "scalar_continuity_eta": "6*a^3/Q*partial_eta(delta_rho_dot)+2*a*k^2/Q*(K_B*partial_eta(E_dot)+C*partial_eta(chi_dot))+a*k^2*Bchi/2=0",
+    "results_under_fixed_dictionary": {
+      "action": "partial_eta(delta_rho_dot)=0",
+      "existing_CLASS": "partial_eta(delta_rho_dot)=Q*k^2*Bchi/(12*a^2)",
+      "class_with_formal_velocity_compensation": "partial_eta(delta_rho_dot)=0 if partial_eta(chi_dot)=Q*Bchi/(4*C), but incompatible with fixed theta=... without changing fluid dictionary"
+    }
+  },
+  "primary_checks": [
+    "density_current_elimination",
+    "background_enthalpy",
+    "pressure_velocity_identity",
+    "theta_kinematic_time_evolution_exact",
+    "scalar_flux_eta_sign",
+    "scalar_continuity_explicit_source",
+    "action_E_source_density_cancellation",
+    "class_E_source_nonzero_density_source",
+    "formal_chidot_compensation",
+    "no_free_theta_source_if_dictionary_fixed"
+  ],
+  "negative_controls": [
+    "wrong_eta_half",
+    "drop_scalar_flux",
+    "wrong_density_grad",
+    "replace_chidot_compensator_without_changing_state_definition"
+  ],
+  "scope": "only frozen reduced analytic longitudinal linear model around relaxed FLRW; all eta partials at fixed state, no full 3+1 action-to-CLASS guarantee",
+  "no_CLASS": true,
+  "no_DES_fitting": true,
+  "no_model_retuning": true,
+  "rule": "If a conditional mismatch persists, report REVIEW, do not patch coefficients; real physical eta-response and DES lensing are blocked until full constrained dictionary is derived."
+}
