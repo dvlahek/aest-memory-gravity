@@ -1,0 +1,53 @@
+{
+  "DES_lensing_observation_found": false,
+  "LW22_geometry_pass_preserved": true,
+  "LW28_reduced_action_quarter_pass_preserved": true,
+  "classification": "GE19_LW29_ORIGINAL_COVARIANT_3D_QUADRATIC_NORMALIZATION_QUARTER_PASS_FULL_ADM_BRIDGE_OPEN",
+  "derived": {
+    "Y_note": "Arbitrary quadratic Y2*X^2 changes gradient stiffness but not the E kinetic Hessian; the locked Y^(3/2) starts at cubic order",
+    "aether_kinetic_Hessian": "2*a*K_B*k^2",
+    "full_normalized_local_Edot_eta_source": "-eta*Q*Bchi/(4*K_B)",
+    "historical_CLASS_Edot_eta_source": "-eta*Q*Bchi/(2*K_B)",
+    "k_squared": "kx^2+ky^2+kz^2 (nonzero)",
+    "math_scope": "3D isotropic scalar quadratic local action at relaxed FLRW, fixed retarded auxiliary branch; full constraints still open",
+    "original_AeST_kinetic": "a^3 K_B sum_i[(k_i/a)*(alpha_dot+Psi)]^2",
+    "original_bath": "eta*a^3/4*(q_dot^2 - (omega*q-sqrt(w)*k*chi/a)^2)",
+    "original_scalar_source_rank": "1 (phi,alpha)",
+    "raw_bath_aether_source": "-eta*a*k^2*Q*Bchi/2",
+    "relative_source_factor": "2"
+  },
+  "historical_NL0B_identity5_physical_evolution_claim_qualified": true,
+  "historical_NL0B_identity7_full_mapping_not_certified": true,
+  "historical_NL0B_raw_half_source_remains_true": true,
+  "original_CLASS_patch_changed": false,
+  "original_LW01_LW08_reclassified": false,
+  "physical_eta_matter_Weyl_derivative_certified": false,
+  "physical_full_3plus1_constraints_and_unit_aether_mapping_certified": false,
+  "predata_git_blob": "53b4baf3484ddac7c272a4dd3b9d3eeee2388bd7",
+  "source_git_blobs": {
+    "docs/ge19_g2c_original_NL0C_Y_direct_H4_Ward_zero_set_2026-11-09.md": "776dc3e50c118e518f47a3f0a3cd0102a571f4a8",
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "docs/nl0b_predata_covariant_memory_completion.md": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw28_reduced_momentum_scalar_continuity_proof_20261110.py": "2084d78c05b192048bf121dae657e1d7396f254c",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "symbolic_checks": {
+    "3d_k_tensor_sum_exact": true,
+    "3d_vector_bath_exactly_scalar_longitudinal": true,
+    "arbitrary_k_orientation_swap": true,
+    "bath_raw_alpha_Euler_source_minus_half": true,
+    "bath_raw_scalar_Euler_source_minus_half": true,
+    "eta_zero_bath_null": true,
+    "free_analytic_Y_quadratic_gradient_no_E_kinetic": true,
+    "full_AeST_aether_kinetic_Hessian_2KB": true,
+    "negative_double_bath_force_detected": true,
+    "negative_halve_AeST_kinetic_detected": true,
+    "no_bath_linear_metric_Euler_source": true,
+    "normalized_aether_eta_evolution_quarter": true,
+    "rank_one_bath_phi_alpha_Hessian": true,
+    "rank_one_bath_phi_alpha_source": true,
+    "wrong_raw_half_as_evolution_detected": true
+  }
+}
