@@ -1,0 +1,67 @@
+{
+  "classification": "GE19_LW15_IMPLEMENTED_TOTAL_FLUID_JD_JT_IDENTICALLY_ZERO_ACTION_EQUIVALENCE_STILL_OPEN",
+  "date": "2026-11-10",
+  "independent_execution": "SymPy 1.14.0 separate local symbolic replay of original frozen v019 AeST background and perturbation equations, 11/11 exact gates. Canonical Github source version was committed but not run in researcher's WSL.",
+  "predata_commit": "729a34c343853dd7c5616415f5e4cacc95a91b67",
+  "predata_git_blob_sha1": "e4614f21987e1c3dd895590127525d61c7aa992e",
+  "canonical_program": "ge19/lw15_effective_fluid_action_dictionary_audit_20261110.py",
+  "original_sources": {
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "v019/patch/source/aest_memory.c": "9a522a653a1855eda3cb67e856f9fc10a1e73d54",
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "docs/ge19_lw14_reconcile_nl0b_linear_bath_ward_and_lw13_total_constraint_2026-11-09.md": "df9eb6dad78396569ee22470c2befa6181a0dd69"
+  },
+  "exact_checks": {
+    "background_rho_plus_p_KQ": true,
+    "background_rho_prime": true,
+    "background_pressure_prime": true,
+    "background_enthalpy_prime": true,
+    "effective_fluid_energy_JD_zero_for_arbitrary_Pi": true,
+    "effective_fluid_momentum_JT_zero_for_arbitrary_Pi": true,
+    "full_original_Pi_of_E_preserves_JD_JT": true,
+    "E_prime_force_is_unconstrained_by_fluid_Ward": true,
+    "broken_delta_pressure_detected": true,
+    "broken_theta_pressure_detected": true,
+    "wrong_background_pprime_detected": true
+  },
+  "symbolic_gates_count": 11,
+  "symbolic_gates_passed": 11,
+  "exact_background_relations": {
+    "rho_A": "(Q*K_Q-K)/3",
+    "p_A": "K/3",
+    "w_A": "p_A/rho_A",
+    "K_Q": "I0/a^3",
+    "c_a_squared": "K_Q/(Q*K_QQ)",
+    "Q_prime": "-3*Hconf*K_Q/K_QQ",
+    "rho_A_prime": "-Hconf*Q*K_Q=-3*Hconf*(rho_A+p_A)",
+    "p_A_prime": "-Hconf*K_Q^2/K_QQ=c_a²*rho_A_prime",
+    "rho_plus_p": "Q*K_Q/3",
+    "rho_plus_p_prime": "-3*Hconf*(1+c_a²)*(rho_A+p_A)"
+  },
+  "exact_implemented_conservation": {
+    "D_A": "rho_A*delta_A",
+    "T_A": "(rho_A+p_A)*theta_A",
+    "P_A": "rho_A*Pi_A",
+    "JD": "D_A'+3Hconf(D_A+P_A)+T_A-3(rho_A+p_A)Phi'=0",
+    "JT": "T_A'+4Hconf*T_A-k² P_A-k²(rho_A+p_A)Psi=0",
+    "arbitrary_Pi": "holds for arbitrary algebraic Pi_A, including the original Pi(E_A,chi,delta_A); E_A' itself not used",
+    "arbitrary_external_Eprime_source": "JD and JT remain exactly zero for arbitrary independently supplied F_E, even one not derivable from the NL0B action"
+  },
+  "negative_controls": {
+    "wrong_Pi_in_density_row": "JD=-3*Hconf*rho_A*DeltaPi",
+    "wrong_Pi_in_velocity_row": "JT=k²*rho_A*DeltaPi",
+    "wrong_background_pprime": "JT=Delta(p_A')*theta_A"
+  },
+  "observations": {
+    "direct_bath_linear_Einstein_stress": "not newly derived; prior NL0B original eight-identity analytic PASS preserved",
+    "prior_scalar_aether_bath_Ward": "LW14 rank-one reduced source Ward PASS preserved",
+    "physical_complete_action_JD_JT": "NOT independently derived",
+    "scalar_partner_to_CLASS_fluid_implementation": "NOT independently mapped",
+    "global_Einstein_AeST_Aeff": "NOT closed",
+    "coupled_two_history_Weyl_observer": "NOT computed",
+    "DES_ACT_observation": false,
+    "H4_Z21_certified": false
+  },
+  "scope_stop": "Exact source-derived conservation is a construction identity of the implemented fluid rows; this must NOT be presented as independently proving the full covariant action's field equations or the original variational scalar partner, nor as observational detection."
+}
