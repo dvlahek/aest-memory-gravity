@@ -1,0 +1,49 @@
+{
+  "AeST_linear_anisotropic_stress_direct_zero_in_reduced_model": true,
+  "LW22_lensing_geometry_PASS_preserved": true,
+  "LW30_ADM_constraints_PASS_preserved": true,
+  "classification": "GE19_LW31_REDUCED_GE06_GR_AEST_NL0B_TRACeless_SHEAR_PASS_FULL_ACTION_BRIDGE_OPEN",
+  "derived": {
+    "AeST": "0",
+    "GR": "2*a*k^2*(Phi-Psi)",
+    "GR_no_Nx_R_Rx": "2*a*k^2*Phi (negative control)",
+    "GR_no_Rx_squared": "-2*a*k^2*Psi (negative control)",
+    "NL0B_bath": "0",
+    "metric_Weyl_relation": "(Phi+Psi)/2=Phi in this reduced AeST-only linear sector; not a physical survey transfer",
+    "real_cosmological_slip": "not zero when total anisotropic stress from other species is present",
+    "scope": "Exact original GE06 plane-symmetric scalar-longitudinal GR+AeST and GE05 linear memory coframe; not full 3+1 tensor/vector/Y/ordinary species.",
+    "shear_on_shell_AeST_only": "Phi=Psi for k!=0; no freely streaming species or other anisotropic stress",
+    "traceless_Euler_definition": "T=[L E_L-(R/2) E_R] linear perturbative coefficient; E_L=dL/dL-dt(dL/dLt)-dx(dL/dLx)"
+  },
+  "full_3plus1_gauge_multiplier_Y_constraints_certified": false,
+  "full_physical_eta_Weyl_observer_ready": false,
+  "observed_DES_Y3_memory_detection": false,
+  "ordinary_species_anisotropic_stress_included": false,
+  "original_LW30_SHA256": "cb09073a4bcfa2f18e003d4cfba08ac08fda315784a6105338d464b9a47fdfbc",
+  "original_v019j_eta_factor2_resolved": false,
+  "predata_git_blob": "f0236ab323b286efb0dd325d2ab99e11b2c47629",
+  "source_blobs": {
+    "docs/ge19_lw29_covariant_3d_quadratic_action_normalization_and_nl0b_erratum_2026-11-10.md": "4da01689245ca29169bdbfc4e5cdb3d03b7ac2e1",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw30_exact_adm_hamiltonian_momentum_constraints_20261110.py": "b9d2751c1a858cd00d3ef44816e7f7300113f600",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68"
+  },
+  "symbolic_checks": {
+    "AeST_background_pressure_isotropic": true,
+    "AeST_background_spatial_Euler_expression": true,
+    "AeST_direct_linear_traceless_source_zero": true,
+    "GR_background_pressure_isotropic": true,
+    "GR_background_spatial_Euler_expression": true,
+    "GR_traceless_metric_slip_from_full_action": true,
+    "bath_background_spatial_Euler_zero": true,
+    "bath_direct_linear_traceless_source_zero": true,
+    "negative_remove_GR_Nx_RRx_detected": true,
+    "negative_remove_GR_Rx_squared_detected": true,
+    "negative_wrong_GR_shear_factor_detected": true,
+    "no_background_Hdot_in_traceless": true,
+    "reduced_slip_zero_on_shell_k_nonzero": true,
+    "spatial_k_parity_even": true,
+    "total_traceless_metric_slip": true
+  }
+}
