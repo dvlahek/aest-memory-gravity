@@ -1,0 +1,53 @@
+{
+  "classification": "GE19_LW22_DES_MAGLIM4_SOURCE_LENSING_EFFICIENCY_GEOMETRY_FREEZE",
+  "date": "2026-11-10",
+  "reason": "Replace redshift-ordering integrals with physically distance-weighted lens-source GGL efficiency g_s(z_l) in frozen original AeST background, without perturbation/observed DES data.",
+  "selection_after_source_geometry_view": true,
+  "selection_before_new_observed_gamma_t_residuals": true,
+  "primary_pair": {
+    "lens_sample": "MagLim",
+    "lens_bin": 4,
+    "source_bin": 4,
+    "ell": [
+      100,
+      150,
+      200
+    ]
+  },
+  "secondary_control_source_bin": 3,
+  "diagnostic_all_source_bins": true,
+  "original_lw21_hard_signedness_fail_preserved": true,
+  "signed_source_policy": "Use original signed NZ_SOURCE normalized by signed area; compare explicitly to positive part diagnostic. Never silently clip, never claim true posterior source response error bound.",
+  "exact_frozen_inputs": {
+    "ge19/lw21b_signed_source_geometry_sensitivity_20261110.py": "1ba3d33a6a8ea892c5251f8bcde203e76436e3fd",
+    "v063/theory_response_map.py": "fb373c8118b755c5aa7d5572d910d6ca3684866e",
+    "results/ge19_lw21b_signed_source_geometry_sensitivity_20261110_r1.json_sha256": "0223b698b13b1a36736274d6582889d66f7cf500ffe0b13eed40612fa4272de8",
+    "results/ge19_lw02_windowed_lensing_20261109.json_sha256": "1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086",
+    "original_class_official_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+    "original_maglim_SHA256": "83efa43f6609ff07248b9c4e411b9ab386ec569cba402364fb21edff456e8b76"
+  },
+  "geometry": {
+    "chi": "Use original patched-class AeST background comoving distance chi(z), memory eta=0, original v063 CLASS cosmology, NOT LCDM guessed replacement.",
+    "efficiency": "g_s(z_L)=int_{z_L}^infinity dz_S n_S(z_S)*(chi(z_S)-chi(z_L))/chi(z_S) / int dz_S n_S(z_S)",
+    "absolute_convergence": "Gauss-Legendre 8 vs 16 per FITS n(z) knot, compare difference for entire 159-node MagLim lens grid and n_L-weighted average. If >1e-5 absolute, classify unresolved, no green physics geometry.",
+    "limited_class_run": "One background-only CLASS solve, output explicitly disabled, no coupled perturbation ODE or lensing forward.",
+    "avoid_extrapolation": "Full original source z grid must lie in strictly increasing original CLASS background comoving-distance support; no interpolation beyond or hand-filled tail.",
+    "original_lw02_control": "Compare new chi(z) interpolated at 8 LW02 native redshifts to original archived LW02 chi nodes; require <=1e-4 relative difference, report max."
+  },
+  "delivered": {
+    "source_efficiency_all_four_source_bins": "g_s(z_L) at all original 159 MagLim lens z nodes, original signed and diagnostic positive-part.",
+    "output": "JSON summary and optional NPZ kernel for future source projection, with original FITS and CLASS status/hashes.",
+    "interpretation": "Geometric lens-source efficiency and foreground overlap only, NOT whole shear response or dP_deltaW/deta. Native support and LOS contamination require separate theory forecasts.",
+    "negativity_bound": "For 0<=K(z_S,z_L)<=1 at fixed lens, signed-vs-plus source efficiency absolute discrepancy <=epsilon/(1-epsilon), checked."
+  },
+  "frozen_science_stops": [
+    "no observed GAMMAT",
+    "no covariance",
+    "no use of uncalibrated lambda as eta",
+    "no full CLASS action-to-effective-fluid Ward claim",
+    "no retarded G_WE",
+    "no detection"
+  ],
+  "success": "GE19_LW22_AEST_BACKGROUND_SOURCE_EFFICIENCY_GEOMETRY_PASS_FULL_GGL_PHYSICAL_FORWARD_OPEN",
+  "failure": "GE19_LW22_CLASS_BACKGROUND_OR_GEOMETRY_INVALID"
+}
