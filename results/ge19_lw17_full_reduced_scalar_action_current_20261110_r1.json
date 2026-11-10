@@ -1,0 +1,76 @@
+{
+  "DES_ACT_detection": false,
+  "H4_Z21_certified": false,
+  "LW03_radial_FAIL": true,
+  "LW05_LOS_BLOCK": true,
+  "LW08_differential_UNRESOLVED": true,
+  "LW16_actual_WSL_SHA256": "665de261c6bdc569887f6eadcaf6582b39c3ce3117b95c1b3d8d64baf26d488f",
+  "action_derived_physical_JD_JT_closed": false,
+  "checks": {
+    "background_shift_charge_constant_when_KQ_a_minus3": true,
+    "fourier_bath_Euler_matches_LW16_volume_factor": true,
+    "full_offshell_action_Jt_exact": true,
+    "full_offshell_action_Jx_exact": true,
+    "linear_FLRW_charge_current_exact": true,
+    "linear_FLRW_spatial_current_exact": true,
+    "linear_bath_charge_current_zero": true,
+    "linear_bath_spatial_flux_exact": true,
+    "missing_bath_flux_negative_control": true,
+    "phi_enters_only_via_derivatives": true,
+    "wrong_bath_sign_negative_control": true
+  },
+  "classification": "GE19_LW17_REDUCED_COMBINED_AEST_MEMORY_SCALAR_CURRENT_EXACT_PASS_FULL_CLASS_ACTION_MAP_OPEN",
+  "complete_background_matter_radiation_Aeff_certified": false,
+  "full_metric_and_aether_Euler_to_CLASS_mapping_certified": false,
+  "full_scalar_shift_current": {
+    "A": "2*C*(E-X)-eta*B_X/2",
+    "B_X": "w*X-omega*sqrt(w)*q",
+    "Euler_phi": "-partial_t(J_phi_t)-partial_x(J_phi_x)",
+    "J_phi_t": "L*R\u00b2*[2*K_Q*cosh(u)+A*sinh(u)]",
+    "J_phi_x": "N*R\u00b2*[A*cosh(u)+2*K_Q*sinh(u)]-b*J_phi_t"
+  },
+  "full_temporal_diffeomorphism_Noether_Ward_proved": false,
+  "global_metric_Green_Weyl_computed": false,
+  "linear_FLRW": {
+    "B_X1": "-om*q1*sw + sw**2*(Qb*v + px1/a)",
+    "E1": "H*v + ut1 + nx1/a",
+    "X1": "Qb*v + px1/a",
+    "background_Jt": "2*a\u00b3*K_Q=2*I0",
+    "bath_linear_dJ_phi_t": "0",
+    "bath_linear_dJ_phi_x": "a*eta*sw*(-Qb*a*sw*v + a*om*q1 - px1*sw)/2",
+    "bath_linear_scalar_Euler_fourier": "-Bchi*a*eta*k**2/2",
+    "dJ_phi_t": "-2*a**2*(-KQ*ell - 2*KQ*rr + KQQ*Qb*a*n - KQQ*a*pt1)",
+    "dJ_phi_x": "a*(4*C*H*a*v - 4*C*Qb*a*v + 4*C*a*ut1 + 4*C*nx1 - 4*C*px1 - 4*KQ*a**2*shift + 4*KQ*a*v - Qb*a*eta*sw**2*v + a*eta*om*q1*sw - eta*px1*sw**2)/2",
+    "dQ": "pt1-Qb*n",
+    "expected_LW16_volume_weighted_Euler": "-Bchi*a*eta*k**2/2"
+  },
+  "nonanalytic_Y_beyond_linear_excluded": true,
+  "original_action": "N*L*R\u00b2*[KB*E\u00b2+2*C*E*X-C*X\u00b2+2*K(Qinv)+eta/4*(Aq\u00b2-(omega*q-sqrt(w)*X)\u00b2)]",
+  "original_invariants": {
+    "Aq": "cosh(u)*(qt-b*qx)/N+sinh(u)*qx/L",
+    "E": "cosh(u)*[(ut-b*ux)/N+Nx/(N*L)]+sinh(u)*[(Lt-b*Lx-L*bx)/(N*L)+ux/L]",
+    "Qinv": "cosh(u)*sigma+sinh(u)*px/L",
+    "X": "sinh(u)*sigma+cosh(u)*px/L",
+    "sigma": "(pt-b*px)/N"
+  },
+  "predata_git_blob_sha1": "91550bc0bfc9180f0415416f08fab695a54ec277",
+  "scientific_scope": "Exactly the full scalar Euler current of original GE06 analytic 1+1 longitudinal AeST + GE05 one normalized positive memory mode, with arbitrary analytic K(Q). NOT full 3D covariant action, temporal/metric/aether constraints, CLASS effective-fluid equivalence or observed universe.",
+  "source_anchor_checks": {
+    "ge05/memory_directional_source_generator.py#1": true,
+    "ge05/memory_directional_source_generator.py#2": true,
+    "ge05/memory_directional_source_generator.py#3": true,
+    "ge06/analytic_aest_directional_source_generator.py#1": true,
+    "ge06/analytic_aest_directional_source_generator.py#2": true,
+    "ge06/analytic_aest_directional_source_generator.py#3": true,
+    "v019j/apply_memory_patch.py#1": true
+  },
+  "source_git_blobs": {
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "sympy_version": "1.14.0",
+  "two_admissible_histories_Weyl_observable": false
+}
