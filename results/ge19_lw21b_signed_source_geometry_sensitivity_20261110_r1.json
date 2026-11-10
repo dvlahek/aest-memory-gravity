@@ -1,0 +1,323 @@
+{
+  "Asimov_forecast_or_detection": false,
+  "H4_Z21_certified": false,
+  "LW05_cosmic_shear_LOS_BLOCK_preserved": true,
+  "LW08_antisymmetric_Weyl_response_UNRESOLVED": true,
+  "classification": "GE19_LW21B_DES_SIGNED_SOURCE_GEOMETRY_SENSITIVITY_REPORTED_NOT_GGL_FORWARD",
+  "full_DES_GGL_forward_certified": false,
+  "galaxy_shear_observed_or_covariance_read": false,
+  "lens_nz_audit": [
+    {
+      "epsilon_B_over_A": 0.0,
+      "exceeds_original_LW21_1e_minus4_limit": false,
+      "label": "NZ_LENS_BIN1",
+      "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+      "min": 5.196466279557115e-05,
+      "negative_area": 0.0,
+      "negative_values": 0,
+      "positive_area": 0.9999999999999999,
+      "samples": 159,
+      "signed_area": 0.9999999999999999
+    },
+    {
+      "epsilon_B_over_A": 0.0,
+      "exceeds_original_LW21_1e_minus4_limit": false,
+      "label": "NZ_LENS_BIN2",
+      "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+      "min": 0.00015080725566016321,
+      "negative_area": 0.0,
+      "negative_values": 0,
+      "positive_area": 1.0,
+      "samples": 159,
+      "signed_area": 1.0
+    },
+    {
+      "epsilon_B_over_A": 0.0,
+      "exceeds_original_LW21_1e_minus4_limit": false,
+      "label": "NZ_LENS_BIN3",
+      "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+      "min": 0.0005587868539421233,
+      "negative_area": 0.0,
+      "negative_values": 0,
+      "positive_area": 1.0,
+      "samples": 159,
+      "signed_area": 1.0
+    },
+    {
+      "epsilon_B_over_A": 0.0,
+      "exceeds_original_LW21_1e_minus4_limit": false,
+      "label": "NZ_LENS_BIN4",
+      "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+      "min": 0.0023261239750074192,
+      "negative_area": 0.0,
+      "negative_values": 0,
+      "positive_area": 0.9999999999999998,
+      "samples": 159,
+      "signed_area": 0.9999999999999998
+    },
+    {
+      "epsilon_B_over_A": 0.0,
+      "exceeds_original_LW21_1e_minus4_limit": false,
+      "label": "NZ_LENS_BIN5",
+      "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+      "min": 0.0029261987973641457,
+      "negative_area": 0.0,
+      "negative_values": 0,
+      "positive_area": 1.0000000000000002,
+      "samples": 159,
+      "signed_area": 1.0000000000000002
+    },
+    {
+      "epsilon_B_over_A": 0.0,
+      "exceeds_original_LW21_1e_minus4_limit": false,
+      "label": "NZ_LENS_BIN6",
+      "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+      "min": 0.003913027389761095,
+      "negative_area": 0.0,
+      "negative_values": 0,
+      "positive_area": 1.0000000000000002,
+      "samples": 159,
+      "signed_area": 1.0000000000000002
+    }
+  ],
+  "negative_source_weight_is_not_literal_probability": true,
+  "original_LW20_WSL_SHA256": "ab0b0147b4edf1a12d182628f81476e2d23443e347fe636243d51007eca962a4",
+  "original_LW21_real_WSL_PASS": false,
+  "original_failed_LW21_nz_sign_policy_threshold_preserved": 0.0001,
+  "original_fits_sha256": "83efa43f6609ff07248b9c4e411b9ab386ec569cba402364fb21edff456e8b76",
+  "physical_eta_matter_Weyl_transfer_certified": false,
+  "physical_source_lensing_efficiency_computed": false,
+  "positive_part_used_only_for_diagnostic_comparison": true,
+  "predata_git_blob_sha1": "7537ac59c928dacc368f2c46c359721449d99cc4",
+  "source_bin_comparisons": [
+    {
+      "paired_lens4_redshift_event_integrals": [
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0003822400401120203,
+          "ell": "all",
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.00041036200246839555,
+          "source_behind_integral_from_original_signed_kernel": 0.028299783022306523,
+          "source_behind_integral_from_positive_part_diagnostic": 0.028682023062418543
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0003820571809662471,
+          "ell": 100,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.00041036200246839555,
+          "source_behind_integral_from_original_signed_kernel": 0.02611203681781196,
+          "source_behind_integral_from_positive_part_diagnostic": 0.026494093998778206
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.00038197655963966015,
+          "ell": 150,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.00041036200246839555,
+          "source_behind_integral_from_original_signed_kernel": 0.025854173900675112,
+          "source_behind_integral_from_positive_part_diagnostic": 0.026236150460314772
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0003811206325375349,
+          "ell": 200,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.00041036200246839555,
+          "source_behind_integral_from_original_signed_kernel": 0.024414834276970106,
+          "source_behind_integral_from_positive_part_diagnostic": 0.02479595490950764
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0003749947588414203,
+          "ell": 300,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.00041036200246839555,
+          "source_behind_integral_from_original_signed_kernel": 0.02212698077887234,
+          "source_behind_integral_from_positive_part_diagnostic": 0.02250197553771376
+        }
+      ],
+      "raw_diagnostic": {
+        "epsilon_B_over_A": 0.00041019367457069883,
+        "exceeds_original_LW21_1e_minus4_limit": true,
+        "label": "NZ_SOURCE_BIN1",
+        "max_signed_vs_positive_normalized_event_discrepancy": 0.00041036200246839555,
+        "min": -6.771413635413951e-05,
+        "negative_area": 4.0748789630999336e-06,
+        "negative_values": 12,
+        "positive_area": 0.009934036567883761,
+        "samples": 300,
+        "signed_area": 0.009929961688920661
+      },
+      "source_bin": 1
+    },
+    {
+      "paired_lens4_redshift_event_integrals": [
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": "all",
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.10841635008756553,
+          "source_behind_integral_from_positive_part_diagnostic": 0.10841635008756553
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 100,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.10585215796794332,
+          "source_behind_integral_from_positive_part_diagnostic": 0.10585215796794332
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 150,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.10543821732794187,
+          "source_behind_integral_from_positive_part_diagnostic": 0.10543821732794187
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 200,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.10252401601606809,
+          "source_behind_integral_from_positive_part_diagnostic": 0.10252401601606809
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 300,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.09463428138667433,
+          "source_behind_integral_from_positive_part_diagnostic": 0.09463428138667433
+        }
+      ],
+      "raw_diagnostic": {
+        "epsilon_B_over_A": 0.0,
+        "exceeds_original_LW21_1e_minus4_limit": false,
+        "label": "NZ_SOURCE_BIN2",
+        "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+        "min": 7.713006883226015e-06,
+        "negative_area": 0.0,
+        "negative_values": 0,
+        "positive_area": 0.00979297849008875,
+        "samples": 300,
+        "signed_area": 0.00979297849008875
+      },
+      "source_bin": 2
+    },
+    {
+      "paired_lens4_redshift_event_integrals": [
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": "all",
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.44147766799611754,
+          "source_behind_integral_from_positive_part_diagnostic": 0.44147766799611754
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 100,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.43885905918236706,
+          "source_behind_integral_from_positive_part_diagnostic": 0.43885905918236706
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 150,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.4384129313305369,
+          "source_behind_integral_from_positive_part_diagnostic": 0.4384129313305369
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 200,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.4349900743742845,
+          "source_behind_integral_from_positive_part_diagnostic": 0.4349900743742845
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 300,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.41943436978895154,
+          "source_behind_integral_from_positive_part_diagnostic": 0.41943436978895154
+        }
+      ],
+      "raw_diagnostic": {
+        "epsilon_B_over_A": 0.0,
+        "exceeds_original_LW21_1e_minus4_limit": false,
+        "label": "NZ_SOURCE_BIN3",
+        "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+        "min": 7.842314394971256e-06,
+        "negative_area": 0.0,
+        "negative_values": 0,
+        "positive_area": 0.009757557112394294,
+        "samples": 300,
+        "signed_area": 0.009757557112394294
+      },
+      "source_bin": 3
+    },
+    {
+      "paired_lens4_redshift_event_integrals": [
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": "all",
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.734326893753908,
+          "source_behind_integral_from_positive_part_diagnostic": 0.734326893753908
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 100,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.7316944776740711,
+          "source_behind_integral_from_positive_part_diagnostic": 0.7316944776740711
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 150,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.7312478451033878,
+          "source_behind_integral_from_positive_part_diagnostic": 0.7312478451033878
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 200,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.7278153087994007,
+          "source_behind_integral_from_positive_part_diagnostic": 0.7278153087994007
+        },
+        {
+          "absolute_signed_vs_positive_part_difference": 0.0,
+          "ell": 300,
+          "no_physical_probability_certification": true,
+          "provable_absolute_difference_upper_bound": 0.0,
+          "source_behind_integral_from_original_signed_kernel": 0.7119397899632505,
+          "source_behind_integral_from_positive_part_diagnostic": 0.7119397899632505
+        }
+      ],
+      "raw_diagnostic": {
+        "epsilon_B_over_A": 0.0,
+        "exceeds_original_LW21_1e_minus4_limit": false,
+        "label": "NZ_SOURCE_BIN4",
+        "max_signed_vs_positive_normalized_event_discrepancy": 0.0,
+        "min": 1.983445726760883e-05,
+        "negative_area": 0.0,
+        "negative_values": 0,
+        "positive_area": 0.009622278143990333,
+        "samples": 300,
+        "signed_area": 0.009622278143990333
+      },
+      "source_bin": 4
+    }
+  ],
+  "uncertainty_is_signedness_method_sensitivity_not_DES_photoz_error": true
+}
