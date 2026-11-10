@@ -22,6 +22,9 @@ import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 PRE=ROOT/"ge19/lw21_des_y3_maglim4_source_behind_predata_20261110.json"
 PRE_BLOB="2b00093ef9621ed19c17ed5599feaa0e58d004d4"
+SIGNEDNESS=ROOT/"ge19/lw21_nz_signedness_handling_erratum_20261110.json"
+SIGNEDNESS_BLOB="4cd19e0ed232a0c7fe8c5673cafdc7d4c7ff4cf4"
+MAX_NEGATIVE_MASS_RATIO=1.e-4
 OLD7=ROOT/"results/ge19_lw07b_des_y3_nz_only_audit_20261109.json"
 OLD7_BLOB="5323b8457cbe7e7426c3e6eb4345183c3660cbff"
 OLD20=ROOT/"results/ge19_lw20_ggl_preforecast_support_20261110_r1.json"
@@ -53,6 +56,56 @@ def normalized_cdf(z,y):
     total=float(cumulative[-1])
     require(np.isfinite(total) and total>0,"NZ_ZERO_MASS")
     return cumulative/total,total
+
+
+def audited_working_nz(z,values,label):
+    """Raw FITS untouched; diagnose signedness before any conditional clipping.
+
+    epsilon = integral(max(-n,0))/integral(max(n,0)), with trapezoidal
+    areas on the original z grid. Only numerical-sign undershoots
+    epsilon<=1e-4 are clipped on a working copy, with full audit record.
+    Larger or nonfinite anomalies fail closed after printing statistics.
+    """
+    z=np.asarray(z,float)
+    y=np.asarray(values,float)
+    shape_ok=z.ndim==1 and z.size>5 and y.shape==z.shape
+    audit={
+        "bin":label,
+        "z_points":int(z.size),
+        "raw_values_count":int(y.size),
+        "array_shape_ok":bool(shape_ok),
+        "z_nonfinite_count":int(np.count_nonzero(~np.isfinite(z))),
+        "nz_nonfinite_count":int(np.count_nonzero(~np.isfinite(y))),
+        "nz_negative_sample_count":int(np.count_nonzero(y<0)),
+        "nz_min":float(np.min(y[np.isfinite(y)])) if np.isfinite(y).any() else None,
+        "nz_max":float(np.max(y[np.isfinite(y)])) if np.isfinite(y).any() else None,
+        "integrated_positive_area":None,
+        "integrated_negative_area":None,
+        "negative_to_positive_area":None,
+        "normalized_signed_vs_clipped_TV_bound":None,
+        "corrected_on_working_copy":False,
+    }
+    valid=shape_ok and np.isfinite(z).all() and np.isfinite(y).all() and np.all(np.diff(z)>0)
+    if valid:
+        positive=np.maximum(y,0.)
+        negative=np.maximum(-y,0.)
+        pa=float(np.trapezoid(positive,z))
+        na=float(np.trapezoid(negative,z))
+        audit["integrated_positive_area"]=pa
+        audit["integrated_negative_area"]=na
+        if np.isfinite(pa) and pa>na>=0:
+            eps=na/pa
+            audit["negative_to_positive_area"]=eps
+            audit["normalized_signed_vs_clipped_TV_bound"]=eps/(1.-eps)
+            valid=eps<=MAX_NEGATIVE_MASS_RATIO
+        else:
+            valid=False
+    print("GE19_LW21_RAW_NZ_SIGN_AUDIT",json.dumps(audit,sort_keys=True),flush=True)
+    require(valid,"NZ_SIGNEDNESS_SOURCE_REVIEW_REQUIRED_"+label)
+    used=np.maximum(y,0.)
+    audit["corrected_on_working_copy"]=bool(audit["nz_negative_sample_count"]>0)
+    normalized_cdf(z,used)
+    return used,audit
 
 def survival(zquery,z,values):
     """Exact piecewise-quadratic survival of piecewise-linear source n(z)."""
@@ -110,7 +163,22 @@ def synthetic_selftest():
            behind,np.ones_like(behind))-1.)<1.e-12,"ALL_SOURCE_BEHIND")
     require(pair_probability(a,np.ones_like(a),
            front,np.ones_like(front))<1.e-12,"ALL_SOURCE_IN_FRONT")
-    print("GE19_LW21_SOURCE_BEHIND_SYNTHETIC_SELFTEST_PASS 4",flush=True)
+    # Mathematically tiny signedness is permitted only on a working copy.
+    small=np.ones_like(z)
+    small[0]=-1.e-6
+    fixed, audit=audited_working_nz(z,small,"SYNTHETIC_TINY")
+    require(audit["corrected_on_working_copy"] and
+            audit["negative_to_positive_area"]<MAX_NEGATIVE_MASS_RATIO and
+            (fixed>=0).all(),"TINY_SIGNEDNESS_NOT_HANDLED")
+    bad=np.ones_like(z)
+    bad[0]=-1.
+    blocked=False
+    try:
+        audited_working_nz(z,bad,"SYNTHETIC_BIG")
+    except RuntimeError as err:
+        blocked="NZ_SIGNEDNESS_SOURCE_REVIEW_REQUIRED" in str(err)
+    require(blocked,"BIG_SIGNEDNESS_NOT_REJECTED")
+    print("GE19_LW21_SOURCE_BEHIND_SYNTHETIC_SELFTEST_PASS 6",flush=True)
 
 def read_nz_only(fitsfile):
     try:
@@ -118,6 +186,7 @@ def read_nz_only(fitsfile):
     except ImportError as e:
         raise RuntimeError("GE19_LW21_ASTROPY_REQUIRED") from e
     obj={}
+    signedness_audit=[]
     # Only access named n(z) HDU data; other HDUs remain uninspected.
     with fits.open(fitsfile,memmap=True) as hdus:
         for hname in ("NZ_LENS","NZ_SOURCE"):
@@ -135,9 +204,12 @@ def read_nz_only(fitsfile):
             dist={}
             for col in bins:
                 dist[int(col[3:])]=np.asarray(table[names[col]],float).copy()
-            for y in dist.values(): normalized_cdf(z,y)
+            for binid in sorted(dist):
+                dist[binid],audit=audited_working_nz(
+                    z,dist[binid],hname+"_BIN"+str(binid))
+                signedness_audit.append(audit)
             obj[hname]=(z,dist)
-    return obj
+    return obj,signedness_audit
 
 def main():
     ap=argparse.ArgumentParser()
@@ -151,6 +223,13 @@ def main():
         return
     require(args.fits is not None and args.fits.is_file(),"MAGLIM_FITS_REQUIRED")
     require(gitblob(PRE)==PRE_BLOB,"PRELOCK_CHANGED")
+    require(gitblob(SIGNEDNESS)==SIGNEDNESS_BLOB,
+            "SIGNEDNESS_POLICY_LOCK_CHANGED")
+    policy=json.loads(SIGNEDNESS.read_text())
+    require(policy["classification"]==
+      "GE19_LW21_NZ_FITS_SIGNEDNESS_PREVALUE_REPAIR_POLICY"
+      and policy["fixed_threshold_relative_negative_area"]==
+      MAX_NEGATIVE_MASS_RATIO,"SIGNEDNESS_POLICY_CHANGED")
     require(gitblob(OLD7)==OLD7_BLOB,"ORIGINAL_LW07B_CHANGED")
     require(OLD20.is_file() and sha256(OLD20)==OLD20_SHA256,
             "ORIGINAL_LW20_WSL_CHANGED")
@@ -173,7 +252,7 @@ def main():
     require(len(original)==1 and
             original[0]["file"]==fitsfile.name and
             original[0]["sha256"]==actual_sha,"FITS_HASH_NOT_ORIGINAL")
-    data=read_nz_only(fitsfile)
+    data,signedness_audit=read_nz_only(fitsfile)
     zl,lens=data["NZ_LENS"]
     zs,sources=data["NZ_SOURCE"]
     require(len(lens)==6 and len(sources)==4,"REDSHIFT_BIN_COUNT")
@@ -215,6 +294,15 @@ def main():
        "classification":
          "GE19_LW21_SOURCE_BEHIND_LENS_REDSHIFT_GEOMETRY_PASS_GGL_PHYSICAL_FORWARD_OPEN",
        "protocol_git_blob_sha1":PRE_BLOB,
+       "signedness_policy_git_blob_sha1":SIGNEDNESS_BLOB,
+       "negative_area_threshold":MAX_NEGATIVE_MASS_RATIO,
+       "raw_nz_sign_diagnostics":signedness_audit,
+       "raw_FITS_bytes_modified":False,
+       "maximum_pair_event_signed_to_clipped_bound":
+           max(a["normalized_signed_vs_clipped_TV_bound"]
+               for a in signedness_audit if a["bin"].startswith("NZ_LENS"))+
+           max(a["normalized_signed_vs_clipped_TV_bound"]
+               for a in signedness_audit if a["bin"].startswith("NZ_SOURCE")),
        "official_maglim_fits_name":fitsfile.name,
        "official_maglim_fits_sha256":actual_sha,
        "original_LW20_WSL_SHA256":OLD20_SHA256,
