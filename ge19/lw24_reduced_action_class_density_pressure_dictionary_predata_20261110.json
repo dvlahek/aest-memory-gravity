@@ -1,0 +1,48 @@
+{
+  "classification": "GE19_LW24_REDUCED_ACTION_TO_CLASS_BACKGROUND_AND_LINEAR_PRESSURE_DICTIONARY_PRELOCK",
+  "date": "2026-11-10",
+  "exploratory_algebra_preceded_prelock": true,
+  "no_blind_registration_claim": true,
+  "user_WSL_LW23_JSON_SHA256": "cb4fab1b275634e95401bbf5b4ac02022cf98949f4a6fab082276d5c161eb185",
+  "original_sources": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "v019/patch/source/aest_memory.c": "9a522a653a1855eda3cb67e856f9fc10a1e73d54",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e"
+  },
+  "question": "Can the analytic plane-symmetric GE06 reduced action's lapse energy density and first-order pressure relation reproduce the original patched CLASS AeST background rho,p,c_ad^2 and effective-fluid Pi_A, without assuming full 3+1 stress/metric closure?",
+  "target_formulas": {
+    "rho8": "Q*K_Q-K",
+    "p8": "K",
+    "background_class": "rho_class=rho8/3, p_class=p8/3, c_a^2=K_Q/(Q*K_QQ)",
+    "shift_charge": "K_Q=I0/a^3",
+    "density_linear": "delta_rho_class=(Q*K_QQ*delta_Q - (k^2/a^2)*(K_B*E_A+C*chi))/3",
+    "pressure_linear": "delta_p_class=K_Q*delta_Q/3",
+    "CLASS_pressure": "delta_p_class=c_a^2*delta_rho_class+c_a^2*k^2/(3*a^2)*(K_B*E_A+C*chi)",
+    "delta_Q": "delta_phi_dot-Q*Psi",
+    "E_X_reduction": "E_1=(ik/a)E_A, X_1=(ik/a)chi in analytic reduced longitudinal Newtonian gauge"
+  },
+  "requested_gates": [
+    "exact_exp_KQQ",
+    "background_energy_pressure",
+    "background_adiabatic_speed",
+    "homogeneous_conservation",
+    "first_order_lapse_euler_from_action",
+    "lapse_gradient_energy_contribution",
+    "linear_pressure_dictionary",
+    "negative_wrong_three",
+    "negative_missing_E_chi",
+    "original_source_blob_locks"
+  ],
+  "scope_limit": [
+    "plane symmetric reduced action longitudinal linear analytic K(Q) sector",
+    "background and scalar lapse/pressure only",
+    "not full pressure anisotropic/shift momentum metric map",
+    "not Y-nonanalytic full 3+1",
+    "not finite eta full physical forward",
+    "not observed gamma_t"
+  ],
+  "no_class": true,
+  "no_data": true,
+  "no_parameter_scan": true
+}
