@@ -62,4 +62,4 @@ In particular:
 - [Fixed positive-eta JSON](../ge19/candidates/evidence/fixed_eta_transfer_diagnostic_20261110_r1.json)
 - [Fixed positive-eta runner log](../ge19/candidates/evidence/ge19_action_quarter_finite_eta_r1_runner.log)
 - [Historical preflight argument error](../ge19/candidates/evidence/ge19_action_quarter_preflight_old_argument_error.log)
-- [Physics acceptance gate](../../docs/ge19_physics_acceptance_decision_action_to_CLASS_2026-11-10.md), maintained as BLOCK
+- [Physics acceptance gate](ge19_physics_acceptance_decision_action_to_CLASS_2026-11-10.md), maintained as BLOCK
