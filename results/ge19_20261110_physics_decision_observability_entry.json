@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-10",
+  "phase": "POST_LW33_PHYSICS_TO_OBSERVABILITY",
+  "classification": "GE19_ANALYTIC_LW_SERIES_CLOSED_ACTION_TO_CLASS_ONE_DECISION_GATE_OBSERVATIONAL_READY_FALSE",
+  "evidence_status": "Interpretation and frozen protocol; not a new simulation, blind preregistration, or observed detection",
+  "original_researcher_WSL_LW33": {
+    "json_repo_path": "results/ge19_lw33_action_scalar_current_class_residual_20261110_r1.json",
+    "json_sha256": "b5dbfc9f0d5bcc8493d3fccb4ab0adcd731b6c5f0d7e07b0849cd986c41e62e6",
+    "json_git_blob": "d5c7bfd1038fee1ae63c1d03cd10802fc3744b47",
+    "log_repo_path": "results/ge19_lw33_r1.log",
+    "log_sha256": "d2abce733a6ec53b61219a3105e5ba15e030ceb583f6ad01f993503f300ec3db",
+    "log_git_blob": "fe74b75a76cb5c0ec6c8fc62859a527797ff5fcc",
+    "sympy_pass": 19,
+    "source_locks_pass": 7,
+    "physically_ready": false
+  },
+  "physical_decision": {
+    "reduced_GE06_GE05_eta_E_evolution_gamma": "1/4",
+    "frozen_v019j_gamma": "1/2",
+    "source_residual": "S_phi = (a*eta*k^2*Bchi/2)*(1-4*gamma), once fixed reduced fluid/aether/dictionary residuals vanish",
+    "result_scope": "Exact original restricted reduced scalar action; not complete full covariant 3+1 Einstein-AeST+Y implementation",
+    "frozen_old_patch_mutated": false,
+    "half_source_physical_implementation_certified": false,
+    "new_quarter_variant_production_certified": false,
+    "no_ad_hoc_density_velocity_compensation": true
+  },
+  "go_no_go": {
+    "one_remaining_gate": "Complete original full covariant constrained scalar+aether+Einstein action to original CLASS fluid/metric variables with physical eta sources and species",
+    "go": "Only if source and constraint mapping fully closes; then create separate versioned action-consistent model, minimal eta=0/constraint regression, physical matter-Weyl cross transfer, DES Y3 forward",
+    "block": "If exact map missing or inconsistent, report analytic reduced source-normalization result and no physical survey forecast; no extra LW audits to rescue it",
+    "retrospective_test_selection_note": "Post-evidence decision; do not claim blind precommit"
+  },
+  "survey_scope": {
+    "first_observer": "DES Y3 galaxy–galaxy lensing",
+    "lens_bin": "MagLim4",
+    "primary_source_bin": 4,
+    "control_source_bin": 3,
+    "source_geometry_LW22": "PASS_GEOMETRY_ONLY",
+    "existing_LW08_differential_tangent": "UNRESOLVED",
+    "angular_support": "Require actual DES gamma_t window and scale cuts; ell 100,150,200 are support screens only",
+    "full_forward_certified": false,
+    "phys_eta_cross_tangent_certified": false,
+    "nuisance_marginal_asimov_performed": false,
+    "real_shear_data_fit_performed": false,
+    "unique_memory_signature_certified": false,
+    "observed_detection": false
+  },
+  "analytic_series_closed_after": "LW33",
+  "no_automatic_more_LW_scripts": true,
+  "original_branch": "physics-first-gravitational-elasticity",
+  "decision_document": "docs/ge19_2026-11-10_physics_decision_analytic_stop_and_observability_entry.md"
+}
