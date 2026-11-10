@@ -60,6 +60,8 @@ def algebra():
     bath_phi=s.diff(bath,phi)
     inferred=s.simplify(bath_alpha/kinetic)
     expected=-eta*Q*Bchi/(4*KB)
+    half_core_inferred=s.simplify(bath_alpha/s.diff(base/2+gradY+bath,alphad,2))
+    doubled_bath_inferred=s.simplify((2*bath_alpha)/kinetic)
     hess=s.hessian(bath,(phi,alpha))
     reducedbath=eta*a**3*s.Rational(1,4)*(
        qd*qd-(om*q-s.sqrt(wx)*k*chi/a)**2)
@@ -101,9 +103,9 @@ def algebra():
       "wrong_raw_half_as_evolution_detected":
           not zero(inferred+eta*Q*Bchi/(2*KB)),
       "negative_halve_AeST_kinetic_detected":
-          not zero(inferred-2*expected),
+          zero(half_core_inferred-2*expected) and not zero(half_core_inferred-expected),
       "negative_double_bath_force_detected":
-          not zero(inferred-2*expected),
+          zero(doubled_bath_inferred-2*expected) and not zero(doubled_bath_inferred-expected),
     }
     failed=[name for name,result in checks.items() if not bool(result)]
     if failed:
