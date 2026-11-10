@@ -1,0 +1,36 @@
+{
+  "classification": "GE19_LW30_REDUCED_3PLUS1_GR_AEST_ADM_SCALAR_CONSTRAINTS_PRELOCK",
+  "date": "2026-11-10",
+  "exploratory_algebra_preceded_prelock": true,
+  "blind_independent_preregistration": false,
+  "parent_LW29_original_sha256": "1749dff33f327ff0bf342285d7640b48792634dcac8af8bcc0159523311e03bd",
+  "parent_LW29_original_git_blob": "6416e1fd3496d826abcb0d665d31532e1e96787b",
+  "source_git_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw24_reduced_action_class_density_pressure_dictionary_20261110.py": "d74dff8c40fed829767a6c301e8782f2d0c3089f",
+    "ge19/lw29_covariant_3d_scalar_quadratic_eta_normalization_20261110.py": "2b3b6f774e87c2264fa0d1c6560dc42a62e2791d",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "docs/ge19_g2c_original_NL0C_Y_direct_H4_Ward_zero_set_2026-11-09.md": "776dc3e50c118e518f47a3f0a3cd0102a571f4a8"
+  },
+  "frozen_background": "Only analytic GE06 GR+AeST+GE05 sector, with no ordinary species, at relaxed FLRW: 3H²=Q*K_Q-K (H²=rho_A). For general cosmology, separately include ordinary matter and its perturbations. k>0 and a>0.",
+  "frozen_field_dictionary": {
+    "metric": "N=1+Psi, L=R=a(1-Phi), ADM spatial b varied then b=0 Newtonian gauge",
+    "aether": "u=partial_x(alpha)/a, E1=partial_x(alpha_dot+Psi)/a",
+    "scalar": "phi=bar_phi+varphi, chi=varphi+Q alpha, deltaQ=varphi_dot-Q Psi",
+    "fluid": "rho_A=(Q*K_Q-K)/3; delta rho_A=(Q*K_QQ deltaQ-k²(K_B E_A+C chi)/a²)/3; T_A=(rho_A+p_A)*k² varphi/(aQ)"
+  },
+  "frozen_action_constraints": {
+    "background_lapse": "E_N0/(2a³)=3H²-(Q*K_Q-K)",
+    "linear_momentum": "E_b^(1)=4*i*k*a³*(Phi_dot+H*Psi-K_Q*varphi/2), no direct linear bath shift source",
+    "linear_hamiltonian_offshell": "E_N^(1)|b=0 +4a³*[k² Phi/a²+3H(Phi_dot+H Psi)+3 delta rho_A/2] +6a³ Phi*[3H²-(Q*K_Q-K)] =0",
+    "class_hamiltonian_on_background": "k² Phi+(3/2)a²[delta rho_A+3(aH/k²) T_A]=0 upon momentum constraint",
+    "direct_bath_metric": "linear E_N^bath=E_b^bath=0"
+  },
+  "min_checks": 12,
+  "no_sweep": true,
+  "no_CLASS_run": true,
+  "no_DES_data": true,
+  "no_patch_change": true,
+  "full_physics_LIMIT": "Full 3+1 scalar+vector+tensor constraints with Y-sector and ordinary species, unit-aether / auxiliary Lagrange multipliers, all E_phi/E_u source rows and gauge mapping still OPEN; do not infer physical eta Weyl observer."
+}
