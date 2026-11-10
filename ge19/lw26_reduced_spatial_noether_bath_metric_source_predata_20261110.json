@@ -1,0 +1,37 @@
+{
+  "classification": "GE19_LW26_REDUCED_SPATIAL_NOETHER_BATH_LINEAR_METRIC_SOURCE_PRELOCK",
+  "date": "2026-11-10",
+  "pre_exploratory_math_seen": true,
+  "blind_independent_predata": false,
+  "original_LW25_json_sha256": "ce02df636fac121d54fd0115a1ed1401725e5cff660ecd83e295494a86ac213f",
+  "original_LW25_json_git_blob": "6e2f7f5326c0e54f5177603aaa9bd04660e980d3",
+  "original_LW25_log_sha256": "00b23af78cb100d4b43b5f4f1b1516e823d0b7adab0d5ae299b66a87f6966978",
+  "source_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw19_reduced_full_action_temporal_invariance_20261110.py": "2879141eef4abc7bf7a9e8bf442c251d148b7203",
+    "ge19/lw25_aether_shift_class_source_consistency_20261110.py": "961a1bf851ca6ba2579c2bb2fbf43352bfbc2072",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "frozen_claims": {
+    "action_space_diffeomorphism": "At fixed x with spatial generator xi=g(t,x) partial_x, invariant Q,X,E,Aq and spatially covariant full reduced action; verify density variation delta L=g_x L",
+    "offshell_spatial_noether": "I_x=N_x E_N+L_x E_L+R_x E_R+b_x E_b+u_x E_u+phi_x E_phi+q_x E_q -partial_x(L E_L-b E_b)-partial_t E_b=0",
+    "bath_metric_source": "For relaxed FLRW with X0=Aq0=q0=u0=0, all first-order bath metric Euler rows N,L,R,b and their first-jet conjugates vanish, in this reduced coframe basis",
+    "physical_scope": "Exact offshell spatial-diffeomorphism kinematics plus bath direct metric first-order source; does not prove theta_A unmodified, full 3+1 metric field mapping, or resolve LW25 factor-two"
+  },
+  "preregistered_checks": {
+    "invariant_scalar_count": 7,
+    "spatial_weight_density_count": 4,
+    "direct_metric_firstorder_count": 10,
+    "offshell_ward_identity_and_negative_controls_min": 3
+  },
+  "required_negative_controls": [
+    "wrong_shift_sign",
+    "missing_shift_time_change",
+    "missing_spatial_scale_weight",
+    "nonzero_linear_bath_metric_assertion_rejected"
+  ],
+  "status_critical": "LW25 conditional factor 2 remains unresolved; do not patch coefficient or fit DES residuals",
+  "no_class_runs": true,
+  "no_data_fit": true
+}
