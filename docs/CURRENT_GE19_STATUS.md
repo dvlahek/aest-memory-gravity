@@ -1,8 +1,18 @@
 # GE19 current scientific status
 
-Last updated: 2026-11-09 (living checkpoint)
+Last updated: 2026-11-10 (living checkpoint)
 Branch: `physics-first-gravitational-elasticity`.
 This is the **canonical living GE19 checkpoint**. Read it first when resuming the GravitationalElasticy / AeST Memory Gravity project. Earlier frozen results and classifications are immutable; the 2026-10-10 snapshot is preserved at the end.
+
+## 2026-11-10: LW15 implemented AeST total-fluid stress Ward identities are identically satisfied; FULL action equivalence still OPEN
+
+Actual new physics result (no CLASS solver, no observed residuals): independent SymPy 1.14.0 proof **11/11 exact algebraic gates PASS**. Original `v019/patch/source/aest_memory.c` AeST homogeneous background `rho_A=(Q K_Q-K)/3`, `p_A=K/3`, `K_Q=I0/a³`, `c_a²=K_Q/(QK_QQ)` gives analytically `rho_A'=-3Hconf(rho_A+p_A)`, `p_A'=c_a² rho_A'`, `R_A'=-3Hconf(1+c_a²)R_A`. The original `v019` Newtonian effective fluid delta/theta equations plus same pressure `P_A=rho_A Pi_A` in Einstein stress yield **identically** `J_D^code=D_A'+3Hconf(D_A+P_A)+T_A-3R_A Phi'=0` and `J_T^code=T_A'+4Hconf T_A-k²P_A-k²R_A Psi=0`, with `D_A=rho_A delta_A`, `T_A=R_A theta_A`. This holds for **any** `Pi_A(delta_A,E_A,chi)` and **does not use the E_A' equation at all**.
+
+**Crucial no-go qualification:** even if one hypothetically inserted a completely arbitrary unphysical `F_E` in E_A', both implemented fluid Ward checks would STILL return zero. Therefore `J_D^code=J_T^code=0` **cannot independently prove** that the actual `v019j` memory E forcing is accompanied by the exact full-action scalar Euler partner in the original field-to-fluid transformation. This does not overturn previous NL0B analytic source Ward PASS; it identifies why CLASS conservation-form rows are insufficient as independent verification of full covariant action closure. Negative-control exact residuals: wrong Pi only in delta row gives `J_D=-3Hconf rho_A DeltaPi`; wrong Pi only in theta row gives `J_T=k²rho_A DeltaPi`; wrong background p' gives `J_T=theta_A Delta(p')`. **All 11/11 source-equation symbolic checks PASS**.
+
+FROZEN before computation: `ge19/lw15_effective_fluid_action_dictionary_predata_20261110.json` (commit `729a34c`, Git blob `e4614f21987e1c3dd895590127525d61c7aa992e`). Canonical Git/source-verified script `ge19/lw15_effective_fluid_action_dictionary_audit_20261110.py` (commit `c303236`), **not yet executed on researcher WSL**, but its 18 literal historical source anchors checked against unchanged exact GitHub patch files and all match. Independently run result `results/ge19_lw15_effective_fluid_background_conservation_independent_symbolic_20261110.json` (commit `68fceed`) and full analytic decision `docs/ge19_lw15_effective_fluid_consistency_vs_covariant_action_noether_2026-11-10.md` (commit `70e6e25`). Frozen original user WSL LW12 8/8 remains untouched.
+
+**Next ONE real physics task:** independently derive the off-shell scalar/aether Euler source-to-effective-fluid transformation from the complete original AeST+NL0B quadratic action including multipliers, bath scalar variation, and original CLASS gradient/field normalizations. Do not repeat conservation/finite-k source sweeps; no physical `J_D,J_T` action verification is claimed before this mapping. Full A_eff and global retarded G_WE, physical two-history matched observer, survey k,z,ell support/finite eta and DES/ACT detection remain OPEN. LW03 radial FAIL, LW05 LOS BLOCK, LW08 anti-signal unresolved, H4/Z21 uncertified preserved.
 
 ## 2026-11-09: LW14 reconciles old NL0B theory Ward PASS with actual CLASS effective-fluid mapping OPEN
 
