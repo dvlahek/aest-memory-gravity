@@ -1,0 +1,82 @@
+{
+  "classification": "GE19_LW20_MAGLIM4_LENS_ONLY_SUPPORT_SCREEN_PASS_GGL_FORWARD_AND_FORECAST_BLOCKED",
+  "date": "2026-11-10",
+  "method": "Read-only independently calculated candidate source geometry from frozen original LW07b observed lens n(z) support metadata, plus LW08 numerical-antisymmetry stop. No actual source n(z), DES observed gamma_t, galaxy bias nuisance, bandpower response, full covariance or calibrated eta tangent was loaded. Canonical LW20 source-lock program committed but NOT executed in researcher WSL.",
+  "predata_git_blob_sha1": "f3915e650e044433a4cec18efd3381848bdb7ec1",
+  "original_parent_blobs": {
+    "results/ge19_lw07b_des_y3_nz_only_audit_20261109.json": "5323b8457cbe7e7426c3e6eb4345183c3660cbff",
+    "results/ge19_lw08_density_weyl_relative_tangent_20261109_archive_replay.json": "f3039640de268cd2136474f1ac716a80695b3713"
+  },
+  "original_lw19_researcher_sha256": "7a13c89f7387299f3ce20bc92716004c8096ea0f170ac7cd0739fcc50d44207e",
+  "target": {
+    "survey": "DES Y3",
+    "probe": "GGL galaxy positions x background tangential shear",
+    "lens": "MagLim",
+    "lens_bin": 4,
+    "preselected_ell": [
+      100,
+      150,
+      200
+    ],
+    "excluded_control_ell": 300,
+    "selection_after_lens_nz_support_review": true,
+    "selection_before_any_new_observed_shear_residuals": true
+  },
+  "lens_nz_only_supported_fraction": [
+    {
+      "ell": 100,
+      "lens_nz_mass_fraction_only": 0.9967622379524206
+    },
+    {
+      "ell": 150,
+      "lens_nz_mass_fraction_only": 0.9963078304964734
+    },
+    {
+      "ell": 200,
+      "lens_nz_mass_fraction_only": 0.9927818494758363
+    }
+  ],
+  "excluded_ell300_lens_nz_mass_fraction": 0.9755598951471407,
+  "supported_native_domain": {
+    "k_h_Mpc_inv": [
+      0.03,
+      0.2
+    ],
+    "z": [
+      0.2476197546610166,
+      1.3852368768513288
+    ]
+  },
+  "screening_gate": {
+    "three_ell_lens_nz_mass_ge_99percent": true,
+    "ell300_lens_nz_mass_below_99percent": true,
+    "not_GGL_coverage_certification": true
+  },
+  "physics_model": {
+    "W": "(Phi+Psi)/2",
+    "cross_spectrum": "P_{delta,W}, original LW06 has signed first-order native cross product response; LW08 differential response unresolved",
+    "GGL_Limber": "C_ell^{gkappa}=s_kappa ell(ell+1) int dchi n_L(chi)b_L(chi)g_s(chi)/chi^3 P_{delta,W}(k=(ell+.5)/chi,z), s_kappa fixed by chosen metric/convergence conventions",
+    "source_efficiency": "g_s(chi)=int_chi^infinity dchi_s n_s(chi_s)(chi_s-chi)/chi_s",
+    "importance": "P_deltaW needed at lens redshifts where n_L is supported, not whole source-range Weyl potential; source n(z) and geometry remain necessary. Full cosmic shear line-of-sight STOP need not transfer to GGL.",
+    "not_full": "Magnification, IA, galaxy bias, scale cuts, exact Hankel/fullsky windows, broad lens tails, covariance and physical eta still open"
+  },
+  "forecast_formula": "t=physical dmu/deta, D=nuisance derivative design, V=observed-vector covariance; F_eta_marg=t^T V^-1 t - (D^T V^-1 t)^T (D^T V^-1 D+P_prior)^-1(D^T V^-1 t)",
+  "exact_identifiability_issue": "For per-lens-bin amplitude-only t proportional to nuisance derivative dmu/dln(b_l), with flat bias prior, Schur Fisher for eta vanishes even if the un-marginalized signal-to-noise is nonzero. A nonzero native Weyl response is not by itself a detectable distinct memory effect.",
+  "fisher_math_only_controls": {
+    "unit_no_nuisance_F": 1,
+    "unit_exact_signal_bias_degeneracy_F": 0,
+    "unit_orthogonal_nuisance_F": 1,
+    "unit_collinear_nuisance_prior_precision1_F": 0.5
+  },
+  "gates": {
+    "archive_nz_support_candidate_pass": true,
+    "full_shear_prediction_and_source_weight_not_constructed": true,
+    "normalization_of_physical_eta_not_calibrated": true,
+    "full_covariance_and_nuisance_derivatives_unavailable": true,
+    "LW08_antisymmetric_response_UNRESOLVED": true,
+    "LW05_cosmic_shear_LOS_BLOCK_unchanged": true,
+    "original_LW19_action_reduced_PASS": true,
+    "observational_detection": false
+  },
+  "stop": "No physical sigma_eta, upper limit or significance is authorized. Do not treat lens n(z) fraction as percent of GGL signal. The next science step is an actual physical P_deltaW derivative and source n(z)/angular response/covariance with nuisance closure; if it cannot be constructed, record blocker rather than synthetic detection."
+}
