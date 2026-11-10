@@ -76,5 +76,10 @@
     "DES_significance_computable": false,
     "new_CLASS_sweep_warranted_by_current_data": false,
     "next_scientific_step": "Maintain P0 action-to-CLASS/constraint gate; require independent solver-error or physically resolved multi-redshift source before DES sensitivity claims. No new broad numerics."
+  },
+  "cross_field_relation_DES_k_overlap": {
+    "Pearson_corr_historical_minus_candidate_W_vs_d_m": -0.8019818409038261,
+    "Pearson_corr_candidate_eta_response_W_vs_d_m": -0.45091827344534946,
+    "remark": "Common coupled k structure, but not evidence separating physical memory from correlated numerical errors."
   }
 }
