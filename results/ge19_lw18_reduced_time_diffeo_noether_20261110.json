@@ -1,0 +1,72 @@
+{
+  "DES_ACT_observational_memory_detection": false,
+  "FLRW_linear_bath_identity": {
+    "E_phi_bath": "-eta*a*k\u00b2*Bchi/2",
+    "E_u_bath": "-i*eta*a\u00b2*k*Q*Bchi/2",
+    "identity": "Q E_phi_bath + (i k/a) E_u_bath = 0",
+    "metric_bath_direct_linear_stress": "already prior NL0B Identity6; not recalculated here",
+    "scalar_shift_current_consistent_with_LW17": true
+  },
+  "H4_Z21_certified": false,
+  "LW03_radial_FAIL_preserved": true,
+  "LW05_full_shear_LOS_BLOCK_preserved": true,
+  "LW08_differential_source_UNRESOLVED_preserved": true,
+  "LW17_researcher_r1_json_content_archived": false,
+  "LW17_researcher_r1_reported_json_valid": true,
+  "checks": {
+    "FLRW_linear_bath_time_Noether_cancellation": true,
+    "Lie_action_volume_density": true,
+    "Lie_metric_00": true,
+    "Lie_metric_01": true,
+    "Lie_metric_10": true,
+    "Lie_metric_11": true,
+    "Lie_transverse_metric": true,
+    "Lie_unit_aether_0": true,
+    "Lie_unit_aether_1": true,
+    "bath_rapidity_Euler_from_action": true,
+    "bath_scalar_spatial_current_from_action": true,
+    "negative_omit_aether_boost_breaks_Lie": true,
+    "negative_omit_scalar_partner_breaks_Noether": true,
+    "off_shell_noether_integration_by_parts": true
+  },
+  "classification": "GE19_LW18_REDUCED_TIME_DIFFEO_NOETHER_KINEMATICS_AND_BATH_LINEAR_IDENTITY_PASS_CLASS_ACTION_MAP_OPEN",
+  "direct_full_action_Euler_to_Noether_contraction_assembled": false,
+  "field_order": [
+    "N",
+    "L",
+    "R",
+    "b",
+    "u",
+    "phi",
+    "q"
+  ],
+  "full_3plus1_temporal_spatial_Ward_certified": false,
+  "full_constrained_metric_Green_certified": false,
+  "off_shell_Noether_operator": {
+    "A": "N E_N+b E_b",
+    "B": "-N b E_N+L b E_L-(N\u00b2/L\u00b2+b\u00b2)E_b-(N/L)E_u",
+    "I": "N_t E_N+L_t E_L+R_t E_R+b_t E_b+u_t E_u+phi_t E_phi+q_t E_q-partial_t(A)-partial_x(B)",
+    "scope": "I=0 is guaranteed by diffeomorphism invariance of complete ORIGINAL REDUCED action and its Euler derivatives; actual full Euler expressions are not all recomputed here."
+  },
+  "original_CLASS_effective_D_T_E_aether_dictionary_certified": false,
+  "physical_JD_JT_action_zero_certified": false,
+  "physical_two_history_Weyl_observer_certified": false,
+  "protocol_git_blob_sha1": "c87e52553aacfa0eb2ece6cd9a6e4571c86bdad4",
+  "scope": "Exact time-coordinate Lie kinematics, implied off-shell Noether operator and positive bath linear source cancellation for the frozen 1+1 reduced action. NOT a complete full-action Euler-to-CLASS independent verification.",
+  "source_git_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw17_full_reduced_scalar_action_current_20261110.py": "df5acc2c97076736ccdd7755691cacdaaada0e22"
+  },
+  "sympy_version": "1.14.0",
+  "time_diffeomorphism": "xi=f(t,x)*partial_t; variations=+Lie_xi",
+  "transformations": {
+    "delta_L": "f*L_t+L*b*f_x",
+    "delta_N": "f*N_t+N*f_t-N*b*f_x",
+    "delta_R": "f*R_t",
+    "delta_b": "f*b_t+b*f_t-(N\u00b2/L\u00b2+b\u00b2)*f_x",
+    "delta_phi": "f*phi_t",
+    "delta_q": "f*q_t",
+    "delta_u": "f*u_t-(N/L)*f_x"
+  }
+}
