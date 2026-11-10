@@ -1,0 +1,11 @@
+--- historic-v019j/source/perturbations.c
++++ exploratory-v019q/source/perturbations.c
+@@ -9359,7 +9359,7 @@
+             Bchi_aest += wj*chi_aest-sw*(a*omega_j/k)*qj;
+           }
+           Bchi_aest *= pba->aest_eta;
+-          E_rhs_aest -= 0.5*Q_aest*Bchi_aest;
++          E_rhs_aest -= 0.25*Q_aest*Bchi_aest;
+         }
+ 
+         dy[pv->index_pt_E_aest] = a*E_rhs_aest/pba->aest_KB-a_prime_over_a*E_aest;
