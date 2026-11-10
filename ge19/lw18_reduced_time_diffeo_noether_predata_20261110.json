@@ -1,0 +1,59 @@
+{
+  "classification": "GE19_LW18_REDUCED_1PLUS1_TEMPORAL_DIFFEO_NOETHER_SOURCE_GATE_PRELOCK",
+  "date": "2026-11-10",
+  "source_scope": "Original frozen analytic GE06 plane-symmetric 1+1 reduction of 3+1 Einstein+AeST, plus original GE05 positive one-mode scalar normalized bath, no nonanalytic Y and no full 3D CLASS action map.",
+  "prior_knowledge": "The time-Lie transformations were analytically derived before locking this protocol and previously frozen GE19 Ward work already covers separate spatial identities. This is a reproducibility and falsification lock, not prospective blind discovery.",
+  "parents": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw17_full_reduced_scalar_action_current_20261110.py": "df5acc2c97076736ccdd7755691cacdaaada0e22"
+  },
+  "exact_coordinate_action": {
+    "metric": "ds²=-N²dt²+L²(dx+b dt)²+R²(dy²+dz²)",
+    "aether_contravariant": "A^t=cosh(u)/N, A^x=-b cosh(u)/N+sinh(u)/L",
+    "xi": "xi=f(t,x)*partial_t",
+    "delta_N": "f*N_t+N*f_t-N*b*f_x",
+    "delta_L": "f*L_t+L*b*f_x",
+    "delta_R": "f*R_t",
+    "delta_b": "f*b_t+b*f_t-(N²/L²+b²)*f_x",
+    "delta_u": "f*u_t-(N/L)*f_x",
+    "delta_phi": "f*phi_t",
+    "delta_q": "f*q_t"
+  },
+  "offshell_noether_formula": {
+    "Euler_variables": [
+      "E_N",
+      "E_L",
+      "E_R",
+      "E_b",
+      "E_u",
+      "E_phi",
+      "E_q"
+    ],
+    "A": "N*E_N+b*E_b",
+    "B": "-N*b*E_N+L*b*E_L-(N²/L²+b²)*E_b-(N/L)*E_u",
+    "identity": "N_t E_N+L_t E_L+R_t E_R+b_t E_b+u_t E_u+phi_t E_phi+q_t E_q - partial_t(A)-partial_x(B)=0",
+    "derivation": "For the covariant reduced action and compactly supported f, sum E_i delta field_i = f identity+partial_t(f A)+partial_x(f B). Boundary drops; f arbitrary."
+  },
+  "linear_FLRW_bath_prediction": {
+    "background": "N=1,L=R=a(t),b=u=q=0,phi_t=Q(t),X=0",
+    "known_direct_bath_metric_stress": "zero at linear perturbative order (already original NL0B Identity6; not newly established)",
+    "bath_scalar_Ephi": "-eta*a*k²*Bchi/2",
+    "bath_aether_Eu": "-i*eta*a²*k*Q*Bchi/2",
+    "reduced_time_noether_constraint": "Q*Ephi+(ik/a)*Eu=0",
+    "interpretation": "This is a restricted linear bath-source Noether cancellation. It cannot show full nonlinear action/CLASS effective stress or complete temporal Hamiltonian constraint closure."
+  },
+  "checks": [
+    "Lie metric (tt tx xx yy) matches ADM variable transformations",
+    "Lie aether A^t and A^x matches transformed u",
+    "volume element delta(NLR²)=partial_t(f NLR²)",
+    "Euler source identity exact integration by parts with f_t and f_x",
+    "linear positive-bath scalar and aether Euler terms cancel",
+    "negative control omit scalar partner breaks identity",
+    "negative control omit aether f_x compensation breaks vector Lie transformation",
+    "all original source hashes preserved",
+    "no CLASS solver, no observed data, no new eta"
+  ],
+  "desired": "GE19_LW18_REDUCED_TIME_DIFFEO_NOETHER_KINEMATICS_AND_BATH_LINEAR_IDENTITY_PASS_CLASS_ACTION_MAP_OPEN",
+  "stop": "A successful structural Noether identity plus linear bath cancellation is not a direct symbolic evaluation of all the complete reduced GE06+GE05 Euler residuals, nor full 3+1 Noether, original CLASS fluid map, or data detection. If any test fails, fail closed and retain the failure."
+}
