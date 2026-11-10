@@ -1,0 +1,44 @@
+{
+  "DES_observation_found": false,
+  "LW22_geometry_PASS_preserved": true,
+  "LW23_source_PASS_preserved": true,
+  "LW24_original_SHA256": "f2b8c8bade6cad1d0ca48e11e56dd19bdecfd597fc20d99b5afdd5506a5c33d5",
+  "LW24_reduced_density_pressure_PASS_preserved": true,
+  "classification": "GE19_LW25_REDUCED_AETHER_CLASS_ETA_SOURCE_FACTOR_TWO_CONDITIONAL_REVIEW_REQUIRED",
+  "exact_symbolic_checks": {
+    "Newtonian_E1_projection": true,
+    "Newtonian_X1_projection": true,
+    "aether_bath_Euler_coefficient_minus_eta_half_before_normalization": true,
+    "eta0_action_CLASS_E_source_agree_conditional": true,
+    "factor_two_ratio_is_exact": true,
+    "finite_eta_conditioned_coefficient_gap": true,
+    "gap_canceled_by_required_chidot_correction": true,
+    "negative_control_unmodified_theta_not_equal_eta_nonzero": true,
+    "original_CLASS_chidot_chain_with_unmodified_theta": true,
+    "original_reduced_aether_u_force": true,
+    "original_reduced_aether_u_kinetic_momentum": true,
+    "original_reduced_shift_gradient_zero": true,
+    "original_reduced_shift_source": true,
+    "reduced_aether_u_spatial_derivative_zero_at_linear": true,
+    "required_conformal_theta_source": true
+  },
+  "formulas": {
+    "action_first_order_reduced_aether": "E_u/(2 i k a^2)=-[K_B*(E_A_dot+H E_A)-K_Q*chi+C*(chi_dot-Q E_A+(H+Q)*chi)+eta Q Bchi/4]",
+    "class_source": "K_B*(E_A_dot+H E_A)=K_Q*chi-C*(Q Pi/(1+w)+(H+Q)*chi-3*c_a^2*H*Q*alpha)-eta Q Bchi/2",
+    "conditional_coefficient_gap": "CLASS_vs_reduced_action source: eta Q Bchi/4, assuming unchanged CLASS theta_dot and standard chi dictionary",
+    "needed_if_same_dictionary": "delta chi_dot=eta Q Bchi/(4 C); or delta theta_prime=eta k^2 Bchi/(4 C)",
+    "shift": "E_b^(1)=-2a^3 K_Q partial_x(varphi) with no direct bath O(eta*perturbation)"
+  },
+  "full_3plus1_action_to_CLASS_certified": false,
+  "original_source_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw19_reduced_full_action_temporal_invariance_20261110.py": "2879141eef4abc7bf7a9e8bf442c251d148b7203",
+    "ge19/lw24_reduced_action_class_density_pressure_dictionary_20261110.py": "d74dff8c40fed829767a6c301e8782f2d0c3089f",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "physical_eta_Weyl_derivative_certified": false,
+  "physical_interpretation": "A conditional discrepancy under unchanged CLASS theta equation and naive action-to-fluid identification; the complete constraint-reduced scalar+aether+metric Euler map is still open. NOT a proved bug of CLASS or of the full theory.",
+  "predata_blob": "80afe36c4ea5859f3f0e4f76e9f5814f99b7290f"
+}
