@@ -1,0 +1,52 @@
+{
+  "classification": "GE19_LW21_DES_Y3_MAGLIM4_SOURCE_BEHIND_GEOMETRY_PREDATA",
+  "date": "2026-11-10",
+  "input_public_fits": "2pt_NG_final_2ptunblind_02_26_21_wnz_maglim_covupdate.fits",
+  "public_source": "https://desdr-server.ncsa.illinois.edu/despublic/y3a2_files/datavectors/",
+  "required_read_extensions": [
+    "NZ_LENS",
+    "NZ_SOURCE"
+  ],
+  "forbidden_read_extensions": [
+    "GAMMAT",
+    "COVMAT",
+    "WTHETA",
+    "XIP",
+    "XIM"
+  ],
+  "expected_n_lens_bins": 6,
+  "expected_n_source_bins": 4,
+  "primary_lens": "DES Y3 MagLim bin 4",
+  "source_bins": "all four metacalibration source redshift distributions, retain source-bin IDs",
+  "candidate_ell": [
+    100,
+    150,
+    200
+  ],
+  "negative_control_ell": 300,
+  "original_parent_blobs": {
+    "results/ge19_lw07b_des_y3_nz_only_audit_20261109.json": "5323b8457cbe7e7426c3e6eb4345183c3660cbff",
+    "results/ge19_lw20_ggl_preforecast_support_20261110_r1.json": "IGNORED_FROZEN_BY_SHA256"
+  },
+  "original_lw20_WSL_sha256": "ab0b0147b4edf1a12d182628f81476e2d23443e347fe636243d51007eca962a4",
+  "required_core_results": {
+    "source_behind_lens_probability": "integral dz_L dz_S n_L(z_L)n_S(z_S) 1[z_S>z_L], normalized independent draws",
+    "per_ell_supported_source_behind_probability": "same double integral with z_L limited to original LW07b certified k,z lens interval for ell",
+    "outside_support_pair_probability": "unconditional pair probability minus supported pair probability, strictly nonnegative",
+    "source_efficiency_unsupported": "This does NOT include (chi_S-chi_L)/chi_S, lensing/C_l weighting, source selection response or actual survey gamma_t",
+    "integration": "exact integration of piecewise-linear lens and source nz using union of z nodes and 4-point Gauss-Legendre: integrand piecewise cubic",
+    "negative_controls": [
+      "identical delta-redshift ordering gap",
+      "source all below lenses",
+      "source all above lenses",
+      "full support fraction not more than total pair fraction"
+    ],
+    "check_original_fits_sha": "match original LW07b provenance source_files entry if present",
+    "no_class_runs": true,
+    "no_Weyl_transfer_approximation": true,
+    "no_gamma_t_data_read": true,
+    "no_covariance_read": true
+  },
+  "successful_scope": "GE19_LW21_SOURCE_BEHIND_LENS_REDSHIFT_GEOMETRY_PASS_GGL_PHYSICAL_FORWARD_OPEN",
+  "stop": "Source-behind probability is a necessary geometric ingredient, not a geometric lensing efficiency, survey window, physical eta response, complete angular forward or detection; no posthoc selection on observed shear."
+}
