@@ -1,0 +1,15 @@
+{
+  "classification": "GE19_LW21_NZ_FITS_SIGNEDNESS_PREVALUE_REPAIR_POLICY",
+  "date": "2026-11-10",
+  "trigger": "Original researcher WSL LW21 selftest 4 PASS, official DES MagLim FITS downloaded (26.9MB), original run failed at read_nz_only -> normalized_cdf because np.isfinite and nonnegativity were combined. No bin-specific raw values supplied yet.",
+  "unknown_diagnostic": "Failing HDU/bin, negative min, negative signed integrated mass, nonfinite counts and whether error is due to negative entries remain UNKNOWN until local diagnostic is printed. This policy must NOT claim to have inspected raw FITS values.",
+  "rationale": "Published DES Y3 source n(z) shear response calibration can yield negative estimated distribution values despite smoothing. These are not probabilities and cannot be silently interpreted as such.",
+  "rule": "For each original NZ_LENS and NZ_SOURCE bin, reject NaN, inf, invalid z grid or nonpositive integral. Compute positive_mass = trapezoid(max(y,0),z), negative_mass=trapezoid(max(-y,0),z), epsilon=negative_mass/positive_mass. Only if epsilon <= 1e-4, replace negative values with zero, renormalize when constructing PDF, and write complete raw-vs-used diagnostics in the JSON. If epsilon > 1e-4 or any nonfinite/invalid inputs, fail closed AFTER printing the diagnostic, no physical probability or PASS.",
+  "fixed_threshold_relative_negative_area": 0.0001,
+  "threshold_selection": "Chosen before any raw min/negative-area statistics or DES shear residuals were inspected; a conservative numerical-negativity tolerance, not a DES measured uncertainty. This is an implementation repair and is NOT blinded preregistration of the underlying scientific question.",
+  "mathematical_bound": "For raw signed density f=f+ - f- with A=int f+ > B=int f-, p_signed=f/(A-B), p_clipped=f+/A: TV(p_signed,p_clipped)=B/(A-B)=epsilon/(1-epsilon). For pair source-behind event the absolute signed-vs-clipped normalized integral perturbation is at most epsilon_L/(1-epsilon_L)+epsilon_S/(1-epsilon_S). This is a mathematical sensitivity bound, not physical uncertainty or full lensing forward uncertainty.",
+  "no_data_changes": "Never modify FITS bytes or original frozen LW07b/LW20 inputs; normalize only a working copy for redshift ordering and archive diagnostics. No tuning eta, K_B, tau, galaxy bias, observed gamma_t, covariance or photo-z shift.",
+  "success": "GE19_LW21_SOURCE_BEHIND_LENS_REDSHIFT_GEOMETRY_PASS_GGL_PHYSICAL_FORWARD_OPEN only if all required data and source provenance checks pass including signedness threshold",
+  "failure": "GE19_LW21_NZ_SIGNEDNESS_NEEDS_PHYSICAL_SOURCE_REVIEW if negative area exceeds limit, or explicit value-integrity failure for NaNs/infs/invalid grid",
+  "next_physics_gate": "After actual clean source-behind redshift ordering, compute true geometry efficiency with chi(z) and validate physical P_deltaW projection. This program does not yield an observable detection."
+}
