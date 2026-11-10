@@ -1,0 +1,9 @@
+usage: run_action_quarter_finite_eta_transfer_20261110.py [-h]
+                                                          --historic-class
+                                                          HISTORIC_CLASS
+                                                          --candidate-class
+                                                          CANDIDATE_CLASS
+                                                          [--eta0-evidence ETA0_EVIDENCE]
+                                                          --out-dir OUT_DIR
+                                                          [--preflight]
+run_action_quarter_finite_eta_transfer_20261110.py: error: the following arguments are required: --out-dir
