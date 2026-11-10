@@ -31,6 +31,8 @@ The plotted quantity is \(10^6\Delta T(k)/\max_{\text{all }147\,k}|T_{\rm candid
 
 At the largest \(|\Delta W|\) sample, \(k=0.0688727632\), the immediate neighboring \(\Delta W\) values are approximately \(-1.53146\times10^{-7}\) at \(k=0.06631181\), \(-3.15956\times10^{-7}\) at \(k=0.06887276\), then \(-1.51036\times10^{-8}\) at \(k=0.07142937\). The corresponding \(\Delta d_m\) values are \(+0.0113061\), \(+0.0194797\), then \(-0.00047645\): pronounced localized structure, not a slowly varying rescaling.
 
+Across the same 49-point window, the computed differences `historical minus candidate` in `W` and `d_m` have **Pearson correlation −0.8019818409** (their signs are typically opposite, consistent with coupled metric/matter evolution). This is evidence of *shared scale-dependent structure in the two implemented outputs*, **not** evidence that a physically normalized signal is resolved: deterministic solver or interpolation errors in coupled equations can also be correlated. In particular, do not dismiss the result as random noise based only on sign flips.
+
 The added changes in the two metric potentials nearly coincide: \(\max_{\rm window}|\Delta\Phi-\Delta\Psi|\approx4.9960\times10^{-16}\) (difference of *source changes*, not the total \(\Phi-\Psi\)). This is consistent with an absence of new linear anisotropic-stress increment in the restricted model, **not** proof of all-sector physical gauge or constraint closure.
 
 ## Interpretation — not an instrumental sensitivity estimate
