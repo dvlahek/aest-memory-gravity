@@ -1,0 +1,68 @@
+{
+  "classification": "GE19_LW19_FULL_REDUCED_GE06_GE05_TEMPORAL_ACTION_COVARIANCE_PASS_CLASS_MAP_OPEN",
+  "date": "2026-11-10",
+  "method": "Independent container Python/SymPy exact variational first-jet check of original frozen GE06+GE05 reduced formulas, after exploring algebra before formula freeze. Canonical Git source-locked LW19 script has been committed but not run in researcher's WSL.",
+  "sympy_version": "1.14.0",
+  "predata_commit": "8c4c4659c3100fbb054d6e955a6be9a26f4d7b93",
+  "predata_blob_sha1": "397e276abaa597412bbbfe35faf9685107f8e403",
+  "canonical_source_commit": "0bc0f1d1f9b2629d522b99fe32f033cee573caa7",
+  "canonical_source_blob": "2879141eef4abc7bf7a9e8bf442c251d148b7203",
+  "historical_source_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py": "9a6b83d4188e5a4756c13ed8b946d2b0f49d8fce"
+  },
+  "actual_researcher_LW18_original_sha256": "82ab6c7c9bb8efa676de8817cb0949ace86823dd92414709486020cfa0f9fc69",
+  "checks": {
+    "invariant_Qinv_true_scalar": true,
+    "invariant_X_true_scalar": true,
+    "invariant_E_true_scalar": true,
+    "invariant_Aq_true_scalar": true,
+    "volume_weight_one": true,
+    "entire_AeST_plus_bath_density": true,
+    "GR_ft_anomaly_zero": true,
+    "GR_fx_matches_boundary": true,
+    "GR_ftt_anomaly_zero": true,
+    "GR_ftx_matches_boundary": true,
+    "GR_fxx_matches_boundary": true,
+    "GR_surface_derivative_integrability": true,
+    "full_reduced_action_exact_boundary": true,
+    "negative_remove_GR_boundary_detected": true,
+    "negative_reverse_GR_boundary_detected": true,
+    "negative_omit_rapidity_boost_detected": true
+  },
+  "gate_count": 16,
+  "gate_passed": 16,
+  "original_action": {
+    "kL": "(Lt-bLx-Lbx)/(NL)",
+    "kR": "(Rt-bRx)/(NR)",
+    "LGR": "NLR²(-4 kL kR -2 kR²)+2N Rx²/L+4Nx R Rx/L",
+    "LAeST_NL0B": "NLR²[KB E²+2(2-KB) EX-(2-KB)X²+2K(Qinv)+eta/4(Aq²-(omega q-sqrt(w)X)²)]",
+    "K_Q": "arbitrary differentiable K(Q); no specific Exp cosmological background tuning"
+  },
+  "geometric_theorem": {
+    "variation": "xi=f(t,x) partial_t, delta=+Lie_xi",
+    "matter_scalar_anomaly": "zero apart from f_t Lmatter density-weight term",
+    "GR_boundary_time_B": "4NR Rx/L",
+    "GR_boundary_space_C": "-4NR Rt/L",
+    "GR_delta_minus_f_Lt_minus_ft_L": "4R*(L Nt Rx-L Nx Rt-Lt N Rx+Lx N Rt)*fx/L² + (4NR Rx/L)*f_tx - (4NR Rt/L)*f_xx",
+    "entire_action_identity": "delta L_total = partial_t(f L_total + 4 N R Rx f_x/L) - partial_x(4 N R Rt f_x/L)",
+    "Noether_consequence": "With compactly supported f, full reduced action is invariant; LW18 time-Noether differential operator vanishes on complete reduced action Euler derivatives off shell. Individual actual Euler rows not separately substituted into the Ward in this audit.",
+    "negative_controls": "Discarding/opposite GR boundary sign and omitting rapidity f_x boost detected."
+  },
+  "model_scope": {
+    "full_reduced_1plus1_action_time_diffeo_offshell_pass": true,
+    "canonical_WSL_LW19_run": false,
+    "full_3plus1_NL0B_AeST_Noether_certified": false,
+    "full_original_CLASS_action_to_fluid_dictionary_certified": false,
+    "physical_total_action_JD_JT_certified": false,
+    "full_Aeff_retarded_Weyl_G_WE": false,
+    "two_dynamically_admissible_histories_with_Weyl_difference": false,
+    "DES_ACT_detection": false,
+    "LW03_radial_FAIL": true,
+    "LW05_LOS_BLOCK": true,
+    "LW08_differential_unresolved": true,
+    "H4_Z21_certified": false
+  },
+  "physics_priority": "Move to single action-to-CLASS smooth-regime constraint/metric observer closure, then physically normalized G_WE, then frozen Asimov power forecast; no numerical precision chase or posthoc physical retuning to manufacture discovery."
+}
