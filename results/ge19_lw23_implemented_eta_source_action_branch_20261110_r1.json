@@ -1,0 +1,57 @@
+{
+  "H4_Z21_uncertified_preserved": true,
+  "LW08_antisymmetric_response_unresolved_preserved": true,
+  "LW22_geometry_pass_preserved": true,
+  "classification": "GE19_LW23_IMPLEMENTED_ETA_SOURCE_FACTOR_PASS_PHYSICAL_ACTION_TO_CLASS_BRIDGE_OPEN",
+  "full_GGL_physical_forward_ready": false,
+  "observational_memory_detection": false,
+  "original_source_blobs": {
+    "ge19/linear_weyl_native_tangent_20261109.py": "abd2113568b801ae59f6906647e82edf62ea45d6",
+    "ge19/lw16_scalar_to_velocity_bath_euler_projection_20261110.py": "e26372e9b309bea34047e52bd49478f406e9459f",
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py": "9a6b83d4188e5a4756c13ed8b946d2b0f49d8fce",
+    "ge19/lw19_reduced_full_action_temporal_invariance_20261110.py": "2879141eef4abc7bf7a9e8bf442c251d148b7203",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "v019w/apply_variational_forcing_patch.py": "00c3f5da5a1b7734c67c82aa9181a443736101bf",
+    "v022/build_offline_forcing.py": "648047c959e320b74943d02f7874fa54d10e813a",
+    "v039/build_tau_forcing.py": "9c859d3131367892f9ee9d809786904a20796f91",
+    "v063/theory_response_map.py": "fb373c8118b755c5aa7d5572d910d6ca3684866e"
+  },
+  "physical_eta_cross_response_certified": false,
+  "physical_source_evaluation": {
+    "Eprime_eta_inhomogeneity": "-a*Q*Braw/(2*K_B)=-a^2*Q*y/(2*K_B)",
+    "conditional_variational_statement": "If q0 is the retarded normalized auxiliary solution and frozen patched E-row plus coupled constraints is the correct reduced physical Euler map, the implemented external forcing gives the u_eta inhomogeneity at eta=0. This is NOT a proof of that full physical map.",
+    "continuum_retarded_branch": "offline Drude history reconstructed from frozen eta0 chi/a; q0 branch must be specified as eta approaches zero from positive eta",
+    "eta_zero_baseline": "aest_memory_enabled=no, aest_eta=0",
+    "normalized_Braw": "a*(chi/a - sum_j w_j z_j) for normalized positive quadrature",
+    "numeric_lambda": "amplification of prescribed external force; not physical finite eta"
+  },
+  "predata_blob": "3dbeba3ea52776d9cda6e85b5dcabda937659a81",
+  "resolved": {
+    "auxiliary_eta_zero_degeneracy_identified": true,
+    "offline_vs_native_Braw_normalization_algebra": true,
+    "physical_reduced_bath_Ward_partner": true,
+    "source_coefficient_sign_a_KB": true
+  },
+  "source_level_signed_cross_derivative": "P_R*(D_eta*W+D*W_eta); independently audited product rule, not observed gamma_t",
+  "symbolic_gates": {
+    "auxiliary_q1_not_direct_source_at_eta_zero": true,
+    "eta_zero_auxiliary_Euler_is_degenerate": true,
+    "negative_missing_scalar_companion_detected": true,
+    "negative_wrong_a_factor_detected": true,
+    "negative_wrong_half_factor_detected": true,
+    "offline_continuum_Braw_equals_a_times_y_for_unit_weights": true,
+    "original_Eprime_matches_offline_a_squared_Q_over_2KB": true,
+    "reduced_physical_bath_scalar_aether_time_Ward": true,
+    "signed_cross_product_derivative": true,
+    "triangular_implemented_eta_tangent": true
+  },
+  "unresolved": {
+    "complete_Einstein_metric_constraint_and_other_species_tangent": true,
+    "continuum_vs_finite_bath_retarded_branch_error_bound": true,
+    "full_3plus1_action_to_CLASS_E_theta_density_momentum_map": true,
+    "nuisance_marginal_memory_identifiability": true,
+    "physical_history_pair_Weyl_observer": true,
+    "real_DES_gamma_t_forward_and_covariance": true
+  }
+}
