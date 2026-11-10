@@ -1,0 +1,48 @@
+{
+  "DES_gamma_t_observation": false,
+  "H4_Z21_certified": false,
+  "LW08_differential_source_unresolved_preserved": true,
+  "LW22_geometry_pass_preserved": true,
+  "LW23_eta_source_pass_preserved": true,
+  "classification": "GE19_LW24_REDUCED_ACTION_BACKGROUND_LINEAR_CLASS_DENSITY_PRESSURE_PASS_FULL_METRIC_FLUID_BRIDGE_OPEN",
+  "complete_aether_momentum_metric_constraints_certified": false,
+  "exact_gates": {
+    "CLASS_Pi_dictionary": true,
+    "CLASS_adiabatic_sound_speed": true,
+    "CLASS_background_conservation": true,
+    "CLASS_background_rho_p": true,
+    "CLASS_linear_density_from_action": true,
+    "CLASS_spatial_pressure": true,
+    "background_lapse": true,
+    "linear_lapse": true,
+    "linear_lapse_gradient": true,
+    "linear_longitudinal_pressure": true,
+    "linear_shift_momentum_exploratory": true,
+    "linear_transverse_pressure": true,
+    "negative_drop_gradient": true,
+    "negative_wrong_pressure_sign": true,
+    "negative_wrong_rho_scaling": true,
+    "newtonian_E_projection": true,
+    "newtonian_X_projection": true
+  },
+  "formulas": {
+    "CLASS_background": "rho=(Q*K_Q-K)/3, p=K/3, c_a^2=K_Q/(Q*K_QQ)",
+    "CLASS_linear_density": "(Q*K_QQ*(phi_dot-Q*Psi) - k^2/a^2*(K_B*E_A+(2-K_B)*chi))/3",
+    "CLASS_linear_pressure": "K_Q*(phi_dot-Q*Psi)/3",
+    "CLASS_pressure_identity": "delta_p=c_a^2*(delta_rho + k^2/(3*a^2)*(K_B*E_A+(2-K_B)*chi))",
+    "background_p8": "K",
+    "background_rho8": "Q*K_Q-K",
+    "linear_shift_exploratory": "E_b=-2*a^3*K_Q*partial_x(phi)"
+  },
+  "full_3plus1_action_to_CLASS_certified": false,
+  "nonanalytic_Y_included": false,
+  "original_source_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019/patch/source/aest_memory.c": "9a522a653a1855eda3cb67e856f9fc10a1e73d54"
+  },
+  "physical_eta_tangent_certified": false,
+  "predata_git_blob": "7c6ba7a0a0b85af6104d1b7e398c57edf0943f40",
+  "scope": "Reduced analytic GE06 longitudinal FLRW action, background and linear density-pressure relation only"
+}
