@@ -85,3 +85,41 @@ python3 -u "$PYTHON" \
 ~~~
 
 Upload the runner log and \`results/ge19_action_quarter_eta0_r1/regression_result.json\`; on failure include the relevant \`candidate_build.log\`, \`historical_run.log\` or \`candidate_run.log\`. The runner will **not** edit or compile the historical original, and refuses to overwrite a previous output directory.
+
+
+## Verified researcher eta=0 PASS; next *single* fixed positive-eta transfer check
+
+The original user WSL runner log and JSON were checked and are now **byte-identical** in GitHub:
+
+- \`ge19/candidates/evidence/ge19_action_quarter_eta0_r1_runner.log\`: original SHA-256 \`6c70251db96a35d36311c0e7cc61c710c00084bf18f61458523f48a90bbf57b7\`, Git blob \`d5eec2f825cc651fdb56f1b708bddf9ec96ea62a\`.
+- \`ge19/candidates/evidence/ge19_action_quarter_eta0_r1_regression_result.json\`: original SHA-256 \`dc02e6da5a0560bbc691400cfca3e2582ccf58bc16359b18f966c46e04bad3a5\`, Git blob \`bbb15393e581585e8bc452ed710e476202ccfede\`.
+
+The candidate clean build PASS and eta=0 old-vs-quarter backgrounds (40,000 rows × 23 columns), total matter P(k) (126 × 2), and P_cb (126 × 2) are **byte-identical**. This is a source implementation control, **not** a finite-eta, constraint or physical Weyl test. The original CLASS checkout and binary were untouched.
+
+To look at the *actual different dynamical response* without retuning, run **one predefined bounded experiment**, not a sweep: candidate at \(\eta=0\), candidate at \(\eta=0.01\), historical at \(\eta=0.01\); the same original AeST Exp input, \(\tau H_0=1\), 16-order bath, and **one** \(z=0.5\). Uses the CLI's native \`mTk\` transfer tables with explicitly mapped \`phi\`, \`psi\` and a declared density column (\`d_m\` when present, otherwise **\`d_tot\` explicitly labelled**, not relabelled as matter). Define \(W=(\Phi+\Psi)/2\). The density–W product is **just a signed transfer-amplitude diagnostic**, not \(P_{\delta W}\), galaxy–galaxy lensing or detection.
+
+This diagnostic is at finite eta, but does **not** prove numerical constraint propagation, physical full action-to-CLASS equivalence, retarded history specificity, an observed DES signal, or an infinitesimal \(\eta\) derivative. **Do not promote to PHYSICS_GO based on it alone.**
+
+~~~bash
+cd ~/aest-memory-gravity
+source .venv/bin/activate
+git -C ../aest-memory-gravity-action-quarter fetch origin candidate/ge19-action-linear-quarter-20261110
+git -C ../aest-memory-gravity-action-quarter checkout --detach origin/candidate/ge19-action-linear-quarter-20261110
+
+SCRIPT=../aest-memory-gravity-action-quarter/ge19/candidates/run_action_quarter_finite_eta_transfer_20261110.py
+
+python3 "$SCRIPT" \
+  --historic-class "$PWD/class_v077" \
+  --candidate-class "$PWD/class_v077_ge19_action_quarter_candidate" \
+  --preflight || exit $?
+
+set +e
+set -o pipefail
+python3 -u "$SCRIPT" \
+  --historic-class "$PWD/class_v077" \
+  --candidate-class "$PWD/class_v077_ge19_action_quarter_candidate" \
+  --out-dir "$PWD/results/ge19_action_quarter_finite_eta_r1" \
+  2>&1 | tee results/ge19_action_quarter_finite_eta_r1_runner.log
+~~~
+
+Supply the runner log and \`results/ge19_action_quarter_finite_eta_r1/fixed_eta_transfer_diagnostic.json\` (plus the case log if execution stops). \`native_transfer_comparison.npz\` contains the signed transfer arrays if a plot or independent consistency inspection is needed. All old source results remain frozen and no GitHub Actions are used.
