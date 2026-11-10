@@ -1,0 +1,16 @@
+{
+  "E_rhs_divided_by_KB_outside_source": true,
+  "candidate_source_sha256": "75bf9fe85f2aae85031edc109e131c6b5d1745dca8497300237e16e57c99f883",
+  "changed_file": "source/perturbations.c",
+  "classification": "EXPLORATORY_LINEAR_SCALAR_QUARTER_SOURCE_ONLY_NOT_PHYSICS_GO",
+  "compile_and_eta0_constraint_regression_completed": false,
+  "eta_bath_in_Bchi_already": true,
+  "exact_one_line_source_delta": "E_rhs_aest -= 0.5*Q_aest*Bchi_aest; => E_rhs_aest -= 0.25*Q_aest*Bchi_aest;",
+  "full_physical_observer_certified": false,
+  "input_source_sha256": "276646d913348824bddf9e24138e4213ecc3fb8b605d21525bf9280474dbca80",
+  "observed_DES_memory": false,
+  "original_CLASS_unmodified": true,
+  "original_v019j_patch_git_blob": "14796a5ed9e6265ed6810c792a93d7328a109364",
+  "original_v077_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "required_next_action": "Rebuild candidate separately and execute one eta=0/source/constraint regression before any physics promotion or observational claim"
+}
