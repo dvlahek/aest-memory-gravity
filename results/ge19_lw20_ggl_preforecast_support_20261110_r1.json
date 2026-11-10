@@ -1,0 +1,72 @@
+{
+  "Asimov_sensitivity_computed": false,
+  "DES_ACT_memory_detection": false,
+  "DES_theta_ell_window_and_scale_cut_validated": false,
+  "H4_Z21_certified": false,
+  "LW05_cosmic_shear_FULL_LOS_BLOCK_preserved": true,
+  "LW08_antisymmetric_response_UNRESOLVED_preserved": true,
+  "classification": "GE19_LW20_MAGLIM4_LENS_ONLY_SUPPORT_SCREEN_PASS_GGL_FORWARD_AND_FORECAST_BLOCKED",
+  "derivative_target": "dC_ell_gkappa/deta at frozen FLRW background, physical eta=0 forcing from original NL0B, with tracer bias/nuisance responses",
+  "ell_candidates": [
+    100,
+    150,
+    200
+  ],
+  "fisher_schur_formula": "F_eta_marg = t^T C^-1 t - t^T C^-1 D (D^T C^-1 D + P_prior)^-1 D^T C^-1 t",
+  "fisher_synthetic_selftests_available": true,
+  "frozen_protocol_git_blob_sha1": "f3915e650e044433a4cec18efd3381848bdb7ec1",
+  "full_action_to_CLASS_fluid_map_certified": false,
+  "full_lens_kz_support_and_quadrature_certified": false,
+  "galaxy_bias_magnification_IA_model_validated": false,
+  "lens_ell300_negative_coverage_control": {
+    "ell": 300,
+    "mass_fraction": 0.9755598951471407
+  },
+  "lens_nz_mass_coverage_info": [
+    {
+      "ell": 100,
+      "lens_nz_mass_fraction_only": 0.9967622379524206,
+      "mass_outside_unquantified_observable": 0.0032377620475794178
+    },
+    {
+      "ell": 150,
+      "lens_nz_mass_fraction_only": 0.9963078304964734,
+      "mass_outside_unquantified_observable": 0.0036921695035265767
+    },
+    {
+      "ell": 200,
+      "lens_nz_mass_fraction_only": 0.9927818494758363,
+      "mass_outside_unquantified_observable": 0.007218150524163747
+    }
+  ],
+  "lens_nz_screen_gates": {
+    "LW19_original_WSL_provenance": true,
+    "excluded_ell300_below_info_threshold": true,
+    "fixed_lens_selection": true,
+    "original_LW07b_not_observation": true,
+    "original_LW08_antisymmetric_unresolved": true,
+    "three_candidate_ell_above_info_threshold": true
+  },
+  "native_k_h": [
+    0.03,
+    0.2
+  ],
+  "native_z": [
+    0.2476197546610166,
+    1.3852368768513288
+  ],
+  "observable_candidate": "MagLim bin 4 g x kappa (galaxy-galaxy lensing)",
+  "observed_shear_read": false,
+  "original_LW19_WSL_SHA256": "7a13c89f7387299f3ce20bc92716004c8096ea0f170ac7cd0739fcc50d44207e",
+  "original_parent_blobs": {
+    "results/ge19_lw07b_des_y3_nz_only_audit_20261109.json": "5323b8457cbe7e7426c3e6eb4345183c3660cbff",
+    "results/ge19_lw08_density_weyl_relative_tangent_20261109_archive_replay.json": "f3039640de268cd2136474f1ac716a80695b3713"
+  },
+  "physical_eta_finite_calibration": false,
+  "physical_two_history_metric_observer_certified": false,
+  "physics_forward_equation": "C_ell_gkappa = ell*(ell+1) int dchi n_L(chi)*b_L(chi)*q_s(chi)/chi^3 * P_deltaW(k=(ell+.5)/chi,z(chi)) (sign convention fixed consistently), q_s=int_chi^inf dchi_s n_s(chi_s)(chi_s-chi)/chi_s",
+  "real_covariance_and_nuisance_derivatives_validated": false,
+  "scientific_decision": "Candidate DES Y3 GGL avoids imposing the cosmic-shear all-chi-to-source transfer requirement. Lens n(z) mass is >99% at three selected ell, but this is NOT a GGL forward or likelihood certification. Next physics gate is genuine full-coupled P_deltaW physical eta derivative in calibrated lens bins and source/bandpower kernels; do not report forecast significance without real covariance.",
+  "source_nz_and_lensing_efficiency_kernel_validated": false,
+  "survey": "DES Y3"
+}
