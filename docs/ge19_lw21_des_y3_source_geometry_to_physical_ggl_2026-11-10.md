@@ -53,3 +53,36 @@ python3 -u -m ge19.lw21_des_y3_maglim4_source_behind_20261110 \
 ~~~
 
 The FITS can instead be the identical existing file used for LW07b; the original frozen hash is checked. The program refuses to overwrite a previous output. The resulting source-behind probabilities will be useful geometry constraints but MUST NOT be labeled physical GGL efficiency or observational significance.
+
+
+## 2026-11-10 LW21 signed-n(z) WSL traceback and controlled implementation repair
+
+Researcher successfully ran the prior 4/4 synthetic selftests and downloaded official 26.9 MB MagLim FITS, then the real FITS ingestion stopped at `read_nz_only -> normalized_cdf -> GE19_LW21_NZ_VALUES_INVALID`. Because the old validation combined nonfinite z, nonfinite n(z), non-increasing z and **any negative bin** into one generic exception, that stack alone cannot identify the failing HDU, source bin, or root cause. **We have NOT seen actual minimum values or signed mass fractions from that FITS.** Published DES Y3 source-redshift calibration explains that response-weight estimates may produce nonphysical negative n(z) at some redshifts (DES Y3 source redshift calibration, Sec. 4.2.4). This is a plausible, not yet verified, explanation.
+
+Before any actual negative bins were inspected, an explicit mathematical signedness policy was frozen in `ge19/lw21_nz_signedness_handling_erratum_20261110.json`, commit `84982855f91258dc580c7c29ec1bb8a14207dac1`, blob `4cd19e0ed232a0c7fe8c5673cafdc7d4c7ff4cf4`. New canonical Python fix `ge19/lw21_des_y3_maglim4_source_behind_20261110.py`, commit `519869ee2f1105b4d9925d1e32158c63febcb92a`. Original LW21 predata, parent LW07b and LW20 SHA locks and FITS bytes were **not changed**.
+
+For every original `NZ_LENS` and `NZ_SOURCE` bin the revised program now prints `GE19_LW21_RAW_NZ_SIGN_AUDIT`: HDU/bin, z-grid integrity, nonfinite count, minimum/maximum, count of negative ordinates, integrated positive mass (A), negative mass (B), and (epsilon=B/A). When (A>B) and (epsilonle10^{-4}), the script uses a **nonnegative clipped working copy** only, with explicit per-bin report and the deterministic bound (mathrm{TV}(n_{m signed}/(A-B),,n_+/A)=B/(A-B)=epsilon/(1-epsilon)). For a lens-source pair event the absolute change of signed-normalized integral due to clipping is bounded by the sum of both one-dimensional TV terms; this is a mathematical bound, not a physical lensing uncertainty. For nonfinite entries, invalid z or larger (epsilon), **fail closed with bin-level diagnostic; no PASS or pair probability**.
+
+The new synthetic selftest extends from 4 to **6** controls, checking that a tiny negative ordinate is audited and conditionally corrected and a significant negative ordinate is **rejected**. Separate pure-NumPy arithmetic replay checked the tiny test has (epsilonapprox1.69	imes10^{-8}) and the large-negative example (epsilonapprox0.01695). The official real FITS is not available for execution in the assistant's container, so a **successful researcher WSL run has not yet been observed**. The original unsuccessful execution remains part of the reproducibility record, not a physics failure. No full source-lensing kernel or observed gravity memory detection is claimed.
+
+**Reuse the already downloaded exact file**, avoid another 26.9MB network transfer, and record to a fresh `_r2.json` plus log:
+
+~~~bash
+cd ~/aest-memory-gravity
+git pull --ff-only
+source .venv/bin/activate
+set +e
+set -o pipefail
+
+python3 -u -m ge19.lw21_des_y3_maglim4_source_behind_20261110 --self-test
+
+MAGLIM_FITS=data/des_y3/2pt_NG_final_2ptunblind_02_26_21_wnz_maglim_covupdate.fits
+test -s "$MAGLIM_FITS" || { echo 'FITS_NOT_FOUND: use original LW21 download path'; exit 3; }
+
+python3 -u -m ge19.lw21_des_y3_maglim4_source_behind_20261110 \
+  --fits "$MAGLIM_FITS" \
+  --out results/ge19_lw21_des_y3_maglim4_source_behind_20261110_r2.json \
+  2>&1 | tee results/ge19_lw21_r2.log
+~~~
+
+If this returns a significant-negative-area stop, preserve the diagnostic and determine whether a different statistically valid source estimator/response treatment is required; **do not widen the tolerance to manufacture a PASS**.
