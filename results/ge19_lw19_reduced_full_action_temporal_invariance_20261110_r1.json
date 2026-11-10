@@ -1,0 +1,70 @@
+{
+  "DES_ACT_observational_memory_detection": false,
+  "GR_anomaly_coefficients": {
+    "ft": "0",
+    "ftt": "0",
+    "ftx": "4*N*R*Rx/L",
+    "fx": "4*R*(L*Nt*Rx - L*Nx*Rt - Lt*N*Rx + Lx*N*Rt)/L**2",
+    "fxx": "-4*N*R*Rt/L"
+  },
+  "GR_anomaly_fx": "4*R*(L*Nt*Rx - L*Nx*Rt - Lt*N*Rx + Lx*N*Rt)/L**2",
+  "GR_boundary_space": "-4*N*R*Rt/L",
+  "GR_boundary_time": "4*N*R*Rx/L",
+  "H4_Z21_certified": false,
+  "LW03_radial_FAIL_preserved": true,
+  "LW05_LOS_BLOCK_preserved": true,
+  "LW08_differential_UNRESOLVED_preserved": true,
+  "LW18_original_researcher_SHA256": "82ab6c7c9bb8efa676de8817cb0949ace86823dd92414709486020cfa0f9fc69",
+  "action_boundary_identity": "delta L = partial_t(f L+4*N*R*Rx*f_x/L)-partial_x(4*N*R*Rt*f_x/L)",
+  "checks": {
+    "GR_ft_anomaly_zero": true,
+    "GR_ftt_anomaly_zero": true,
+    "GR_ftx_matches_boundary": true,
+    "GR_fx_matches_boundary": true,
+    "GR_fxx_matches_boundary": true,
+    "GR_surface_derivative_integrability": true,
+    "entire_AeST_plus_bath_density": true,
+    "full_reduced_action_exact_boundary": true,
+    "invariant_Aq_true_scalar": true,
+    "invariant_E_true_scalar": true,
+    "invariant_Q_true_scalar": true,
+    "invariant_X_true_scalar": true,
+    "negative_omit_rapidity_boost_detected": true,
+    "negative_remove_GR_boundary_detected": true,
+    "negative_reverse_GR_boundary_detected": true,
+    "volume_weight_one": true
+  },
+  "classification": "GE19_LW19_FULL_REDUCED_GE06_GE05_TEMPORAL_ACTION_COVARIANCE_PASS_CLASS_MAP_OPEN",
+  "field_basis": [
+    "N",
+    "L",
+    "R",
+    "b",
+    "u",
+    "phi",
+    "q"
+  ],
+  "full_3plus1_and_nonanalytic_Y_certified": false,
+  "full_Euler_rows_directly_substituted": false,
+  "full_action_to_CLASS_fluid_map": false,
+  "global_Aeff_and_retarded_G_WE": false,
+  "original_gravity_action": "NLR\u00b2(-4kL kR-2kR\u00b2)+2N Rx\u00b2/L+4 Nx R Rx/L",
+  "original_matter_action": "NLR\u00b2[KB E\u00b2+2(2-KB)EX-(2-KB)X\u00b2+2K(Q)+eta/4(Aq\u00b2-(omega q-sqrt(w)X)\u00b2)]",
+  "original_source_blobs": {
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py": "9a6b83d4188e5a4756c13ed8b946d2b0f49d8fce"
+  },
+  "physical_scope": "Exact off-shell temporal diffeo variation of original full GE06+GE05 reduced Lagrangian, arbitrary analytic K(Q); not full 3+1, nonlinear Y, complete CLASS fluid map, observer or data.",
+  "physical_two_history_metric_signal": false,
+  "protocol_blob_sha1": "397e276abaa597412bbbfe35faf9685107f8e403",
+  "reduced_time_Noether_from_actual_action": true,
+  "source_anchor_checks": {
+    "ge05/memory_directional_source_generator.py#1": true,
+    "ge06/analytic_aest_directional_source_generator.py#1": true,
+    "ge06/analytic_aest_directional_source_generator.py#2": true,
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py#1": true,
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py#2": true
+  },
+  "sympy_version": "1.14.0"
+}
