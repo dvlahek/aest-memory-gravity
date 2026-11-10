@@ -1,0 +1,11 @@
+GE19_ACTION_QUARTER_EXACT_SOURCE_DELTA_PASS
+GE19_ACTION_QUARTER_ETA0_ALGEBRAIC_SOURCE_EQUIVALENCE_PASS
+GE19_ACTION_QUARTER_COMMAND make clean
+GE19_ACTION_QUARTER_COMMAND make -j2 PYTHON=/home/dino/aest-memory-gravity/.venv/bin/python3 class
+GE19_ACTION_QUARTER_COMMAND /home/dino/aest-memory-gravity/class_v077/class /home/dino/aest-memory-gravity/results/ge19_action_quarter_eta0_r1/historical.ini
+GE19_ACTION_QUARTER_COMMAND /home/dino/aest-memory-gravity/class_v077_ge19_action_quarter_candidate/class /home/dino/aest-memory-gravity/results/ge19_action_quarter_eta0_r1/candidate.ini
+GE19_ACTION_QUARTER_BUILD_PASS
+GE19_ACTION_QUARTER_ETA0_MATCH_PASS 3
+GE19_ACTION_QUARTER_CONSTRAINT_PROPAGATION_OPEN
+GE19_ACTION_QUARTER_PHYSICAL_OBSERVER_READY False
+GE19_ACTION_QUARTER_RESULT /home/dino/aest-memory-gravity/results/ge19_action_quarter_eta0_r1/regression_result.json
