@@ -75,7 +75,7 @@ def preflight(historic, candidate):
 
 def prepare_ini(label,base,out):
     lines=[]
-    keys={"root","output","lensing","write_background","write_parameters",
+    keys={"root","overwrite_root","output","lensing","write_background","write_parameters",
           "input_verbose","background_verbose","perturbations_verbose",
           "k_per_decade_for_pk","k_per_decade_for_bao","P_k_max_h/Mpc",
           "aest_memory_enabled","aest_eta","aest_memory_order","aest_tau_H0"}
