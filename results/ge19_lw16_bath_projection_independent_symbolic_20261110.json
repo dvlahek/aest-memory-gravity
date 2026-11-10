@@ -1,0 +1,57 @@
+{
+  "classification": "GE19_LW16_BATH_SOURCE_PROJECTION_TO_THETA_PASS_FULL_ACTION_FLUID_DICTIONARY_OPEN",
+  "calculation_date": "2026-11-10",
+  "source_kind": "independent SymPy exact action bath-only projection, not canonical git-locked WSL execution",
+  "frozen_predata_commit": "865cbfdf72b3b9fd39e3ffbde5aae9c99b6c7d65",
+  "frozen_predata_git_blob_sha1": "d03d947f78b216834ca64926d369ba9c255f7fb2",
+  "input_actual_LW15_WSL_sha256": "7732d5bc13ea7ff5df2fcf9747862215954af53348d0083fe7d66c195cb527f1",
+  "sympy_version": "1.14.0",
+  "checked": {
+    "E_varphi_action_variation": true,
+    "E_alpha_equals_Q_E_varphi": true,
+    "field_redefinition_matches_CLASS_chi": true,
+    "Euler_theta_chain_rule": true,
+    "Euler_theta_equals_a_over_k2_Ealpha": true,
+    "projected_aether_source_matches_frozen_CLASS": true,
+    "Euler_theta_equals_projected_source_over_a": true,
+    "theta_alpha_Hessian_rank_one": true,
+    "theta_alpha_null_direction": true,
+    "negative_control_wrong_projection": true,
+    "negative_control_scalar_partner_missing": true
+  },
+  "checks_passed": 11,
+  "checks_total": 11,
+  "definitions": {
+    "chi": "varphi+Q alpha=Q*(a theta_A/k²+alpha)",
+    "kappa": "k/a",
+    "Bchi": "w chi-omega sqrt(w) q/kappa",
+    "Lpot": "-eta/4*(omega q-sqrt(w)kappa chi)^2"
+  },
+  "action_Euler_varphi": "-eta*(k/a)^2 Bchi/2",
+  "action_Euler_alpha": "Q * action_Euler_varphi",
+  "action_Euler_theta": "(Q*a/k²)*action_Euler_varphi=(a/k²)*action_Euler_alpha=-eta Q Bchi/(2a)",
+  "class_spatial_aether_projected_E_rhs": "(a²/k²)*E_alpha=-eta Q Bchi/2",
+  "ratio": "E_theta=projected_E_rhs/a",
+  "theta_alpha_Hessian_rank": 1,
+  "theta_alpha_Hessian": [
+    [
+      "-Q**2*eta*w/(2*k**2)",
+      "-Q**2*eta*w/(2*a)"
+    ],
+    [
+      "-Q**2*eta*w/(2*a)",
+      "-Q**2*eta*k**2*w/(2*a**2)"
+    ]
+  ],
+  "theta_alpha_null": [
+    "k²/a",
+    "-1"
+  ],
+  "source_matches_frozen_CLASS_Erhs": true,
+  "action_to_class_full_scalar_Euler_fluid_dictionary_independently_derived": false,
+  "physical_JD_JT_from_action_certified": false,
+  "global_Aeff_Green_certified": false,
+  "physical_history_pair_certified": false,
+  "observational_detection": false,
+  "scope": "Variation of the frozen reduced quadratic BATH potential in one Fourier mode, at fixed background and bath coordinate; not the complete AeST + NL0B action with kinetic and multiplier equations, and E_theta is NOT CLASS theta prime RHS. No claim of an omitted term in CLASS fluid Euler equation."
+}
