@@ -1,0 +1,32 @@
+{
+  "classification": "GE19_LW31_REDUCED_GE06_GE05_SPATIAL_TRACeless_SHEAR_PRELOCK",
+  "date": "2026-11-10",
+  "exploratory_symbolic_derivation_preceded_freeze": true,
+  "blind_pre_registration": false,
+  "original_parent_LW30_json_sha256": "cb09073a4bcfa2f18e003d4cfba08ac08fda315784a6105338d464b9a47fdfbc",
+  "original_parent_LW30_json_git_blob": "53e1d2d021d60d9a17464c5c2894f789cb4cf1be",
+  "source_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw30_exact_adm_hamiltonian_momentum_constraints_20261110.py": "b9d2751c1a858cd00d3ef44816e7f7300113f600",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "docs/ge19_lw29_covariant_3d_quadratic_action_normalization_and_nl0b_erratum_2026-11-10.md": "4da01689245ca29169bdbfc4e5cdb3d03b7ac2e1"
+  },
+  "constraints_and_dictionaries": {
+    "coframe": "ds²=-N²dt²+L²(dx+b dt)²+R²(dy²+dz²), b varied before b=0",
+    "metric": "N=1+epsilon Psi, L=R=a(1-epsilon Phi), mode exp(ikx), k!=0",
+    "Einstein": "E_L=partial_L lag -partial_t partial_Lt lag -partial_x partial_Lx lag; E_R analogous",
+    "shear": "[L*E_L-(R/2)*E_R]_epsilon1 (metric Euler traceless combination)",
+    "expected_GR_shear": "2*a*k²*(Phi-Psi)",
+    "expected_AeST_shear": "0",
+    "expected_bath_shear": "0",
+    "background_isotropy": "[L*E_L-(R/2)*E_R]_epsilon0 = 0 separately for GR AeST bath",
+    "no_metric_direct_bath": "relaxed FLRW U=X=0"
+  },
+  "physical_limit": "Proves a scalar anisotropic-stress null only for restricted plane-symmetric longitudinal analytic GE06+GE05 about relaxed FLRW with no other species. This is not a generic full 3+1 AeST/Y or real CLASS universe result. No Weyl response or detection.",
+  "no_class": true,
+  "no_fit": true,
+  "no_tuning": true,
+  "no_frozen_patch_modification": true,
+  "next_gate": "Complete the original scalar+aether Euler-to-fluid bridge and handle unit-aether/auxiliary constraints. Shear null does not resolve eta source factor 2."
+}
