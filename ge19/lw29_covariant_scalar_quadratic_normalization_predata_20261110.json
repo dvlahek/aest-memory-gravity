@@ -1,0 +1,52 @@
+{
+  "classification": "GE19_LW29_COVARIANT_3D_SCALAR_QUADRATIC_ETA_NORMALIZATION_AUDIT_PRELOCK",
+  "date": "2026-11-10",
+  "theory_anchors": {
+    "original_NL0B_action": "docs/nl0b_predata_covariant_memory_completion.md",
+    "analytic_AeST_reduction": "ge06/analytic_aest_directional_source_generator.py",
+    "original_memory_reduction": "ge05/memory_directional_source_generator.py",
+    "original_patch": "v019j/apply_memory_patch.py",
+    "original_LW28": "ge19/lw28_reduced_momentum_scalar_continuity_proof_20261110.py"
+  },
+  "source_git_blobs": {
+    "docs/nl0b_predata_covariant_memory_completion.md": "9b1c013153faeddbd2add3d80eb29f673bc7748f",
+    "docs/nl0b_covariant_memory_completion_result.md": "d005b1c135fead856510aa76b6174fb9051fa552",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw28_reduced_momentum_scalar_continuity_proof_20261110.py": "2084d78c05b192048bf121dae657e1d7396f254c",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "docs/ge19_g2c_original_NL0C_Y_direct_H4_Ward_zero_set_2026-11-09.md": "776dc3e50c118e518f47a3f0a3cd0102a571f4a8"
+  },
+  "prior_information_used_before_lock": true,
+  "independent_blind_preregistration": false,
+  "question": "Does the full covariant 3-dimensional linear scalar quadratic block of the existing published AeST term -KB/2 F^2 combined with the frozen normalized NL0B bath 1/4 yield the CLASS Euler E coefficient 1/2 or 1/4 once the complete aether kinetic Euler normalization is included?",
+  "model_fixed": {
+    "k2": "kx^2+ky^2+kz^2>0; spatial isotropy is explicit",
+    "aether_scalar_gradient": "E_i=(k_i/a)*(alpha_dot+Psi)",
+    "projected_scalar_gradient": "X_i=(k_i/a)*(varphi+Q*alpha)",
+    "auxiliary_longitudinal": "q_i=(k_i/k)*q, q=U/sqrt(eta) causal branch",
+    "analytic_E_X": "KB |E|^2 + 2(2-KB) E.X -(2-KB)|X|^2",
+    "original_memory": "eta/4 *((D_A q)^2-(omega q-sqrt(w) X)^2)",
+    "Y_nonlinear": "NL0C Y^(3/2) is cubic in perturbation amplitude and does not alter the scalar quadratic E kinetic coefficient",
+    "original_E_rhs_patch": "-eta*Q*Bchi/2 in E_rhs then Eprime=a E_rhs/KB..."
+  },
+  "checks": [
+    "Euler_alpha_dot_KB_has_factor_2",
+    "bath_alpha_source_minus_eta_over_2",
+    "bath_scalar_source_Q_relation",
+    "full_evolution_eta_over_4KB",
+    "generic_orientation_invariance",
+    "negative_halve_KB_doubles_tangent",
+    "negative_double_bath_amplitude",
+    "independent_Y_gradient_term_no_E_kinetic_change",
+    "eta0_bath_background_and_direct_linear_metric_stress_null"
+  ],
+  "frozen_policy": {
+    "no_CLASS_runs": true,
+    "no_observations": true,
+    "no_parameter_sweeps": true,
+    "do_not_change_old_NL0B_or_CLASS": true,
+    "historical_reinterpretation": "Historical NL0B identity 5 inferred CLASS evolution by equating raw bath Euler source with normalized E_rhs; historical archived PASS remains unchanged but current physical-equivalence claim requires qualification.",
+    "claim_limit": "Exact 3D scalar quadratic local Hessian in the frozen analytic covariant sector; does not solve full 3+1 Einstein, unit-aether multiplier, auxiliary orthogonality, species and gauge constraint bridge, nor physical matter-Weyl observation."
+  }
+}
