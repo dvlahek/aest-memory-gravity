@@ -1,0 +1,80 @@
+{
+  "classification": "GE19_ACTION_QUARTER_SIGNED_NATIVE_SHAPE_UNRESOLVED_NOT_PHYSICS_GO",
+  "method": "Independent read-only analysis of actual researcher original NPZ, no new CLASS runs or DES data",
+  "original_npz": {
+    "basename": "native_transfer_comparison.npz",
+    "sha256": "ca63e13a49b3b104fd65c06314a21d86734983a74e7427188cdeeb03bf9a85c5",
+    "bytes": 21851,
+    "git_binary_archived": false,
+    "n_k": 147,
+    "k_hmpc_range": [
+      0.000010497437888340237,
+      0.3048573488309009
+    ]
+  },
+  "settings": {
+    "z": 0.5,
+    "eta": 0.01,
+    "old_coefficient": 0.5,
+    "quarter_coefficient": 0.25,
+    "DES_k_overlap_hmpc": [
+      0.03,
+      0.2
+    ],
+    "overlap_n_k": 49,
+    "overlap_sampled_k_range": [
+      0.03015307072277438,
+      0.19784730640216702
+    ],
+    "native_density_key": "d_m"
+  },
+  "definitions": {
+    "delta": "historical_eta001 - candidate_eta001",
+    "quarter_response": "candidate_eta001 - candidate_eta0",
+    "historical_response": "historical_eta001 - candidate_eta0",
+    "global_scale": "max(abs(candidate_eta0_transfer)) over all 147 k points",
+    "amplitude_fit": "least-squares delta ≈ A*candidate_eta0 across the 49 k-window points",
+    "factor_two_diagnostic": "L2 norm of (historical_response - 2*quarter_response) divided by L2 norm of historical_response; not a mathematical proof that eta=0.01 is perturbative"
+  },
+  "W": {
+    "max_abs_delta": 3.159558091825332e-7,
+    "k_at_max_hmpc": 0.06887276322009737,
+    "max_abs_over_global_eta0_amplitude": 5.792008214664641e-7,
+    "pointwise_max_abs_delta_over_eta0_in_window": 0.0000028256862886837717,
+    "pointwise_median_abs_delta_over_eta0_in_window": 1.0785883724083863e-7,
+    "positive_delta_points": 27,
+    "negative_delta_points": 22,
+    "adjacent_sign_flips": 26,
+    "adjacent_intervals": 48,
+    "amplitude_only_fit_relative_l2_residual": 0.9503005849464158,
+    "response_cosine_quarter_vs_historical": -0.05539930269822461,
+    "factor_two_diagnostic": 1.3739827575585906
+  },
+  "d_m": {
+    "max_abs_delta": 0.019479727044199535,
+    "k_at_max_hmpc": 0.06887276322009737,
+    "max_abs_over_global_eta0_amplitude": 0.0000010229141494283504,
+    "pointwise_max_abs_delta_over_eta0_in_window": 0.0000029036811145281942,
+    "pointwise_median_abs_delta_over_eta0_in_window": 6.57755951768846e-8,
+    "positive_delta_points": 26,
+    "negative_delta_points": 23,
+    "adjacent_sign_flips": 22,
+    "adjacent_intervals": 48,
+    "amplitude_only_fit_relative_l2_residual": 0.9996658567225009,
+    "response_cosine_quarter_vs_historical": -0.19891311536656572,
+    "factor_two_diagnostic": 1.7704231830478612
+  },
+  "shear": {
+    "max_abs_eta_difference_of_phi_minus_psi_in_des_k_window": 4.996003610813204e-16,
+    "remark": "Near equality of phi and psi *increments* on this window, does not prove full covariance or no bath anisotropic stress in all regimes"
+  },
+  "decision": {
+    "implemented_finite_eta_difference_nonzero": true,
+    "coherent_physical_memory_shape_demonstrated": false,
+    "solver_numerical_error_quantified": false,
+    "physical_eta_derivative_certified": false,
+    "DES_significance_computable": false,
+    "new_CLASS_sweep_warranted_by_current_data": false,
+    "next_scientific_step": "Maintain P0 action-to-CLASS/constraint gate; require independent solver-error or physically resolved multi-redshift source before DES sensitivity claims. No new broad numerics."
+  }
+}
