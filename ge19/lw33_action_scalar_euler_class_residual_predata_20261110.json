@@ -1,0 +1,38 @@
+{
+  "classification": "GE19_LW33_OFFSHELL_SCALAR_CURRENT_TO_CLASS_RESIDUAL_IDENTITY_PRELOCK",
+  "date": "2026-11-10",
+  "exploratory_algebra_preceded_freeze": true,
+  "blind_preregistration": false,
+  "original_LW32_JSON_SHA256": "1990409ccc8529ea6725ca4dbf13aa80f5639d5b5adce33e801f7be8b7a9f884",
+  "original_LW32_JSON_GIT_BLOB": "852fc07083745865307150d759cb53ba230fe3ad",
+  "sources": {
+    "ge19/lw17_full_reduced_scalar_action_current_20261110.py": "df5acc2c97076736ccdd7755691cacdaaada0e22",
+    "ge19/lw24_reduced_action_class_density_pressure_dictionary_20261110.py": "d74dff8c40fed829767a6c301e8782f2d0c3089f",
+    "ge19/lw25_aether_shift_class_source_consistency_20261110.py": "961a1bf851ca6ba2579c2bb2fbf43352bfbc2072",
+    "ge19/lw27_scalar_charge_velocity_source_closure_20261110.py": "c4ade0db00ded7cfdcd5af65c31953eeb62dd9d4",
+    "ge19/lw32_covariant_aether_auxiliary_multiplier_elimination_20261110.py": "b10c7c74e3fd31ed902bc76cd09878c99332cd60",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "frozen_action": {
+    "scalar_jet": "Jt=2a^3*KQQ*deltaQ-6a^3*KQ*Phi; Jx=i*k*a*(2*C*(E-chi)+2*KQ*alpha-eta B/2)",
+    "scalar_zero": "S=dot(Jt)-a*k^2*(2*C*(E-chi)+2*KQ*alpha-eta*B/2)=0",
+    "background": "dot(a)=a H; dot(KQ)=-3 H KQ; dot(Q)=-3 H KQ/KQQ",
+    "fluid": "P=KQ*deltaQ/3; R=Q*KQ/3; T=R*k^2*varphi/(a Q); dot(D)_fluid=-3H(D+P)-T/a+3R dot(Phi)",
+    "aether_row": "dot(E)_gamma=-H E+[KQ*chi-C*(dot(chi)_kin-Q E+(H+Q)chi)-eta*gamma*Q*B]/KB",
+    "chi_kin": "dot(chi)_kin=deltaQ+Q E+dot(Q)*alpha",
+    "density_action": "D_action=[Q*KQQ*deltaQ-k^2/a^2*(KB E+C chi)]/3"
+  },
+  "target_theorem": "S=6a^3/Q R_D +2a k^2 KB/Q R_E +2a k^2 C/Q R_chi+2a k^2 KQ/Q R_geo -6a^3/Q dot(R_rho)-18a^3 H/Q R_rho+a eta k^2 B/2 (1-4 gamma), exactly for arbitrary off-shell evolution residuals and algebraic-definition residuals under frozen background laws.",
+  "source_decision": {
+    "gamma_action": "1/4",
+    "gamma_implemented": "1/2",
+    "old_gamma_on_shell_scalar_residual": "-a*eta*k^2*B/2",
+    "needed_explicit_density_evolution_compensation_old_gamma": "+eta*Q*k^2*B/(12a^2), absent from frozen implemented fluid row",
+    "remaining_full_3plus1": "Complete full covariant unit-multiplier gauge transformation and other species not proven; no unconditional CLASS patch bug claim."
+  },
+  "expected_checks_min": 16,
+  "no_CLASS_or_DES_runs": true,
+  "no_tuning": true,
+  "no_changes_to_old_patch": true
+}
