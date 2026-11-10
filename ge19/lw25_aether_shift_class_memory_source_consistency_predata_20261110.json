@@ -1,0 +1,45 @@
+{
+  "classification": "GE19_LW25_REDUCED_AETHER_SHIFT_CLASS_MEMORY_SOURCE_CONDITIONAL_CONSISTENCY_PRELOCK",
+  "date": "2026-11-10",
+  "exploratory_derivation_seen_before_freeze": true,
+  "no_independent_blind_preregistration_claim": true,
+  "parent_LW24_original_JSON_SHA256": "f2b8c8bade6cad1d0ca48e11e56dd19bdecfd597fc20d99b5afdd5506a5c33d5",
+  "source_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw19_reduced_full_action_temporal_invariance_20261110.py": "2879141eef4abc7bf7a9e8bf442c251d148b7203",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "ge19/lw24_reduced_action_class_density_pressure_dictionary_20261110.py": "d74dff8c40fed829767a6c301e8782f2d0c3089f"
+  },
+  "frozen_question": "Does the original GE06+GE05 reduced longitudinal full first-order aether Euler and shift equation imply exactly the v019j CLASS eta source when the original v019 theta and alpha equations, background Qdot, and frozen fluid dictionary are imposed?",
+  "formulas": {
+    "action": "NLR^2*(KB*E^2+2C*E*X-C*X^2+2K(Q)+eta/4*(Aq^2-(omega*q-sqrt(w)*X)^2))",
+    "C": "2-KB",
+    "first_order_aether_momentum": "dL/d(u_dot)=2a^3*(KB*E1+C*X1)",
+    "first_order_aether_force": "dL/du=2a^3*[H*(KB*E1+C*X1)+C*Q*(E1-X1)+KQ*X1]-eta*a^3*Q*BX/2",
+    "first_order_shift": "dL/db=-2a^3*KQ*partial_x(varphi), dL/d(b_x)=0",
+    "Newtonian_projection": "E1=(ik/a)*EA, X1=(ik/a)*chi, BX=(ik/a)*Bchi, chi=Q*(a*theta/k^2+alpha)",
+    "background": "Qdot=-3*H*c_a2*Q",
+    "class_theta": "theta_dot=(3c_a2-1)*H*theta+k^2/(a)*(Pi/(1+w)+Psi)",
+    "class_alpha": "alpha_dot=EA-Psi",
+    "class_E_rhs_bath": "-eta*Q*Bchi/2",
+    "reduced_aether_E_rhs_bath_conditional": "-eta*Q*Bchi/4 if theta_dot unchanged",
+    "equivalent_missing_chidot_condition": "delta chi_dot=eta*Q*Bchi/(4*C)",
+    "equivalent_missing_theta_prime_condition": "delta theta_prime=eta*k^2*Bchi/(4*C)"
+  },
+  "checks": [
+    "original_action_jet_linear_aether_exact",
+    "original_action_jet_linear_shift_exact",
+    "newtonian_metric_projection",
+    "background_theta_alpha_chidot_chain",
+    "memory_coefficient_compare",
+    "conditional_recovery_with_explicit_velocity_source",
+    "negative_control_zero_eta_agreement",
+    "original_git_source_locks"
+  ],
+  "no_fitting": true,
+  "no_new_CLASS": true,
+  "no_survey_data": true,
+  "interpretation": "A conditional coefficient comparison, NOT a demonstrated physical inconsistency of the full covariant AeST action or proof of erroneous CLASS implementation. The fluid/velocity dictionary may be eta-dependent, and the full scalar+aether+Einstein EOM combination is not yet derived. Record an explicit STOP/REVIEW if mismatch remains under stated premises."
+}
