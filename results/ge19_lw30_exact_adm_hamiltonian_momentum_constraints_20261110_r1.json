@@ -1,0 +1,52 @@
+{
+  "DES_detection_found": false,
+  "LW22_lensing_geometry_preserved": true,
+  "LW29_scalar_quadratic_source_normalization_preserved": true,
+  "all_ordinary_species_included": false,
+  "classification": "GE19_LW30_REDUCED_3PLUS1_GR_AEST_ADM_SCALAR_CONSTRAINTS_PASS_FULL_ACTION_TO_CLASS_OPEN",
+  "derived": {
+    "C_H": "k^2*Phi/a^2+3H*(Phi_dot+H*Psi)+3*delta_rho_A/2",
+    "C_H_CLASS": "k^2*Phi/a^2+(3/2)*(delta_rho_A+3*a*H*T_A/k^2), using momentum",
+    "Einstein_AeST_Hamiltonian": "E_N^(1)|b=0+4a^3*C_H+6a^3*Phi*[3H^2-(Q*K_Q-K)]=0",
+    "Einstein_AeST_momentum": "E_b^(1)=4*i*k*a^3*(Phi_dot+H*Psi-K_Q*varphi/2)",
+    "T_A": "(rho_A+p_A)*k^2*varphi/(a*Q)",
+    "background_lapse": "E_N0/(2a^3)=3H^2-(Q*K_Q-K)",
+    "delta_rho_A": "(Q*K_QQ*(varphi_dot-Q*Psi)-k^2/a^2*(K_B*(alpha_dot+Psi)+(2-K_B)*(varphi+Q*alpha)))/3",
+    "matter_enthalpy": "rho_A+p_A=Q*K_Q/3",
+    "scope": "Original analytic 3+1 plane-symmetric scalar coframe GR+AeST+GE05; AeST-only FLRW, not all ordinary species, not Y or full gauge/unit-aether map"
+  },
+  "full_3plus1_covariant_AeST_Y_and_CLASS_equivalence": false,
+  "full_3plus1_shear_equation_certified": false,
+  "original_CLASS_patch_modified": false,
+  "original_LW29_SHA256": "1749dff33f327ff0bf342285d7640b48792634dcac8af8bcc0159523311e03bd",
+  "physical_eta_matter_Weyl_derivative_certified": false,
+  "predata_git_blob": "5cce6d6c0736f42feff691ce4370d783dad1d8f2",
+  "source_git_blobs": {
+    "docs/ge19_g2c_original_NL0C_Y_direct_H4_Ward_zero_set_2026-11-09.md": "776dc3e50c118e518f47a3f0a3cd0102a571f4a8",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge19/lw24_reduced_action_class_density_pressure_dictionary_20261110.py": "d74dff8c40fed829767a6c301e8782f2d0c3089f",
+    "ge19/lw29_covariant_3d_scalar_quadratic_eta_normalization_20261110.py": "2b3b6f774e87c2264fa0d1c6560dc42a62e2791d",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68"
+  },
+  "symbolic_gates": {
+    "AeST_lapse_grad_from_E_chi": true,
+    "AeST_shift_minus_2a3ik_KQ_varphi": true,
+    "GR_lapse_grad_4aik_Phi": true,
+    "GR_shift_4a3ik_Phidot_Hpsi": true,
+    "Hamiltonian_on_background": true,
+    "Hamiltonian_to_CLASS_using_momentum": true,
+    "background_friedmann_lapse": true,
+    "bath_lapse_direct_linear_zero": true,
+    "bath_shift_direct_linear_zero": true,
+    "enthalpy_QKQ_over_three": true,
+    "full_Hamiltonian_offshell_background_residual": true,
+    "full_momentum_equal_CLASS": true,
+    "negative_drop_AeST_lapse_gradient": true,
+    "negative_missing_AeST_shift": true,
+    "negative_wrong_GR_shift_factor": true,
+    "negative_wrong_friedmann_background": true,
+    "velocity_phase_momentum_dictionary": true
+  },
+  "unit_aether_and_auxiliary_multiplier_equivalence_certified": false
+}
