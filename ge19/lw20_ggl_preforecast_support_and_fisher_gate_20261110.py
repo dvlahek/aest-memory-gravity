@@ -65,8 +65,10 @@ def fisher_schur(t, covariance, nuisance, prior_precision):
     require(np.allclose(C,C.T,rtol=0,atol=1.e-12) and
             np.allclose(P,P.T,rtol=0,atol=1.e-12),
             "FISHER_NOT_SYMMETRIC")
+    # An empty (0 x 0) prior matrix is valid when there are NO nuisance
+    # columns: avoid computing min() of an empty eigenvalue vector.
     require(np.min(np.linalg.eigvalsh(C))>0 and
-            np.min(np.linalg.eigvalsh(P))>=-1.e-12,
+            (n==0 or np.min(np.linalg.eigvalsh(P))>=-1.e-12),
             "FISHER_NON_PSD_INPUTS")
     Ct=np.linalg.solve(C,t)
     if n==0:
