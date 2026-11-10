@@ -130,13 +130,18 @@ def algebra():
         s.simplify(theta_dot_kin-theta_dot_class)==0,
       "negative_half_factor_has_nonzero_density_source":
         s.simplify(dclass)!=0,
+      "negative_drop_action_density_gradient_detected":
+        s.simplify(Jt-(2*a**3/Q*(Q*KQQ*deltaQ+k*k*A/a**2)
+                      -6*a**3*KQ*Phi))!=0,
+      "negative_ad_hoc_velocity_source_violates_fixed_kinematics":
+        s.simplify(compensation)!=0
     }
     # A genuine negative control: dropping the explicit scalar bath flux
     # while keeping the action-derived aether term forces a density source.
     noflux=s.solve(scalar_eta-a*k*k*B/2,Dd_eta)[0]
     checks["negative_drop_scalar_bath_flux_detected"]=s.simplify(
         noflux.subs({Ed_eta:e_action,chid_eta:0})
-        -a*0)!=0
+        )!=0
     failed=[key for key,passed in checks.items() if not bool(passed)]
     if failed:
         print("GE19_LW27_FAILED_GATES",failed,flush=True)
