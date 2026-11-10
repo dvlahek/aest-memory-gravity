@@ -109,6 +109,12 @@ def synthetic_selftest():
             "SIGNED_SOURCE_TV_BOUND")
     require(audit["exceeds_original_LW21_1e_minus4_limit"],
             "ORIGINAL_LW21_HARD_FAIL_PRESERVED")
+    # Metadata-only guard: a truncated SHA must fail already in the self-test.
+    frozen_lw02=json.loads(PRE.read_text())["exact_frozen_inputs"][
+        "results/ge19_lw02_windowed_lensing_20261109.json_sha256"]
+    require(len(LW02_SHA)==64 and LW02_SHA==frozen_lw02,
+            "ORIGINAL_LW02_SHA_PRELOCK_MISMATCH")
+    print("GE19_LW22_FROZEN_LW02_SHA_PRELOCK_PASS",flush=True)
     print("GE19_LW22_AEST_SOURCE_EFFICIENCY_SYNTHETIC_SELFTEST_PASS 4",flush=True)
 
 def load_background(class_root):
