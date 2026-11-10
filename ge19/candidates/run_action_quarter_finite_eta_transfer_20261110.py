@@ -120,16 +120,22 @@ def transfer_columns(file):
     tokens=re.findall(r"(?:^|\s)(\d+):([A-Za-z_][A-Za-z_0-9]*)",
                       " ".join(hdr))
     columns={key:int(number)-1 for number,key in tokens}
-    for k in ("d_m","phi","psi"):
+    for k in ("phi","psi"):
         need(k in columns,"NO_EXPLICIT_TRANSFER_COLUMN_"+k+"_"+file.name)
+    # Native CLASS command-line mTk often exposes d_tot, not d_m.
+    # Never silently relabel total density as nonrelativistic matter.
+    density="d_m" if "d_m" in columns else "d_tot" if "d_tot" in columns else None
+    need(density is not None,"NO_DECLARED_DENSITY_COLUMN_"+file.name)
     data=np.atleast_2d(np.loadtxt(file,comments="#"))
     need(np.isfinite(data).all() and data.shape[0]>=4,"BAD_TRANSFER_"+file.name)
     need(max(columns.values())<data.shape[1],"TRANSFER_COLUMNS_OUT_OF_RANGE")
     # k is the first column of CLASS transfer tables, in h/Mpc.
     k=data[:,0]
     need(np.all(np.diff(k)>0) and np.all(k>0),"K_GRID_NOT_ORDERED")
-    return k,{name:data[:,col].copy() for name,col in columns.items()
-              if name in ("d_m","phi","psi")}
+    return k,{"density":data[:,columns[density]].copy(),
+              "phi":data[:,columns["phi"]].copy(),
+              "psi":data[:,columns["psi"]].copy(),
+              "density_key":density}
 
 def unique_transfer(root):
     files=sorted(root.parent.glob(root.name+"*tk.dat"))
@@ -177,14 +183,17 @@ def main():
         execute(root/"class",ini,out/(name+".log"),root)
         tf=unique_transfer(prefix)
         k,values=transfer_columns(tf)
-        arrays[name]={"k":k,**values,
+        arrays[name]={"k":k,"density":values["density"],
+                      "phi":values["phi"],"psi":values["psi"],
                       "W":(values["phi"]+values["psi"])/2.0,
-                      "D_W":values["d_m"]*(values["phi"]+values["psi"])/2.0}
+                      "density_W":values["density"]*(values["phi"]+values["psi"])/2.0}
+        arrays[name]["density_key"]=values["density_key"]
         pf,pdata=unique_power(prefix)
         power[name]=pdata
     ref=arrays["candidate_eta0"]
     for label,arr in arrays.items():
         need(np.array_equal(arr["k"],ref["k"]),"TRANSFER_K_GRID_"+label)
+        need(arr["density_key"]==ref["density_key"],"DENSITY_SCHEMA_CHANGED_"+label)
     basepow=power["candidate_eta0"]
     for label,arr in power.items():
         need(arr.shape==basepow.shape and np.array_equal(arr[:,0],basepow[:,0]),
@@ -192,7 +201,7 @@ def main():
     quarter=arrays["candidate_eta001"]
     half=arrays["historical_eta001"]
     metrics={}
-    for field in ("d_m","phi","psi","W","D_W"):
+    for field in ("density","phi","psi","W","density_W"):
         b=ref[field]
         q=quarter[field]
         h=half[field]
@@ -211,7 +220,7 @@ def main():
     }
     np.savez_compressed(out/"native_transfer_comparison.npz",k_hmpc=ref["k"],
        **{f"{name}_{field}":val for name,arr in arrays.items()
-          for field,val in arr.items() if field!="k"})
+          for field,val in arr.items() if field not in ("k","density_key")})
     report={
        "classification":"GE19_ACTION_QUARTER_FIXED_FINITE_ETA_IMPLEMENTED_TRANSFER_DIAGNOSTIC_NOT_PHYSICS_GO",
        "eta_fixed":ETA,
@@ -220,8 +229,9 @@ def main():
        "cases":[name for name,_,_ in cases],
        "source_candidate_sha256":proof["candidate_source_sha256"],
        "source_historical_sha256":proof["input_source_sha256"],
-       "native_transfer_fields":["d_m","phi","psi","W","D_W"],
-       "D_W_definition":"product of signed CLASS d_m and W transfer amplitudes, NOT a projected survey cross-power",
+       "native_transfer_fields":["density","phi","psi","W","density_W"],
+       "native_density_key":ref["density_key"],
+       "density_W_definition":"product of the explicitly identified CLASS density column (d_m if available, otherwise d_tot) and W, NOT a physical matter-Weyl projected cross-power",
        "units":"CLASS native transfer fields, k in h/Mpc, one redshift",
        "metrics":metrics,
        "finite_eta_runs_completed":True,
