@@ -1,0 +1,48 @@
+{
+  "classification": "GE19_LW19_REDUCED_TOTAL_ACTION_TIME_DIFFEO_BOUNDARY_THEOREM_FORMULA_FREEZE",
+  "date": "2026-11-10",
+  "provenance_and_ordering": "Exact transformation, GR boundary anomaly and scalar-invariant checks explored independently in a scratch SymPy calculation BEFORE publishing this freeze. This is a reproducibility/ falsification freeze, not blind preregistration of an unknown theorem.",
+  "goal": "Directly verify temporal diffeomorphism invariance of the COMPLETE original GE06 analytic reduced Einstein+AeST plus original positive GE05 bath (normalized physical eta mode), including the by-parts GR boundary current. Establish full reduced off-shell temporal Noether from actual Lagrangian variation, without pretending this closes the full 3+1 action or CLASS.",
+  "historical_source_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py": "9a6b83d4188e5a4756c13ed8b946d2b0f49d8fce"
+  },
+  "LW18_original_researcher_WSL_json_sha256": "82ab6c7c9bb8efa676de8817cb0949ace86823dd92414709486020cfa0f9fc69",
+  "formula": {
+    "metric": "ds²=-N²dt²+L²(dx+b dt)²+R²(dy²+dz²)",
+    "invariants": {
+      "kL": "(L_t-bL_x-Lb_x)/(NL)",
+      "kR": "(R_t-bR_x)/(NR)",
+      "sigma": "(phi_t-b phi_x)/N",
+      "Qinv": "cosh(u)*sigma+sinh(u)*phi_x/L",
+      "X": "sinh(u)*sigma+cosh(u)*phi_x/L",
+      "E": "cosh(u)*[(u_t-b u_x)/N+N_x/(N L)]+sinh(u)*[kL+u_x/L]",
+      "Aq": "cosh(u)*(q_t-b q_x)/N+sinh(u)*q_x/L"
+    },
+    "gravity": "L_GR=NLR²(-4 kL kR -2 kR²)+2N R_x²/L+4N_x R R_x/L",
+    "aether_bath": "L_AeST+NL0B=NLR²[KB E²+2(2-KB)E X -(2-KB)X² +2K(Qinv)+eta/4*(Aq²-(omega q-sqrt(w)X)²)]",
+    "transformation": "xi=f(t,x) partial_t, delta=+Lie_xi; original LW18 variations for N,L,R,b,u,phi,q",
+    "boundary_identity": "delta L_total=partial_t[f L_total + (4 N R R_x/L) f_x]+partial_x[-(4 N R R_t/L) f_x]",
+    "derivative_coeff_test": "After subtracting f (L_total)_t and f_t L_total, the terms at f=0 are A f_x + B f_tx + C f_xx where B=4NR R_x/L, C=-4NR R_t/L and A=(B)_t+(C)_x.",
+    "GR_curvature_rewrite_warning": "This boundary current is required because GE06 used its integrated-by-parts GR spatial curvature term. Omitting it causes a spurious false Ward FAIL.",
+    "validation_scope": "All expressions are local independent first jets, not evaluated cosmic background snapshots. K(Q) is an arbitrary differentiable function."
+  },
+  "fixed_checks": [
+    "Original kinematic Q, X, E, Aq have no f_t, f_x, f_tt, f_tx, f_xx anomaly beyond scalar transport",
+    "Volume NLR² transforms as weight-one density: delta volume - f volume_t = f_t volume",
+    "Actual combined AeST+NL0B density transforms as weight-one density with arbitrary analytic K(Q)",
+    "GR integrated-by-parts lagrangian transform anomaly is exactly A f_x+B f_tx+C f_xx",
+    "Boundary identity A=(B)_t+(C)_x holds algebraically for arbitrary N,L,R first jets",
+    "Full combined original reduced action changes only by exact time/space boundary terms",
+    "Negative control discarding GR surface current detects nonzero anomaly",
+    "Negative control wrong sign of GR boundary current detects nonzero residual",
+    "Time-aether rapidity compensation term must remain, no tuning of physical parameters",
+    "Original frozen source Git blobs and canonical LW18 SHA are present",
+    "No numerical CLASS run or observed DES/ACT data"
+  ],
+  "success_classification": "GE19_LW19_FULL_REDUCED_GE06_GE05_TEMPORAL_ACTION_COVARIANCE_PASS_CLASS_MAP_OPEN",
+  "failure_classification": "GE19_LW19_FULL_REDUCED_TEMPORAL_ACTION_COVARIANCE_FAIL",
+  "honest_scope": "Direct full reduced action invariance plus Noether consequence proven; this does NOT explicitly differentiate all Euler source rows in 3+1 or construct complete action-to-CLASS dark fluid, full Aeff, dynamical two-history Weyl or sky detection. No reopening H4/Z21 or altering previously frozen coefficient/eta.",
+  "next_science_gate": "One original CLASS action-to-effective-fluid/metric observer closure/benchmark campaign with precisely required missing Euler combinations, then predictive finite physical eta forecast. Do not run many small additional k/time precision sweeps."
+}
