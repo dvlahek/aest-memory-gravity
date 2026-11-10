@@ -1,0 +1,78 @@
+{
+  "classification": "GE19_LW18_REDUCED_TIME_DIFFEO_NOETHER_KINEMATICS_AND_BATH_LINEAR_IDENTITY_PASS_CLASS_ACTION_MAP_OPEN",
+  "date": "2026-11-10",
+  "independent_method": "Independent SymPy exact prototype executed in analysis container using the same Lie transformations, ADM metric/aether, Noether integration-by-parts identity, and quadratic GE05 bath fluctuation variation as frozen in predata. Canonical source-locked GitHub runner was committed but has not been executed in researcher WSL.",
+  "predata_commit": "5b9c29c806aaddabe4af63caed0a1888e2365a54",
+  "predata_blob": "c87e52553aacfa0eb2ece6cd9a6e4571c86bdad4",
+  "canonical_runner_git_commit": "bfaa8f5e927ae2a6e72fd19d6ec56dc711de9bbf",
+  "source_blobs": {
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge19/lw17_full_reduced_scalar_action_current_20261110.py": "df5acc2c97076736ccdd7755691cacdaaada0e22"
+  },
+  "sympy_version": "1.14.0",
+  "checks": {
+    "Lie_metric_00": true,
+    "Lie_metric_01": true,
+    "Lie_metric_10": true,
+    "Lie_metric_11": true,
+    "Lie_unit_aether_0": true,
+    "Lie_unit_aether_1": true,
+    "Lie_transverse_metric": true,
+    "Lie_action_volume_density": true,
+    "off_shell_noether_integration_by_parts": true,
+    "negative_omit_aether_boost_breaks_Lie": true,
+    "bath_rapidity_Euler_from_action": true,
+    "bath_scalar_spatial_current_from_action": true,
+    "FLRW_linear_bath_time_Noether_cancellation": true,
+    "negative_omit_scalar_partner_breaks_Noether": true
+  },
+  "checks_total": 14,
+  "checks_passed": 14,
+  "metric": "ds²=-N²dt²+L²(dx+b dt)²+R²(dy²+dz²)",
+  "aether": "A^t=cosh(u)/N; A^x=-b cosh(u)/N+sinh(u)/L",
+  "gauge_parameter": "xi=f(t,x)*partial_t",
+  "transformations": {
+    "delta_N": "f*N_t+N*f_t-N*b*f_x",
+    "delta_L": "f*L_t+L*b*f_x",
+    "delta_R": "f*R_t",
+    "delta_b": "f*b_t+b*f_t-(N²/L²+b²)*f_x",
+    "delta_u": "f*u_t-(N/L)*f_x",
+    "delta_phi": "f*phi_t",
+    "delta_q": "f*q_t"
+  },
+  "integration_by_parts_ward_operator": {
+    "A": "N E_N+b E_b",
+    "B": "-N b E_N+L b E_L-(N²/L²+b²)E_b-(N/L)E_u",
+    "identity": "sum_{z in N,L,R,b,u,phi,q}(E_z z_t)-partial_t(A)-partial_x(B)=0",
+    "proof_scope": "Exact Lie transformations and Euler-identity integration by parts for the reduced diffeomorphism-invariant action. The full list of original GE06+GE05 Euler partial derivative expressions was not separately computed and plugged back into the identity."
+  },
+  "linear_relaxed_FLRW_bath": {
+    "E_phi": "-eta*a*k²*Bchi/2",
+    "E_u": "-i*eta*a²*k*Q*Bchi/2",
+    "identity": "Q E_phi+(i k/a) E_u=0",
+    "scalar_pair_missing_negative": "nonzero i k E_u/a",
+    "direct_bath_metric_first_order_stress": "Existing NL0B Identity6; not independently recalculated for this phase"
+  },
+  "original_LW17_researcher_r1": {
+    "classification_reported": "GE19_LW17_REDUCED_COMBINED_AEST_MEMORY_SCALAR_CURRENT_EXACT_PASS_FULL_CLASS_ACTION_MAP_OPEN",
+    "11of11_checks": true,
+    "source_checks": true,
+    "JSON_VALID_reported": true,
+    "actual_file_uploaded": false,
+    "original_JSON_byte_identity_not_available": true
+  },
+  "limits": {
+    "complete_offshell_full_reduced_action_Euler_contraction_verified": false,
+    "full_3plus1_Noether_and_nonlinear_Y_certified": false,
+    "full_CLASS_effective_fluid_action_map_certified": false,
+    "physical_total_JD_JT_action_certified": false,
+    "retarded_G_WE_computed": false,
+    "dynamically_admissible_two_history_metric_signal": false,
+    "astrophysical_detection": false,
+    "LW03_radial_FAIL": true,
+    "LW05_cosmic_shear_LOS_BLOCK": true,
+    "LW08_antisymmetric_UNRESOLVED": true,
+    "H4_Z21_certified": false
+  }
+}
