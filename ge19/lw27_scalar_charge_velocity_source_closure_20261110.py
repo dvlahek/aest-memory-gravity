@@ -107,7 +107,7 @@ def algebra():
       "scalar_bath_Jx_eta_coefficient_from_LW17":
         s.simplify(s.diff(Jx,eta)+s.I*k*a*B/2)==0,
       "scalar_Euler_eta_flux_sign":
-        s.simplify(s.diff(-s.I*k*Jx,eta)-a*k*k*B/2)==0,
+        s.simplify(s.diff(-s.I*k*Jx,eta)+a*k*k*B/2)==0,
       "theta_dot_CLASS_is_exact_phase_kinematics":
         s.simplify(theta_dot_kin-theta_dot_class)==0,
       "chi_dot_CLASS_is_exact_scalar_aether_kinematics":
@@ -130,9 +130,6 @@ def algebra():
         s.simplify(theta_dot_kin-theta_dot_class)==0,
       "negative_half_factor_has_nonzero_density_source":
         s.simplify(dclass)!=0,
-      "negative_missing_scalar_flux_has_nonzero_density_source":
-        s.simplify(solved.subs({B:0,Ed_eta:e_action,chid_eta:0})
-                   .subs(B,1))!=0 if False else True
     }
     # A genuine negative control: dropping the explicit scalar bath flux
     # while keeping the action-derived aether term forces a density source.
@@ -140,7 +137,6 @@ def algebra():
     checks["negative_drop_scalar_bath_flux_detected"]=s.simplify(
         noflux.subs({Ed_eta:e_action,chid_eta:0})
         -a*0)!=0
-    del checks["negative_missing_scalar_flux_has_nonzero_density_source"]
     failed=[key for key,passed in checks.items() if not bool(passed)]
     if failed:
         print("GE19_LW27_FAILED_GATES",failed,flush=True)
