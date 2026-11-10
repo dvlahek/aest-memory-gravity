@@ -1,0 +1,57 @@
+{
+  "classification": "GE19_LW23_IMPLEMENTED_SOURCE_FACTOR_AND_ETA_BRANCH_PRELOCK",
+  "date": "2026-11-10",
+  "informed_by_previous_exploratory_analysis": true,
+  "no_blind_preregistration_claim": true,
+  "physics_question": "Does the original offline continuum Drude source have the same algebraic coefficient as the patched CLASS finite-bath eta-source, and what does this certify about a physical eta response after the eta=0 auxiliary degeneracy?",
+  "source_blobs": {
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
+    "v019w/apply_variational_forcing_patch.py": "00c3f5da5a1b7734c67c82aa9181a443736101bf",
+    "v022/build_offline_forcing.py": "648047c959e320b74943d02f7874fa54d10e813a",
+    "v039/build_tau_forcing.py": "9c859d3131367892f9ee9d809786904a20796f91",
+    "v063/theory_response_map.py": "fb373c8118b755c5aa7d5572d910d6ca3684866e",
+    "ge19/linear_weyl_native_tangent_20261109.py": "abd2113568b801ae59f6906647e82edf62ea45d6",
+    "ge19/lw16_scalar_to_velocity_bath_euler_projection_20261110.py": "e26372e9b309bea34047e52bd49478f406e9459f",
+    "ge19/lw18_reduced_time_diffeo_noether_20261110.py": "9a6b83d4188e5a4756c13ed8b946d2b0f49d8fce",
+    "ge19/lw19_reduced_full_action_temporal_invariance_20261110.py": "2879141eef4abc7bf7a9e8bf442c251d148b7203"
+  },
+  "formulas": {
+    "chi": "Q*(a*theta/k**2 + alpha)",
+    "X": "chi/a",
+    "Braw": "sum_j w_j*(chi-a*z_j) = a*(X-sum_j w_j*z_j) when weights normalized",
+    "F_E": "-a*Q*Braw/(2*K_B)=-a*a*Q*y/(2*K_B)",
+    "action": "L_bath=eta L_norm(q,X) so Euler_q=eta Euler_q_norm and q at exactly eta=0 is not fixed by bath equation",
+    "variational": "u'=F0(u)+eta e_E S(u,q), q'=H(u,q); u_eta'=D F0(u0)u_eta+e_E S(u0,q0) on a selected retarded q0 branch, matched zero tangent IC",
+    "observable": "P_deltaW=P_R(k) T_delta T_W; derivative=P_R (T_delta,eta T_W+T_delta T_W,eta)"
+  },
+  "required_gates": [
+    "strict_source_git_blobs",
+    "frozen_source_string_anchors",
+    "offline_Braw_identity",
+    "source_normalization_and_sign",
+    "action_eta_auxiliary_degeneracy",
+    "triangular_variational_identity",
+    "bath_scalar_aether_Ward_pair",
+    "no_physical_observer_claim"
+  ],
+  "negative_controls": [
+    "wrong_factor_a",
+    "wrong_factor_2",
+    "missing_scalar_partner",
+    "confuse_lambda_with_eta"
+  ],
+  "stop_policy": {
+    "can_claim": "Frozen original implemented CLASS E-row eta-source algebraic factor matches original offline continuum source formal normalization; conditioned on retarded causal auxiliary branch and frozen eta0 background",
+    "cannot_claim": [
+      "full 3+1 action-to-CLASS equivalence",
+      "full constrained G_WE kernel",
+      "physical eta inferred observationally",
+      "finite eta detection",
+      "DES gamma_t likelihood"
+    ],
+    "no_class_runs": true,
+    "no_parameter_tuning": true,
+    "no_observed_data": true
+  }
+}
