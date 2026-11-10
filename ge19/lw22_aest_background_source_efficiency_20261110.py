@@ -25,7 +25,7 @@ PRE_BLOB="b884ea402dc05ae486c6da008ebb7b19600d8dc2"
 LW21B=ROOT/"results/ge19_lw21b_signed_source_geometry_sensitivity_20261110_r1.json"
 LW21B_SHA="0223b698b13b1a36736274d6582889d66f7cf500ffe0b13eed40612fa4272de8"
 LW02=ROOT/"results/ge19_lw02_windowed_lensing_20261109.json"
-LW02_SHA="1aec3ddcbe84e473dbb5edb5640cf923ac1db4d05f086"
+LW02_SHA="1aec3ddcbe84e473dbb5edb5640cf923ac1db4d9fb1fe37ab32424bd4d05f086"
 SOURCES={
  "ge19/lw21b_signed_source_geometry_sensitivity_20261110.py":
     "1ba3d33a6a8ea892c5251f8bcde203e76436e3fd",
@@ -180,7 +180,17 @@ def main():
         require(blob(ROOT/f)==expected,"SOURCE_BLOB_CHANGED_"+Path(f).name)
     require(LW21B.is_file() and sha(LW21B)==LW21B_SHA,
             "LW21B_RESEARCHER_SHA_CHANGED")
-    require(LW02.is_file() and sha(LW02)==LW02_SHA,
+    # Cross-check the complete SHA-256 against the immutable pre-data freeze.
+    frozen_lw02=json.loads(PRE.read_text())["exact_frozen_inputs"][
+        "results/ge19_lw02_windowed_lensing_20261109.json_sha256"]
+    require(len(LW02_SHA)==64 and LW02_SHA==frozen_lw02,
+            "ORIGINAL_LW02_SHA_PRELOCK_MISMATCH")
+    require(LW02.is_file(),"ORIGINAL_LW02_GEOMETRY_FILE_MISSING")
+    actual_lw02_sha=sha(LW02)
+    print("GE19_LW22_LW02_SHA256_AUDIT",json.dumps({
+        "path":str(LW02),"expected":LW02_SHA,"actual":actual_lw02_sha
+    },sort_keys=True),flush=True)
+    require(actual_lw02_sha==LW02_SHA,
             "ORIGINAL_LW02_GEOMETRY_SHA_CHANGED")
     require(sha(arg.fits)==FITS_SHA,"ORIGINAL_FITS_SHA_CHANGED")
     pre=json.loads(PRE.read_text())
