@@ -155,7 +155,7 @@ def main():
     ap.add_argument("--candidate-class",type=Path,required=True)
     ap.add_argument("--eta0-evidence",type=Path,default=ROOT/
       "ge19/candidates/evidence/ge19_action_quarter_eta0_r1_regression_result.json")
-    ap.add_argument("--out-dir",type=Path,required=True)
+    ap.add_argument("--out-dir",type=Path,default=ROOT/"results/ge19_action_quarter_finite_eta_r1")
     ap.add_argument("--preflight",action="store_true")
     args=ap.parse_args()
     orig=args.historic_class.expanduser().resolve()
