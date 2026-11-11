@@ -1,7 +1,7 @@
 # GE19 — one joint action-to-CLASS scalar source matrix, with exact physical source coefficient
 
 **11 November 2026 | single integrated physics continuation, not LW34.**
-**Decision:** \`REDUCED_LINEAR_SCALAR_ACTION_TO_CLASS_SOURCE_MATRIX_ALGEBRA_PASS / COMPLETE_3PLUS1_PRODUCTION_CERTIFICATION_OPEN / DES_BLOCK\`.
+**Decision:** `REDUCED_LINEAR_SCALAR_ACTION_TO_CLASS_SOURCE_MATRIX_ALGEBRA_PASS / COMPLETE_3PLUS1_PRODUCTION_CERTIFICATION_OPEN / DES_BLOCK`.
 
 This note is the **actual joint source/equation comparison**, not a proposed future series of audits. It is constructed from the original frozen GE06 (Einstein+AeST), GE05 (NL0B positive longitudinal bath), v019 (CLASS effective-fluid) and v019j (CLASS bath) source definitions. The supplemental single [reproducible SymPy source matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py) was independently run **in standalone algebra mode** in the analysis container with **15/15 exact identities PASS**, with no numerical cosmological execution; the **GitHub source-locked WSL execution is not yet performed**. Together with previously researcher-verified LW33, this supports a definite conditional statement, **not** full all-species CLASS equivalence or an observed memory discovery.
 
@@ -115,7 +115,7 @@ The AeST scalar-electric quadratic term has \(\partial^2L^{(2)}_{\rm AeST}/\part
 \boxed{\Delta\dot E_A=-\frac{\eta Q}{4K_B}B_\chi,\qquad
 \Delta E_A'=-\frac{a\eta Q}{4K_B}B_\chi.}\tag{E}
 \]
-In C, the \(\eta\) factor has already been incorporated into \`Bchi_aest\`; the following E evolution row divides the entire RHS by \(K_B\). Thus the **separate exploratory quarter branch** implements Eq. (E) *in that row*. The frozen historical \`v019j\` has coefficient **one-half**, not one-quarter, and does not insert a companion \(\eta\) source into the density/velocity rows.
+In C, the \(\eta\) factor has already been incorporated into `Bchi_aest`; the following E evolution row divides the entire RHS by \(K_B\). Thus the **separate exploratory quarter branch** implements Eq. (E) *in that row*. The frozen historical `v019j` has coefficient **one-half**, not one-quarter, and does not insert a companion \(\eta\) source into the density/velocity rows.
 
 The literal bath action contains an overall \(\eta\) in the normalized \(q_j\) representation. At \(\eta=0\) its Euler equation degenerates; a physical \(\eta\to0^+\) tangent needs a **selected continuous retarded auxiliary branch**, rather than inferring uniqueness from the zero-coupling algebra. Zero-auxiliary initial data in the historical code is a chosen regular branch that has **not** by itself been certified as a unique covariant cosmological initial-state condition.
 
@@ -148,7 +148,7 @@ For \(\gamma=1/4\), \(a^3R_\rho\) is constant; matched \(R_\rho(t_i)=0\) is pres
 
 For a fixed original minimally coupled action \(S_{\rm tot}=S_{\rm GR+AeST+NL0B}[g,A,\phi,U]+\sum_s S_s[g,\psi_s]\), variation gives \(\delta S_s/\delta A=\delta S_s/\delta\phi=\delta S_s/\delta U=0\) **at fixed metric and independent matter variables**. Therefore standard baryons, photons, neutrinos and ordinary CDM, *if included as separate minimally coupled sectors rather than conflated with the AeST effective dark fluid*, introduce **no new direct** \(\eta\) or bath companion into (B)/(E)/(S). They **do** modify \(H(t)\) and the total Einstein density/pressure/momentum/shear, and indirectly change \(E_A,\chi,q_j\) through \(\Phi,\Psi\) and Boltzmann evolution. A self-consistent action-to-CLASS mapping must keep that feedback.
 
-The original \`v019\` implementation uses CDM-labeled array indices to carry the **AeST effective dark component** when \`aest_enabled\`, with a changed pressure/enthalpy. This is a state-bookkeeping substitution, **not** a demonstration that any independent physical CDM fluid is being evolved simultaneously. A correct full-species source matrix must distinguish that effective component from the remaining actual standard CLASS species. Merely adding \(T_A\) to an unmodified CDM momentum term would double count it.
+The original `v019` implementation uses CDM-labeled array indices to carry the **AeST effective dark component** when `aest_enabled`, with a changed pressure/enthalpy. This is a state-bookkeeping substitution, **not** a demonstration that any independent physical CDM fluid is being evolved simultaneously. A correct full-species source matrix must distinguish that effective component from the remaining actual standard CLASS species. Merely adding \(T_A\) to an unmodified CDM momentum term would double count it.
 
 Minimal coupling guarantees additivity at the **action-source** level, not exact equivalence across every CLASS approximation switch or gauge branch. Existing restricted LW30/31 and 11 November spatial-trace results supply AeST-only metric equations; the properly sourced **all-species spatial trace/shear, baryon-photon/neutrino Boltzmann feedback, normal/gauge equations and initial conditions** still require one direct joint verification on the implementation actually used.
 
@@ -165,21 +165,21 @@ Minimal coupling guarantees additivity at the **action-source** level, not exact
 | Physical causal, solver-accurate \(\partial_\eta P_{\delta_m W}(k,z)\) | Single positive-eta code transfer small, oscillatory in \(k\), errors unqualified | **BLOCK** |
 | DES Y3 \(\gamma_t\) forecast and observed likelihood | Only real lens/source geometry frozen | **BLOCK**, no detection |
 
-**One precise remaining deliverable:** jointly check the actual Newtonian-gauge CLASS all-species Einstein source rows and auxiliary initial/approximation state-switch equations against the **entire original constrained action-derived quadratic scalar system**, including its spatial trace and residual (S), rather than repeating symbolic individual-row PASS or tuning \(1/4\). If not independently established, label \`PHYSICS_BLOCK\`. If proved, only the isolated quarter candidate advances to **one** predeclared solver-error and retarded-history control, then a nuisance-marginal DES Y3 Asimov forecast. No observed DES residuals are permitted to set source coefficients.
+**One precise remaining deliverable:** jointly check the actual Newtonian-gauge CLASS all-species Einstein source rows and auxiliary initial/approximation state-switch equations against the **entire original constrained action-derived quadratic scalar system**, including its spatial trace and residual (S), rather than repeating symbolic individual-row PASS or tuning \(1/4\). If not independently established, label `PHYSICS_BLOCK`. If proved, only the isolated quarter candidate advances to **one** predeclared solver-error and retarded-history control, then a nuisance-marginal DES Y3 Asimov forecast. No observed DES residuals are permitted to set source coefficients.
 
 **No new CLASS run, finite-eta sweep, H4/Z21 solve, GitHub Actions or astronomical detection in this result.**
 
 ### Source provenance and reproducibility
 
-- [Single executable 15-identity matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py), exact checks performed in a local isolated analysis runtime in **no-source-lock** mode (not a WSL source-locked run). For WSL with the original frozen repo checkout and active \`sympy\`, invoke:
-  \`\`\`bash
+- [Single executable 15-identity matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py), exact checks performed in a local isolated analysis runtime in **no-source-lock** mode (not a WSL source-locked run). For WSL with the original frozen repo checkout and active `sympy`, invoke:
+  ```bash
   cd ~/aest-memory-gravity
   git pull --ff-only
   source .venv/bin/activate
   python3 ge19/physics_gate/action_to_class_scalar_matrix_20261111.py \
     --out results/ge19_action_to_class_scalar_matrix_20261111.json
-  \`\`\`
-  Expect \`GE19_ORIGINAL_SOURCE_LOCKS_PASS 5\` and \`GE19_SCALAR_MATRIX_SYMBOLIC_PASS 15\`; the JSON explicitly retains \`production_physics_go=false\`. **Do not repeat CLASS numerics.**
+  ```
+  Expect `GE19_ORIGINAL_SOURCE_LOCKS_PASS 5` and `GE19_SCALAR_MATRIX_SYMBOLIC_PASS 15`; the JSON explicitly retains `production_physics_go=false`. **Do not repeat CLASS numerics.**
 - [LW33 complete reduced off-shell identity](ge19_lw33_exact_scalar_action_to_CLASS_offshell_source_decision_2026-11-10.md), with original actual researcher WSL PASS.
 - [LW30/31 metric rows](ge19_lw30_original_gr_aest_adm_scalar_constraints_class_bridge_2026-11-10.md), [spatial trace](ge19_20261111_original_action_spatial_trace_linear_scalar_closure.md).
 - [Existing physics Noether/source acceptance](ge19_20261111_physics_first_noether_scalar_source_closure_decision.md), [P0 Issue #2](https://github.com/dvlahek/aest-memory-gravity/issues/2).
