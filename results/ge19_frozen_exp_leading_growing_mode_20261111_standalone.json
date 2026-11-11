@@ -1,0 +1,112 @@
+{
+  "DES_detection": false,
+  "all_CLASS_approximation_switches_certified": false,
+  "caveat": "A leading-order radiation growing mode, not a finite-k full Einstein-AeST-NL0B primordial eigenmode.",
+  "classification": "GE19_FROZEN_EXP_LEADING_RADIATION_ADIABATIC_MODE_SUPPORTED_NOT_FULL_PHYSICS_GO",
+  "finite_eta_numerical_transfer_converged": false,
+  "free_streaming_neutrino_fraction": "Rnu = rho_free_streaming_radiation / rho_total_radiation",
+  "frozen_exp_background": {
+    "K_Q_today_I0": "0.000400912849822208377004114",
+    "Z_today": "4.3928199682159576759913",
+    "calibration_target_3Omega_cdm_H0sq": "4.00912849822379927527049e-8",
+    "relative_dust_ic_density_error_scaling": "O(w_A) for fixed leading adiabatic amplitude",
+    "rows": [
+      {
+        "Q": "0.000100000000000043928199682",
+        "Z": "4.3928199682159576759913",
+        "a": "1",
+        "c_a2": "1.10947351103636011649527e-14",
+        "w_A": "1.13822100959218464265286e-14"
+      },
+      {
+        "Q": "0.000100000000000045258619009",
+        "Z": "4.52586190087345517308156",
+        "a": "0.6666666666666667",
+        "c_a2": "1.07843731346979212098824e-14",
+        "w_A": "1.10476194438844988394506e-14"
+      },
+      {
+        "Q": "0.000100000000000051043607543",
+        "Z": "5.10436075434769460265193",
+        "a": "0.1",
+        "c_a2": "9.61110358359346171012477e-15",
+        "w_A": "9.79554588831618550991896e-15"
+      },
+      {
+        "Q": "0.000100000000000057311803075",
+        "Z": "5.73118030748498958609226",
+        "a": "0.01",
+        "c_a2": "8.59339470502937078484919e-15",
+        "w_A": "8.72420641428274635501236e-15"
+      },
+      {
+        "Q": "0.00010000000000006818229966",
+        "Z": "6.81822996600533186469319",
+        "a": "1e-4",
+        "c_a2": "7.25524842264972564594676e-15",
+        "w_A": "7.33328154803501027130845e-15"
+      },
+      {
+        "Q": "0.000100000000000077572381661",
+        "Z": "7.75723816607939386761529",
+        "a": "1e-6",
+        "c_a2": "6.39247704985163691234326e-15",
+        "w_A": "6.44559299707980572678826e-15"
+      },
+      {
+        "Q": "0.000100000000000085957901511",
+        "Z": "8.59579015108930265976397",
+        "a": "1e-8",
+        "c_a2": "5.77770299720076005942771e-15",
+        "w_A": "5.81680091313316381779013e-15"
+      }
+    ],
+    "w_A_upper_bound_over_a_in_(0,1]": "1.2e-14"
+  },
+  "full_coupled_next_order_in_k_tau_and_rhoA_over_rhor_solved": false,
+  "leading_mode": {
+    "E_A": "0 leading",
+    "Phi": "(1+2*Rnu/5)*Psi0",
+    "Psi": "Psi0",
+    "alpha_A": "-a*tau*Psi0/2",
+    "chi": "0 leading",
+    "delta_A": "-3*(1+w_A)*Psi0/2",
+    "delta_Q": "-3*Q*c_a^2*Psi0/2",
+    "delta_b": "-3*Psi0/2",
+    "delta_gamma": "-2*Psi0",
+    "delta_nu": "-2*Psi0",
+    "p_j": "0 selected no-free-bath-mode leading",
+    "q_j": "0 selected no-free-bath-mode leading",
+    "sigma_nu": "k^2*tau^2*Psi0/15",
+    "theta_A": "k^2*tau*Psi0/2",
+    "theta_b": "k^2*tau*Psi0/2",
+    "theta_gamma": "k^2*tau*Psi0/2",
+    "theta_nu": "k^2*tau*Psi0/2",
+    "varphi_A": "a*Q*tau*Psi0/2"
+  },
+  "legacy_IC_formal_discrepancy_actual_frozen_exp_tiny": true,
+  "mode_limit": "k*tau -> 0, rho_A/rho_r -> 0; tight-coupled photons; radiation-dominated background",
+  "one_physical_mode_amplitude": "Psi0",
+  "original_dust_IC_exactly_adiabatic_for_nonzero_w": false,
+  "original_sources_locked": false,
+  "production_physics_go": false,
+  "source_blobs": {},
+  "symbolic_gates": {
+    "ae_ad_entropy_vs_photons": true,
+    "ae_aether_electric_vanishes": true,
+    "ae_chi_vanishes": true,
+    "ae_density_action_dictionary": true,
+    "ae_density_continuity_k0": true,
+    "ae_phase_deltaQ": true,
+    "ae_pressure_action_dictionary": true,
+    "ae_scalar_charge_constant_temporal_leading": true,
+    "ae_theta_euler_leading": true,
+    "class_dust_ic_entropy_exact": true,
+    "einstein_hamiltonian_radiation_k0": true,
+    "einstein_momentum_radiation_k0": true,
+    "einstein_neutrino_slip_leading": true,
+    "nu_quadrupole_leading": true,
+    "photon_euler_leading": true,
+    "zero_bath_forcing_on_adiabatic_state": true
+  }
+}
