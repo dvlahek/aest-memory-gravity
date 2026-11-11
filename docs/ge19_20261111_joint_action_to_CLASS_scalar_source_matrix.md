@@ -152,6 +152,35 @@ The original `v019` implementation uses CDM-labeled array indices to carry the *
 
 Minimal coupling guarantees additivity at the **action-source** level, not exact equivalence across every CLASS approximation switch or gauge branch. Existing restricted LW30/31 and 11 November spatial-trace results supply AeST-only metric equations; the properly sourced **all-species spatial trace/shear, baryon-photon/neutrino Boltzmann feedback, normal/gauge equations and initial conditions** still require one direct joint verification on the implementation actually used.
 
+## 6A. Specific non-symbolic implementation obstructions in the ORIGINAL C patch
+
+A direct fresh reading of the original source-locked \`v019/apply_patch_v019.py\` and \`v019j/apply_memory_patch.py\` isolates two **implementation/interpretation obligations** that the 15 symbolic checks, the \(\eta=0\) equality and the fixed finite-\(\eta\) native \(d_m,W\) diagnostic cannot resolve.
+
+**(i) AeST is substituted for the CDM-labeled *code state*, not a separately tracked physical CDM.** In \`v019\` the background explicitly uses:
+~~~c
+pvecback[pba->index_bg_rho_cdm] = rho_aest;
+rho_m += rho_aest-3.*p_aest;
+~~~
+while the perturbation stress/matter-observer code says:
+~~~c
+ppw->delta_rho += rho_dark*y[ppw->pv->index_pt_delta_cdm];
+delta_rho_m += rho_dark*y[ppw->pv->index_pt_delta_cdm];
+rho_m += rho_dark;
+rho_plus_p_m += rho_plus_p_dark;
+~~~
+These are exact source excerpts. They are not *by themselves* proof that CLASS is inconsistent: code may use distinct background and perturbation conventions for different observable definitions. **But they do mean the native transfer field labelled \`d_m\` cannot be casually identified with a separately evolved pressureless CDM density, or interpreted as the physical matter component in a survey cross-power without auditing the \`rho_m\`, \`delta_rho_m\`, \`rho_plus_p_m\` transfer normalization through the actual CLASS output functions.** This is a concrete, narrowly identifiable unverified observer convention, independently of the quarter-factor question. The model's physical effective dark fluid should not be double-counted as both AeST and ordinary CDM.
+
+**(ii) Retarded auxiliary initial state is selected in C but has not been independently derived as unique.** In \`v019j\`, per-node normalized q/p states are allocated **only in Newtonian gauge**, zeroed at leading initial conditions, and copied on the captured approximation vector-rebuild branch:
+~~~c
+ppw->pv->y[ppw->pv->index_pt_mem_q_aest+jm] = 0.;
+ppw->pv->y[ppw->pv->index_pt_mem_p_aest+jm] = 0.;
+~~~
+The source comments invoke \(\chi_i=0\) for leading adiabatic data. Such a zero state is a *specific chosen regular/retarded initialization* in the implemented oscillator, but the homogeneous second-order equation also has independent initial data; **\(\chi_i=0\) alone does not prove that \(q_i=p_i=0\) is the uniquely physically admissible initial state.** Need an asymptotic regularity/causal-prehistory argument and a check of *every relevant* source-vector switch/IC path in the actual patched CLASS C. This is a physics/implementation initial-value task, not another arbitrary numerical eta sweep.
+
+**(iii) All four original Einstein metric scalar rows from GE06 (H/M/shear/trace) are *restricted-model action results*, not a source-level comparison to each actual CLASS Einstein row after all standard species.** Existing CLASS neutrinos/photons/baryons provide metric stress and free-streaming anisotropic shear. Minimal coupling shows absence of **direct** bath terms in their individual Euler variations, but cannot prove that the v019/v019j C implementation preserves the correct total action-derived constraints for all used approximation branches.
+
+**Concrete P0 acceptance:** In *one* source-to-operator comparison, reconstruct the true transfer-density meaning and physical retarded q/p initial state, alongside full species+metric+E/scalar rows. If any remains unmatched, classify \`PHYSICS_BLOCK\`, even if the source coefficient is locally 1/4 and \`d_m,W\` arrays exist. No DES fit and no new LW stages are appropriate as substitutes.
+
 ## 7. Physics acceptance verdict — single candidate, no new LW campaign
 
 | Equation / source | Joint comparison | Accepted scope |
