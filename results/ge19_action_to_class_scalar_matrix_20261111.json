@@ -1,0 +1,43 @@
+{
+  "DES_detection": false,
+  "all_species_CLASS_ODE_rows_independently_matched": false,
+  "classification": "GE19_LINEAR_SCALAR_MATRIX_ALGEBRA_PASS_PRODUCTION_ACTION_TO_CLASS_STILL_OPEN",
+  "full_covariant_constraint_propagation_certified": false,
+  "identities": {
+    "bath_euler_source_in_proper_time": "Q*eta*sw*(a*omega*q - chi*k*sw)/(4*K_B*k)",
+    "bath_oscillator_conformal_time": "q''+2Hconf q'+a^2 omega^2 q = a omega sqrt(w) k chi",
+    "bath_oscillator_proper_time": "qddot+3H qdot+omega^2 q = omega sqrt(w) k chi/a",
+    "density_dictionary_drift_if_scalar_euler_on_shell": "Rrho_dot+3H Rrho=eta*Q*k^2*B_chi*(1-4*gamma)/(12*a^2)",
+    "phase_chi_dot": "Q*(E_A+Pi_A/(1+w_A)-3*H*c_a^2*alpha_A)",
+    "pressure_action": "K_Q deltaQ/3",
+    "pressure_class": "rho_A Pi_A",
+    "scalar_charge_residual_on_other_rows": "a*eta*k^2*B_chi*(1-4*gamma)/2"
+  },
+  "minimal_matter_coupling_assumed": true,
+  "production_physics_go": false,
+  "source_blobs": {
+    "docs/ge19_lw33_exact_scalar_action_to_CLASS_offshell_source_decision_2026-11-10.md": "dedcb6148b6ee4353c32972fcc456d9e3a185ffd",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "ge06/analytic_aest_directional_source_generator.py": "a7afe0035054a9dca55d74a6497c081422114b4c",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "source_locks_executed": true,
+  "symbolic_gates": {
+    "action_dQ_to_class_pressure": true,
+    "action_momentum_equals_class_momentum": true,
+    "action_normalized_quarter_source": true,
+    "action_pressure_equals_class_pressure": true,
+    "aether_kinetic_hessian_2KB": true,
+    "auxiliary_conformal_source_units": true,
+    "auxiliary_retarded_oscillator_eq": true,
+    "bath_aether_source_rank_one": true,
+    "bath_scalar_source_exact": true,
+    "class_alpha_theta_recover_chi_dot": true,
+    "class_theta_euler_recovers_action_dQ": true,
+    "half_density_dictionary_forced_drift": true,
+    "half_scalar_charge_residual_nonzero": true,
+    "quarter_density_dictionary_no_source_drift": true,
+    "quarter_scalar_charge_residual_zero": true
+  }
+}
