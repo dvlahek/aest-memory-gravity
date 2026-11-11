@@ -1,0 +1,73 @@
+{
+  "DES_observed_detection": false,
+  "baryon_is_not_an_observed_galaxy_tracer": true,
+  "classification": "EXISTING_NEWTONIAN_BARYON_WEYL_TRANSFER_DIAGNOSTIC_ONLY_NOT_PHYSICS_GO",
+  "correlation_delta_b_delta_W_in_fixed_window": -0.37036638744091493,
+  "correlation_delta_m_delta_W_in_fixed_window": -0.801981840903826,
+  "field_names": {
+    "W": "(CLASS phi + CLASS psi)/2",
+    "d_b": "CLASS native d_b baryon density transfer in Newtonian gauge",
+    "d_m": "CLASS default (possibly pressureless-assumption) exported total matter transfer; NOT independent physical survey matter"
+  },
+  "fixed_eta": "historical and quarter eta=0.01; quarter eta=0",
+  "k_window_first_last_hmpc": [
+    0.03015307072277438,
+    0.19784730640216702
+  ],
+  "k_window_hmpc": [
+    0.03,
+    0.2
+  ],
+  "metrics": {
+    "W": {
+      "difference_norm": 3.972980251554884e-07,
+      "factor_two_test_norm_ratio": 1.3739827575585906,
+      "max_abs_difference_over_full_k_eta0_max": 5.792008214664641e-07,
+      "max_abs_historic_minus_quarter": 3.159558091825332e-07,
+      "negative_difference_points": 22,
+      "positive_difference_points": 27,
+      "response_norm_candidate": 1.5807873393648172e-07,
+      "response_norm_historical": 3.558430525214272e-07,
+      "sign_changes_between_nonzero_adjacent_k": 26,
+      "warning": "Not a convergence claim or a projected P_bW signal"
+    },
+    "d_b": {
+      "difference_norm": 0.016765850271651964,
+      "factor_two_test_norm_ratio": 2.6375921881713253,
+      "max_abs_difference_over_full_k_eta0_max": 7.46579788503764e-07,
+      "max_abs_historic_minus_quarter": 0.01420085750578437,
+      "negative_difference_points": 24,
+      "positive_difference_points": 25,
+      "response_norm_candidate": 0.013919526955976506,
+      "response_norm_historical": 0.01092496576814827,
+      "sign_changes_between_nonzero_adjacent_k": 24,
+      "warning": "Not a convergence claim or a projected P_bW signal"
+    },
+    "d_m": {
+      "difference_norm": 0.027610023701200605,
+      "factor_two_test_norm_ratio": 1.7704231830478612,
+      "max_abs_difference_over_full_k_eta0_max": 1.0229141494283504e-06,
+      "max_abs_historic_minus_quarter": 0.019479727044199535,
+      "negative_difference_points": 23,
+      "positive_difference_points": 26,
+      "response_norm_candidate": 0.013665054029123732,
+      "response_norm_historical": 0.021426573723392402,
+      "sign_changes_between_nonzero_adjacent_k": 22,
+      "warning": "Not a convergence claim or a projected P_bW signal"
+    }
+  },
+  "n_all_k": 147,
+  "n_window_k": 49,
+  "new_CLASS_run": false,
+  "physical_constraint_propagation_certified": false,
+  "physical_galaxy_bias_and_projected_GGL_not_calculated": true,
+  "retarded_auxiliary_branch_uniqueness_proven": false,
+  "reused_existing_CLASS_run": true,
+  "table_names": {
+    "candidate_eta0": "candidate_eta0_00_tk.dat",
+    "candidate_eta001": "candidate_eta001_00_tk.dat",
+    "historical_eta001": "historical_eta001_00_tk.dat"
+  },
+  "time": "previously fixed z_pk=0.5; no new redshifts",
+  "tuning_performed": false
+}
