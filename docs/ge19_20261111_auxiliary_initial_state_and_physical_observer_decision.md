@@ -116,7 +116,7 @@ python3 -u ge19/physics_gate/inspect_existing_baryon_weyl_20261111.py \
   --out results/ge19_existing_baryon_weyl_20261111.json \
   2>&1 | tee results/ge19_existing_baryon_weyl_20261111.log
 ~~~
-The parser deliberately **refuses output overwrite**. If a native \`d_b\` column is missing, stop with the error, do not synthesize it or rerun CLASS without a new physics decision. The result is a **diagnostic**, not \(\partial_\eta P_{\delta W}\), and the script has not been run on the user's WSL tables by the assistant.
+The parser deliberately **refuses output overwrite**. If a native \`d_b\` column is missing, stop with the error, do not synthesize it or rerun CLASS without a new physics decision. The result is a **diagnostic**, not \(\partial_\eta P_{\delta W}\), and the script has now been run on the researcher's WSL tables; its actual log and results are recorded in section 7.
 
 ## 6. Final joint physics status and strictly bounded next decision
 
@@ -134,3 +134,29 @@ The parser deliberately **refuses output overwrite**. If a native \`d_b\` column
 **Decision:** Freeze the new analytic result as a principled restriction: *adiabatic / no initial bath isocurvature, fixed quarter-source physical theory*. If those assumptions are not accepted, the model has additional free initial-state parameters and cannot deliver a unique memory-only observational curve. If accepted, the next objective still must close the full all-species source/constraint observer bridge — **not** another undirected LW series or a new eta sweep. The **existing** tiny, jagged finite-\(\eta\) code response cannot be promoted to a discovery by changing the observer definition after seeing it. Any comparison is a post-evidence diagnostic and must be labeled as such.
 
 This document preserves historical results and does not alter the frozen initial-condition patch or source parameter values.
+
+
+## 7. Actual researcher WSL read-only baryon–Weyl result: physical signal **not** established
+
+**Subsequent original WSL execution (11 November 2026):** \`GE19_EXISTING_BARYON_WEYL_PRIOR_NPZ_IDENTITY_PASS\`, \`GE19_EXISTING_BARYON_WEYL_READ_ONLY_PASS 49\`, \`GE19_OBSERVATION_READY False\`. It read exactly the three existing single-z \`mTk\` native CLASS tables and reproduced the prior \`d_m,\Phi,\Psi\` NPZ values byte-for-byte for each 147-point k grid, with no new CLASS numerics, parameter sweep, projection or observed DES data.
+
+The original *researcher-submitted bytes* are now archived and independently fetched with exact Git-blob matches:
+- [WSL diagnostic JSON](../results/ge19_existing_baryon_weyl_20261111.json): SHA-256 \`8542fa6361bd28cb50ab5288b75d1e64ff1e3077a1fd58715219fd48caafabc6\`, Git blob \`583add9d56f088a984d983f2c2d980e8844b9e1b\`, **3065 bytes**.
+- [WSL runner log](../results/ge19_existing_baryon_weyl_20261111.log): SHA-256 \`f1a068a1dc12c69a230fc6915120aaed9e149c3c7e0dc8397dc121746c2a16eb\`, Git blob \`a957234f73d00a4a70584e0044be24a2802ea1af\`, **214 bytes**.
+- The repeatedly uploaded independent [joint source-to-CLASS matrix](../results/ge19_action_to_class_scalar_matrix_20261111.json) remains exactly archived with blob \`5375bac561091fb3d98d4f978e2664e067f9906a\`; its [WSL log](../results/ge19_action_to_class_scalar_matrix_20261111.log) has blob \`81bbc96fcf09a17e52d3267e230f442fa86da73b\`. It is a reupload, **not a new physical verification**.
+
+Use the previously chosen screening interval \`0.03 <= k <= 0.20 h/Mpc\`, at one \`z=0.5\` and fixed \`eta=0.01\`: 49 out of 147 common k samples. Define \`\Delta T=T_{historical gamma=1/2,eta=.01}-T_{candidate gamma=1/4,eta=.01}\`. The exported normalized difference is \`\max_k|\Delta T|/\max_{all k}|T_{candidate,eta=0}|\`, **not a pointwise fractional error**, survey SNR or \`d_b W\` cross-power.
+
+| Field | Max absolute half-minus-quarter in 49 k window | Max difference / full-k eta0 max | Adjacent sign changes (of 48) | Simple expected factor-two response deviation: \`||S_h-2S_q||/||S_h||\` |
+|---|---:|---:|---:|---:|
+| Native Newtonian baryon \`d_b\` | \`0.01420085750578437\` | \`7.46579788503764e-7\` | **24/48** | **2.6375921881713253** |
+| Native default \`d_m\` | \`0.019479727044199535\` | \`1.0229141494283504e-6\` | **22/48** | **1.7704231830478612** |
+| Weyl potential \`W\` | \`3.159558091825332e-7\` | \`5.792008214664641e-7\` | **26/48** | **1.3739827575585906** |
+
+The signed field differences have Pearson \`corr(\Delta d_b,\Delta W)=-0.37036638744091493\`, compared with \`corr(\Delta d_m,\Delta W)=-0.801981840903826\`. The less anticorrelated baryon response and persistent high-frequency k sign switching weaken the case that the prior default pressureless-only comoving \`d_m\` observer displayed an independently robust physical memory signature. But correlated physical acoustic transfer structure and common numerical errors can both affect these statistics; **nothing here proves the response is noise** or that \`d_m\` conversion is the unique cause. No convergence study was included.
+
+**Stop/acceptance decision:**
+- **PASS:** original source-locked joint linear scalar action-to-CLASS matrix 15/15; existing mTk-to-NPZ identity, independent minimally coupled baryon column parsed; all numerical user file hashes/provenance preserved.
+- **NOT PASS:** source-normalization factor-two *response scaling*, physical error-controlled \`\partial_\eta T\`, all-species constraint-to-source mapping, cosmic IC branch uniqueness, calibrated galaxy–Weyl projected cross spectrum, DES observable/likelihood.
+- Do **not** compute a DES significance, publish a memory detection, modify old \`d_m\` data in hindsight, or select a preferred scaling by fitting survey residuals. The result is **\`IMPLEMENTED_NATIVE_TRANSFER_JAGGED_AND_NOT_PHYSICALLY_RESOLVED\`**.
+- The next valid activity is **one unified full physical observer/equation acceptance**, not additional unmotivated CLASS runs or symbolic microtests. The separate \`gamma=1/4\` candidate and the conditional no-initial-free-bath-mode sector remain the only fixed model assumptions permitted for a *future* error-controlled survey prediction.
