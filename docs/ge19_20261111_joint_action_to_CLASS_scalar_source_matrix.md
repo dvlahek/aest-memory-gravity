@@ -170,6 +170,32 @@ rho_plus_p_m += rho_plus_p_dark;
 ~~~
 These are exact source excerpts. They are not *by themselves* proof that CLASS is inconsistent: code may use distinct background and perturbation conventions for different observable definitions. **But they do mean the native transfer field labelled \`d_m\` cannot be casually identified with a separately evolved pressureless CDM density, or interpreted as the physical matter component in a survey cross-power without auditing the \`rho_m\`, \`delta_rho_m\`, \`rho_plus_p_m\` transfer normalization through the actual CLASS output functions.** This is a concrete, narrowly identifiable unverified observer convention, independently of the quarter-factor question. The model's physical effective dark fluid should not be double-counted as both AeST and ordinary CDM.
 
+**Independent check against the actual pinned official CLASS v077 output pipeline:** Original official CLASS \`lesgourg/class_public\`, commit \`e85808324f51fc694d12e3ed7439552a3c3f9540\`, \`source/perturbations.c\` original Git blob \`c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0\`, computes
+~~~c
+ppw->delta_m = delta_rho_m/rho_m;
+ppw->theta_m = rho_plus_p_theta_m/rho_plus_p_m;
+~~~
+and, when its input flag \`matter_source_in_current_gauge\` is false, explicitly applies
+~~~c
+ppw->delta_m += 3. *a*H * ppw->theta_m/k2;
+~~~
+The pinned official source comment says **this gauge-invariant transformation is only valid if all matter components are pressureless and stable**. In \`source/input.c\` (original Git blob \`99ca121ad1d5be93fd0b87316849e85a6fa732c3\`), its default is \`ppt->has_matter_source_in_current_gauge = _FALSE_\`. The frozen original \`v019/ini/aest_exp.ini\` (Git blob \`f9a2bde8921a148e063f9657a8ede0a51c6a629d\`) sets \`gauge = newtonian\` but **does not override that output flag**. The one fixed-\(\eta\) source runner uses that original benchmark and also does not override this flag.
+
+Therefore, with a pressureful AeST effective dark component included in the same CDM-labelled \`rho_m\` sum, the **native exported \`d_m\` at the selected \(\eta,z\) is using a pressureless-matter gauge conversion outside its stated derivation's assumptions**. Under the usual covariant comoving-gauge density definition for a separately conserved total matter-like effective fluid, the expected linear correction is
+\[
+D_m^{\rm com}=\frac{\delta\rho_m}{\rho_m}
++\frac{3aH}{k^2}\frac{\sum_i(\rho_i+p_i)\theta_i}{\rho_m}
+=\delta_m+\frac{3aH}{k^2}\frac{\rho_m+p_m}{\rho_m}\theta_m,
+\]
+whereas the pinned CLASS code uses \(\delta_m+3aH\theta_m/k^2\). In a single effective AeST+pressureless-baryon mixture with the same stress bookkeeping, the candidate discrepancy would be
+\[
+\boxed{D_m^{\rm CLASS}-D_m^{\rm com}
+=-\frac{3aH}{k^2}\frac{p_A}{\rho_m}\theta_m.}
+\]
+**Conditions and scope:** this formula assumes a coherent definition of the same effective total matter stress and no independent mass-exchange terms, with Newtonian \(\theta_i\) conventions matching CLASS. The actual \`rho_m\` background bookkeeping (\`rho_aest-3p_aest\` in its matter/radiation split) and possible additional species must first be reconciled before this expression can be used as a corrected survey observable. This is a **demonstrated invalid assumption of the default output conversion for generic \(p_A\ne0\)**, *not* a measured numerical error or proof of faulty Einstein/aether evolution. It could vanish in the exact dust limit; neither its size nor DES significance has been computed.
+
+**Actionable fixed-observer remedy for a later bounded experiment:** request \`matter_source_in_current_gauge = yes\` in Newtonian gauge and **explicitly** define any gauge-invariant physical galaxy/matter observable from total action stress, pressure and momentum, rather than applying the pressureless \`d_m\` correction. Do not retroactively reinterpret the earlier 147 native k values as physical \(\partial_\eta P_{d_mW}\), and do not modify old frozen run inputs.
+
 **(ii) Retarded auxiliary initial state is selected in C but has not been independently derived as unique.** In \`v019j\`, per-node normalized q/p states are allocated **only in Newtonian gauge**, zeroed at leading initial conditions, and copied on the captured approximation vector-rebuild branch:
 ~~~c
 ppw->pv->y[ppw->pv->index_pt_mem_q_aest+jm] = 0.;
