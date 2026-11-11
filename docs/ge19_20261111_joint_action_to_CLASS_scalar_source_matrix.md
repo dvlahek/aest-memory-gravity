@@ -3,7 +3,7 @@
 **11 November 2026 | single integrated physics continuation, not LW34.**
 **Decision:** `REDUCED_LINEAR_SCALAR_ACTION_TO_CLASS_SOURCE_MATRIX_ALGEBRA_PASS / COMPLETE_3PLUS1_PRODUCTION_CERTIFICATION_OPEN / DES_BLOCK`.
 
-This note is the **actual joint source/equation comparison**, not a proposed future series of audits. It is constructed from the original frozen GE06 (Einstein+AeST), GE05 (NL0B positive longitudinal bath), v019 (CLASS effective-fluid) and v019j (CLASS bath) source definitions. The supplemental single [reproducible SymPy source matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py) was independently run **in standalone algebra mode** in the analysis container with **15/15 exact identities PASS**, with no numerical cosmological execution; the **GitHub source-locked WSL execution is not yet performed**. Together with previously researcher-verified LW33, this supports a definite conditional statement, **not** full all-species CLASS equivalence or an observed memory discovery.
+This note is the **actual joint source/equation comparison**, not a proposed future series of audits. It is constructed from the original frozen GE06 (Einstein+AeST), GE05 (NL0B positive longitudinal bath), v019 (CLASS effective-fluid) and v019j (CLASS bath) source definitions. The supplemental single [reproducible SymPy source matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py) was independently run **in standalone algebra mode** in the analysis container with **15/15 exact identities PASS**, with no numerical cosmological execution; the **subsequent original GitHub source-locked WSL execution passed 15/15 symbolic checks and 5/5 original source locks**, with byte-identical outputs archived as [matrix JSON](../results/ge19_action_to_class_scalar_matrix_20261111.json) (Git blob `5375bac561091fb3d98d4f978e2664e067f9906a`) and [WSL log](../results/ge19_action_to_class_scalar_matrix_20261111.log) (Git blob `81bbc96fcf09a17e52d3267e230f442fa86da73b`). Together with previously researcher-verified LW33, this supports a definite conditional statement, **not** full all-species CLASS equivalence or an observed memory discovery.
 
 ## 1. One common field and time basis
 
@@ -226,7 +226,7 @@ The source comments invoke \(\chi_i=0\) for leading adiabatic data. Such a zero 
 
 ### Source provenance and reproducibility
 
-- [Single executable 15-identity matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py), exact checks performed in a local isolated analysis runtime in **no-source-lock** mode (not a WSL source-locked run). For WSL with the original frozen repo checkout and active `sympy`, invoke:
+- [Single executable 15-identity matrix](../ge19/physics_gate/action_to_class_scalar_matrix_20261111.py), exact checks performed in a local isolated analysis runtime in **no-source-lock** mode (and subsequently reproduced in the original WSL with all five source locks). For WSL with the original frozen repo checkout and active `sympy`, invoke:
   ```bash
   cd ~/aest-memory-gravity
   git pull --ff-only
