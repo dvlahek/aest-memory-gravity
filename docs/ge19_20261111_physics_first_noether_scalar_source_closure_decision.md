@@ -95,7 +95,7 @@ The original **restricted AeST-only** metric rows are (LW30/31)
 \mathcal C_M^{A}=\dot\Phi+H\Psi-\frac{3aT_A}{2k^2}=0,\qquad
 \mathcal C_{\rm shear}^{A}=\Phi-\Psi=0\quad(k\ne0),
 \]
-where the last equality holds only **without** ordinary-species anisotropic stress. In the full observed cosmology, minimally coupled baryons/photons/neutrinos add their density/momentum/shear contributions, and the **total spatial Einstein trace equation** and their perturbation feedback must be matched with the same conventions.
+where the last equality holds only **without** ordinary-species anisotropic stress. In the full observed cosmology, minimally coupled baryons/photons/neutrinos add their density/momentum/shear contributions, and their perturbation feedback must be matched with the same conventions. **The previously missing restricted original-action spatial trace has now been derived separately:** [11 November action spatial-trace result](ge19_20261111_original_action_spatial_trace_linear_scalar_closure.md). Its AeST-only on-shell equation is \\(\\ddot\\Phi+H(3\\dot\\Phi+\\dot\\Psi)+(3H^2+2\\dot H)\\Psi+\\frac{k^2}{3a^2}(\\Phi-\\Psi)=\\frac32P_A\\). This is not yet an all-species CLASS implementation proof.
 
 The original restricted scalar charge \(J_\phi\) is
 \[
@@ -147,7 +147,7 @@ These identities are true *for any injected aether E force*, because their deriv
 **Therefore:**
 - Passing \(\mathcal C_H,\mathcal C_M\) and a generic Bianchi/CLASS fluid-Ward check is **necessary but not discriminating** for \(\gamma\). An arbitrary injected E source can satisfy those implemented conservation forms while violating \(\mathscr S_\phi=0\) of the specified action.
 - Checking **only** the quarter C-source literal anchor, \(\eta=0\) byte-identity or finite-\(\eta\) native Weyl difference is also **not discriminating** for full action correctness.
-- One **real** source-to-theory acceptance must independently reconcile (E) and (S) with the complete constrained metric/effective-fluid **including the spatial trace, scalar/aether/auxiliary Euler and all active ordinary species**, with correct initial-value and gauge mapping. Algebraically imposed fluid conservation is **not** a substitute for the scalar Euler equation.
+- One **real** source-to-theory acceptance must independently reconcile (E) and (S) with the complete constrained metric/effective-fluid **including the now-derived *restricted* spatial trace, the complete covariant scalar/aether/auxiliary Euler projection and all active ordinary species**, with correct initial-value and gauge mapping. Algebraically imposed fluid conservation is **not** a substitute for the scalar Euler equation.
 - At that point a **single** time-resolved direct scalar-charge/Einstein-constraint residual trace on the versioned candidate could provide an implementation check; a perfect constraint trace by itself still would not establish that the action-to-code map was correct.
 
 The mathematical Noether identity (N) **explains why** all these equations must be compatible in the true theory. It does not license artificially adding a density/velocity term to cancel the half-source residual, nor independently prove that quarter is the only possible full covariant effective-fluid representation.
@@ -161,13 +161,13 @@ The mathematical Noether identity (N) **explains why** all these equations must 
 | Hamiltonian/momentum and traceless scalar spatial Einstein rows | LW30/LW31 | **Restricted action PASS** |
 | Complete off-shell scalar charge/CLASS residual identity | Original researcher LW33 WSL (19/19, 7 locks) | **Restricted exact PASS; quarter necessary** |
 | General covariance/Ward identity of covariant action | (N), geometric derivation in this note | **Formal continuum identity**, not code equivalence |
-| Fully independent spatial Einstein **trace**, all-species field feedback, original auxiliary/matter Euler-to-C-row map and gauge/IC branches | No combined original action-to-CLASS demonstration | **OPEN** |
+| Spatial Einstein trace / pressure in restricted analytic longitudinal action | Newly derived directly from GE06+GE05 original source on 11 November | **Restricted action PASS**, not full all-species closure |\n| Full all-species field feedback, original auxiliary/matter Euler-to-C-row map and gauge/IC branches | No combined original action-to-CLASS demonstration | **OPEN** |
 | Physical source-normalized, causal \(\partial_\eta P_{d_mW}(k,z)\) | Native CLASS outputs alone do not establish | **BLOCK** |
 | Real DES Y3 \(\gamma_t\) including line-of-sight, bias/IA/photo-z/covariance | No verified full forward/likelihood | **BLOCK / no detection** |
 
 The archived action-quarter code candidate indeed compiles, agrees exactly with historical code for \(\eta=0\), and produces distinct tiny native \(d_m,\Phi,\Psi\) for \(\eta=.01,z=.5\). **The signed 49-node k signal is jagged with many sign reversals, and simple factor-two source-to-response scaling is unsupported.** This must **not** be called a converged physical memory prediction without an independent error estimate. Its small apparent amplitude does not settle theory normalization or survey sensitivity.
 
-**Next step is a theory decision, not a numerical sweep:** construct one joint action-derived **spatial Einstein trace + scalar/aether/auxiliary effective-fluid and matter-source map** with all explicit \(\eta\) terms, and compare it to the actual CLASS state evolution. A contradiction is legitimate \`PHYSICS_BLOCK\`; a complete all-rows equivalence allows only the **separate quarter candidate** to advance to a bounded physical transfer calculation. At present the evidence supports \`PHYSICS_BLOCK\`, with the restricted source-normalization proposition as a self-contained potential theoretical result.
+**Next step is a theory decision, not a numerical sweep:** construct one joint action-derived **full all-species scalar/aether/auxiliary effective-fluid and matter-source map**, using the now-derived restricted spatial trace with all explicit \(\eta\) terms, and compare it to the actual CLASS state evolution. A contradiction is legitimate \`PHYSICS_BLOCK\`; a complete all-rows equivalence allows only the **separate quarter candidate** to advance to a bounded physical transfer calculation. At present the evidence supports \`PHYSICS_BLOCK\`, with the restricted source-normalization proposition as a self-contained potential theoretical result.
 
 No extra LW34/LW35 scripts, no new CLASS jobs or GitHub Actions, no DES tuning.
 
@@ -179,6 +179,6 @@ No extra LW34/LW35 scripts, no new CLASS jobs or GitHub Actions, no DES tuning.
 - [LW30 ADM Hamiltonian and momentum](ge19_lw30_original_gr_aest_adm_scalar_constraints_class_bridge_2026-11-10.md)
 - [LW31 traceless spatial Einstein](ge19_lw31_original_action_spatial_traceless_Einstein_shear_2026-11-10.md)
 - [LW32 multiplier elimination](ge19_lw32_covariant_unit_aether_auxiliary_multiplier_exact_elimination_2026-11-10.md)
-- [LW33 complete reduced off-shell scalar identity](ge19_lw33_exact_scalar_action_to_CLASS_offshell_source_decision_2026-11-10.md)
+- [LW33 complete reduced off-shell scalar identity](ge19_lw33_exact_scalar_action_to_CLASS_offshell_source_decision_2026-11-10.md)\n- [11 November original action spatial trace / pressure derivation](ge19_20261111_original_action_spatial_trace_linear_scalar_closure.md)
 - [2026-11-10 integrated scalar-mode embedding](ge19_single_scalar_3plus1_embedding_and_candidate_source_2026-11-10.md)
 - [P0 physical source equivalence issue](https://github.com/dvlahek/aest-memory-gravity/issues/2)
