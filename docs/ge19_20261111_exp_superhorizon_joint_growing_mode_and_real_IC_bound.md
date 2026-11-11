@@ -1,13 +1,13 @@
 # GE19 — vodeći zajednički superhorizontski mod i stvarna veličina AeST IC nesklada
 
 **Datum:** 11. studenoga 2026.  
-**Klasifikacija:** \`LEADING_RADIATION_ADIABATIC_MODE_SUPPORTED / FINITE_K_COUPLED_MEMORY_OPEN / PHYSICS_GO_BLOCK / DES_NOT_DETECTED\`.
+**Klasifikacija:** `LEADING_RADIATION_ADIABATIC_MODE_SUPPORTED / FINITE_K_COUPLED_MEMORY_OPEN / PHYSICS_GO_BLOCK / DES_NOT_DETECTED`.
 
 Ovaj dokument zaključuje jedan fizikalni račun, **bez nove CLASS numerike, bez DES fita i bez mijenjanja zamrznute teorije**. Izvršiv izvor i samostalni JSON sa 16/16 simboličkih provjera arhivirani su na istoj grani. Kanonska **izvorno zaključana WSL reprodukcija još nije izvedena** za ovaj konkretan novi test.
 
 ## 1. Fizikalna pozadina iz zamrznutog Exp modela
 
-Originalni izvor \`v019/patch/source/aest_memory.c\` i izvorni benchmark \`v019/ini/aest_exp.ini\` definiraju
+Originalni izvor `v019/patch/source/aest_memory.c` i izvorni benchmark `v019/ini/aest_exp.ini` definiraju
 
 \[
 Q=Q_0+Z_0Z,\qquad
@@ -72,12 +72,12 @@ Ukupno **16/16 preciznih simboličkih identiteta** iz reproducibilnog programa p
 
 Jedini sada fizikalno opravdan korak jest **jedan zajednički sljedeći red superhorizontskog razvoja** kroz \(\mathcal O((k\tau)^2)\) i \(\mathcal O(\rho_A/\rho_r)\), uključujući vremenske promjene \(w_A,c_a^2\), smičnost neutrina, AeST skalar/aeter i retarded \(q_j,p_j\). Treba izvesti gdje se prvi put pojavljuju nenulti \(\chi,E_A,B_\chi\), i potvrditi da ista akcija daje Einsteinove izvore i scalar-charge Ward identitet.
 
-Bez tog zatvaranja **nema** \`PHYSICS_GO\`, proizvodnog fizikalnog \(\partial_\eta P_{gW}\), kvalificirane numeričke konvergencije ili DES Y3 detekcije. Prijašnja jaka oscilacija predznaka u prijenosnim funkcijama nije opravdano proglašena ni signalom ni numeričkom pogreškom.
+Bez tog zatvaranja **nema** `PHYSICS_GO`, proizvodnog fizikalnog \(\partial_\eta P_{gW}\), kvalificirane numeričke konvergencije ili DES Y3 detekcije. Prijašnja jaka oscilacija predznaka u prijenosnim funkcijama nije opravdano proglašena ni signalom ni numeričkom pogreškom.
 
 ## 4. Provenijencija i reproducibilnost
 
-- [Jedan izvršivi program za 16 identiteta](../ge19/physics_gate/frozen_exp_superhorizon_growing_mode_20261111.py), Git blob \`e0a2562b2c728c1deef2eadb784f6c750aeef3b7\`.
-- [Arhivirani samostalni JSON](../results/ge19_frozen_exp_leading_growing_mode_20261111_standalone.json), Git blob \`49c86301f95cff22bb764e1b7f52aca013c590f6\`, klasifikacija \`production_physics_go=false\`.
+- [Jedan izvršivi program za 16 identiteta](../ge19/physics_gate/frozen_exp_superhorizon_growing_mode_20261111.py), Git blob `e0a2562b2c728c1deef2eadb784f6c750aeef3b7`.
+- [Arhivirani samostalni JSON](../results/ge19_frozen_exp_leading_growing_mode_20261111_standalone.json), Git blob `49c86301f95cff22bb764e1b7f52aca013c590f6`, klasifikacija `production_physics_go=false`.
 - [Prethodni zajednički all-species izvorni pregled](ge19_20261111_all_species_Einstein_operator_and_adiabatic_IC_block.md).
 
 Po potrebi jedno **kratko WSL potvrđivanje originalnih zaključanih izvora**, koje ne pokreće CLASS:
@@ -90,7 +90,7 @@ set -o pipefail
 python3 -u ge19/physics_gate/frozen_exp_superhorizon_growing_mode_20261111.py \
   --out results/ge19_frozen_exp_leading_growing_mode_20261111_wsl.json \
   2>&1 | tee results/ge19_frozen_exp_leading_growing_mode_20261111_wsl.log
-echo "EXIT=\${PIPESTATUS[0]}"
+echo "EXIT=${PIPESTATUS[0]}"
 ~~~
 
-Očekivano: \`GE19_FROZEN_EXP_SOURCE_LOCKS_PASS 4\`, \`GE19_FROZEN_EXP_LEADING_GROWING_MODE_PASS 16\` i \`GE19_FULL_PHYSICS_GO False\`. Uporaba druge izvorne revizije ili neuspjeh testa mora biti prijavljen, a ne automatski popravljan.
+Očekivano: `GE19_FROZEN_EXP_SOURCE_LOCKS_PASS 4`, `GE19_FROZEN_EXP_LEADING_GROWING_MODE_PASS 16` i `GE19_FULL_PHYSICS_GO False`. Uporaba druge izvorne revizije ili neuspjeh testa mora biti prijavljen, a ne automatski popravljan.
