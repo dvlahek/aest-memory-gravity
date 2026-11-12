@@ -15,6 +15,10 @@ if [[ "$(git branch --show-current)" != "physics-first-gravitational-elasticity"
     echo "GE19_WRONG_PROJECT_BRANCH"; exit 2
 fi
 source .venv/bin/activate
+python3 -m py_compile \
+  ge19/physics_gate/patch_full_class_tangent_two_pass_20261112.py \
+  ge19/physics_gate/run_full_class_two_pass_tangent_20261112.py
+echo "GE19_PYTHON_SYNTAX_PREFLIGHT_PASS"
 if [[ "$CLASS" != "$HOME/GE19_CLASS_TANGENT_v077" && "${GE19_ACK_ISOLATED_CLASS:-}" != "yes" ]]; then
     echo "GE19_REFUSE_UNACKNOWLEDGED_CLASS_ROOT: use the default isolated directory"
     echo "or set GE19_ACK_ISOLATED_CLASS=yes after making a separate copy"
