@@ -1,0 +1,48 @@
+{
+  "DES_detection": false,
+  "assumptions": [
+    "separate regular no-free-bath q_i=p_i=0",
+    "chi_i=E_i=0",
+    "fixed identical initial cosmological state for half and quarter",
+    "smooth fixed t_i>0, nonzero K_B and rho_A+p_A",
+    "linear reduced source/CLASS dictionary"
+  ],
+  "classification": "GE19_REDUCED_FIRST_MEMORY_ONSET_SOURCE_IDENTITY_PASS_NOT_FULL_MODE",
+  "exact_symbolic_gates": {
+    "bath_first_force_gradient": true,
+    "bath_q_third_derivative": true,
+    "half_minus_quarter_E_quadratic": true,
+    "initial_B_force_zero": true,
+    "initial_E_derivative": true,
+    "initial_chi_derivative": true,
+    "initial_q_p_derivatives_zero": true,
+    "kinematic_comoving_delta": true,
+    "kinematic_phase_theta_alpha": true,
+    "quarter_eta_E_quadratic": true,
+    "quarter_source_only_not_initial_force": true,
+    "source_is_zero_at_exact_leading_adiabatic": true,
+    "strict_dust_zero_E_drive": true,
+    "strict_dust_zero_chi_drive": true
+  },
+  "finite_eta_TRANSFER_convergence_certified": false,
+  "first_nonzero_mode_amplitude_solved": false,
+  "full_physics_go": false,
+  "identities": {
+    "B_chi_prime_at_zero_state": "sum(w_j)*a*Q*c_a2*Delta_A (conformal derivative)",
+    "E_dot_at_zero_chi_E_q_p": "-(2-K_B)*Q*c_a2*Delta_A/K_B",
+    "E_eta_quadratic_Taylor_coefficient_quarter": "-eta*a^2*Q^2*c_a2*Delta_A*sum(w_j)/(8*K_B)",
+    "E_half_minus_quarter_quadratic_coefficient": "-eta*a^2*Q^2*c_a2*Delta_A*sum(w_j)/(8*K_B)",
+    "causal_taylor_time_variable": "Delta_tau=tau-tau_i",
+    "chi_dot_at_zero_chi_E_q_p": "Q*c_a2*Delta_A",
+    "q_j_cubic_Taylor_coefficient": "a^2*k*omega_j*sqrt(w_j)*Q*c_a2*Delta_A/6"
+  },
+  "identity_count": 14,
+  "initial_comoving_Delta_A_fixed_by_all_species_next_order": false,
+  "source_blobs": {
+    "docs/ge19_lw33_exact_scalar_action_to_CLASS_offshell_source_decision_2026-11-10.md": "dedcb6148b6ee4353c32972fcc456d9e3a185ffd",
+    "ge05/memory_directional_source_generator.py": "40837d77f89028da30c28899e2d0530a4401844e",
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364"
+  },
+  "source_locks_executed": true
+}
