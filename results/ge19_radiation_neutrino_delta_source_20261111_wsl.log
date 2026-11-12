@@ -1,0 +1,4 @@
+GE19_RADIATION_SOURCE_LOCKS_PASS 3
+GE19_RADIATION_DELTA_SOURCE_PASS 9
+GE19_FULL_PHYSICS_GO False
+GE19_RADIATION_DELTA_REPORT /home/dino/aest-memory-gravity/results/ge19_radiation_neutrino_delta_source_20261111_wsl.json
