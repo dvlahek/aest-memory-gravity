@@ -39,7 +39,7 @@
   "v019j_historical_half_source_exists": true,
   "patcher_blob": "dfc2c2d66e94083c79689c5bcfec7b05649d8064",
   "runner_blob": "d007085e57d792207238de3793a3b47d28511507",
-  "wsl_wrapper_blob": "6a8f55dcc109fc95a76989df5817a93faf9789b8",
+  "wsl_wrapper_blob": "184acab4b5f7923a2760e28f736354311417798d",
   "implementation_document_blob": "666df096e20ce539d956994536cae14426e1f683",
   "patcher_has_two_pass_source_record_and_force": true,
   "runner_has_null_and_two_source_resolutions": true,
@@ -49,5 +49,6 @@
   "Ward_and_full_physics_gate": false,
   "DES_detection": false,
   "validation_note": "Static source audit only; actual WSL source SHA check, Python execution, generated C compilation, physical Ward/Einstein constraints and W1 remain unperformed.",
-  "full_CLASS_build_verified": false
+  "full_CLASS_build_verified": false,
+  "wsl_wrapper_has_python_syntax_guard": true
 }
