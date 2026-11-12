@@ -91,6 +91,7 @@ def make_ini(original:Path,out_dir:Path,label:str,tol:float) -> Path:
         "z_pk":"0.5",
         "output":"mTk",
         "k_output_values":"0.06732117",
+        "P_k_max_1/Mpc":"0.08",
         "root":str((out_dir/"native"/(label+"_")).resolve()),
         "overwrite_root":"yes",
         "tol_perturbations_integration":format(tol,".12g"),
@@ -112,6 +113,8 @@ def run_class(root:Path, ini:Path,log:Path, env:dict):
     program=root/"class"
     if not program.is_file():
         raise RuntimeError("GE19_CLASS_NOT_COMPILED; run make -j2 in isolated CLASS checkout")
+    if program.stat().st_mtime<(root/"source"/"perturbations.c").stat().st_mtime:
+        raise RuntimeError("GE19_CLASS_BINARY_STALE_RECOMPILE_WITH_MAKE")
     with log.open("w") as f:
         result=subprocess.run([str(program),str(ini)],cwd=root,env=env,
                               stdout=f,stderr=subprocess.STDOUT,check=False)
@@ -132,6 +135,9 @@ def main():
     out=args.out_dir.expanduser().resolve()
     if not ini.is_file():
         raise RuntimeError("GE19_ORIGINAL_FROZEN_INI_MISSING")
+    frozen_sha=subprocess.check_output(["git","hash-object",str(ini)],text=True).strip()
+    if frozen_sha!="f9a2bde8921a148e063f9657a8ede0a51c6a629d":
+        raise RuntimeError("GE19_FROZEN_EXP_INI_SOURCE_CHANGED "+frozen_sha)
     manifest=patched_source_qualification(root)
     print("GE19_FULL_CLASS_SOURCE_PATCH_PREFLIGHT_PASS",manifest["parent_source_type"],flush=True)
     if not args.run:
