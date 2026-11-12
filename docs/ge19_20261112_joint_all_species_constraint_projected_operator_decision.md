@@ -110,7 +110,7 @@ provided the denominator is nonzero. Hence the constraint forces a **small but n
 
 ### Reproducibility
 
-- [One 21-identity symbolic source program](../ge19/physics_gate/constraint_projected_joint_operator_20261112.py), committed to the original branch. Equivalent local algebra has **21/21 PASS**; canonical source-locked WSL execution of this compact GitHub program is pending.
+- [One 21-identity symbolic source program](../ge19/physics_gate/constraint_projected_joint_operator_20261112.py), committed to the original branch. The original researcher's canonical source-locked WSL execution now confirms **21/21 PASS with 5/5 original source locks**, with byte-identical [WSL JSON](../results/ge19_constraint_projected_joint_operator_20261112_wsl.json) (SHA-256 `5a7148d96cba3d97b25f64d223c9e31f8d4393b80f9749106b738b95dafa6ff1`, Git blob `1cf3a81c61f252f96a2a1a45740bbd668af1b869`) and [WSL log](../results/ge19_constraint_projected_joint_operator_20261112_wsl.log) (SHA-256 `cc2e0ee5db55656cba50757bff0ec799628d8cd1f554f8de5189a1afb8ad98aa`, Git blob `b8561488ee1524c45485faed3cc10fc0d9203931`). These results prove the stated symbolic source identities, not full physical production equivalence.
 - [Frozen WSL 17/17 source](../results/ge19_coupled_frozen_gain_20261112_wsl.json); [14/14 first memory onset](../results/ge19_first_retarded_memory_onset_20261111_wsl.json); [9/9 radiation source](../results/ge19_radiation_neutrino_delta_source_20261111_wsl.json).
 - [LW30 original ADM Einstein constraints](ge19_lw30_original_gr_aest_adm_scalar_constraints_class_bridge_2026-11-10.md), [LW33 scalar-source identity](ge19_lw33_exact_scalar_action_to_CLASS_offshell_source_decision_2026-11-10.md).
 
@@ -126,4 +126,4 @@ python3 -u ge19/physics_gate/constraint_projected_joint_operator_20261112.py \
 rc=$PIPESTATUS
 echo "EXIT=$rc"
 ~~~
-Expected `GE19_CONSTRAINT_SOURCE_LOCKS_PASS 5`, `GE19_CONSTRAINT_PROJECTED_JOINT_IDENTITIES_PASS 21`, `GE19_FULL_PHYSICS_GO False`.
+Actual previously completed WSL output: `GE19_CONSTRAINT_SOURCE_LOCKS_PASS 5`, `GE19_CONSTRAINT_PROJECTED_JOINT_IDENTITIES_PASS 21`, `GE19_FULL_PHYSICS_GO False`. **Do not rerun merely to reproduce it.**
