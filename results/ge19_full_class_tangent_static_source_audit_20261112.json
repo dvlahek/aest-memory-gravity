@@ -38,7 +38,7 @@
   "v019j_normalized_bath_rhs_exists": true,
   "v019j_historical_half_source_exists": true,
   "patcher_blob": "dfc2c2d66e94083c79689c5bcfec7b05649d8064",
-  "runner_blob": "956b8dc390a9de7a3fd22c0a8fba560880ca1d6d",
+  "runner_blob": "d007085e57d792207238de3793a3b47d28511507",
   "wsl_wrapper_blob": "6a8f55dcc109fc95a76989df5817a93faf9789b8",
   "implementation_document_blob": "666df096e20ce539d956994536cae14426e1f683",
   "patcher_has_two_pass_source_record_and_force": true,
@@ -47,5 +47,7 @@
   "C_compilation_performed": false,
   "full_CLASS_tangent_executed": false,
   "Ward_and_full_physics_gate": false,
-  "DES_detection": false
+  "DES_detection": false,
+  "validation_note": "Static source audit only; actual WSL source SHA check, Python execution, generated C compilation, physical Ward/Einstein constraints and W1 remain unperformed.",
+  "full_CLASS_build_verified": false
 }
