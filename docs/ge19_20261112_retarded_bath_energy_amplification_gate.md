@@ -107,7 +107,7 @@ B_{\chi,i}=0.
 The first \(\eta\)-dependent term in \(E_A\) is quadratic in the *local* \(\Delta\tau=\tau-\tau_i\), as independently confirmed by the archived WSL exact-source JSON. At leading radiation order, the second WSL source derivation gives
 \[
 \Delta_A=-\frac{15+4R_\nu}{40}\Psi_0(k\tau)^2
-+O((k\tau)^4,\rho_A/\rho_r,c_a^2),
++O((k\tau)^4,\rho_A/\rho_r,\rho_b/\rho_r,c_a^2),
 \tag{9}
 \]
 where the meaning of the omitted terms follows the frozen source's asymptotic truncation.
