@@ -168,6 +168,7 @@ def main():
     for label,mode,trace,output,dt,tol,zero in operations:
         cfg=make_ini(ini,out,label,tol)
         env=environment.copy()
+        env.pop("GE19_TANGENT_ZERO_SOURCE",None)
         env["GE19_TANGENT_MODE"]=mode
         env["GE19_TANGENT_TRACE"]=str(trace)
         env["GE19_TANGENT_DT_MPC"]=dt
