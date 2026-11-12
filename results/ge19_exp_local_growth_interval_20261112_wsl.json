@@ -1,0 +1,93 @@
+{
+  "DES_detection": false,
+  "actual_full_background_H_solved": false,
+  "assumptions": [
+    "flat FLRW",
+    "positive components with -1<=w_i<=1/3",
+    "H(a)<=H0/a^2",
+    "finite positive NL0B oscillator weights and frequencies",
+    "frozen reduced scalar+aether+bath operator; Delta_A external for root criterion"
+  ],
+  "calibration": {
+    "H0_Mpc_inverse": "0.000224559251587309778153258",
+    "I0": "0.000400912849822208377004114",
+    "Z_at_a_min": "8.59579015108930265976397",
+    "Z_at_today": "4.3928199682159576759913"
+  },
+  "classification": "GE19_EXP_SUFFICIENT_LOCAL_ROOT_INTERVAL_PASS_NOT_PHYSICAL_GAIN",
+  "conservative_envelope": {
+    "Qmax": "0.0001000000000001",
+    "Qmin": "0.0001",
+    "ca2max": "1.2e-14"
+  },
+  "endpoint_f_margin": {
+    "a_max": "0.00002595533164771302608",
+    "a_min": "4.009126640188956924e-12"
+  },
+  "fixed_model": "Frozen AeST Exp KB=0.1, Q0=1e-4, K2=9500, Z0=1e-17, omega_cdm=0.1201075",
+  "full_constraint_projected_all_species_root_certified": false,
+  "interval_a": [
+    "1e-8",
+    "0.7"
+  ],
+  "landmarks": [
+    {
+      "H_upper": "2245592515873.09778",
+      "KQ": "4.00912849822208377e+20",
+      "KQ_over_threshold_using_H_upper": "4373338.012814566",
+      "a": "1e-8"
+    },
+    {
+      "H_upper": "22455.9251587309778",
+      "KQ": "400912849.822208377",
+      "KQ_over_threshold_using_H_upper": "9396.482503047605",
+      "a": "1e-4"
+    },
+    {
+      "H_upper": "224.559251587309778",
+      "KQ": "400912.849822208377",
+      "KQ_over_threshold_using_H_upper": "939.6480751578807",
+      "a": "0.001"
+    },
+    {
+      "H_upper": "2.24559251587309778",
+      "KQ": "400.912849822208377",
+      "KQ_over_threshold_using_H_upper": "93.96066539227871",
+      "a": "0.01"
+    },
+    {
+      "H_upper": "0.0224559251587309778",
+      "KQ": "0.400912849822208377",
+      "KQ_over_threshold_using_H_upper": "9.354826351805721",
+      "a": "0.1"
+    },
+    {
+      "H_upper": "0.00249510279541455309",
+      "KQ": "0.0148486240674891991",
+      "KQ_over_threshold_using_H_upper": "3.011466564055663",
+      "a": "0.3"
+    },
+    {
+      "H_upper": "0.000898237006349239113",
+      "KQ": "0.00320730279857766702",
+      "KQ_over_threshold_using_H_upper": "1.691035389168826",
+      "a": "0.5"
+    },
+    {
+      "H_upper": "0.000458284186912877098",
+      "KQ": "0.00116884212776154046",
+      "KQ_over_threshold_using_H_upper": "1.101912039896055",
+      "a": "0.7"
+    }
+  ],
+  "physical_adiabatic_mode_excitation_certified": false,
+  "production_physics_go": false,
+  "proof": "f(a)=I0*a-C*H0*a^2-C*Qmax*a^4-3*KB*H0^2*ca2max/Q0; f concave, endpoint positive, hence positive throughout",
+  "source_blobs": {
+    "docs/ge19_20261112_frozen_coupled_scalar_bath_gain_conditional_root.md": "9c0886f4842452ead4d47e235b36ebd43508bafc",
+    "v019/ini/aest_exp.ini": "f9a2bde8921a148e063f9657a8ede0a51c6a629d",
+    "v019/patch/source/aest_memory.c": "9a522a653a1855eda3cb67e856f9fc10a1e73d54"
+  },
+  "source_locks_executed": true,
+  "time_dependent_fundamental_matrix_gain_certified": false
+}
