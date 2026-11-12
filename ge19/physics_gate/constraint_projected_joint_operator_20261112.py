@@ -81,9 +81,10 @@ def calculate():
  chk['constraint_projected_frozen_rank_one_polynomial']=s.simplify(char-poly)==0
  chk['zero_gradient_gravity_scalar_factorization']=s.simplify(char.subs(G,0)-DG*DS)==0
  chk['frozen_gradient_is_rank_one_update']=(MAT.diff(G).rank()==1)
- Eoverchi=(lam+3*H*cs)/Q
- Phioverchi=G*(KB*Eoverchi+C)/(2*(lam+H)*(lam+3*H*cs)/KQ-Q+2*G)
- chk['finite_gradient_scalar_eigenmode_metric_induced']=s.simplify((2*(lam+H)*(lam+3*H*cs)/KQ-Q+2*G)*Phioverchi-G*(KB*Eoverchi+C))==0
+ Dbase=2*(lam+H)*(lam+3*H*cs)/KQ-Q+2*G
+ Phioverchi=G*(KB*(lam+3*H*cs)+C*Q)/((Q+G*KB)*Dbase-2*G**2*KB)
+ Eoverchi=(lam+3*H*cs-G*C+2*G*Phioverchi)/(Q+G*KB)
+ chk['finite_gradient_scalar_eigenmode_metric_induced']=(s.simplify(Dbase*Phioverchi-G*(KB*Eoverchi+C))==0 and s.simplify((lam+3*H*cs)-Q*Eoverchi-G*(KB*Eoverchi+C-2*Phioverchi))==0)
  chk['physical_AeST_only_Delta_nonzero_for_metric']=s.simplify((-2*k*k*Phi/(3*a*a))/RA+2*k*k*Phi/(3*a*a*RA))==0
  chk['scalar_eigenvalue_persists_for_small_g_conditional']=s.simplify(s.diff(poly,G).subs(G,0)-KQ*DS+N*DG)==0
  bad=[n for n,v in chk.items() if not v]
@@ -101,7 +102,7 @@ def calculate():
  'DG':'(lambda+H)*(lambda+3H*c_a^2)-Q*K_Q/2',
  'DS':'(lambda+H)*(lambda+3H*c_a^2)-Q*(K_Q-C*(H+Q-3H*c_a^2)-eta*Q*B_eff(lambda)/4)/K_B',
  'N':'K_Q-C*Q*(1+C/K_B)-eta*Q*B_eff(lambda)/4',
- 'scalar_mode_metric_ratio':'Phi/chi=g*(K_B*(lambda+3H*c_a^2)/Q+C)/[2*(lambda+H)*(lambda+3H*c_a^2)/K_Q-Q+2*g]',
+ 'scalar_mode_metric_ratio':'Phi/chi=g*(K_B*(lambda+3H*c_a^2)+C*Q)/[(Q+g*K_B)*(2*(lambda+H)*(lambda+3H*c_a^2)/K_Q-Q+2*g)-2*g^2*K_B]',
  'root_scope':'Simple positive scalar root at g=0 persists for sufficiently small g>0 if distinct from gravity eigenvalue; not full cosmological growth',
  }
 def main():
