@@ -111,6 +111,8 @@ static void ge19_load_trace(void) {
 static double ge19_force_at(double tau, double k) {
   size_t lo,hi,mid;
   if (ge19_mode()!=2 || !ge19_selected(k)) return 0.;
+  if (getenv("GE19_TANGENT_ZERO_SOURCE") &&
+      strcmp(getenv("GE19_TANGENT_ZERO_SOURCE"),"1")==0) return 0.;
   ge19_load_trace();
   if (tau<ge19_times[0]-1.e-7 || tau>ge19_times[ge19_count-1]+1.e-7) {
     fprintf(stderr,"GE19_TANGENT_SOURCE_OUTSIDE_TRACE tau=%.17g range=[%.17g,%.17g]\n",
@@ -171,6 +173,7 @@ static int ge19_record_callback(double tau,double *y,double *dy,int index_tau,
     fprintf(stderr,"GE19_TANGENT_INVALID_CALLBACK\n");exit(85);
   }
   if (!pba->aest_enabled || !pba->aest_memory_enabled ||
+      pba->aest_eta!=0. ||
       ppt->gauge != newtonian || pppaw->index_md!=ppt->index_md_scalars) {
     fprintf(stderr,"GE19_TANGENT_REQUIRES_AEST_NEWTONIAN_SCALARS\n");exit(85);
   }
@@ -226,6 +229,11 @@ def modify(original: str) -> str:
       'dy[pv->index_pt_E_aest] = a*E_rhs_aest/pba->aest_KB-a_prime_over_a*E_aest;',
       '/* GE19 forced exact eta tangent: only the direct E source at eta0. */\n'
       '        if (ge19_mode()==2 && ge19_selected(k)) {\n'
+      '          if (pba->aest_eta!=0. || !pba->aest_memory_enabled ||\n'
+      '              ppt->gauge!=newtonian) {\n'
+      '            fprintf(stderr,"GE19_TANGENT_NONZERO_ETA_OR_WRONG_GAUGE\\n");\n'
+      '            exit(86);\n'
+      '          }\n'
       '          E_rhs_aest -= 0.25*Q_aest*ge19_force_at(tau,k);\n'
       '        }\n'
       '        dy[pv->index_pt_E_aest] = a*E_rhs_aest/pba->aest_KB-a_prime_over_a*E_aest;',
