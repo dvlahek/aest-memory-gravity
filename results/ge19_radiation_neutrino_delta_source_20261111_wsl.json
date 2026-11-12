@@ -1,0 +1,40 @@
+{
+  "DES_detection": false,
+  "classification": "GE19_RADIATION_NEUTRINO_DELTA_A_FIRST_SOURCE_CLOSED_REDUCED_NOT_PHYSICS_GO",
+  "finite_eta_transfers_computed": false,
+  "full_AeST_bath_finite_k_solution": false,
+  "identity_count": 9,
+  "physical_weyl_observer_ready": false,
+  "production_physics_go": false,
+  "result": {
+    "Delta_A_order_(k_tau)^2_over_Psi0": "-(4*R_nu + 15)/40",
+    "Phi_2_over_Psi0": "-(56*R_nu**2 + 580*R_nu + 525)/(630*(2*R_nu + 25))",
+    "Psi_2_over_Psi0": "(56*R_nu**2 + 10*R_nu - 525)/(630*(2*R_nu + 25))",
+    "assumed_primordial_state": "single adiabatic growing mode, zero free bath q/p",
+    "chi_dot_at_initial_from_source": "-Q*c_a2*(15+4*R_nu)*Psi0*(k*tau_i)^2/40",
+    "neglected_orders": [
+      "rho_A/rho_rad",
+      "rho_b/rho_rad",
+      "c_a2 corrections to Delta_A",
+      "higher (k tau) powers"
+    ]
+  },
+  "scope": "radiation-dominated flat Newtonian, leading in dustlike AeST and rho_A/rho_rad, through x^2 only",
+  "source_blobs": {
+    "ge19/physics_gate/first_retarded_memory_onset_20261111.py": "9c41778234a734643d2527ff539d5fdb255bd66a",
+    "ge19/physics_gate/frozen_exp_superhorizon_growing_mode_20261111.py": "e0a2562b2c728c1deef2eadb784f6c750aeef3b7",
+    "v019/patch/source/aest_memory.c": "9a522a653a1855eda3cb67e856f9fc10a1e73d54"
+  },
+  "source_locks_executed": true,
+  "symbolic_gates": {
+    "all_radiation_limit": true,
+    "comoving_AeST_dust_order_x2": true,
+    "density_velocity_full_comoving_combination": true,
+    "neutrino_leading_slip": true,
+    "neutrino_octupole_coefficient": true,
+    "no_neutrino_limit": true,
+    "six_radiation_equations_exact": true,
+    "source_vanishes_superhorizon_leading": true,
+    "unique_radiation_neutrino_solution": true
+  }
+}
