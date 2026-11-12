@@ -79,12 +79,12 @@ The complete **time-dependent U_0(t,s)** and error control have not been compute
 
 ## Provenance and one possible short WSL confirmation
 
-- [Fixed-model source-locked high-precision certificate](../ge19/physics_gate/exp_local_growth_interval_certificate_20261112.py). Its mathematical inequality and fixed-parameter evaluations were independently reproduced in a standalone local analysis, **not yet source-locked on researcher WSL**.
+- [Fixed-model source-locked high-precision certificate](../ge19/physics_gate/exp_local_growth_interval_certificate_20261112.py). Its mathematical inequality and fixed-parameter evaluations were independently reproduced in a standalone local analysis and subsequently **source-locked on the researcher's WSL with 3/3 original source files PASS**, with exact original-byte [JSON](../results/ge19_exp_local_growth_interval_20261112_wsl.json) (SHA-256 `fb68640accaa8b20bf09110ba73c8a453c2c25c5dbb5d20187dae418a239acc0`, Git blob `0c8d41b618770a0f388283464d7e0b4f638e316c`) and [log](../results/ge19_exp_local_growth_interval_20261112_wsl.log) (SHA-256 `1a3bff60e5d963bcd90e89c4ce8f5b18245466290e78f8527da3ca316319bff3`, Git blob `f10640f6dfaff19b307a1f6b0759296004fafda2`). The execution reports `GE19_EXP_INTERVAL_SOURCE_LOCKS_PASS 3`, `GE19_EXP_FROZEN_LOCAL_ROOT_INTERVAL_PASS`, and `GE19_FULL_PHYSICS_GO False`.
 - [21/21 researcher source-locked constraint equations](../results/ge19_constraint_projected_joint_operator_20261112_wsl.json).
 - [17/17 researcher source-locked frozen bath dispersion](../results/ge19_coupled_frozen_gain_20261112_wsl.json).
 - [Causal eta-to-Weyl tangent derivation](ge19_20261112_causal_eta_to_weyl_tangent_and_strict_dust_null.md).
 
-To reproduce **only** the mathematical interval certificate (no CLASS), use:
+The WSL verification below has **already been completed**. No rerun is needed simply to collect another PASS label:
 
     cd ~/aest-memory-gravity
     git pull --ff-only
