@@ -232,10 +232,10 @@ def modify(original: str) -> str:
       "TANGENT_E")
     s=one(s,
        '               ppt->error_message,\n'
-       '               ppt->error_message);\n\n'
+       '               error_message);\n\n'
        '    /** - --> compute quantities depending on approximation schemes */',
        '               ppt->error_message,\n'
-       '               ppt->error_message);\n'
+       '               error_message);\n'
        '    /* GE19 direct W1 from full CLASS Einstein shear at source times. */\n'
        '    ge19_write_tangent_readout(tau,a,k,\n'
        '      (y[ppw->pv->index_pt_phi]+pvecmetric[ppw->index_mt_psi])/2.);\n\n'
