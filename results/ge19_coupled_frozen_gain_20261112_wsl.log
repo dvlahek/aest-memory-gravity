@@ -1,0 +1,4 @@
+GE19_GAIN_SOURCE_LOCKS_PASS 4
+GE19_REDUCED_FROZEN_GAIN_IDENTITIES_PASS 17
+GE19_FULL_PHYSICS_GO False
+GE19_FROZEN_GAIN_RESULT /home/dino/aest-memory-gravity/results/ge19_coupled_frozen_gain_20261112_wsl.json
