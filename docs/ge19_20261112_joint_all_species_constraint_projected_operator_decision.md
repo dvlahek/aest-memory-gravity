@@ -90,11 +90,11 @@ N&=K_Q-CQ\left(1+\frac{C}{K_B}\right)-\frac{\eta Q}{4}\mathcal W(\lambda).
 \]
 The formula is an exact determinant identity for this **frozen constraint-projected reduced model**, not the full-time physical spectrum.
 
-When \(g\to0\), \(\mathcal P=D_GD_S\). If \(D_S\) has a **simple** positive root distinct from a root of \(D_G\), it persists for sufficiently small \(g>0\) by continuity and the implicit function theorem. The associated nonzero metric amplitude is
+When \(g\to0\), \(\mathcal P=D_GD_S\). If \(D_S\) has a **simple** positive root distinct from a root of \(D_G\), it persists for sufficiently small \(g>0\) by continuity and the implicit function theorem. Eliminating both the scalar-phase and χ eigenvector rows (not just the leading (g	o0) phase relation), the associated metric amplitude is
 \[
 \boxed{\frac{\Phi}{\chi}=
-\frac{g\left[K_B(\lambda+3Hc_a^2)/Q+C\right]}
-{2(\lambda+H)(\lambda+3Hc_a^2)/K_Q-Q+2g},}\tag{7}
+\frac{g\left[K_B(\lambda+3Hc_a^2)+CQ\right]}
+{(Q+gK_B)\left[2(\lambda+H)(\lambda+3Hc_a^2)/K_Q-Q+2g\right]-2g^2K_B},}\tag{7}
 \]
 provided the denominator is nonzero. Hence the constraint forces a **small but nonzero \(\Delta_A\)**, rather than automatically eliminating every scalar eigenvector.
 
