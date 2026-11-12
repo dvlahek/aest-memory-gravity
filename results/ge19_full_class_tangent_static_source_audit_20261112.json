@@ -1,0 +1,51 @@
+{
+  "classification": "GE19_PINNED_V077_SOURCE_ANCHOR_STATIC_AUDIT_ONLY_NOT_COMPILED",
+  "date": "2026-11-12",
+  "original_CLASS_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "original_CLASS_source_git_blob": "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0",
+  "static_pinned_C_anchors": [
+    {
+      "name": "include_header",
+      "occurrences": 1
+    },
+    {
+      "name": "initial_state",
+      "occurrences": 1
+    },
+    {
+      "name": "einstein_source_readout",
+      "occurrences": 1
+    },
+    {
+      "name": "solver_locals",
+      "occurrences": 1
+    },
+    {
+      "name": "approximation_interval",
+      "occurrences": 1
+    },
+    {
+      "name": "native_evolver",
+      "occurrences": 1
+    },
+    {
+      "name": "solver_free",
+      "occurrences": 1
+    }
+  ],
+  "all_seven_unique": true,
+  "v019_original_E_row_exists": true,
+  "v019j_normalized_bath_rhs_exists": true,
+  "v019j_historical_half_source_exists": true,
+  "patcher_blob": "dfc2c2d66e94083c79689c5bcfec7b05649d8064",
+  "runner_blob": "956b8dc390a9de7a3fd22c0a8fba560880ca1d6d",
+  "wsl_wrapper_blob": "6a8f55dcc109fc95a76989df5817a93faf9789b8",
+  "implementation_document_blob": "666df096e20ce539d956994536cae14426e1f683",
+  "patcher_has_two_pass_source_record_and_force": true,
+  "runner_has_null_and_two_source_resolutions": true,
+  "original_AeST_v019j_modified_CLASS_source_SHA_verified_on_researcher_WSL": false,
+  "C_compilation_performed": false,
+  "full_CLASS_tangent_executed": false,
+  "Ward_and_full_physics_gate": false,
+  "DES_detection": false
+}
