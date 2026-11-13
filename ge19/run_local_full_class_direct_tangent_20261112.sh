@@ -17,6 +17,7 @@ fi
 source .venv/bin/activate
 python3 -m py_compile \
   ge19/physics_gate/patch_full_class_tangent_two_pass_20261112.py \
+  ge19/physics_gate/repair_full_class_tangent_header_order_20261113.py \
   ge19/physics_gate/run_full_class_two_pass_tangent_20261112.py
 echo "GE19_PYTHON_SYNTAX_PREFLIGHT_PASS"
 if [[ "$CLASS" != "$HOME/GE19_CLASS_TANGENT_v077" && "${GE19_ACK_ISOLATED_CLASS:-}" != "yes" ]]; then
@@ -49,6 +50,10 @@ case "$MODE" in
       python3 ge19/physics_gate/patch_full_class_tangent_two_pass_20261112.py \
         --class-root "$CLASS"
     fi
+    # Repair exactly the already-patched WSL v1 C++ include-order defect.
+    # On newly patched versions this is a strict provenance-checking no-op.
+    python3 ge19/physics_gate/repair_full_class_tangent_header_order_20261113.py \
+      --class-root "$CLASS"
     make -C "$CLASS" -j2
     python3 ge19/physics_gate/run_full_class_two_pass_tangent_20261112.py \
       --class-root "$CLASS" \
