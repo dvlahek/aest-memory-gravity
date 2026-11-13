@@ -4,6 +4,18 @@
 
 This is now a concrete experimental source patcher and runner, not merely a proposed calculation. The code has not been compiled against the researcher's isolated CLASS checkout or physically qualified. Do not describe this artifact as a demonstrated full CLASS Weyl result until the actual local source-locked run returns evidence.
 
+## 13 November 2026 — first original WSL prepare diagnosis and source-hash repair
+
+Original [researcher prepare log](../results/ge19_full_class_tangent_prepare_20261112.log) was supplied directly in the current conversation, **not archived in the repository yet**. It establishes: `GE19_PYTHON_SYNTAX_PREFLIGHT_PASS`, isolated pinned CLASS checkout at `e8580832`, successful original v019 and v019j patches with all their original source-audit checks, then **`GE19_UNRECOGNIZED_CLASS_SOURCE_SHA256=2b4d7be96b6ebf4149bef129e357a32571f69cfffb3be0b1792d578e82ad6e17`**. No experimental tangent source patch had been applied, and no C compilation or full CLASS integration started.
+
+**Cause:** original patcher had an incomplete allowlist of expected generated v019j `perturbations.c` SHA-256 values; the produced WSL source was NOT one of its two prelisted candidate files. The C anchor audit 7/7 was on **original CLASS** source, not proof that this particular source hash should be rejected or accepted without verification.
+
+**Repair committed:** experimental [source patcher](../ge19/physics_gate/patch_full_class_tangent_two_pass_20261112.py) now recognizes **exactly** the observed new SHA as an explicit additional allowed candidate, but additionally requires (i) pinned CLASS HEAD `e85808324f51fc694d12e3ed7439552a3c3f9540`, (ii) pinned original `source/perturbations.c` Git blob `c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0` from HEAD, and (iii) unchanged `v019/apply_patch_v019.py` and `v019j/apply_memory_patch.py` source blob IDs `c78484eb916bfee2730759c0bdc813a706bf9a68` and `14796a5ed9e6265ed6810c792a93d7328a109364`. The [runner](../ge19/physics_gate/run_full_class_two_pass_tangent_20261112.py) enforces the same source SHA allowlist and requires the original HEAD/blob provenance reported in the manifest. This is an **implementation acceptance repair**, not a new physics result.
+
+**Next step:** on the **existing** isolated checkout, `git pull --ff-only` the research repo and rerun only `bash ge19/run_local_full_class_direct_tangent_20261112.sh prepare`. Do not reset or reclone the isolated CLASS directory. The runner itself skips original v019/v019j patches when their original markers are already present. This will attempt the experimental tangent source patch, build, and preflight. **Until its WSL compile result is supplied, the true status is `PREPARE_SHA_LOCK_REPAIRED / CLASS_C_BUILD_NOT_YET_PROVEN / PHYSICS_GO_FALSE`.** Do NOT run the five-pass `run` stage if prepare fails.
+
+---
+
 ## Committed implementation
 
 - [Full CLASS source-locked two-pass patcher](../ge19/physics_gate/patch_full_class_tangent_two_pass_20261112.py): accepts only historical AeST v019j perturbations.c SHA-256 276646d913348824bddf9e24138e4213ecc3fb8b605d21525bf9280474dbca80 or separately frozen quarter candidate SHA-256 75bf9fe85f2aae85031edc109e131c6b5d1745dca8497300237e16e57c99f883. Refuses unexpected sources and reruns; creates an original-source backup and manifest. It changes the historical half coefficient to the action-motivated quarter ONLY in an isolated CLASS copy, leaving the historical sources intact.
