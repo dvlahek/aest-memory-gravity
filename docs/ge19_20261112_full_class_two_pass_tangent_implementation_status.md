@@ -4,6 +4,22 @@
 
 This is now a concrete experimental source patcher and runner, not merely a proposed calculation. The code has not been compiled against the researcher's isolated CLASS checkout or physically qualified. Do not describe this artifact as a demonstrated full CLASS Weyl result until the actual local source-locked run returns evidence.
 
+## 13 November 2026 — second WSL prepare: first C++ build blocker resolved in source
+
+The original WSL `prepare` rerun **passed** the Python syntax preflight, full pinned-source SHA and C-patch anchor checks, then printed `GE19_FULL_CLASS_TANGENT_PATCH_APPLIED_NOT_VALIDATED 856ba9feeda5a6c7de9d13441755303ade38b685138091b2bca533630112b0b3`. The build entered actual `g++` compilation of `source/perturbations.c` and stopped with **three not-declared errors** in `ge19_record_callback`: `aest_memory_active_count`, `aest_memory_node_order` and `aest_memory_weight_order`. No native CLASS baseline, tangent or DES run occurred.
+
+**Exact source-level diagnosis:** Original `v019/apply_patch_v019.py` inserts `#include "aest_memory.h"` immediately following `#include "parallel.h"`. The original `v019j/apply_memory_patch.py` appends the three declarations to that header, inside the original `extern "C"` protection. Our initial tangent patcher instead inserted the helper and its `ge19_record_callback` immediately after `parallel.h`, **before** the existing `aest_memory.h` include. In the C++ translation unit the functions were therefore not declared when referenced. This is an ordinary header-order bug and **not** a failed memory physical equation.
+
+**Permanent and existing-tree fixes:**
+
+- The [GE19 tangent patcher](../ge19/physics_gate/patch_full_class_tangent_two_pass_20261112.py) now inserts its C helper **after both original CLASS/AeST includes**.
+- The [strict single-source header-order repair](../ge19/physics_gate/repair_full_class_tangent_header_order_20261113.py) handles the **already-patched** WSL file. It requires the exact observed old modified-source SHA-256 `856ba9feeda5a6c7de9d13441755303ade38b685138091b2bca533630112b0b3`, original unpatched v019j backup SHA-256 `2b4d7be96b6ebf4149bef129e357a32571f69cfffb3be0b1792d578e82ad6e17`, the original pinned CLASS HEAD/blob, one exact callback marker and one existing memory header. It moves **only that include** before the helper, takes a snapshot, updates the existing source manifest SHA, and preserves all physical C equations. On a correctly ordered source and consistent manifest, it performs a no-op.
+- The [isolated WSL prepare wrapper](../ge19/run_local_full_class_direct_tangent_20261112.sh) now runs this repair automatically **only after the original patch/manifest is present**, before `make -j2`. It performs Python syntax preflight on the repair script as well.
+
+**Next action:** preserve the existing `~/GE19_CLASS_TANGENT_v077` and run the existing single `prepare` command after `git pull --ff-only`. **Do not clone, reset, delete the original backup, or rerun historical v019/v019j patches.** If the next compile succeeds, further full physical and numerical checks are still required. As of this change, **new C compilation has not been reexecuted** after the fix; `PHYSICS_GO=false`, `DES_detection=false`, and the five-pass `run` must wait for `PREPARE_EXIT=0`.
+
+---
+
 ## 13 November 2026 — first original WSL prepare diagnosis and source-hash repair
 
 Original [researcher prepare log](../results/ge19_full_class_tangent_prepare_20261112.log) was supplied directly in the current conversation, and has now been **byte-exactly archived** at the linked path (1510 UTF-8 bytes, SHA-256 `f072487becd79a747d6007237428ab5436f5546532440a175f6a0c127b63ba18`, Git blob `97b27f4c0d96027afae63aec7430abc3ae06980a`). It establishes: `GE19_PYTHON_SYNTAX_PREFLIGHT_PASS`, isolated pinned CLASS checkout at `e8580832`, successful original v019 and v019j patches with all their original source-audit checks, then **`GE19_UNRECOGNIZED_CLASS_SOURCE_SHA256=2b4d7be96b6ebf4149bef129e357a32571f69cfffb3be0b1792d578e82ad6e17`**. No experimental tangent source patch had been applied, and no C compilation or full CLASS integration started.
