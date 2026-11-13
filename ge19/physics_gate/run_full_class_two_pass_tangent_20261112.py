@@ -65,9 +65,15 @@ def patched_source_qualification(root:Path):
     if c.count(PATCH_MARKER)!=1 or m.get("modified_source_sha256")!=sha:
         raise RuntimeError("GE19_SOURCE_CHANGED_AFTER_PATCH")
     if m.get("parent_source_sha256") not in (
+        "2b4d7be96b6ebf4149bef129e357a32571f69cfffb3be0b1792d578e82ad6e17",
         "276646d913348824bddf9e24138e4213ecc3fb8b605d21525bf9280474dbca80",
         "75bf9fe85f2aae85031edc109e131c6b5d1745dca8497300237e16e57c99f883"):
         raise RuntimeError("GE19_BAD_PARENT")
+    if (m.get("original_CLASS_HEAD") !=
+        "e85808324f51fc694d12e3ed7439552a3c3f9540" or
+        m.get("original_CLASS_git_blob") !=
+        "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0"):
+        raise RuntimeError("GE19_PINNED_PARENT_PROVENANCE_MISMATCH")
     if c.count("ge19_force_at(tau,k)")!=1:
         raise RuntimeError("GE19_E_FORCING_NOT_EXACTLY_ONCE")
     for snippet in ("ge19_record_callback:perturbations_sources",
