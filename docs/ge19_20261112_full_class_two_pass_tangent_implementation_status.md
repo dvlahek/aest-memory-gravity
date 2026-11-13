@@ -4,6 +4,30 @@
 
 This is now a concrete experimental source patcher and runner, not merely a proposed calculation. The code has not been compiled against the researcher's isolated CLASS checkout or physically qualified. Do not describe this artifact as a demonstrated full CLASS Weyl result until the actual local source-locked run returns evidence.
 
+## 13 November 2026 — first native run stopped at input_init; corrected lensing switch
+
+The first native `run` entered `base010` then returned CLASS exit=1 before any perturbation integration or physical memory evaluation. In the user-provided `base010.log`, the decisive source error is `input_read_parameters_lensing(L:5101)`: lensed CMB Cls were requested without `tCl/pCl` and `lCl` output.
+
+**Exact cause:** the frozen [aest_exp.ini](../v019/ini/aest_exp.ini) specifies `lensing = yes` for its original `tCl,pCl,lCl,mPk` outputs. The experimental [runner](../ge19/physics_gate/run_full_class_two_pass_tangent_20261112.py) changed `output` to `mTk` but initially failed to disable this inherited *lensed angular-spectrum output*. It is an output/input consistency issue, not an AeST equation failure.
+
+**Corrected and committed in runner only:** every generated `mTk` ini now sets `lensing = no`; the generator independently verifies one `output = mTk`, `lensing = no`, `gauge = newtonian` and `aest_eta = 0` before invoking CLASS. The original benchmark source, native CLASS C code, primordial species, background and physical parameter inputs remain unchanged. The WSL wrapper's nested runner log now uses the basename of the selected output directory, preserving the first failure log.
+
+**Single retry** in a fresh output directory (retain the old `base010.log` evidence); no new compile/prepare/clone:
+
+    cd ~/aest-memory-gravity
+    git pull --ff-only
+    source .venv/bin/activate
+    set -o pipefail
+    GE19_TANGENT_OUT_DIR="$PWD/results/ge19_full_class_direct_tangent_20261113_r2" \
+      bash ge19/run_local_full_class_direct_tangent_20261112.sh run \
+      2>&1 | tee results/ge19_full_class_tangent_run_20261113_r2.log
+    rc=\${PIPESTATUS[0]}
+    echo "RUN_EXIT=$rc"
+
+**Pending:** no post-fix WSL runtime confirmation; no baseline source history or direct W1 result. `BUILD_PASS / INPUT_INIT_FIX_COMMITTED_NOT_RUN / PHYSICS_GO_FALSE / DES_NOT_DETECTED`.
+
+---
+
 ## 13 November 2026 — WSL `prepare r2`: CLASS C++ build **PASS**
 
 The original [researcher WSL build log](../results/ge19_full_class_tangent_prepare_20261113_r2.log) is archived **byte-identically** (SHA-256 `b9f4ecda4b737317c99835ef08f2a04c2b42dd1665d8a9fcef41da58e455e42a`, Git blob `f96ffa4307c14bc37e262918c867496d9f8421fc`, 12367 bytes). The logger captures complete `GE19_TANGENT_AEST_HEADER_ORDER_REPAIR_PASS`, including modified source SHA-256 `c41ad4cad9cc18d658f80841137094349657df6ac5d68fd3c0c75cfbbe092073`, followed by successful `g++` compilation of `source/perturbations.c`, native `class` executable link, static `libclass.a`, and successful `classy` wheel installation. The closing `GE19_FULL_CLASS_SOURCE_PATCH_PREFLIGHT_PASS` and `GE19_FULL_CLASS_PATCH_COMPILE_PREFLIGHT_COMPLETE_NOT_PHYSICS_GO` are present. One GCC truncation warning in the unrelated `source/distortions.c` did not prevent the build.
