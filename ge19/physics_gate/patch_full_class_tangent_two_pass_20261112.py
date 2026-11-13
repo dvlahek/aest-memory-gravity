@@ -12,8 +12,18 @@ import os
 from pathlib import Path
 
 PRISTINE_SHA256 = {
-    "276646d913348824bddf9e24138e4213ecc3fb8b605d21525bf9280474dbca80": "v019j_historical_half",
+    # Observed on researcher WSL after pinned v077 -> original v019 -> v019j.
+    # Source log: GE19_UNRECOGNIZED_CLASS_SOURCE_SHA256=2b4d7...
+    "2b4d7be96b6ebf4149bef129e357a32571f69cfffb3be0b1792d578e82ad6e17": "v077_v019_v019j_WSL_observed_half",
+    # Previously recorded candidate hashes retained for explicit compatibility.
+    "276646d913348824bddf9e24138e4213ecc3fb8b605d21525bf9280474dbca80": "v019j_historical_half_prior_candidate",
     "75bf9fe85f2aae85031edc109e131c6b5d1745dca8497300237e16e57c99f883": "isolated_quarter_candidate",
+}
+PINNED_CLASS_HEAD = "e85808324f51fc694d12e3ed7439552a3c3f9540"
+PINNED_ORIGINAL_CLASS_BLOB = "c78fe4376d2eeebfbf4ff0cfca13b048d4513fa0"
+LOCKED_AEST_PATCH_SOURCE_BLOBS = {
+    "v019/apply_patch_v019.py": "c78484eb916bfee2730759c0bdc813a706bf9a68",
+    "v019j/apply_memory_patch.py": "14796a5ed9e6265ed6810c792a93d7328a109364",
 }
 SOURCE_MARKER = "/* GE19 FULL CLASS DIRECT TANGENT EXPERIMENT v1 */"
 
@@ -311,6 +321,33 @@ def main():
     if not src.is_file():raise SystemExit("GE19_CLASS_ROOT_MISSING: "+str(src))
     orig=src.read_text()
     if SOURCE_MARKER in orig:raise SystemExit("GE19_ALREADY_PATCHED_REFUSE")
+    # The SHA reported by the first WSL prepare was not in the old
+    # hardcoded candidate list, even though both parent patches passed.
+    # Require the exact pinned original CLASS checkout and frozen repo
+    # patch-script blobs before permitting any new candidate hash.
+    import subprocess
+    project = Path(__file__).resolve().parents[2]
+    for name, expected_blob in LOCKED_AEST_PATCH_SOURCE_BLOBS.items():
+        file = project / name
+        if not file.is_file():
+            raise SystemExit("GE19_PARENT_PATCH_SOURCE_MISSING: "+name)
+        got = subprocess.check_output(
+            ["git","hash-object",str(file)], text=True, cwd=project
+        ).strip()
+        if got != expected_blob:
+            raise SystemExit("GE19_PARENT_PATCH_SOURCE_CHANGED: "+name+" "+got)
+    try:
+        head = subprocess.check_output(
+            ["git","-C",str(root),"rev-parse","HEAD"],text=True
+        ).strip()
+        blob = subprocess.check_output(
+            ["git","-C",str(root),"rev-parse","HEAD:source/perturbations.c"],
+            text=True,
+        ).strip()
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit("GE19_ORIGINAL_CLASS_GIT_PROVENANCE_FAIL") from exc
+    if head != PINNED_CLASS_HEAD or blob != PINNED_ORIGINAL_CLASS_BLOB:
+        raise SystemExit("GE19_WRONG_PINNED_CLASS_OR_SOURCE: "+head+" "+blob)
     h=hashlib.sha256(orig.encode()).hexdigest()
     if h not in PRISTINE_SHA256:
         raise SystemExit("GE19_UNRECOGNIZED_CLASS_SOURCE_SHA256="+h+
@@ -329,6 +366,9 @@ def main():
        "classification":"GE19_EXPERIMENTAL_FULL_CLASS_TWO_PASS_SOURCE_PATCHED_NOT_PHYSICS_GO",
        "parent_source_sha256":h,
        "parent_source_type":PRISTINE_SHA256[h],
+       "original_CLASS_HEAD":PINNED_CLASS_HEAD,
+       "original_CLASS_git_blob":PINNED_ORIGINAL_CLASS_BLOB,
+       "original_AeST_patch_source_blobs":LOCKED_AEST_PATCH_SOURCE_BLOBS,
        "modified_source_sha256":hashlib.sha256(patched.encode()).hexdigest(),
        "original_backup":str(backup),
        "changed_file":str(src),
