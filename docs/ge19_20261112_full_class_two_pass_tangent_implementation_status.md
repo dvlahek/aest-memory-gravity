@@ -4,6 +4,18 @@
 
 This is now a concrete experimental source patcher and runner, not merely a proposed calculation. The code has not been compiled against the researcher's isolated CLASS checkout or physically qualified. Do not describe this artifact as a demonstrated full CLASS Weyl result until the actual local source-locked run returns evidence.
 
+## 13 November 2026 — WSL `prepare r2`: CLASS C++ build **PASS**
+
+The original [researcher WSL build log](../results/ge19_full_class_tangent_prepare_20261113_r2.log) is archived **byte-identically** (SHA-256 `b9f4ecda4b737317c99835ef08f2a04c2b42dd1665d8a9fcef41da58e455e42a`, Git blob `f96ffa4307c14bc37e262918c867496d9f8421fc`, 12367 bytes). The logger captures complete `GE19_TANGENT_AEST_HEADER_ORDER_REPAIR_PASS`, including modified source SHA-256 `c41ad4cad9cc18d658f80841137094349657df6ac5d68fd3c0c75cfbbe092073`, followed by successful `g++` compilation of `source/perturbations.c`, native `class` executable link, static `libclass.a`, and successful `classy` wheel installation. The closing `GE19_FULL_CLASS_SOURCE_PATCH_PREFLIGHT_PASS` and `GE19_FULL_CLASS_PATCH_COMPILE_PREFLIGHT_COMPLETE_NOT_PHYSICS_GO` are present. One GCC truncation warning in the unrelated `source/distortions.c` did not prevent the build.
+
+**Meaning:** The native experimental full CLASS code is now *actually compiled* and source-prefight-validated in the researcher's **isolated pinned v077 checkout**. No real `baseline_dt010`, force, null-control, convergence, or physical observable has run yet. `PHYSICS_GO=false`, DES detection absent.
+
+**Additional code reading before native run:** Original CLASS `perturbations_vector_init` sets all `used_in_sources` perturbation coordinates to true by default; it disables only specified higher photon/neutrino multipoles, not the appended AeST `q_j`/`p_j` coordinates. Thus the dense-output baseline record callback receives interpolated bath coordinates from the native evolver. **However, for the single selected k the recorder replaces the normal `perturbations_sources` callback**, so standard native `mTk` source tables from that *baseline recorder* are **not valid transfer products**. The meaningful outputs from that pass are only `GE19_TANGENT_TRACE` (`Bchi0, W0`) and the associated source history. The full forced pass still runs the original `perturbations_sources` callback for its own transfer tables. This baseline transfer caveat is an engineering limitation and must not be mistaken for a constraint/physics result.
+
+**One next native test:** the wrapper's `run` step, with fixed `k,z` and no finite-`eta` sweep, is the **first actual experiment**. If any selected-k source-table or interpolation error occurs, stop and treat as an implementation issue. Do not infer physical null signal from a failed run. Even if it passes numerically, independently validate true primordial initial conditions, approximation switching, Einstein/Ward residuals, and original action equivalence before `PHYSICS_GO` or DES claims.
+
+---
+
 ## 13 November 2026 — second WSL prepare: first C++ build blocker resolved in source
 
 The original WSL `prepare` rerun **passed** the Python syntax preflight, full pinned-source SHA and C-patch anchor checks, then printed `GE19_FULL_CLASS_TANGENT_PATCH_APPLIED_NOT_VALIDATED 856ba9feeda5a6c7de9d13441755303ade38b685138091b2bca533630112b0b3`. The build entered actual `g++` compilation of `source/perturbations.c` and stopped with **three not-declared errors** in `ge19_record_callback`: `aest_memory_active_count`, `aest_memory_node_order` and `aest_memory_weight_order`. No native CLASS baseline, tangent or DES run occurred.
