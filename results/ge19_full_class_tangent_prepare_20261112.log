@@ -1,0 +1,49 @@
+GE19_PYTHON_SYNTAX_PREFLIGHT_PASS
+GE19_CLONE_LOCAL_ISOLATED_CLASS
+Cloning into '/home/dino/GE19_CLASS_TANGENT_v077'...
+HEAD is now at e8580832 Fixed shoorting bug (negative dx); store Omega_m(z) and Omega_r(z) in background table.
+{
+  "target_version": "v3.3.4",
+  "target_sha": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "physics_path_modified": true,
+  "aest_eta": 0.0,
+  "cdm_slot_reused_for_aest_effective_component": true,
+  "new_states": [
+    "alpha_aest",
+    "E_aest"
+  ],
+  "initial_condition_proxy": "chi_i=0, E_i=0",
+  "gauge": "newtonian only"
+}
+{
+  "classification": "FINITE_POSITIVE_DRUDE_MEMORY_CLASS_PATCH",
+  "memory_background_correction": 0,
+  "memory_direct_linear_Einstein_stress": 0,
+  "inputs": [
+    "aest_memory_enabled",
+    "aest_eta",
+    "aest_tau_H0",
+    "aest_memory_order"
+  ],
+  "orders": [
+    16,
+    20
+  ],
+  "active_nodes": {
+    "16": 15,
+    "20": 19
+  },
+  "normalized_states": "q_j=sqrt(w_j) u_j, p_j=dq_j/d(conformal time)",
+  "leading_memory_IC": "q_j=p_j=0 because chi_i=0 in the leading adiabatic mode",
+  "closure_source": "E_rhs -> E_rhs - Q B_chi/2",
+  "source_audit": {
+    "eta_input": true,
+    "bath_q_index": true,
+    "bath_p_index": true,
+    "positive_weight_sqrt": true,
+    "conformal_friction": true,
+    "memory_closure": true,
+    "no_direct_memory_stress": true
+  }
+}
+GE19_UNRECOGNIZED_CLASS_SOURCE_SHA256=2b4d7be96b6ebf4149bef129e357a32571f69cfffb3be0b1792d578e82ad6e17; expected historical or separate quarter candidate; no source modified
