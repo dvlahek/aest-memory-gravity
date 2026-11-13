@@ -96,6 +96,10 @@ def make_ini(original:Path,out_dir:Path,label:str,tol:float) -> Path:
         "aest_eta":"0",
         "z_pk":"0.5",
         "output":"mTk",
+        # The frozen v019 paper benchmark requests lensing=yes with tCl/pCl/lCl.
+        # Our one-k diagnostic instead requests ONLY mTk, so lensing MUST be
+        # disabled at input_init. This is a CLASS-output fix, not cosmology tuning.
+        "lensing":"no",
         "k_output_values":"0.06732117",
         "P_k_max_1/Mpc":"0.08",
         "root":str((out_dir/"native"/(label+"_")).resolve()),
@@ -111,6 +115,17 @@ def make_ini(original:Path,out_dir:Path,label:str,tol:float) -> Path:
             s=s[:matches[0].start()]+k+" = "+v+s[matches[0].end():]
         else:
             s+="\n"+k+" = "+v
+    # Fail closed BEFORE spending time in CLASS if the output/lensing
+    # combination regresses. Keep the original v019 input unchanged.
+    generated = {}
+    for name in ("output", "lensing", "gauge", "aest_eta"):
+        m = re.findall(r"(?m)^\s*"+re.escape(name)+r"\s*=\s*([^#\n]+)",s)
+        if len(m)!=1:
+            raise RuntimeError("GE19_GENERATED_INI_KEY_NOT_UNIQUE "+name)
+        generated[name]=m[0].strip()
+    if (generated["output"]!="mTk" or generated["lensing"].lower()!="no"
+        or generated["gauge"].lower()!="newtonian" or generated["aest_eta"]!="0"):
+        raise RuntimeError("GE19_GENERATED_INI_INCONSISTENT_OUTPUT_OR_BACKGROUND")
     path=out_dir/(label+".ini")
     path.write_text(s+"\n" if not s.endswith("\n") else s)
     return path
