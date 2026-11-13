@@ -67,7 +67,7 @@ case "$MODE" in
       --class-root "$CLASS" \
       --original-ini "$PROJECT/v019/ini/aest_exp.ini" \
       --out-dir "$OUT" --run \
-      2>&1 | tee "$PROJECT/results/ge19_full_class_direct_tangent_20261112_runner.log"
+      2>&1 | tee "$PROJECT/results/$(basename "$OUT")_runner.log"
     ;;
   *)
     echo "Usage: bash ge19/run_local_full_class_direct_tangent_20261112.sh prepare|run"
