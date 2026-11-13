@@ -227,8 +227,11 @@ def one(s: str, old: str, new: str, label: str) -> str:
 
 def modify(original: str) -> str:
     s=original
-    s=one(s,'#include "parallel.h"\n',
-          '#include "parallel.h"\n'+HELPER+'\n',"HEADER")
+    # The v019 patch already includes aest_memory.h immediately after
+    # parallel.h. Insert the GE19 callback only AFTER that header:
+    # the callback references the v019j functions declared inside it.
+    s=one(s,'#include "parallel.h"\n#include "aest_memory.h"\n',
+          '#include "parallel.h"\n#include "aest_memory.h"\n'+HELPER+'\n',"HEADER")
     # In the target branch only one AeST memory E term is present.
     if 'E_rhs_aest -= 0.5*Q_aest*Bchi_aest;' in s:
         s=one(s,'E_rhs_aest -= 0.5*Q_aest*Bchi_aest;',
