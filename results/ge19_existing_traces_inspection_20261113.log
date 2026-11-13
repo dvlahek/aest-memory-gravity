@@ -1,0 +1,3 @@
+GE19_FULL_CLASS_SOURCE_PATCH_PREFLIGHT_PASS v077_v019_v019j_WSL_observed_half
+GE19_EXISTING_TRACES_DIAGNOSTIC {"DES_detection": false, "baseline_W_at_z_0p5": 0.07009097715416947, "baseline_a_range": [2.251984948309577e-06, 1.0], "baseline_tau_range": [1.0417779584818918, 14150.279922065203], "classification": "GE19_EXISTING_BASELINE_AND_NULL_DATA_INSPECTION_ONLY", "forced_eta_tangent_computed": false, "full_physics_go": false, "null_W_at_z_0p5": 0.0, "null_a_range": [0.39999999999999997, 1.0], "null_max_abs_W": 0.0, "null_rows": 13, "record_rows": 141494}
+GE19_CLASS_NOT_RERUN
