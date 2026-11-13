@@ -169,7 +169,11 @@ def main():
     p.add_argument("--out-dir",type=Path,required=True)
     p.add_argument("--run",action="store_true",
                    help="actually execute CLASS; otherwise preflight only")
+    p.add_argument("--inspect-existing",action="store_true",
+                   help="read existing completed baseline/null traces WITHOUT running CLASS")
     args=p.parse_args()
+    if args.run and args.inspect_existing:
+        p.error("--run and --inspect-existing are mutually exclusive")
     root=args.class_root.expanduser().resolve()
     ini=args.original_ini.expanduser().resolve()
     out=args.out_dir.expanduser().resolve()
@@ -180,6 +184,27 @@ def main():
         raise RuntimeError("GE19_FROZEN_EXP_INI_SOURCE_CHANGED "+frozen_sha)
     manifest=patched_source_qualification(root)
     print("GE19_FULL_CLASS_SOURCE_PATCH_PREFLIGHT_PASS",manifest["parent_source_type"],flush=True)
+    if args.inspect_existing:
+        # Pure inspection. Does not modify the old result folder, restart CLASS
+        # or assume the native W readout was densely sampled.
+        record=read_trace(out/"baseline_dt010.csv",dense_source=True)
+        null=read_trace(out/"null_W1.csv")
+        summary={
+            "classification":"GE19_EXISTING_BASELINE_AND_NULL_DATA_INSPECTION_ONLY",
+            "record_rows":len(record),"null_rows":len(null),
+            "baseline_tau_range":[record[0][0],record[-1][0]],
+            "baseline_a_range":[record[0][1],record[-1][1]],
+            "null_a_range":[null[0][1],null[-1][1]],
+            "baseline_W_at_z_0p5":interpolate_a(record),
+            "null_W_at_z_0p5":interpolate_a(null),
+            "null_max_abs_W":max(abs(row[2]) for row in null),
+            "forced_eta_tangent_computed":False,
+            "full_physics_go":False,"DES_detection":False
+        }
+        print("GE19_EXISTING_TRACES_DIAGNOSTIC",json.dumps(summary,sort_keys=True),
+              flush=True)
+        print("GE19_CLASS_NOT_RERUN",flush=True)
+        return
     if not args.run:
         print("GE19_DRY_RUN_ONLY: specify --run to execute the 5 fixed single-k controls")
         print("GE19_PHYSICS_GO False")
