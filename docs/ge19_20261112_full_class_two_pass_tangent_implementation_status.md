@@ -21,7 +21,7 @@ The first native `run` entered `base010` then returned CLASS exit=1 before any p
     GE19_TANGENT_OUT_DIR="$PWD/results/ge19_full_class_direct_tangent_20261113_r2" \
       bash ge19/run_local_full_class_direct_tangent_20261112.sh run \
       2>&1 | tee results/ge19_full_class_tangent_run_20261113_r2.log
-    rc=\${PIPESTATUS[0]}
+    rc=${PIPESTATUS[0]}
     echo "RUN_EXIT=$rc"
 
 **Pending:** no post-fix WSL runtime confirmation; no baseline source history or direct W1 result. `BUILD_PASS / INPUT_INIT_FIX_COMMITTED_NOT_RUN / PHYSICS_GO_FALSE / DES_NOT_DETECTED`.
