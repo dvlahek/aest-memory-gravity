@@ -21,7 +21,14 @@ PATCH_MARKER = "/* GE19 FULL CLASS DIRECT TANGENT EXPERIMENT v1 */"
 K_MPC=0.06732117
 TARGET_A=2.0/3.0
 
-def read_trace(path: Path):
+def read_trace(path: Path, *, dense_source: bool = False):
+    """Validate one fixed-k CLASS trace.
+
+    The record callback uses a deliberately dense primordial Bchi history.
+    The native perturbations_sources callback uses CLASS's sparse tau grid;
+    applying the same 100-row threshold to a null/tangent readout is invalid.
+    Do NOT waive the target-redshift coverage or nonfinite/monotonic checks.
+    """
     if not path.is_file():
         raise RuntimeError("GE19_MISSING_TRACE "+str(path))
     rows=[]
@@ -34,22 +41,34 @@ def read_trace(path: Path):
             B=float(rec["Bchi"])
             if not all(map(math.isfinite,(tau,a,k,W,B))):
                 raise RuntimeError("GE19_NONFINITE_TRACE "+str(path))
-            if abs(k-K_MPC)>K_MPC*1e-11:
-                raise RuntimeError("GE19_K_NOT_SELECTED "+str(path))
-            if rows and tau<=rows[-1][0]:
+            if a<=0 or abs(k-K_MPC)>K_MPC*1e-11:
+                raise RuntimeError("GE19_INVALID_SCALE_OR_K "+str(path))
+            if rows and (tau<=rows[-1][0] or a<=rows[-1][1]):
                 raise RuntimeError("GE19_TRACE_NONMONOTONE "+str(path))
             rows.append((tau,a,W,B))
-    if len(rows)<100:
-        raise RuntimeError("GE19_TOO_FEW_SOURCE_TIMES "+str(path))
+    nmin=100 if dense_source else 1
+    if len(rows)<nmin:
+        raise RuntimeError("GE19_TOO_FEW_"+("DENSE_SOURCE" if dense_source else "WEYL_READOUT")+
+                           "_TIMES "+str(path)+f" rows={len(rows)}")
+    # An output is meaningful only if it actually samples or brackets z=0.5.
+    interpolate_a(rows)
     return rows
 
 def interpolate_a(rows,a=TARGET_A):
+    if not rows:
+        raise RuntimeError("GE19_EMPTY_TARGET_TRACE")
     scale=[r[1] for r in rows]
     if not all(scale[i+1]>scale[i] for i in range(len(scale)-1)):
         raise RuntimeError("GE19_NONMONOTONE_SCALE")
     i=bisect.bisect_left(scale,a)
+    # CLASS may emit precisely one time sample at the requested z_pk.
+    if i<len(rows) and math.isclose(scale[i],a,rel_tol=2e-6,abs_tol=1e-10):
+        return rows[i][2]
+    if i>0 and math.isclose(scale[i-1],a,rel_tol=2e-6,abs_tol=1e-10):
+        return rows[i-1][2]
     if i==len(rows) or i==0:
-        raise RuntimeError("GE19_TARGET_A_NOT_IN_SOURCE_RANGE")
+        raise RuntimeError("GE19_TARGET_A_NOT_IN_SOURCE_RANGE "+
+                           f"target={a:.12g} range=[{scale[0]:.12g},{scale[-1]:.12g}]")
     x0,x1=scale[i-1],scale[i]
     f=(a-x0)/(x1-x0)
     return rows[i-1][2]*(1-f)+rows[i][2]*f
@@ -202,8 +221,9 @@ def main():
         run_class(root,cfg,log,env)
         print("GE19_CLASS_FINISHED",label,flush=True)
         expected=trace if mode=="record" else output
-        read_trace(expected)
-    b1=read_trace(trace1);b2=read_trace(trace2)
+        samples=read_trace(expected,dense_source=(mode=="record"))
+        print("GE19_CLASS_TRACE_VALIDATED",label,"rows",len(samples),flush=True)
+    b1=read_trace(trace1,dense_source=True);b2=read_trace(trace2,dense_source=True)
     null=read_trace(nullfile);w1=read_trace(t1);w2=read_trace(t2)
     v0=interpolate_a(b1)
     v02=interpolate_a(b2)
@@ -211,7 +231,10 @@ def main():
     v1=interpolate_a(w1)
     v2=interpolate_a(w2)
     ratio=float(v2/v02) if v02 else math.nan
-    noise=max(abs(zn),1e-300)
+    # The zero-source tangent must stay zero across every emitted
+    # CLASS readout point, not merely at the final selected redshift.
+    null_max=max(abs(row[2]) for row in null)
+    noise=max(null_max,1e-300)
     discrepancy=abs(v2-v1)
     report={
         "classification":"GE19_FULL_CLASS_TWO_PASS_TANGENT_EXPERIMENT_RUN_NOT_YET_PHYSICS_GO",
@@ -219,6 +242,10 @@ def main():
         "k_mpc":K_MPC,"target_z":0.5,"target_a":TARGET_A,
         "base_dt010_W0":v0,"base_dt005_W0":v02,
         "null_zero_source_W":zn,
+        "null_max_abs_W_all_output_times":null_max,
+        "readout_row_counts":{"base010":len(b1),"null":len(null),
+                              "force010":len(w1),"base005":len(b2),
+                              "force005":len(w2)},
         "direct_tangent_dt010_W1":v1,"direct_tangent_dt005_W1":v2,
         "relative_tangent_per_unit_eta":ratio,
         "absolute_interpolation_plus_integration_difference":discrepancy,
