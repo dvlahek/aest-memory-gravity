@@ -166,6 +166,46 @@ For the on-shell FLRW background with \(A_\mu=(-1,0,0,0)\), zero auxiliary backg
 \]
 Equation (13) is an actionable **off-shell residual target** for a future joint action-vs-code proof: if the right-hand side reconstructed independently from the full action vanishes, then the scalar Euler follows. Equation (13) is not to be evaluated from the original CLASS E-row alone; the missing covariant aether multiplier equations are necessary.
 
+### Corollary B1 — the actual *history-dependent* Weyl response is not the total W1
+
+Within the additional assumptions of the earlier **conditional** full constrained propagator (Theorem 2 of the [prior proof](ge19_20261113_retarded_memory_proof_and_full_physics_obstruction.md)), and assuming the physical initial-state derivative is held fixed while separating the two *sources*, define
+\[
+B_{\chi,0}=W_b\chi_0-a\sum_j\frac{\omega_j\sqrt{w_j}}{k}q_{j,0}
+\equiv B_{\rm inst,0}+B_{\rm delayed,0}.
+\tag{13a}
+\]
+The linear superposition formula is
+\[
+ W_1(\tau)
+ =W_{1,\rm IC}(\tau)+W_{1,\rm inst}(\tau)+W_{1,\rm delayed}(\tau),
+\tag{13b}
+\]
+\[
+ W_{1,\rm IC}=\ell U_0(\tau,\tau_i)Y_{{\rm ic},1}, \tag{13c}
+\]
+\[
+ W_{1,\rm inst}
+ =-\int_{\tau_i}^{\tau}
+ \ell(\tau)U_0(\tau,s)e_E\,
+ \frac{a(s)Q(s)}{4K_B}W_b\chi_0(s)\,ds,\tag{13d}
+\]
+\[
+ \boxed{
+ W_{1,\rm delayed}
+ =+\int_{\tau_i}^{\tau}
+ \ell(\tau)U_0(\tau,s)e_E\,
+ \frac{a(s)^2Q(s)}{4K_B}
+ \sum_j\frac{\omega_j\sqrt{w_j}}{k}q_{j,0}(s)\,ds .
+ }\tag{13e}
+\]
+**Proof:** insert (13a) into the already-proved variation-of-constants formula, using the original conformal-time source \(-aQB_{\chi,0}/(4K_B)\), and split the integral. No new equations or parametric choices are introduced. QED.
+
+**Consequence:** The one reported native full CLASS value \(W_1=1.8390770226818281\times10^{-9}\) is the **sum** of the instantaneous and genuine historical terms (and the selected initial-state contribution, assumed zero in the code). Neither (13e) nor its sign has been independently evaluated in the real all-species physical state. Therefore \(W_1\ne0\) does **not** prove that \(W_{1,\rm delayed}\ne0\); the strongest completed claim is a nonzero response to the *whole action-derived bath coupling* in the modified implementation. The 141,494-point saved \(B_{\chi,0}(t)\) source by itself is not a separately archived decomposition into \(\chi_0(t)\) and the individual \(q_{j,0}(t)\), so the exact value of (13e) cannot be inferred just by reinterpreting the one-point JSON/13-row Weyl CSV. Recovering a physically validated delayed metric contribution would require the original field/propagator and on-shell constraints, **not** arbitrary new eta/k/z scans.
+
+This separation is central to the paper's physical language: a frequency-dependent bath kernel already proves temporal gravitational *memory within the quadratic action*, while a standalone **observable history-dependent Weyl signal** remains unproved.
+
+---
+
 ## Proposition C — Einstein scalar Hamiltonian constraint is propagated once the full shear and conservation conditions hold
 
 In the already archived total-stress scalar normalization, let \({\cal C}_H\) be the Hamiltonian residual and
