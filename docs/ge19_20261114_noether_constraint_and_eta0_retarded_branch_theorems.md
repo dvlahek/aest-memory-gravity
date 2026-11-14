@@ -75,6 +75,41 @@ For nonzero \(Q_i,K_B,W_b,D_i\), the \(\eta\)-derivative of \(E_A\) is therefore
 
 **Proof**: the q/p initial data make the q term and its first derivative vanish at t_i, leaving (8). Because \(y_1(t_i)=0\), equation (6) gives \(\dot y_1(t_i)=A_1(t_i)y_0(t_i)=0\). In the E equation, differentiation in time at t_i then leaves only \(-Q_i\dot B_{\chi,0}(t_i)/(4K_B)\) as its second derivative; all \(A_0y_1\) and initial state derivatives vanish through that order. Taylor's formula yields (9). QED.
 
+### Corollary A2 — distinguish the instantaneous elastic term from genuine delayed memory
+
+**Important separation:** The \(O(h^2)\) contribution in (9) follows from the **instantaneous** \(W_b\chi\) part of \(B_\chi\). By itself, that term is **not** proof that a history-dependent contribution has reached the aether. The genuinely nonlocal bath contribution begins at a higher order and can be isolated analytically.
+
+Write \(B_\chi=B_{\rm inst}+B_{\rm delayed}\) with
+\[
+B_{\rm inst}=W_b\chi,\qquad
+B_{\rm delayed}=-a\sum_j\frac{\omega_j\sqrt{w_j}}{k}q_j.
+\tag{9a}
+\]
+Under the same conditions (7), \(q_j(t_i)=\dot q_j(t_i)=\chi_i=0\) imply \(\ddot q_{j,i}=0\) and
+\[
+q_j(t_i+h)=\frac{\omega_j\sqrt{w_j}k}{6a_i}D_i h^3+O(h^4).
+\tag{9b}
+\]
+Hence
+\[
+\boxed{B_{\rm delayed}(t_i+h)
+=-\frac{D_i}{6}\left(\sum_jw_j\omega_j^2\right)h^3+O(h^4).}
+\tag{9c}
+\]
+
+Compare two *mathematical diagnostics* with the same \(\eta=0\) baseline and initial data: the original retarded response, and the auxiliary-feedback-disabled response that keeps only \(B_{\rm inst}\) in the **first-order** E forcing. Their difference is
+\[
+\boxed{
+\left[E_{A,1}^{\rm ret}-E_{A,1}^{\rm inst}\right](t_i+h)
+=\frac{Q_iD_i}{96K_B}
+\left(\sum_jw_j\omega_j^2\right)h^4+O(h^5).
+}
+\tag{9d}
+\]
+**Proof:** (9b) follows by differentiating the forced oscillator equation three times in the smooth regime. Substitution into (9a) proves (9c). The difference of the two tangent E equations starts with the direct source \(-Q B_{\rm delayed}/(4K_B)\); integrating its \(O(h^3)\) leading term yields (9d). Contributions through the difference of the homogeneous coupled \(\chi_1,E_1\) states enter at higher order. QED.
+
+This is a **strictly non-instantaneous retarded correction** with nonzero coefficient whenever \(D_i\ne0\), \(Q_i>0\), \(K_B>0\) and some \(w_j>0\), \(\omega_j>0\). It is more precise than equating the whole leading \(E_{A,1}\) with "memory": the \(\eta\)-dependent response contains **both** instantaneous elasticity and delayed bath history. It does **not** prove a nonzero Weyl transfer, because coupling to the full metric constraints could suppress or cancel the metric projection. The instant-only comparator is a mathematical decomposition, **not** a second fit or an alternative original action.
+
 **Scope**: \(\Delta_A(t_i)\ne0\) is an explicit hypothesis. It is consistent with the earlier leading finite-k radiation-source expansion
 \[
  \Delta_A\simeq-\frac{15+4R_\nu}{40}\Psi_0(k\tau)^2+\cdots,
@@ -156,7 +191,7 @@ It integrates exactly to
 
 ## Scientific decision / remaining irreducible proof obligation
 
-- **Proved within the reduced action**: existence of the selected retarded bath, analytic \(\eta\to0^+\) tangent despite the unnormalized auxiliary-action degeneracy, and the leading explicit nonzero \(E_{A,1}\) onset **when** \(D_i\ne0\).
+- **Proved within the reduced action**: separation of the leading instantaneous (O(h^2)) aether response from the genuine delayed (O(h^4)) auxiliary feedback, plus existence of the selected retarded bath, analytic \(\eta\to0^+\) tangent despite the unnormalized auxiliary-action degeneracy, and the leading explicit nonzero \(E_{A,1}\) onset **when** \(D_i\ne0\).
 - **Proved for any complete covariant action**: the precise diffeomorphism Noether identity (11), and scalar Euler redundancy on a complete on-shell Einstein+aether+auxiliary+matter solution with Q nonzero.
 - **Proved conditionally under complete stress/spatial evolution**: homogeneous Einstein Hamiltonian constraint propagation when shear holds.
 - **Not proved**: that the actual original full GE05/GE06+NL0B 3+1 variational Hessian and all multiplier variations reduce to the very same state-space operator as the v019+v019j+quarter CLASS code. There is no independently derived physical eta-dependent full radiation-era eigenvector or proof that \(Y_{{\rm ic},1}=0\). The local E response of Corollary A1 and the preliminary native full CLASS \(W_1/W_0=2.6238427503110188\times10^{-8}\) at one fixed k/z are **not** proof of an independent physical gravitational eigenmode or observational detectability.
