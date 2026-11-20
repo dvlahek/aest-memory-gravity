@@ -71,17 +71,38 @@ def calculate():
   'corrected_comoving_source':s.simplify(delta_comov-f*(1+s.Rational(3,4)*c)*k**2*tau**2)==0,
   'X_source_cF_unchanged_to_first_order_c':s.simplify(s.diff(c*delta_comov-c*f*k**2*tau**2,c).subs(c,0))==0,
  }
+ # Running Exp coefficients: Volterra forms at retained O(c_a²) radiation/test-source order.
+ # The Q and c functions are NOT frozen in these additional symbolic gates.
+ v,u,lam,A,I0,KB=s.symbols('v u lambda A I0 KB',real=True,positive=True)
+ cfun=s.Function('ca2')
+ Qfun=s.Function('Q')
+ I_tau=s.Integral(cfun(v)*v**3,(v,0,tau))
+ I_u=s.Integral(cfun(v)*v**3,(v,0,u))
+ theta_run=f*k**4*I_tau/tau
+ x_run=A*f*k**2*I_tau
+ e_run=I0*f*k**2/(A*KB*tau)*s.Integral(Qfun(u)*I_u/u,(u,0,tau))
+ theta_lam=theta_d+lam*theta_run
+ phase_running=(s.diff(theta_lam,tau)+theta_lam/tau)/k**2-Psi-3*lam*cfun(tau)*theta_lam/(tau*k**2)
+ checks.update({
+  'running_ca2_velocity_Euler_integrating_factor':s.simplify(s.diff(theta_run,tau)+theta_run/tau-cfun(tau)*f*k**4*tau**2)==0,
+  'running_ca2_phase_action_identity_O_c':s.simplify(s.diff(phase_running-lam*cfun(tau)*dnorm,lam).subs(lam,0))==0,
+  'running_ca2_source_X_integral':s.simplify(s.diff(x_run,tau)-A*tau*cfun(tau)*f*k**2*tau**2)==0,
+  'running_ca2_phase_X_velocity_relation':s.simplify(x_run-A*tau*theta_run/k**2)==0,
+  'running_ca2_Q_E_integral_leading':s.simplify(s.diff(e_run,tau)+e_run/tau-Qfun(tau)*I0*x_run/(A**2*KB*tau**2))==0,
+  'running_ca2_constant_limit_velocity':s.simplify(theta_run.subs(cfun(v),c).doit()-c*f*k**4*tau**3/4)==0,
+  'running_ca2_constant_limit_X':s.simplify(x_run.subs(cfun(v),c).doit()-A*c*f*k**2*tau**4/4)==0,
+ })
  checks={name:bool(ok) for name,ok in checks.items()}
  if not all(checks.values()):
   raise RuntimeError('PHASE_VELOCITY_SYMBOLIC_FAIL '+str([n for n,ok in checks.items() if not ok]))
  return {
-  'classification':'GE19_PRESSUREFUL_PRIMORDIAL_VELOCITY_CORRECTION_REDUCED_PASS_NOT_FULL_PHYSICS',
+  'classification':'GE19_PRESSUREFUL_PRIMORDIAL_VELOCITY_RUNNING_EXP_INTEGRAL_PROXY_SYMBOLIC_PASS_NOT_FULL_PHYSICS',
   'checks':checks,'gate_count':len(checks),
   'f_over_Psi0':str(s.factor(f/P)),
   'theta_c_per_c':str(theta_c),
   'strict_dust_action_density_error':str(dust_density_error),
   'corrected_comoving_Delta_A':str(delta_comov),
-  'scope':'leading radiation+neutrino test-AeST geometry, linear in c=c_a², through (k*tau)^2 in Delta, Qprime/Q=-3c/tau',
+  'scope':'leading radiation+neutrino test-AeST geometry; constant-c special case and variable-c(tau), Q(tau) integral forms; first order in c_a² and through (k*tau)^2 in Delta',
   'pressure_gradient_S':'higher order under archived X/E proxy scaling, not certified in full mode',
   'complete_scalar_Ward_and_all_species_mode_proved':False,
   'physical_delayed_Weyl_transfer_proved':False,
