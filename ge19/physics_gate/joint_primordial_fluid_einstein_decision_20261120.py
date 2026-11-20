@@ -125,7 +125,7 @@ def calculate():
         "unchanged_radiation_proxy_is_full_finite_RA_einstein_solution":False,
         "photon_neutrino_backreaction_evolved":False,
         "full_scalar_aether_Ward_propagation_certified":False,
-        "finite_k_physical_adibatic_eigenvector_certified":False,
+        "finite_k_physical_adiabatic_eigenvector_certified":False,
         "physical_delayed_only_Weyl_transfer_certified":False,
         "DES_detection":False,
         "interpretation":
