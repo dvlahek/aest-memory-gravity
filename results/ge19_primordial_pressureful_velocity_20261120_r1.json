@@ -1,0 +1,31 @@
+{
+  "DES_observability_ready": false,
+  "checks": {
+    "X_source_cF_unchanged_to_first_order_c": true,
+    "archived_radiation_Delta_A": true,
+    "corrected_comoving_source": true,
+    "dust_velocity_action_density_error_equals_minus_f": true,
+    "dust_velocity_solves_zero_pressure_euler": true,
+    "independent_six_equation_radiation_solution": true,
+    "nonzero_dust_action_error_for_generic_adiabatic_mode": true,
+    "pressureful_velocity_O_c_euler_consistent": true,
+    "pressureful_velocity_O_c_phase_action_consistent": true,
+    "running_ca2_Q_E_integral_leading": true,
+    "running_ca2_constant_limit_X": true,
+    "running_ca2_constant_limit_velocity": true,
+    "running_ca2_phase_X_velocity_relation": true,
+    "running_ca2_phase_action_identity_O_c": true,
+    "running_ca2_source_X_integral": true,
+    "running_ca2_velocity_Euler_integrating_factor": true
+  },
+  "classification": "GE19_PRESSUREFUL_PRIMORDIAL_VELOCITY_RUNNING_EXP_INTEGRAL_PROXY_SYMBOLIC_PASS_NOT_FULL_PHYSICS",
+  "complete_scalar_Ward_and_all_species_mode_proved": false,
+  "corrected_comoving_Delta_A": "-Psi0*k**2*tau**2*(4*R_nu + 15)*(3*c + 4)/160",
+  "f_over_Psi0": "-(4*R_nu + 15)/40",
+  "gate_count": 16,
+  "physical_delayed_Weyl_transfer_proved": false,
+  "pressure_gradient_S": "higher order under archived X/E proxy scaling, not certified in full mode",
+  "scope": "leading radiation+neutrino test-AeST geometry; constant-c special case and variable-c(tau), Q(tau) integral forms; first order in c_a² and through (k*tau)^2 in Delta",
+  "strict_dust_action_density_error": "Psi0*k**2*tau**2*(4*R_nu + 15)/40",
+  "theta_c_per_c": "-Psi0*k**4*tau**3*(4*R_nu + 15)/160"
+}
