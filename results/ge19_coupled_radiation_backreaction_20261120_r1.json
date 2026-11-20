@@ -1,0 +1,37 @@
+{
+  "DES_detection": false,
+  "Phi0_over_Psi0": "(2*R_nu + 5)/5",
+  "Phi_y_over_Psi0": "-(16*R_nu + 15)/(16*(2*R_nu + 15))",
+  "Psi_y_over_Psi0": "5*(8*R_nu - 3)/(16*(2*R_nu + 15))",
+  "classification": "GE19_COUPLED_RADIATION_NEUTRINO_DUSTLIKE_AEST_LEADING_Y_PASS_NOT_FULL_PHYSICS",
+  "expansion": "first order y=rho_A/rho_r, leading k*tau->0 and c_a2,w_A->0",
+  "full_physics_GO": false,
+  "gate_count": 16,
+  "gates": {
+    "Einstein_Hamiltonian_k0_through_y": true,
+    "Einstein_momentum_through_y": true,
+    "Einstein_neutrino_traceless_shear_through_y": true,
+    "adiabatic_density_entropy_through_y": true,
+    "background_friedmann_through_y": true,
+    "background_matter_fraction_first_order": true,
+    "dust_aest_continuity_superhorizon_through_y": true,
+    "dust_aest_euler_through_y": true,
+    "neutrino_shear_Boltzmann_through_y": true,
+    "neutrino_slip_radiation_leading": true,
+    "no_neutrino_potential_limit_Phi": true,
+    "no_neutrino_potential_limit_Psi": true,
+    "photon_continuity_superhorizon_through_y": true,
+    "photon_euler_through_y": true,
+    "unique_Phi_coefficient": true,
+    "unique_Psi_coefficient": true
+  },
+  "limitations": [
+    "baryon-photon tight-coupling loading omitted",
+    "true AeST pressureful Exp K(Q) dynamics omitted",
+    "NL0B bath eta and retarded history omitted",
+    "finite k\u00b2*tau\u00b2 corrections not solved",
+    "full scalar Ward and physical primordial eigenvector not proved",
+    "physical delayed Weyl and DES transfer not proved"
+  ],
+  "model": "photons + free-streaming massless neutrinos + separately conserved pressureless AeST-like species"
+}
