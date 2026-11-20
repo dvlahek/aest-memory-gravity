@@ -52,6 +52,27 @@ The Einstein momentum equation and the first-order photon, neutrino quadrupole a
 A local SymPy script with **16/16 exact symbolic gates** was run in an independent container. Canonical source-locked researcher WSL execution is still pending. Code:
 \`ge19/physics_gate/coupled_radiation_aest_leading_backreaction_20261120.py\`.
 
+## 2A. A useful observer distinction: the ordinary AeST-density Weyl correction is not delayed memory
+
+The newly source-locked *pressureless* model gives an exact additional algebraic prediction for the gauge-invariant Newtonian Weyl combination \`W=(Phi+Psi)/2\`, at the same leading \`k tau ->0\` and \`O(y)\` truncation:
+\`\`\`math
+\boxed{
+\frac{W}{\Psi_0}
+=1+\frac{R_\nu}{5}
++\frac{3(4R_\nu-5)}{16(15+2R_\nu)}y
++O(y²,(k\tau)²).
+}
+\`\`\`
+Equivalently, the relative change against the *same radiation-only metric* is
+\`\`\`math
+\boxed{\frac{\delta_y W}{W_{\rm radiation}}
+=\frac{15(4R_\nu-5)}{16(R_\nu+5)(15+2R_\nu)}\,y
++O(y²,(k\tau)²).}
+\`\`\`
+The new neutrino-shear/anisotropic stress contribution has \`(\Phi_1-\Psi_1)/\Psi_0=-7R_\nu/[2(15+2R_\nu)]\`. At \`R_\nu=0\`, \`W/\Psi_0=1-y/16\` and the shear correction vanishes. For illustrative \`R_\nu=0.41\`, \`W_y/\Psi_0\approx -0.0398230\` and \`(\delta_y W/W_{\rm radiation})/y\approx -0.0368050\`. These ratios are determined by exact symbolic algebra from the certified two potential coefficients, not an added numerical cosmology.
+
+**This is an eta-independent, ordinary gravitational-matter backreaction of an AeST-*like* dust species. It is NOT a delayed NL0B retarded memory signature and is not a DES shear/lensing prediction.** A future physical memory forecast must form the corrected eta=0 Weyl baseline *and* take the separately action-normalized derivative in eta with the complete no-free-history branch. The already archived v019j forced CLASS tangent cannot be subtracted from the new analytic O(y) coefficient to extract memory: they are distinct models/orders/normalizations, with original source mismatch and incomplete primordial initialization.
+
 ## 3. What this changes—and does not change
 
 The previous fixed-radiation negative-control Einstein residual was \`R_A Delta_A\ne0\` because it prohibited compensating metric/radiation perturbations. Equations above explicitly exhibit **one consistent leading-order coupled compensation** in the physically meaningful pressureless, baryon-free submodel. Therefore this is real forward progress beyond merely diagnosing a missing source. It does **not** establish finite-k \`O(k²\tau²)\` AeST comoving density or fully close the primordial memory forcing. The actual Exp AeST species has nonzero (though small) \`w_A,c_a²\`, the baryon-photon loading changes the radiation Euler at order y, and the original scalar phase/Ward relation and positive NL0B bath history still must propagate together.
