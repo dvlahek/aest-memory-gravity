@@ -25,7 +25,7 @@
   "gate_count": 16,
   "physical_delayed_Weyl_transfer_proved": false,
   "pressure_gradient_S": "higher order under archived X/E proxy scaling, not certified in full mode",
-  "scope": "leading radiation+neutrino test-AeST geometry; constant-c special case and variable-c(tau), Q(tau) integral forms; first order in c_a² and through (k*tau)^2 in Delta",
+  "scope": "leading radiation+neutrino test-AeST geometry; constant-c special case and variable-c(tau), Q(tau) integral forms; first order in c_a\u00b2 and through (k*tau)^2 in Delta",
   "strict_dust_action_density_error": "Psi0*k**2*tau**2*(4*R_nu + 15)/40",
   "theta_c_per_c": "-Psi0*k**4*tau**3*(4*R_nu + 15)/160"
 }
