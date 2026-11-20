@@ -1,0 +1,26 @@
+{
+  "DES_detection": false,
+  "classification": "GE19_PRIMORDIAL_REDUCED_ACTION_FLUID_PASS_FIXED_RADIATION_FULL_CONSTRAINT_NO_GO",
+  "einstein_total_comoving_constraint": "Omega_s + R_A*Delta_A + 2*k**2*Phi/(3*a**2) = 0",
+  "finite_k_physical_adiabatic_eigenvector_certified": false,
+  "fixed_radiation_metric_and_species_constraint_defect": "-Psi_0*R_A*k**2*tau**2*(4*R_nu + 15)/40",
+  "fluid_action_consistency_certified_in_reduced_dictionary": true,
+  "full_action_to_CLASS_equivalence_certified": false,
+  "full_scalar_aether_Ward_propagation_certified": false,
+  "interpretation": "Negative control: fixed radiation metric/species cannot satisfy full total comoving Einstein constraint for generic finite R_A. This establishes a mandatory metric+species backreaction gate; it does not disprove existence of a coupled physical mode.",
+  "necessary_first_order_backreaction_identity": "2*k**2*deltaPhi/(3*a**2) + deltaOmega_s = -R_A*Delta_A",
+  "photon_neutrino_backreaction_evolved": false,
+  "physical_delayed_only_Weyl_transfer_certified": false,
+  "symbolic_checks": {
+    "Einstein_correction_requirement_algebra": true,
+    "action_phase_pressure_dictionary_with_S": true,
+    "dustlike_test_AeST_comoving_source": true,
+    "finite_AeST_gravity_constraint_defect_formula": true,
+    "fixed_radiation_negative_control_nonzero": true,
+    "fluid_density_continuity_running_w_and_c_with_S": true,
+    "fluid_momentum_Euler_running_w_and_c_with_S": true,
+    "six_radiation_neutrino_rows": true
+  },
+  "symbolic_gate_count": 8,
+  "unchanged_radiation_proxy_is_full_finite_RA_einstein_solution": false
+}
