@@ -16,7 +16,7 @@ LOCKS={
  "docs/ge19_20261119_exact_driven_X_E_constrained_source_bridge.md":
   "ebd1e7ae6c7221c1bbdc17a94409533a60c02c65",
  "ge19/physics_gate/action_to_class_scalar_matrix_20261111.py":
-  "c90a3de0b71d0ef4e6664512e6e247cd44e27dd",
+  "c90a3de0b71d0ef4e6664512e6e247cd44e27ddc",
  "ge19/physics_gate/physical_baryon_Exp_leading_seed_20261121.py":
   "b58e4119a73a2d4a4a279e9a858177e99fbd95fb",
 }
