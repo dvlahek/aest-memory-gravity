@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/dino/aest-memory-gravity/ge19/physics_gate/corrected_octupole_and_causal_memory_onset_20261121.py", line 131, in <module>
+    if __name__=="__main__":main()
+                            ^^^^^^
+  File "/home/dino/aest-memory-gravity/ge19/physics_gate/corrected_octupole_and_causal_memory_onset_20261121.py", line 120, in main
+    if not a.self_test:source_locks(a.repo_root.resolve())
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dino/aest-memory-gravity/ge19/physics_gate/corrected_octupole_and_causal_memory_onset_20261121.py", line 29, in source_locks
+    if actual!=expected:raise RuntimeError("SOURCE_CHANGED "+path+" "+actual)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: SOURCE_CHANGED ge19/physics_gate/action_to_class_scalar_matrix_20261111.py c90a3de0b71d0ef4e6664512e6e247cd44e27ddc
