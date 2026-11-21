@@ -1,0 +1,13 @@
+GE19_TANGENT_TRACE_LOADED 141494
+Reading input parameters
+ -> matched budget equations by adjusting Omega_Lambda = 0.684113
+Running CLASS version v3.3.4
+Computing background
+ -> non-cold dark matter species with i=1 has m_i = 6.000000e-02 eV (so m_i / omega_i =9.405928e+01 eV)
+ -> ncdm species i=1 sampled with 11 (resp. 11) points for purpose of background (resp. perturbation) integration. In the relativistic limit it gives Delta N_eff = 0.999997
+ -> age = 13.797524 Gyr
+ -> conformal age = 14150.279922 Mpc
+ -> N_eff = 3.046 (summed over all species that are non-relativistic at early times)
+ -> radiation/matter equality at z = 3405.922636
+    corresponding to conformal time = 112.706299 Mpc
+Computing sources
