@@ -12,6 +12,8 @@ from pathlib import Path
 import run_full_class_two_pass_tangent_20261112 as base
 
 ROOT=Path(__file__).resolve().parents[2]
+RESPONSE_RUNNER_BLOB="94af6d14826d0621410204554e9d246a89660806"
+RECONSTRUCTION_RUNNER_BLOB="e45b4d3d1a7328540793796a8c0896eb013ac2ce"
 SPLIT_REPORT_SHA256="aefa147ed929db0bfb53892ea6f2b1c276d57aa355b79a1701ea40f0d814f591"
 BASELINE_SHA256="fbe1212cbc052343e283edae1c7496e631da6056ad983d575fd2d699e9bf2e19"
 NULL_SHA256="7cf0d48dd7bce488c81cdad7e3270ec258f8a4b1e954d574f87c2a1811a877ac"
@@ -57,6 +59,14 @@ def csv_source_consistency(baseline,instant,delayed):
 
 def preflight(opts):
  repo=ROOT.resolve()
+ for source,expected in (
+   ("ge19/physics_gate/run_full_class_two_pass_tangent_20261112.py",RESPONSE_RUNNER_BLOB),
+   ("ge19/physics_gate/reconstruct_native_Bchi_instant_delayed_fast_20261120.py",RECONSTRUCTION_RUNNER_BLOB),
+ ):
+  f=repo/source
+  require(f.is_file(),'RUNNER_SOURCE_MISSING_'+source)
+  blob=subprocess.check_output(["git","hash-object",str(f)],cwd=repo,text=True).strip()
+  require(blob==expected,'RUNNER_SOURCE_CHANGED_'+source)
  ini=opts.original_ini.resolve()
  require(ini.is_file(),'FROZEN_INI_MISSING')
  blob=subprocess.check_output(["git","hash-object",str(ini)],text=True).strip()
