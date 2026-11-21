@@ -7,7 +7,7 @@ Computing background
  -> ncdm species i=1 sampled with 11 (resp. 11) points for purpose of background (resp. perturbation) integration. In the relativistic limit it gives Delta N_eff = 0.999997
  -> age = 13.797524 Gyr
  -> conformal age = 14150.279922 Mpc
- -> N_eff = 3.046 (summed over all species that are non-relativistic at early times)
+ -> N_eff = 3.046 (summed over all species that are non-relativistic at early times) 
  -> radiation/matter equality at z = 3405.922636
     corresponding to conformal time = 112.706299 Mpc
 Computing sources
