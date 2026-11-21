@@ -72,6 +72,10 @@ def algebra():
   'aest_photon_adiabatic_entropy_zero':linear_zero(dA-s.Rational(3,4)*dg),
   'photon_neutrino_density_equality':linear_zero(dg-dn),
   'photon_neutrino_leading_velocity_equality':linear_zero((thpb-thnu)/(k*k*t)),
+  'aest_comoving_density_cancels_at_k0':linear_zero(dA+3*H*thA/(k*k)),
+  'photon_comoving_density_cancels_at_k0':linear_zero(dg+4*H*thpb/(k*k)),
+  'neutrino_comoving_density_cancels_at_k0':linear_zero(dn+4*H*thnu/(k*k)),
+  'baryon_comoving_density_cancels_at_k0':linear_zero(db+3*H*thpb/(k*k)),
   'baryon_loading_leading_drag_pressure_cancellation':
    linear_zero((-H*Rb*thpb-Rb*k*k*dg/4)/k**2),
   'equal_matter_potential_coefficient_AeST_baryons':
@@ -111,6 +115,7 @@ def algebra():
   'Phi_y_m_over_Psi0':str(s.factor(F/P)),
   'Psi_y_m_over_Psi0':str(s.factor(G/P)),
   'baryon_loading':'R_b=3*rho_b/(4*rho_gamma)=3*y_b/[4*(1-R_nu)]; pressure/inertia O(y_b) cancel in photon-baryon Euler at leading k*tau',
+  'comoving_density_seed':'Delta_A=delta_A+3*Hcal*theta_A/k²=0 and Delta_gamma,nu,b=0 through O(y_A,y_b) at leading k*tau; first nonzero finite-k source F requires O(k²*tau²) NLO',
   'frozen_Exp_parameters':{'Q0':1e-4,'Z0':1e-17,'K2':9500,'K_B':0.1},
   'valid_Exp_branch':'Z>0 where K_Q=I0/a^3>0 and Q0,Z0,K2>0',
   'Exp_w':'Z0*(1-exp(-Z**2))/[2*Q0*Z+Z0*(2*Z**2-1+exp(-Z**2))]',
