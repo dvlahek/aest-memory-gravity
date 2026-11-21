@@ -1,6 +1,6 @@
 # GE19 — Joint photon–baryon–neutrino–AeST-like leading seed and rigorous frozen Exp dust bounds
 
-**2026-11-21. Physics-first decision with no new CLASS runs.** This note proves (i) a coupled, tight-coupled-baryon extension of the radiation-era Einstein seed to first order in the *total* matter/radiation ratio, and (ii) strict analytical upper bounds on pressure and adiabatic sound speed of the exact pinned AeST Exp background. The algebra was independently checked with 27 exact SymPy residuals in an isolated local prototype. Source-locked researcher WSL confirmation of [the executable](../ge19/physics_gate/physical_baryon_Exp_leading_seed_20261121.py) remains pending.
+**2026-11-21. Physics-first decision with no new CLASS runs.** This note proves (i) a coupled, tight-coupled-baryon extension of the radiation-era Einstein seed to first order in the *total* matter/radiation ratio, and (ii) strict analytical upper bounds on pressure and adiabatic sound speed of the exact pinned AeST Exp background. The algebra was independently checked with 31 exact SymPy residuals in an isolated local prototype. Source-locked researcher WSL confirmation of [the executable](../ge19/physics_gate/physical_baryon_Exp_leading_seed_20261121.py) remains pending.
 
 **Classification:** \`LEADING_EINSTEIN_BOLTZMANN_BARYON_SEED_CONSISTENT_AND_FROZEN_EXP_EOS_UNIFORMLY_DUSTLIKE / ORIGINAL_FULL_FINITE_K_ACTION_WARD_PRIMORDIAL_MODE_OPEN / DES_NOT_DETECTED\`.
 
@@ -55,6 +55,28 @@ The joint Einstein Hamiltonian, momentum, traceless shear and spatial trace, tog
 **Crucially the same coefficients multiply \`y_A\` and \`y_b\`.** They are not separately adjustable in a regular adiabatic leading mode. At \`R_nu=0\`, both metric potentials are \`P(1-y_m/16)\`; for general \`R_nu\`, the nonzero neutrino slip is retained. The result extends our successful 16-gate radiation+Aest-like model to include the leading baryon contribution in the *same* coupled Einstein–Boltzmann seed.
 
 **Scope:** this is a controlled \`O(y_A,y_b)\` and leading \`k\tau\` result with a pressureless AeST-like sector and **massless relativistic neutrinos**. It is not the full finite-k physical Einstein–AeST–NL0B growing mode. Baryon-photon recombination and higher multipoles, massive-neutrino transitions, the AeST scalar/aether longitudinal state, and the retarded bath have **not** been solved here.
+
+## 2A. New decisive primordial cancellation: where the physical memory source *first* appears
+
+The leading adiabatic **comoving** contrasts vanish individually through O(y_A,y_b):
+\`\`\`math
+\Delta_A\equiv\delta_A+3\mathcal H\frac{\theta_A}{k^2}
+=\left[3\Phi_1+\Psi_1+\frac P4\right]y_m+O(y_m^2,(k\tau)^2)=0+O(y_m^2,(k\tau)^2),
+\`\`\`
+\`\`\`math
+\Delta_\gamma=\delta_\gamma+4\mathcal H\frac{\theta_{\gamma b}}{k^2}
+=\left[6\Phi_1+2\Psi_1+\frac P2\right]y_m+O(y_m^2,(k\tau)^2)=0+O(y_m^2,(k\tau)^2),
+\`\`\`
+and likewise \`Delta_nu=0\` and \`Delta_b=delta_b+3 mathcal H theta_b/k²=0\` at this order. This is a nontrivial **consequence of the joint Einstein momentum/Hamiltonian constraints**, since the coefficients satisfy \`3 Phi_1+Psi_1=-P/4\`. It is an exactly verified large-scale cancellation, not a claim that the density perturbations themselves vanish.
+
+The original reduced action has
+\`\`\`math
+\dot X=E_A+c_a^2 F,\quad
+F=\Delta_A+\frac{k^2}{3a^2R_A}[K_B E_A+(2-K_B)QX].
+\`\`\`
+Therefore the leading \`k\tau\to0\` metric/density seed **does not yet fix the first finite-k source** exciting the scalar/aether channel, and cannot by itself prove \`X(t_i)=0\`, \`E_A(t_i)=0\` or \`W_{1,delayed}\neq0\`. The next unique physics calculation is the *joint* \`O(k²\tau²)\` adiabatic Frobenius source and original-action scalar/aether initial eigenvector, using the same baryon loading, neutrino anisotropic stress and quarter-source normalization. The older fixed-radiation test-fluid value \`Delta_A=-(15+4R_nu)P(k\tau)²/40+\cdots\` is only a **seed/check** at zero matter backreaction; it must not be transplanted unchanged as a full physical solution.
+
+This is the exact reason further leading \`k\tau=0\` or standalone oscillator audits no longer advance the memory goal. The first physically discriminating correction sits at NLO in wavenumber.
 
 ## 3. Rigorous, all-Z positive-branch bound for the pinned Exp benchmark
 
@@ -113,4 +135,4 @@ The remaining research bottleneck is **not** the photon–baryon O(y_m) backreac
 
 ## Reproducibility
 
-[Single source-locked 27-gate symbolic derivation](../ge19/physics_gate/physical_baryon_Exp_leading_seed_20261121.py). No expensive numerical pipeline. No cosmological evidence is tuned or reprocessed.
+[Single source-locked 31-gate symbolic derivation](../ge19/physics_gate/physical_baryon_Exp_leading_seed_20261121.py). No expensive numerical pipeline. No cosmological evidence is tuned or reprocessed.
