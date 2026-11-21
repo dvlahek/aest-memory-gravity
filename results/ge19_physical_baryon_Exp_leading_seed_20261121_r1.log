@@ -1,0 +1,4 @@
+GE19_BARYON_EXP_SOURCE_LOCKS_PASS 3
+GE19_BARYON_EXP_LEADING_COUPLED_SYMBOLIC_PASS 31
+GE19_FULL_PHYSICS_GO False
+GE19_BARYON_EXP_REPORT /home/dino/aest-memory-gravity/results/ge19_physical_baryon_Exp_leading_seed_20261121_r1.json
