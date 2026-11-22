@@ -17,8 +17,11 @@ import numpy as np
 
 PINNED_OBS06_SHA256 = "564542d47fa95d5b5fb3c5b0c8bb4eae1ecbc93f450bf993ea0bbb98310546e3"
 HISTORICAL_ONE_POINT_W1_DELAYED_OVER_W0_PER_ETA = -1.712922233834667e-9
-COV_KEYS=("cov","covariance","C","covmat","cov_192","gammat_covariance")
-GR_KEYS=("theory","theory_vector","gammat_theory","gr_theory","theory_gammat","prediction","mu_gr","pred")
+COV_KEYS=("published_covariance","cov","covariance","C","covmat","cov_192","gammat_covariance")
+GR_KEYS=("gr_fixed_unfitted_theory","theory","theory_vector","gammat_theory","gr_theory","theory_gammat","prediction","mu_gr","pred")
+# OBS06 r2 original npz manifest confirms exact GR/cov keys:
+# gr_fixed_unfitted_theory (192,) and published_covariance (192,192).
+# Observed/residual fields are intentionally NEVER listed in allowed keys.
 LENS_KEYS=("bin1","BIN1","lens_bin","lens","lens_bins","bin_lens")
 SOURCE_KEYS=("bin2","BIN2","source_bin","source","source_bins","bin_source")
 PAIR_KEYS=("pairs","bin_pairs","tomographic_pairs")
