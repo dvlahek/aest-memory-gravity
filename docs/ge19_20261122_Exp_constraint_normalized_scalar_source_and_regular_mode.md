@@ -66,21 +66,22 @@ R_A=\frac{4K_2}{3}(Q_0+\varepsilon Z)
 \`\`\`
 **Important:** This is an algebraic path through the original Exp family at fixed \`Z\`; it is **not** the calibrated cosmology where \`K_Q=I_0/a^3\` fixes an epoch-dependent \`Z\` as parameters change. It must not be interpreted as a cosmological limit or a specific numerical gain.
 
-If an unverified trial artificially holds \`\mathcal N\neq0\` fixed while \`R_A\to0\`, then \`\Delta_A=\mathcal N/R_A\to\infty\`: this is **not a regular density perturbation**. For an actual physical branch with bounded comoving \`\Delta_A\`, instead the total constrained numerator **must** satisfy
+The Einstein constraint states
 \`\`\`math
-\boxed{
-\mathcal N=R_A\Delta_A=O(R_A),\qquad
-c_a^2F=c_a^2\Delta_A\longrightarrow0
-\quad\text{for the regular fixed-}\Delta_A\text{ matter-only part}.
-}
+R_A\Delta_A+\Omega_s=-\frac{2k^2}{3a^2}\Phi.
 \`\`\`
-The second equality applies to \`F=\mathcal N/R_A\` **as defined above**; the first \`F=\Delta_A+k²S_A/(3a²R_A)\` expression shows that \`F\` itself includes the gradient/aether stress. Consequently a *finite physical \`\Delta_A\` alone* does **not** force the whole \`\mathcal N\` to be \`R_A\Delta_A\`: it additionally requires \`S_A=0\` or \`S_A=O(R_A)\` in the limit. More carefully, the genuine source relation is
+Substituting this *actual* constraint into the complete source gives
 \`\`\`math
-\mathcal N=R_A\Delta_A+\frac{k^2}{3a^2}S_A,
+\boxed{\mathcal N=R_A\Delta_A+\frac{k^2}{3a^2}S_A,\qquad
+c_a^2F=c_a^2\Delta_A+
+\frac{k^2}{a^2Q^2K_{QQ}}S_A.}\tag{4}
 \`\`\`
-so **regularity of \`\Delta_A\` alone is insufficient to conclude \`\mathcal N=O(R_A)\`.** The gradient/aether stress is the independent missing ingredient! This is precisely the primordial physical mode-selection obstruction.
+This distinguishes two physically different questions:
 
-To avoid conflating the two distinct sources, the \`c_a²\Delta_A\` *matter-only* part is suppressed for bounded \`\Delta_A\`, whereas the \`c_a² k²S_A/(3a²R_A)\` part equals \`k²S_A/(a²Q²K_{QQ})\` and may remain finite. A finite-\`k\` action eigenmode must select a physically admissible \`S_A\`.
+- If \`\Delta_A\` stays bounded in a formal limit \`R_A\to0\`, its **matter-only** forcing \`c_a^2\Delta_A\` vanishes with \`c_a^2\`.
+- **Nothing about bounded \`\Delta_A\` alone bounds the aether stress \`S_A\`**, so the *full* \`c_a^2F\` need not vanish. If the physical primordial mode additionally implies \`S_A=O(R_A)\`, the gradient contribution also vanishes; if \`S_A\` remains finite, it can survive. Whether either branch satisfies the complete action, regularity and Ward is still unproved.
+
+It would be *incorrect* to identify \`\Delta_A=\mathcal N/R_A\` while discarding \`S_A\`, or to hold a nonzero \`\mathcal N\` fixed and infer a physical effect without evaluating both constituent terms. The actual dustlike Einstein–Boltzmann proxy determines \`\Delta_A\`, **not** the AeST scalar/aether stress required by the original covariant theory. This missing stress is exactly the next primordial selection problem.
 
 ## 4. Stress-null kernel remains invisible to instantaneous Einstein constraints
 
