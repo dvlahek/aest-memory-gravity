@@ -46,3 +46,17 @@ test -x "$CAND/class" && file "$CAND/class" && sha256sum "$CAND/class"
 ```
 
 **Labels:** `SOURCE_STAGE_GO=true`; `CLASS_LINK_COMMAND_REACHED_NO_ERRORS_IN_LOG=true`; `BINARY_EXISTENCE_UNVERIFIED_IN_UPLOAD=true`; `FULL_PHYSICS_GO=false`; `DES_detection=false`.
+
+## Researcher WSL executable confirmation — 2026-11-22
+
+The researcher subsequently ran a direct **read-only** executable existence and format test in WSL for the exact isolated candidate:
+
+```text
+/home/dino/GE19_CLASS_QUARTER_ENTHALPY_20261122/class: ELF 64-bit LSB pie executable, x86-64, version 1 (GNU/Linux), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=d86c97359205ee6686e6a2beaa019f12a3dbdd5f, for GNU/Linux 3.2.0, with debug_info, not stripped
+9b63ca76f1b308f31d78cfea3cf65c097f4d70eb55582188b7e587512a8230b9  /home/dino/GE19_CLASS_QUARTER_ENTHALPY_20261122/class
+EXIT=0
+```
+
+This **supersedes the earlier compile-status uncertainty**: the researcher explicitly confirmed a present executable ELF file with an executable permission check and `EXIT=0`, uniquely fingerprinted by SHA-256 `9b63ca76f1b308f31d78cfea3cf65c097f4d70eb55582188b7e587512a8230b9`. Status: **CLASS_EXECUTABLE_BUILD_CONFIRMED**. Note that `file`/checksum validation does not execute cosmological evolution, test the primordial perturbations, or evaluate gravitational memory: **CLASS_PHYSICAL_EVOLUTION_NOT_RUN, FULL_PHYSICS_GO=false, DES_detection=false.**
+
+The next and only scientifically material gate remains the action-consistent finite-k growing-mode initial-value problem with original quarter source and physically retarded prior-history-selected q/p. No recompilation or further engineering check is warranted solely from this success.
