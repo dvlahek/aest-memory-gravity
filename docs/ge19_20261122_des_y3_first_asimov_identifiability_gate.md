@@ -52,6 +52,29 @@ The first GE19 Asimov script mistakenly looked only for \`obs06_fixed_gr_192.npz
 
 The rerun should use output suffix \`r2\` to avoid overwriting the original r1 asset-blocked evidence. If the original OBS06 NPZ lacks individually certified \`GR\`, \`cov\` or reliable 1-based lens/source mappings, the script will return \`GE19_ASIMOV_ASSET_BLOCKED_...\` with a header-only NPZ manifest rather than manufacture an index. **No manual mapping is authorized based solely on presumed ordering or observed data.**
 
+
+## WSL researcher execution r2 — SHA matched, original schema discovered, no covariance used yet
+
+Researcher r2 original [JSON](../results/ge19_des_y3_asimov_20261122_r2.json) and [log](../results/ge19_des_y3_asimov_20261122_r2.log) have now been archived **byte-for-byte** (original Git JSON blob \`7f14a385475be14d067825c21aced4253440cfea\`, log blob \`7e9d2f0692423e88b03aca74f5074eadd1cdd5c0\`; SHA-256 \`e93110d50d2b26a4ae8306fa5792f6e2ccabd065873dc40f4d8076bf2942fcdd\`, log \`524a5dca15d22e9b8f87ceea7ac2b0e6e6275322b7fa2ca0628d1d3fd0bffa5f\`). The r1 repeated files match the existing Git archives exactly.
+
+**New verified result:** the original OBS06 GR reference was found at \`results/obs06_des_y3_gr/obs06_fixed_des_example_gr_192.npz\` and **SHA-256 matched** \`564542d47fa95d5b5fb3c5b0c8bb4eae1ecbc93f450bf993ea0bbb98310546e3\`. Header-only inspection recovered the exact NPZ schema:
+
+\`\`\`text
+gr_fixed_unfitted_theory      float64[192]
+published_covariance         float64[192,192]
+lens_bin                     int64[192]
+source_bin                   int64[192]
+theta_arcmin                 float64[192]
+observed_gammat              float64[192]          # DO NOT READ
+signed_residual_observed_minus_gr float64[192]     # DO NOT READ
+\`\`\`
+
+The initial parser accepted neither \`gr_fixed_unfitted_theory\` nor \`published_covariance\`, so r2 correctly ended with \`GE19_ASIMOV_ASSET_BLOCKED_GR_KEY_AMBIGUOUS_OR_ABSENT\`. **No GR theory or real covariance was numerically loaded for the Fisher test; no observed residual was inspected.** The independent synthetic projection controls remained \`3/3 PASS\`.
+
+Fixed ONLY the two explicitly evidenced input aliases in the original fail-closed script: \`GR_KEYS\` now allows the exact \`gr_fixed_unfitted_theory\` and \`COV_KEYS\` allows \`published_covariance\`, without adding either observed-data or signed-residual key, in commit \`f725eb8ec98aeab5bbb8e37f7b4d616ecbd6d458\`. \`lens_bin/source_bin\` were already recognized. The **next** researcher WSL run must use unique suffix \`r3\`, read the same immutable pinned NPZ, verify 1-based pair metadata and published covariance Cholesky, then compute *only the flat-response negative control*. A third \`ASSET_BLOCKED\` would be a schema/selection issue, not a physics failure.
+
+**Scientific boundary unchanged:** even if r3 returns \`...PROXY_AMPLITUDE_DEGENERACY_PASS_ONLY\` and an exactly zero profiled flat Fisher, that only verifies the observer and covariance pipeline plus a known mathematical amplitude degeneracy. It does **not** measure actual GE19 memory identifiability. The physical, angle-dependent, original quarter-action, no-free-bath \`d gamma_t/d eta\` remains absent and **PHYSICAL_FORECAST_GO=false / DES_detection=false**.
+
 ## What is required for the next *physical* Asimov go/no-go
 
 Generate **one** original quarter-normalized, finite-k growing-state- and retarded-history-certified delayed *galaxy-Weyl cross-spectrum* across the actual survey \`k,z,ell\` support. Project it through pinned lens/source n(z), calibrated \`gamma_t\` angular windows and scale cuts and verify numerical errors below the resulting template norm. Construct the full nuisance/instantaneous-rival columns \`D_phys\` with physically stated priors; calculate profiled \`F_\perp\). Only then, if sufficiently distinguishable, unblind the existing public \`gamma_t\` data for an actual test. The current strict classification is **PHYSICAL_ASIMOV_BLOCKED_MISSING_DELAYED_GAMMAT_TANGENT; DES_DETECTION=FALSE**.
