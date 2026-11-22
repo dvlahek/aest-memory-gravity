@@ -117,6 +117,10 @@ def radiation_baryon_exp_background(a:float,p:ExpParameters,
     return Background(a,a*math.sqrt(rg+rn+rb+e.rhoA),
                       rg,rn,rb,e.rhoA,e.wA,e.cA2)
 
+def scale_factor_prime(b:Background)->float:
+    """Background Friedmann evolution to accompany the 19 perturbation rows."""
+    return b.a*b.Hcal
+
 def rhs(y:Mapping[str,float],b:Background)->dict[str,float]:
     """Complete 19-variable k^0+k^2 pressureful, full-Einstein coefficient RHS.
 
@@ -212,6 +216,7 @@ def specification()->dict:
       "entropy_identity":"(dA2-3 dg2/4)'=v_gamma0-v_A0",
       "assumption":"analytic X,S_A=O(k²), zero direct linear bath stress at relaxed background; unproved full physical primordial branch",
       "constraint_redundancy":"Hamiltonian_kN=(3/2)a^2*comoving_kN, N=0,2, after momentum equation",
+      "background_time_equation":"a_prime=a*Hcal, Hcal=a*sqrt(rho_gamma+rho_nu+rho_b+rho_A)",
       "primordial_mode_selected":False,"evolved":False,"class_executed":False,
       "FULL_PHYSICS_GO":False,"DES_detection":False,
     }
