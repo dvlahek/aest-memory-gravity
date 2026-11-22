@@ -1,0 +1,43 @@
+{
+  "C": "2-K_B",
+  "DES_detection": false,
+  "FULL_PHYSICS_GO": false,
+  "Sdot": "[C*Q/K_B-H]*S_A+Q*[K_Q-2*C*Q/K_B]*X-eta*Q*Bchi/4",
+  "Xdot": "-(C*Q/K_B)*X+[1/K_B+k\u00b2/(a\u00b2*Q\u00b2*K_QQ)]*S_A+c_a\u00b2*Delta_A",
+  "classification": "GE19_EXACT_REDUCED_X_S_STRESS_LIFT_AND_LOCAL_SCALAR_CURRENT_BRIDGE_PASS_NOT_FULL_PRIMORDIAL_WARD",
+  "gate_count": 17,
+  "gates": {
+    "Sdot_action_to_raw_combination": true,
+    "Sdot_closed_X_S": true,
+    "Sdot_density_source_F_cancels_exactly": true,
+    "Xdot_closed_X_S_gradient": true,
+    "arbitrary_source_gamma_bridge_defect": true,
+    "c_over_RA_from_action": true,
+    "half_source_current_bridge_defect": true,
+    "lambda_simplification_C_plus_KB_two": true,
+    "quarter_source_current_bridge": true,
+    "scalar_current_agrees_with_stress_lift_eta0": true,
+    "selected_zero_state_S_second_derivative": true,
+    "source_gamma_half_negative_control_nonzero": true,
+    "source_gamma_quarter_unique_for_nonzero_eta_wb": true,
+    "stress_null_eta0_lifting": true,
+    "stress_null_initial_S_zero": true,
+    "zero_state_Sdot_initial_zero": true,
+    "zero_state_Xdot_first_nonzero": true
+  },
+  "general_gamma_defect": "delta Sdot_gamma-Q delta J_phi^x/(2 i k a)=(1/4-gamma)*eta*Q*W_b*epsilon",
+  "historical_half_source_defect": "-eta*Q*W_b*epsilon/4 for gamma=1/2",
+  "important_limitations": [
+    "The current-to-stress bridge holds for this specific initial variation, not the complete covariant Noether identity.",
+    "A stress-null direction need not be a physical primordial adiabatic eigenmode.",
+    "Chosen finite-time zero bath is not guaranteed by the original global no-free-bath retarded history.",
+    "No complete Einstein-AeST-NL0B Hessian, finite-k physical growing eigenvector, or original full Ward propagation is certified.",
+    "No CLASS runs, DES comparison, or physical delayed Weyl detection."
+  ],
+  "lambda": "K_Q-2*C*Q/K_B",
+  "local_spatial_current": "delta J_phi^x/(i*k*a)=epsilon*[2*K_Q/Q-4*C/K_B-eta*W_b/2]",
+  "local_stress_lift": "delta Sdot_A=[K_Q-2*C*Q/K_B-eta*Q*W_b/4]*epsilon if delta q_j=0 at this initial instant",
+  "local_stress_null_shift": "delta chi=epsilon, delta E=-C epsilon/K_B; delta S_A=delta metric stress=0 at the same initial instant",
+  "quarter_local_bridge": "delta Sdot_A=Q*delta J_phi^x/(2*i*k*a) for the stress-null displacement with fixed auxiliary coordinates, at gamma=1/4",
+  "selected_zero_state_onset": "If X=S=q=qdot=0 at a finite initial instant, Xdot=c_a\u00b2 Delta_A, Sdot=0, Sddot=Q*c_a\u00b2*Delta_A*(K_Q-2*C*Q/K_B-eta*Q*W_b/4)"
+}
