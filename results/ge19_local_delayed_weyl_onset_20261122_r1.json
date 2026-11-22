@@ -1,0 +1,34 @@
+{
+  "DES_detection": false,
+  "D_i": "Q_i c_i Delta_A_i",
+  "E_1_hist": "Q_i D_i M2 h^4/(96 K_B)+O(h^5)",
+  "FULL_PHYSICS_GO": false,
+  "Phi_1_hist_and_W1_hist": "c_i k^2 Q_i D_i M2 h^6/(5760 a_i^2)+O(h^7)",
+  "check_count": 10,
+  "classification": "GE19_CONDITIONAL_REDUCED_ALL_SPECIES_CAUSAL_WEYL_H6_PROVED_NOT_FULL_PRIMORDIAL",
+  "conditions": [
+    "Finite regular t_i, k!=0, a,Q,K_Q,K_B,c nonzero and smooth.",
+    "At eta0+ baseline chi_i=E_i=r_j_i=dot_r_j_i=0 and D_i=Q_i c_i Delta_A_i !=0.",
+    "History-only eta derivative is retarded-minus-instantaneous comparator under SAME baseline, SAME operator and SAME initial eta derivative.",
+    "All ordinary species have no direct eta NL0B forcing and respond through the metric (no earlier independent eta source); direct linear bath stress vanishes about relaxed background.",
+    "Original quarter-normalized reduced scalar/aether and total Einstein constraints/pressure trace; full covariant action equivalence and physical finite-k growing adiabatic mode NOT certified.",
+    "The leading-order calculation uses coefficients at t_i; coefficient time derivatives enter subleading orders."
+  ],
+  "density_A_1_hist": "-H_i c_i k^2 Q_i D_i M2 h^5/(480 a_i^2)+O(h^6)",
+  "exact_stress_reduction": "W_stress(Phi,phi,E,chi,ordinary)=Phi-9 a^2 S_shear/(4 k^2), provided the action density/phase and Einstein source constraints are imposed.",
+  "if_Delta_A_i_is_O_k2": "W_history=O(k^4 h^6) at FIXED finite regular t_i; not a uniform primordial limit.",
+  "phi_1_hist": "c_i k^2 Q_i D_i M2 h^5/(480 a_i^2 K_Q_i)+O(h^6)",
+  "physical_matter_Weyl_transfer_ready": false,
+  "symbolic_checks": {
+    "AeST_continuity_leading": true,
+    "AeST_density_history_h5": true,
+    "E_history_h4": true,
+    "Weyl_history_h6": true,
+    "Weyl_k4_if_adiabatic_Delta_k2": true,
+    "bath_retarded_h3": true,
+    "comoving_density_h5_cancels": true,
+    "phi_history_h5": true,
+    "spatial_trace_leading_pressure": true,
+    "stress_W_exactly_reduces_to_Phi_minus_shear": true
+  }
+}
