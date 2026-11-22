@@ -151,6 +151,12 @@ def run(path):
             pair=np.asarray(z[pkey],int)
             lens,source=pair[:,0],pair[:,1]
         r["array_keys_used"]={"GR":gkey,"covariance":ckey,"lens_mapping":lkey,"source_mapping":skey}
+        # Explicitly fail closed on 0-based labels; never silently relabel.
+        r["tomographic_label_ranges"]={"lens":[int(lens.min()),int(lens.max())],
+                                       "source":[int(source.min()),int(source.max())]}
+        if np.any(lens<=0) or np.any(source<=0):
+            r["classification"]="GE19_ASIMOV_ASSET_BLOCKED_ZERO_BASED_OR_INVALID_BIN_LABELS"
+            return r
         # Full published MagLim convention: lens/source bins 1-based.
         selected=(lens==4)&np.isin(source,[3,4])
         counts={str(s):int(np.sum((lens==4)&(source==s))) for s in [3,4]}
