@@ -43,7 +43,7 @@ The researcher executed the first canonical run and uploaded an original JSON/lo
 
 \`GE19_ASIMOV_PROJECTION_SELFTEST_PASS 3\` passed, followed by \`GE19_ASIMOV_ASSET_BLOCKED_REFERENCE_MISSING\`; therefore **no real DES covariance submatrix, GR rows or survey Fisher information was loaded**. This is **not a null observational result** and no memory \`sigma_eta\` is available.
 
-A pre-existing researcher [OBS06R2 WSL log](https://chatgpt.com) documents the actual original file path and checksum:
+A pre-existing original researcher OBS06R2 WSL log documents the actual original file path and checksum:
 \`\`\`text
 /home/dino/aest-memory-gravity/results/obs06_des_y3_gr/obs06_fixed_des_example_gr_192.npz
 SHA256 564542d47fa95d5b5fb3c5b0c8bb4eae1ecbc93f450bf993ea0bbb98310546e3
