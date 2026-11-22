@@ -157,7 +157,12 @@ def rhs(y:Mapping[str,float],b:Background)->dict[str,float]:
     }
 
 def constraints(y:Mapping[str,float],b:Background)->dict[str,float]:
-    """Independent Einstein Hamiltonian and comoving k^0+k^2 residuals."""
+    """Einstein Hamiltonian and comoving k^0+k^2 residuals.
+
+    After imposing the momentum equation, these pairs are redundant:
+    Hamiltonian_kN=(3/2)*a*a*comoving_kN, N=0 and 2.
+    These are not independent physical consistency gates.
+    """
     d=rhs(y,b)
     a,h=b.a,b.Hcal
     psi0=y["Phi0"]-4.5*a*a*b.R_nu*y["zn0"]
@@ -182,7 +187,7 @@ def driver_delta_A2(y:Mapping[str,float],b:Background)->float:
     """Constrained physical fluid-source coefficient (not a dust proxy)."""
     return y["dA2"]+3*b.Hcal*y["vA2"]
 
-def entropy_rate_identites(y:Mapping[str,float],b:Background)->dict[str,float]:
+def entropy_rate_identities(y:Mapping[str,float],b:Background)->dict[str,float]:
     """Algebraic k^2 sources of relative entropy (residuals all zero)."""
     d=rhs(y,b)
     return {
@@ -206,6 +211,7 @@ def specification()->dict:
       "source":"Delta_A2=dA2+3 Hcal vA2; dA=deltaA/(1+wA)",
       "entropy_identity":"(dA2-3 dg2/4)'=v_gamma0-v_A0",
       "assumption":"analytic X,S_A=O(k²), zero direct linear bath stress at relaxed background; unproved full physical primordial branch",
+      "constraint_redundancy":"Hamiltonian_kN=(3/2)a^2*comoving_kN, N=0,2, after momentum equation",
       "primordial_mode_selected":False,"evolved":False,"class_executed":False,
       "FULL_PHYSICS_GO":False,"DES_detection":False,
     }
