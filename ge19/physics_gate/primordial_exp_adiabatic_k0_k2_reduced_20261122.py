@@ -132,6 +132,52 @@ def full_operator_reconstruction_residuals(
     }
     return {k:explicit[k]-reference[k] for k in FIELDS}
 
+
+# 8 dynamical variables, plus the constant conserved adiabatic curvature.
+STATE_CONSTRAINED=("calR","V0","Znu0","Phi2","Vg2","Vnu2",
+                   "VA2","Znu2","Jnu3")
+
+def constrained_photon_density_k2(
+        q:Mapping[str,float],b:Background)->float:
+    """Exact Einstein-comoving elimination of delta_gamma2.
+
+    Requires selected *adiabatic* species density ratios through k²,
+    no first-order AeST bath stress at k², and the k² Hamiltonian/momentum
+    constraint. No fit, subtraction of unrelated GR templates, or arbitrary
+    primordial amplitude. Nonzero rho_gamma guarantees the denominator.
+    """
+    if set(q)!=set(STATE_CONSTRAINED):
+        raise ValueError("expected conserved curvature and eight evolving fields")
+    a,h=b.a,b.Hcal
+    phi0=q["calR"]-h*q["V0"]
+    moment=(b.R_g+b.rho_b)*q["Vg2"]+b.R_nu*q["Vnu2"]+b.R_A*q["VA2"]
+    density_weight=(b.rho_g+b.rho_nu+
+                    0.75*(b.rho_b+b.R_A))
+    if density_weight<=0:raise RuntimeError("SINGULAR_PHYSICAL_COMOVING_WEIGHT")
+    return -(3*h*moment+2*phi0/(3*a*a))/density_weight
+
+def constrained_full_state(
+        q:Mapping[str,float],b:Background)->dict[str,float]:
+    z=dict(q)
+    z["dg2"]=constrained_photon_density_k2(q,b)
+    return leading_adiabatic_state(z,b)
+
+def constrained_rhs(q:Mapping[str,float],b:Background)->dict[str,float]:
+    """Eight evolution equations; C2=0 enforces ninth continuity row."""
+    z=dict(q)
+    z["dg2"]=constrained_photon_density_k2(q,b)
+    r=reduced_rhs(z,b)
+    return {key:r[key] for key in STATE_CONSTRAINED}
+
+def constrained_driver_delta_A2(
+        q:Mapping[str,float],b:Background)->float:
+    """Explicit physically backreacted AeST comoving k² driver."""
+    return 0.75*constrained_photon_density_k2(q,b)+3*b.Hcal*q["VA2"]
+
+def constrained_constraint_residual(q:Mapping[str,float],b:Background)->float:
+    """Identically zero analytically; evaluate only for rounding diagnostics."""
+    return full_constraints(constrained_full_state(q,b),b)["comoving_k2"]
+
 def regular_radiation_normalization(Rnu_fraction:float,curv:float)->dict[str,float]:
     """Strict a~tau, rho_m/rho_r->0 Frobenius leading mode per calR.
 
@@ -158,6 +204,11 @@ def specification()->dict:
       "input_operator_locked":"primordial_exp_pressureful_joint_k2_system_20261122",
       "state_fields":list(STATE),"number_evolving_fields":9,
       "curvature_conserved":"calR=Phi0+Hcal V0",
+      "constraint_eliminated_state_fields":list(STATE_CONSTRAINED),
+      "number_constraint_eliminated_evolving_fields":8,
+      "constraint_elimination":"dg2=-(3 Hcal [(R_gamma+rho_b)Vgamma2+R_nu Vnu2+R_A VA2]+2 Phi0/(3a²))/(rho_gamma+rho_nu+3(rho_b+R_A)/4)",
+      "exact_constrained_driver":"Delta_A2=3 Hcal VA2+3 dg2/4; fully coupled, no dust proxy",
+
       "k0_conditions":"V_gamma0=V_nu0=V_A0=V; delta_gamma0=delta_nu0=-4Hcal V; delta_b0=d_A0=-3Hcal V",
       "k2_adiabatic_density":"delta_nu2=delta_gamma2, delta_b2=d_A2=3 delta_gamma2/4; zero relative entropy initial state",
       "one_independent_k2_constraint":"C2=Omega_s2+R_A Delta_A2+2Phi0/(3a^2)=0",
