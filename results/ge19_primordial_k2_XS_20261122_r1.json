@@ -1,0 +1,38 @@
+{
+  "B2": "W_b Q X2-a sum_j omega_j sqrt(w_j) q3_j",
+  "Bdelayed2": "-a sum_j omega_j sqrt(w_j) q3_j",
+  "DES_detection": false,
+  "FULL_PHYSICS_GO": false,
+  "assumptions": [
+    "Fixed regular positive a,Q,K_B,K_QQ and differentiable background, at finite t. No uniform claim as a->0.",
+    "Analytic even-k physical scalar branch with X(k=0)=S_A(k=0)=Delta_A(k=0)=0; leading pure-gauge adiabatic state is a necessary input, not proof of its unique full finite-k continuation.",
+    "Retarded bath with no independent homogeneous q_j=O(k) or q_j=O(1) mode; q_j=O(k\u00b3) follows from the driven source if X=O(k\u00b2).",
+    "For the test-fluid estimate, Delta_A2 may use frozen dustlike 42-gate mixed coefficient but must be replaced by action-derived coupled pressureful AeST source for full physical mode."
+  ],
+  "classification": "GE19_CONDITIONAL_ANALYTIC_K2_ORIGINAL_X_S_CAUSAL_BATH_HIERARCHY_PASS_NOT_PHYSICAL_PRIMORDIAL",
+  "gate_count": 14,
+  "gates": {
+    "Bdelayed_k2_despite_q3": true,
+    "Binstant_k2": true,
+    "Btotal_k2": true,
+    "Kqq_gradient_absent_from_leading_k2_operator": true,
+    "S_first_nonzero_k2": true,
+    "S_no_k4_in_truncated_eta_source": true,
+    "X_first_nonzero_k2": true,
+    "X_gradient_feedback_only_k4": true,
+    "eta0_bath_driven_but_no_E_feedback": true,
+    "qacc_driven_k3": true,
+    "qacc_no_k1_source_if_X0_zero": true,
+    "qdot_driven_k3": true,
+    "stress_null_S2_initial_zero": true,
+    "stress_null_lift_can_enter_at_k2": true
+  },
+  "matter_proxy_Delta2": "-(15+4R_nu)*Psi0*tau\u00b2/40*(1-y_m/5) from dustlike Einstein-Boltzmann proxy, not a self-consistent pressureful-AeST mode",
+  "q3_evolution": "dot q3_j=p3_j; dot p3_j=-3H p3_j-omega_j\u00b2 q3_j+omega_j sqrt(w_j) Q X2/a",
+  "relative_orders": "X,S_A,Delta_A,Binstant,Bdelayed=O(k\u00b2); q_j=O(k\u00b3). Direct gradient feedback k\u00b2 S_A first contributes at O(k^4) for fixed regular a(t).",
+  "retarded_historical_zero_warning": "No independent bath homogeneous mode does NOT imply q3=p3=0 at arbitrary finite stored CLASS time.",
+  "s2_evolution": "dot S2=(C Q/K_B-H) S2+Q(K_Q-2 C Q/K_B) X2-eta Q B2/4",
+  "tangent_warning": "At eta0+ the initial-state eta derivative may add an independent metric tangent, not fixed by source-only decomposition.",
+  "undetermined_physical_data": "Two O(k\u00b2) coefficients X2(t_i), S2(t_i) (and transported retarded bath q3_j,p3_j); leading X0=S0=0 does not fix them. Full covariant scalar/aether/multiplier/Einstein Ward/adiabatic Frobenius selection is required.",
+  "x2_evolution": "dot X2=-(C Q/K_B) X2+S2/K_B+c_a\u00b2 Delta_A2"
+}
