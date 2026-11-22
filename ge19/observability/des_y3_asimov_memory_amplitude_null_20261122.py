@@ -31,12 +31,24 @@ def sha256(p: Path) -> str:
     return h.hexdigest()
 
 def find_reference(root: Path):
-    dirs=[root/"observations/des_y3",root/"results",root/"observations"]
-    hits=[]
-    for d in dirs:
-        if d.is_dir():
-            hits.extend(d.rglob("obs06_fixed_gr_192.npz"))
-    return sorted({p.resolve() for p in hits})
+    # OBS06 originally shipped under a longer filename in the same repo.
+    # Exact file bytes, NOT the filename, determine whether it is accepted.
+    names=("obs06_fixed_gr_192.npz","obs06_fixed_des_example_gr_192.npz")
+    paths=[
+      root/"results/obs06_des_y3_gr",
+      root/"results",
+      root/"observations/des_y3",
+      root/"observations",
+      root/"obs06",
+    ]
+    hits=set()
+    for folder in paths:
+        if not folder.is_dir():
+            continue
+        for name in names:
+            for item in folder.rglob(name):
+                if item.is_file():hits.add(item.resolve())
+    return sorted(hits)
 
 def describe(z, file_path):
     # Parse .npy HEADERS without calling z[k] or reading observed data values.
@@ -211,9 +223,20 @@ def main():
         if not path.is_file():raise FileNotFoundError(path)
     else:
         matches=find_reference(a.repo_root.resolve())
-        if len(matches)>1:
-            raise RuntimeError("AMBIGUOUS_OBS06_REFERENCE "+repr([str(p) for p in matches]))
-        path=matches[0] if matches else None
+        # Multiple aliases/copies can coexist: accept only the unique one
+        # with the frozen original OBS06 SHA256.
+        matching=[p for p in matches if sha256(p)==PINNED_OBS06_SHA256]
+        if len(matching)>1:
+            raise RuntimeError("AMBIGUOUS_IDENTICAL_OBS06_COPIES "+repr([str(p) for p in matching]))
+        if len(matching)==1:
+            path=matching[0]
+        elif len(matches)==1:
+            # run() will return a fail-closed SHA mismatch diagnostic.
+            path=matches[0]
+        elif matches:
+            raise RuntimeError("NO_SHA_MATCHING_OBS06_REFERENCE "+repr([str(p) for p in matches]))
+        else:
+            path=None
     self_test()
     result=run(path)
     print(result["classification"],flush=True)
