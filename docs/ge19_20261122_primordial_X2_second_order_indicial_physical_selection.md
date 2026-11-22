@@ -74,13 +74,13 @@ Recover \`S_2=K_B(\dot X_2+\mathcal AX_2-f)\`. On the **reference** homogeneous 
 S_{2,(0)}\sim K_B\Lambda t^{-1/2}\ln t,\qquad
 S_{2,(1/2)}\sim \frac{K_B}{2\sqrt t}.\tag{6}
 \`\`\`
-The second branch has unbounded **un-normalized** stress coefficient \`S_2\` as \`t->0\`, but its *standalone gradient-density contribution* relative to the AeST dustlike background remains finite:
+Because the full field is `S_A=k²S_2`, its dictionary gradient density is `D_A^{grad}=-k^4S_2/(3a²)` at the retained formal k² order; this is a k⁴ correction at fixed t, shown here only to diagnose early-time regularity and the noncommuting limits `k->0`, `t->0`. The second branch has unbounded **un-normalized** stress coefficient \`S_2\` as \`t->0\`, but its *standalone gradient-density contribution* relative to the AeST dustlike background remains finite:
 \`\`\`math
 \frac{D_A^{\rm grad}}{\rho_A}
-\sim-\frac{k²S_2}{a²QK_Q}
-\longrightarrow -\frac{k² A K_B}{2\bar Q I_0}\quad\text{for reference }p=\tfrac12.\tag{7}
+\sim-\frac{k^4S_2}{a²QK_Q}
+\longrightarrow -\frac{k^4 A K_B}{2\bar Q I_0}\quad\text{for reference }p=\tfrac12.\tag{7}
 \`\`\`
-For the constant branch, this gradient-only fraction instead contains a logarithm, \`[-k² S_2/(a²QK_Q)]/\ln t\to-k²/A²\`.
+For the constant branch, this gradient-only fraction instead contains a logarithm, \`[-k^4 S_2/(a²QK_Q)]/\ln t\to-k^4/A²\`.
 
 **Crucial decision:** **Do not discard all \`S_2\sim t^{-1/2}\` states by imposing boundedness of the raw field \`S_2\` alone.** Physical regularity must be assessed using the complete action density, entropy/adiabaticity, metric, aether multiplier equations, original temporal scalar current and Ward conditions, not one coordinate/amplitude of a partly reduced action. Eq. (7) demonstrates only a *necessary caution*, **not** that the \`p=1/2\` branch is a physically admissible primordial mode. Likewise a potentially logarithmic divergence of one stress component does not by itself prove the full \`p=0\` branch impossible before dictionary cancellations and mode mixing are assessed.
 
