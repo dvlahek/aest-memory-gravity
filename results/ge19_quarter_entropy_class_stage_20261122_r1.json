@@ -1,0 +1,30 @@
+{
+  "DES_detection": false,
+  "FULL_PHYSICS_GO": false,
+  "adiabatic_sync_density_and_newtonian_transform_corrected_in_candidate_only": true,
+  "candidate_C_sha256": "3aa1dde9eaf55a10a43f39192132fb606d4190ff3bb4b0490915d96870186b81",
+  "candidate_root": "/home/dino/GE19_CLASS_QUARTER_ENTHALPY_20261122",
+  "class_compiled": false,
+  "class_executed": false,
+  "classification": "GE19_ISOLATED_QUARTER_ENTHALPY_CLASS_SOURCE_STAGE_ONLY_NOT_PHYSICS_GO",
+  "exact_replacement_anchor_counts": {
+    "adiabatic_sync_density_enthalpy": 1,
+    "newtonian_density_gauge_enthalpy": 1,
+    "original_action_quarter_force": 1
+  },
+  "full_covariant_Ward_boltzmann_verified": false,
+  "full_primordial_k2_X_E_mode_selected": false,
+  "original_CLASS_git_HEAD": "e85808324f51fc694d12e3ed7439552a3c3f9540",
+  "original_C_preserved": true,
+  "original_C_sha256": "c41ad4cad9cc18d658f80841137094349657df6ac5d68fd3c0c75cfbbe092073",
+  "quarter_normalization_confirmed_in_candidate": true,
+  "quarter_normalization_corrected_in_candidate_only": false,
+  "repair_status": {
+    "adiabatic_sync_density_enthalpy": "changed",
+    "newtonian_density_gauge_enthalpy": "changed",
+    "original_action_quarter_force": "already_quarter_no_change"
+  },
+  "retarded_qp_history_transported": false,
+  "scope_notice": "Necessary leading source and entropy repairs only; CLASS synch-to-Newtonian metric seed and full k^2 growing mode still require independent action-consistent certification.",
+  "source_root": "/home/dino/GE19_CLASS_TANGENT_v077"
+}
