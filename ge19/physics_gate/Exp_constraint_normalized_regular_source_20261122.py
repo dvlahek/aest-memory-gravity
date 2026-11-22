@@ -36,7 +36,7 @@ def derive():
  numerator=-Om+k**2*(stress-2*Phi)/(3*a**2)
  F=numerator/RA
  derived=(-3*Om+k**2*(stress-2*Phi)/a**2)/(Q**2*KQQ)
- constrained_Omega=k**2*(stress-2*Phi)/(3*a**2)-RA*D
+ constrained_Omega=-RA*D-2*k**2*Phi/(3*a**2)
  Z,eps,Q0,K2=s.symbols("Z epsilon Q0 K2",positive=True)
  Qe=Q0+eps*Z
  KQe=4*K2*eps*Z*s.exp(Z**2)
@@ -52,10 +52,10 @@ def derive():
  test={
   "exact_constrained_cF_source":s.simplify(c*F-derived)==0,
   "ratio_c_over_RA_cancels_KQ":s.simplify(c/RA-3/(Q**2*KQQ))==0,
-  "regular_Delta_gives_numerator_RA_Delta":
-   s.simplify(numerator.subs(Om,constrained_Omega)-RA*D)==0,
-  "regular_Delta_gives_cF_c_Delta":
-   s.simplify((c*F).subs(Om,constrained_Omega)-c*D)==0,
+  "Einstein_constraint_gives_N_RA_Delta_plus_gradient_stress":
+   s.simplify(numerator.subs(Om,constrained_Omega)-RA*D-k**2*stress/(3*a**2))==0,
+  "Einstein_constraint_gives_cF_c_Delta_plus_gradient_stress":
+   s.simplify((c*F).subs(Om,constrained_Omega)-c*D-k**2*stress/(a**2*Q**2*KQQ))==0,
   "Exp_c_exact":
    s.simplify(ce-eps*Z/(Qe*(1+2*Z**2)))==0,
   "Exp_RA_exact":
@@ -78,10 +78,10 @@ def derive():
   "gate_count":len(test),"gates":{n:bool(v) for n,v in test.items()},
   "exact_identity":"c_a2/R_A=3/(Q**2*K_QQ)",
   "exact_source":"c_a2*F=[k**2*(K_B E+(2-K_B)QX-2Phi)/a**2-3Omega_s]/(Q**2*K_QQ)",
-  "Einstein_numerator":"N=-Omega_s+k**2*(K_B E+(2-K_B)QX-2Phi)/(3a**2)=R_A Delta_A",
+  "Einstein_numerator":"N=-Omega_s+k**2*(K_B E+(2-K_B)QX-2Phi)/(3a**2)=R_A Delta_A+k**2*S_A/(3a**2)",
   "frozen_Exp_bound":"0<c_a2/R_A<3/(4*K2*Q0**2)=7894.736842105263 at Q0=1e-4 K2=9500 Z>0",
   "fixed_Z_limit":"For Z0=epsilon->0 at fixed finite positive Z, c_a2 and R_A vanish, but c_a2/R_A remains finite nonzero; NOT a physical fixed-calibrated-I0 limit.",
-  "necessary_regular_condition":"If Delta_A remains bounded as R_A tends to zero, N must be O(R_A), and c_a2*F=c_a2*Delta_A tends to zero. N held nonzero makes Delta_A divergent, not a regular physical source.",
+  "necessary_regular_condition":"If Delta_A remains bounded as R_A tends to zero, the matter-only term c_a2*Delta_A tends to zero. But N=R_A*Delta_A+k**2*S_A/(3*a**2). The gradient/aether source can remain nonzero unless the physical initial mode also constrains S_A. No bound on the full c_a2*F follows from bounded Delta_A alone.",
   "stress_null_selection":"Einstein stress depends on S=K_B E+(2-K_B)QX; delta chi=e, delta E=-(2-K_B)e/K_B leaves S unchanged. Full scalar/aether propagation and Ward needed to fix the physical amplitude.",
   "scalar_current":"delta J_phi^x/(i k a e)=2K_Q/Q-4(2-K_B)/K_B-eta W_b/2; Ward constrains current divergence, not its spatial component to vanish.",
   "full_physics_GO":False,"DES_detection":False,
