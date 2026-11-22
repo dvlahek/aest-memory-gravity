@@ -1,0 +1,94 @@
+{
+  "DES_detection": false,
+  "array_keys_used": {
+    "GR": "gr_fixed_unfitted_theory",
+    "covariance": "published_covariance",
+    "lens_mapping": "lens_bin",
+    "source_mapping": "source_bin"
+  },
+  "asymptotic_fisher_null_identity": "t=epsilon*mu; D=[mu*I_source3,mu*I_source4]; hence t in col(D), F_perp=0 exactly",
+  "classification": "GE19_DES_Y3_FROZEN_GR_COVARIANCE_PROXY_AMPLITUDE_DEGENERACY_PASS_ONLY",
+  "data_used": "GR model reference, full covariance and tomographic metadata ONLY; never observed values or residuals",
+  "diagnostic": {
+    "F_profiled_numeric_roundoff": 3.748285229433295e-46,
+    "F_unprofiled": 2.7245822792610327e-15,
+    "SNR_eta1_profiled_numeric_roundoff": 1.936048870621115e-23,
+    "SNR_eta1_unprofiled": 5.219753135217252e-08,
+    "nuisance_amplitude_columns": 2,
+    "nuisance_rank": 2,
+    "relative_whitened_projection_residual": 3.7090812926740735e-16,
+    "rows": 26,
+    "source_bins": [
+      3,
+      4
+    ]
+  },
+  "fraction_per_eta": -1.712922233834667e-09,
+  "npz_manifest": {
+    "gr_fixed_unfitted_theory": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    },
+    "lens_bin": {
+      "dtype": "int64",
+      "shape": [
+        192
+      ]
+    },
+    "observed_gammat": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    },
+    "published_covariance": {
+      "dtype": "float64",
+      "shape": [
+        192,
+        192
+      ]
+    },
+    "signed_residual_observed_minus_gr": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    },
+    "source_bin": {
+      "dtype": "int64",
+      "shape": [
+        192
+      ]
+    },
+    "theta_arcmin": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    }
+  },
+  "numeric_profiled_F_is_roundoff_not_evidence": true,
+  "observable_template_identifiable": false,
+  "physical_delayed_gamma_t_template_present": false,
+  "physical_forecast_GO": false,
+  "probe": "MagLim lens bin 4 x source bin 4; source bin 3 fixed control",
+  "reference_path": "/home/dino/aest-memory-gravity/results/obs06_des_y3_gr/obs06_fixed_des_example_gr_192.npz",
+  "reference_sha256": "564542d47fa95d5b5fb3c5b0c8bb4eae1ecbc93f450bf993ea0bbb98310546e3",
+  "selected_rows_per_source": {
+    "3": 13,
+    "4": 13
+  },
+  "source_template": "UNPHYSICAL constant-fraction null control, scaled by historical ONE (k,z) Weyl ratio only",
+  "tomographic_label_ranges": {
+    "lens": [
+      1,
+      4
+    ],
+    "source": [
+      1,
+      4
+    ]
+  }
+}
