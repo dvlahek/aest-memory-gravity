@@ -40,8 +40,8 @@ def algebra():
  KQrad=I/(A0**3*t**s.Rational(3,2))
  Sp=KB*(s.diff(xp,t)+C*Qbar*xp/KB)
  Sh=KB*(s.diff(xh,t)+C*Qbar*xh/KB)
- rp=s.factor(-k*k*Sp/(ap**2*Qbar*KQrad))
- rh=s.factor(-k*k*Sh/(ap**2*Qbar*KQrad))
+ rp=s.factor(-k**4*Sp/(ap**2*Qbar*KQrad))
+ rh=s.factor(-k**4*Sh/(ap**2*Qbar*KQrad))
  Z,Z0,Q0,K2=s.symbols('Z Z0 Q0 K2',positive=True)
  Qexp=Q0+Z0*Z
  KQQexp=4*K2*s.exp(Z**2)*(1+2*Z**2)
@@ -57,8 +57,8 @@ def algebra():
   'reference_radiation_Xsqrt_first_subleading_cancels':s.limit(t**s.Rational(3,2)*L(xh),t,0)==0,
   'constant_branch_stress_log_divergence_coefficient':s.simplify(s.limit(Sp*s.sqrt(t)/s.log(t),t,0)-KB*D0)==0,
   'sqrt_branch_stress_inv_sqrt_coefficient':s.simplify(s.limit(Sh*s.sqrt(t),t,0)-KB/2)==0,
-  'sqrt_branch_fractional_gradient_density_finite':s.simplify(s.limit(rh,t,0)+k*k*A0*KB/(2*Qbar*I))==0,
-  'constant_branch_fractional_gradient_density_log':s.simplify(s.limit(rp/s.log(t),t,0).subs(D0,D0true)+k*k/A0**2)==0,
+  'sqrt_branch_fractional_gradient_density_finite':s.simplify(s.limit(rh,t,0)+k**4*A0*KB/(2*Qbar*I))==0,
+  'constant_branch_fractional_gradient_density_log':s.simplify(s.limit(rp/s.log(t),t,0).subs(D0,D0true)+k**4/A0**2)==0,
   'Exp_exact_KQ_over_KQQ':s.simplify(KQexp/KQQexp-Z0*Z/(1+2*Z**2))==0,
   'Exp_exact_Q_dln_a':s.simplify(dz_dln_a*s.diff(Qexp,Z)+3*cexp*Qexp)==0,
   'Exp_KQQ_over_KQ':s.simplify(KQQexp/KQexp-(1+2*Z**2)/(Z0*Z))==0,
