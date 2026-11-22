@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -86,16 +87,67 @@ def check_source(repo: Path, root: Path):
         raise RuntimeError("EXPECTED_AEST_BRANCHES_MISSING")
     staged=raw
     count={}
-    for label,old,new in REPLACEMENTS:
-        n=staged.count(old)
-        if n!=1:
-            raise RuntimeError(f"EXACT_ANCHOR_{label}_COUNT_{n}")
-        staged=staged.replace(old,new,1)
-        count[label]=n
-    # This source still uses ordinary CLASS radiation hierarchy. It does
-    # NOT solve the missing physical k^2 X/E adiabatic eigenvector.
-    assert OLD_FORCE not in staged and NEW_FORCE in staged
-    return raw,staged,head,count
+    status={}
+
+    # The original local checkout may already use the action-correct
+    # quarter coefficient. Only recognize exactly one simple half/quarter
+    # assignment; never guess another algebraic form of the bath source.
+    force_pattern=re.compile(
+        r"(?m)^[ \t]*E_rhs_aest[ \t]*-=[ \t]*(0\.5|0\.25)"
+        r"[ \t]*\*[ \t]*Q_aest[ \t]*\*[ \t]*Bchi_aest"
+        r"[ \t]*;[ \t]*(?://[^\n]*)?$"
+    )
+    force_hits=list(force_pattern.finditer(staged))
+    if len(force_hits)!=1:
+        relevant=[
+            f"{line_no}: {line.strip()[:220]}"
+            for line_no,line in enumerate(staged.splitlines(),1)
+            if ("Bchi_aest" in line or "E_rhs_aest" in line)
+        ][:24]
+        raise RuntimeError(
+            f"EXACT_FORCE_FORM_UNRECOGNIZED_MATCHES_{len(force_hits)}"
+            +f" SOURCE_C_SHA256_{hashlib.sha256(raw.encode()).hexdigest()}"
+            +"\nSOURCE_FORCE_LINES:\n"+"\n".join(relevant)
+            +"\nNO_SOURCE_CHANGED; supply the diagnostic lines."
+        )
+    match=force_hits[0]
+    old_coeff=match.group(1)
+    count["original_action_quarter_force"]=1
+    if old_coeff=="0.5":
+        staged=(staged[:match.start(1)]+"0.25"+staged[match.end(1):])
+        status["original_action_quarter_force"]="changed_half_to_quarter"
+    else:
+        status["original_action_quarter_force"]="already_quarter_no_change"
+
+    # The density and gauge adjustments may likewise already exist.
+    for label,old,new in REPLACEMENTS[1:]:
+        n_old=staged.count(old)
+        n_new=staged.count(new)
+        if n_old==1 and n_new==0:
+            staged=staged.replace(old,new,1)
+            status[label]="changed"
+        elif n_old==0 and n_new==1:
+            status[label]="already_correct_no_change"
+        else:
+            relevant=[
+                f"{line_no}: {line.strip()[:220]}"
+                for line_no,line in enumerate(staged.splitlines(),1)
+                if ("index_pt_delta_cdm" in line and
+                    ("index_pt_delta_g" in line or "a_prime_over_a" in line))
+            ][:20]
+            raise RuntimeError(
+                f"EXACT_ANCHOR_{label}_OLD_{n_old}_NEW_{n_new}"
+                +"\nSOURCE_DENSITY_LINES:\n"+"\n".join(relevant)
+                +"\nNO_SOURCE_CHANGED; supply the diagnostic lines."
+            )
+        count[label]=1
+
+    if len(list(force_pattern.finditer(staged)))!=1 or not (
+            any(force_pattern.finditer(staged))):
+        raise RuntimeError("FORCE_STAGING_UNVERIFIED")
+    if force_pattern.search(staged).group(1)!="0.25":
+        raise RuntimeError("QUARTER_SOURCE_STAGING_FAILED")
+    return raw,staged,head,count,status
 
 def main():
     ap=argparse.ArgumentParser()
@@ -116,7 +168,7 @@ def main():
         raise RuntimeError("CANDIDATE_EXISTS_REFUSE_OVERWRITE "+str(candidate))
     if report.exists():
         raise RuntimeError("REPORT_EXISTS_REFUSE_OVERWRITE "+str(report))
-    original,patched,head,anchors=check_source(repo,root)
+    original,patched,head,anchors,repair_status=check_source(repo,root)
     status={
         "classification":"GE19_ISOLATED_QUARTER_ENTHALPY_CLASS_SOURCE_STAGE_ONLY_NOT_PHYSICS_GO",
         "original_CLASS_git_HEAD":head,
@@ -125,9 +177,11 @@ def main():
         "source_root":str(root),
         "candidate_root":str(candidate),
         "exact_replacement_anchor_counts":anchors,
+        "repair_status":repair_status,
         "original_C_preserved":True,
-        "quarter_normalization_corrected_in_candidate_only":bool(args.apply),
-        "adiabatic_sync_density_and_newtonian_transform_corrected_in_candidate_only":bool(args.apply),
+        "quarter_normalization_corrected_in_candidate_only":bool(args.apply) and repair_status["original_action_quarter_force"]=="changed_half_to_quarter",
+        "quarter_normalization_confirmed_in_candidate":bool(args.apply),
+        "adiabatic_sync_density_and_newtonian_transform_corrected_in_candidate_only":bool(args.apply) and any(v=="changed" for k,v in repair_status.items() if k!="original_action_quarter_force"),
         "full_primordial_k2_X_E_mode_selected":False,
         "retarded_qp_history_transported":False,
         "full_covariant_Ward_boltzmann_verified":False,
@@ -153,9 +207,11 @@ def main():
         if file_sha(target)!=status["candidate_C_sha256"]:
             raise RuntimeError("CANDIDATE_VERIFY_FAILED")
         print("GE19_ISOLATED_CLASS_SOURCE_STAGE_PASS",len(anchors),flush=True)
+        print("GE19_CLASS_FORCE_STATUS",repair_status["original_action_quarter_force"],flush=True)
         print("GE19_CLASS_CANDIDATE "+str(candidate),flush=True)
     else:
         print("GE19_ISOLATED_CLASS_SOURCE_PREFLIGHT_PASS",len(anchors),flush=True)
+        print("GE19_CLASS_FORCE_STATUS",repair_status["original_action_quarter_force"],flush=True)
     report.parent.mkdir(parents=True,exist_ok=True)
     report.write_text(json.dumps(status,indent=2,sort_keys=True)+"\n")
     print("GE19_CLASS_STAGE_REPORT "+str(report),flush=True)
