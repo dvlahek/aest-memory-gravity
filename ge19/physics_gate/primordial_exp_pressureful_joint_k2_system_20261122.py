@@ -204,6 +204,64 @@ def entropy_rate_identities(y:Mapping[str,float],b:Background)->dict[str,float]:
             d["dn2"]-d["dg2"]-4*(y["vg0"]-y["vn0"])/3,
     }
 
+def leading_aest_photon_slip_source(
+        y:Mapping[str,float],b:Background)->dict[str,float]:
+    """Exact leading relative-velocity balance in the combined Exp operator.
+
+    u=V_A0-V_gamma0; S0=d_A0-3*delta_gamma0/4.
+    (aQ*u)'/(aQ)=[3c-1/(1+R_b)]*(Hcal*V_gamma0+delta_gamma0/4)+c*S0.
+    It excludes no physical mode unless a regular primordial boundary is imposed.
+    """
+    d=rhs(y,b)
+    u=y["vA0"]-y["vg0"]
+    s0=y["dA0"]-0.75*y["dg0"]
+    src=(3*b.c_A2-1/(1+b.baryon_loading))*(
+        b.Hcal*y["vg0"]+0.25*y["dg0"])+b.c_A2*s0
+    lhs=d["vA0"]-d["vg0"]+(1-3*b.c_A2)*b.Hcal*u
+    return {"relative_velocity_u":u,"leading_entropy_S0":s0,
+            "integrating_factor_aQ_source":src,
+            "direct_euler_lhs":lhs,"algebraic_residual":lhs-src}
+
+def strict_radiation_pressureful_exp_source(
+        R_nu:float,Psi0:float,tau:float,Q_tau:float,
+        integral_s3Q:float)->dict[str,float]:
+    """Exact leading pressureful Exp source in a pure-radiation metric.
+
+    integral_s3Q is the actual integral int_0^tau s^3*Q(s) ds.
+    This is an asymptotic test-fluid boundary, NOT full Exp metric backreaction.
+    """
+    if not (0<=R_nu<=1 and all(math.isfinite(v) for v in
+            (R_nu,Psi0,tau,Q_tau,integral_s3Q))
+            and tau>0 and Q_tau>0 and integral_s3Q>0):
+        raise ValueError("invalid strict-radiation source inputs")
+    F=-(56*R_nu**2+580*R_nu+525)/(630*(2*R_nu+25))
+    G=(56*R_nu**2+10*R_nu-525)/(630*(2*R_nu+25))
+    D=3*F-0.25
+    factor=4*integral_s3Q/(tau**4*Q_tau)
+    dust=-(15+4*R_nu)*Psi0*tau**2/40
+    return {
+       "Phi2_over_Psi0_tau2":F,"Psi2_over_Psi0_tau2":G,
+       "normalized_dA2":D*Psi0*tau**2,
+       "regular_vA2":Psi0*((G+4*D/3)*integral_s3Q/
+                        (tau*Q_tau)-D*tau**3/3),
+       "Delta_A2":dust*factor,"dust_reference":dust,
+       "running_Q_factor":factor,
+       "full_Einstein_backreaction_included":False}
+
+def frozen_exp_strict_radiation_pressure_bound(
+        p:ExpParameters)->dict[str,float]:
+    """Uniform leading-radiation Q-history factor, NOT a Weyl bound.
+
+    cmax=Z0/(2sqrt(2)Q0), 0<c<cmax and Q'/Q=-3*c/tau.
+    Then 1<=F_Q<=4/(4-3cmax) for 3*cmax<4.
+    """
+    cmax=p.Z0/(2*math.sqrt(2)*p.Q0)
+    if 3*cmax>=4:raise ValueError("radiation bound divergent")
+    return {"c_A2_max":cmax,"Q_history_factor_min":1.,
+            "Q_history_factor_max":4/(4-3*cmax),
+            "relative_correction_max":3*cmax/(4-3*cmax),
+            "bounds_full_gravitational_memory":False}
+
 def specification()->dict:
     return {
       "classification":"GE19_JOINT_EXP_PRESSUREFUL_K0_K2_COEFFICIENT_OPERATOR_ASSEMBLED_NOT_PRIMORDIAL_SELECTED",
@@ -217,6 +275,9 @@ def specification()->dict:
       "assumption":"analytic X,S_A=O(k²), zero direct linear bath stress at relaxed background; unproved full physical primordial branch",
       "constraint_redundancy":"Hamiltonian_kN=(3/2)a^2*comoving_kN, N=0,2, after momentum equation",
       "background_time_equation":"a_prime=a*Hcal, Hcal=a*sqrt(rho_gamma+rho_nu+rho_b+rho_A)",
+      "leading_slip_integrating_factor":"(aQ(V_A0-V_g0))'=aQ*[(3c-1/(1+Rb))*(Hcal V_g0+delta_g0/4)+c S_Ag0]",
+      "strict_radiation_Delta_A2":"-Psi0*(15+4Rnu)*tau²/40 * [4 integral_0^tau s³Q(s)ds/(tau⁴Q(tau))]",
+      "strict_radiation_running_Q_bound":"1<=F_Q<=4/(4-3cmax), cmax=Z0/(2sqrt(2)Q0); no bound on full coupled Weyl",
       "primordial_mode_selected":False,"evolved":False,"class_executed":False,
       "FULL_PHYSICS_GO":False,"DES_detection":False,
     }
