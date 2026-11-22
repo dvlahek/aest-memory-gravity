@@ -1,0 +1,12 @@
+{
+  "DES_detection": false,
+  "classification": "GE19_ASIMOV_ASSET_BLOCKED_REFERENCE_MISSING",
+  "data_used": "GR model reference, full covariance and tomographic metadata ONLY; never observed values or residuals",
+  "fraction_per_eta": -1.712922233834667e-09,
+  "next_required": "Provide exact OBS06 reference NPZ: obs06_fixed_gr_192.npz, SHA256 pinned; do not use observed VALUE as theory.",
+  "observable_template_identifiable": null,
+  "physical_delayed_gamma_t_template_present": false,
+  "physical_forecast_GO": false,
+  "probe": "MagLim lens bin 4 x source bin 4; source bin 3 fixed control",
+  "source_template": "UNPHYSICAL constant-fraction null control, scaled by historical ONE (k,z) Weyl ratio only"
+}
