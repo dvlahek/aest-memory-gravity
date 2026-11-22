@@ -77,6 +77,8 @@ def check_source(repo: Path, root: Path):
     if "index_bg_w_aest" not in background or "aest_enabled" not in background:
         raise RuntimeError("AEST_BACKGROUND_FIELD_NOT_PRESENT")
     cfile=root/"source/perturbations.c"
+    if cfile.is_symlink():
+        raise RuntimeError("REFUSE_SYMLINKED_ORIGINAL_C_SOURCE")
     raw=cfile.read_text()
     if "index_pt_mem_p_aest" not in raw:
         raise RuntimeError("EXPECTED_ORIGINAL_NL0B_BATH_NOT_PRESENT")
@@ -143,6 +145,8 @@ def main():
             "*.o","*.opp","*.a","*.so","*.pyc")
         shutil.copytree(root,candidate,ignore=ignore,symlinks=True)
         target=candidate/"source/perturbations.c"
+        if target.is_symlink():
+            raise RuntimeError("REFUSE_SYMLINKED_CANDIDATE_C_SOURCE")
         if target.read_text()!=original:
             raise RuntimeError("CANDIDATE_COPY_PROVENANCE_MISMATCH")
         target.write_text(patched)
