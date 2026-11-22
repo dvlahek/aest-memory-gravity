@@ -38,9 +38,24 @@ def find_reference(root: Path):
             hits.extend(d.rglob("obs06_fixed_gr_192.npz"))
     return sorted({p.resolve() for p in hits})
 
-def describe(z):
-    # ZIP entry headers and shapes only; no observed array values printed.
-    return {k: {"shape":list(z[k].shape),"dtype":str(z[k].dtype)} for k in z.files}
+def describe(z, file_path):
+    # Parse .npy HEADERS without calling z[k] or reading observed data values.
+    # Manifest must never load the observed VALUE/data/residual arrays.
+    import zipfile
+    from numpy.lib import format as fmt
+    out={}
+    with zipfile.ZipFile(file_path) as archive:
+        for k in z.files:
+            with archive.open(k+".npy") as fd:
+                version=fmt.read_magic(fd)
+                if version==(1,0):
+                    shape,fortran,dtype=fmt.read_array_header_1_0(fd)
+                elif version in ((2,0),(3,0)):
+                    shape,fortran,dtype=fmt.read_array_header_2_0(fd)
+                else:
+                    raise ValueError("unsupported NPY header "+str(version))
+                out[k]={"shape":list(shape),"dtype":str(dtype)}
+    return out
 
 def pick(z,keys,ndim=None,shape=None):
     found=[k for k in keys if k in z.files and
@@ -106,7 +121,7 @@ def run(path):
         r["expected_sha256"]=PINNED_OBS06_SHA256
         return r
     with np.load(path,allow_pickle=False) as z:
-        r["npz_manifest"]=describe(z)
+        r["npz_manifest"]=describe(z,path)
         gkey,gfound=pick(z,GR_KEYS,ndim=1)
         if gkey is None:
             r["classification"]="GE19_ASIMOV_ASSET_BLOCKED_GR_KEY_AMBIGUOUS_OR_ABSENT"
