@@ -1,0 +1,59 @@
+{
+  "DES_detection": false,
+  "GR_candidates": [],
+  "classification": "GE19_ASIMOV_ASSET_BLOCKED_GR_KEY_AMBIGUOUS_OR_ABSENT",
+  "data_used": "GR model reference, full covariance and tomographic metadata ONLY; never observed values or residuals",
+  "fraction_per_eta": -1.712922233834667e-09,
+  "npz_manifest": {
+    "gr_fixed_unfitted_theory": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    },
+    "lens_bin": {
+      "dtype": "int64",
+      "shape": [
+        192
+      ]
+    },
+    "observed_gammat": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    },
+    "published_covariance": {
+      "dtype": "float64",
+      "shape": [
+        192,
+        192
+      ]
+    },
+    "signed_residual_observed_minus_gr": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    },
+    "source_bin": {
+      "dtype": "int64",
+      "shape": [
+        192
+      ]
+    },
+    "theta_arcmin": {
+      "dtype": "float64",
+      "shape": [
+        192
+      ]
+    }
+  },
+  "observable_template_identifiable": null,
+  "physical_delayed_gamma_t_template_present": false,
+  "physical_forecast_GO": false,
+  "probe": "MagLim lens bin 4 x source bin 4; source bin 3 fixed control",
+  "reference_path": "/home/dino/aest-memory-gravity/results/obs06_des_y3_gr/obs06_fixed_des_example_gr_192.npz",
+  "reference_sha256": "564542d47fa95d5b5fb3c5b0c8bb4eae1ecbc93f450bf993ea0bbb98310546e3",
+  "source_template": "UNPHYSICAL constant-fraction null control, scaled by historical ONE (k,z) Weyl ratio only"
+}
