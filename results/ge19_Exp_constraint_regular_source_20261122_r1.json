@@ -1,0 +1,29 @@
+{
+  "DES_detection": false,
+  "Einstein_numerator": "N=-Omega_s+k**2*(K_B E+(2-K_B)QX-2Phi)/(3a**2)=R_A Delta_A+k**2*S_A/(3a**2)",
+  "classification": "GE19_EXP_CONSTRAINT_NORMALIZED_SOURCE_AND_REGULARITY_NECESSARY_CONDITION_PASS_NOT_PHYSICAL_PRIMORDIAL",
+  "exact_identity": "c_a2/R_A=3/(Q**2*K_QQ)",
+  "exact_source": "c_a2*F=[k**2*(K_B E+(2-K_B)QX-2Phi)/a**2-3Omega_s]/(Q**2*K_QQ)",
+  "fixed_Z_limit": "For Z0=epsilon->0 at fixed finite positive Z, c_a2 and R_A vanish, but c_a2/R_A remains finite nonzero; NOT a physical fixed-calibrated-I0 limit.",
+  "frozen_Exp_bound": "0<c_a2/R_A<3/(4*K2*Q0**2)=7894.736842105263 at Q0=1e-4 K2=9500 Z>0",
+  "full_physics_GO": false,
+  "gate_count": 13,
+  "gates": {
+    "Einstein_constraint_gives_N_RA_Delta_plus_gradient_stress": true,
+    "Einstein_constraint_gives_cF_c_Delta_plus_gradient_stress": true,
+    "Exp_KQQ_positive": true,
+    "Exp_RA_exact": true,
+    "Exp_RA_to_zero_at_fixed_Z": true,
+    "Exp_c_exact": true,
+    "Exp_c_to_zero_at_fixed_Z": true,
+    "Exp_ratio_nonzero_fixed_Z_epsilon_to_zero": true,
+    "eta0_stress_null_spatial_current": true,
+    "exact_constrained_cF_source": true,
+    "ratio_c_over_RA_cancels_KQ": true,
+    "stress_null_S_invariant": true,
+    "stress_null_spatial_scalar_current": true
+  },
+  "necessary_regular_condition": "If Delta_A remains bounded as R_A tends to zero, the matter-only term c_a2*Delta_A tends to zero. But N=R_A*Delta_A+k**2*S_A/(3*a**2). The gradient/aether source can remain nonzero unless the physical initial mode also constrains S_A. No bound on the full c_a2*F follows from bounded Delta_A alone.",
+  "scalar_current": "delta J_phi^x/(i k a e)=2K_Q/Q-4(2-K_B)/K_B-eta W_b/2; Ward constrains current divergence, not its spatial component to vanish.",
+  "stress_null_selection": "Einstein stress depends on S=K_B E+(2-K_B)QX; delta chi=e, delta E=-(2-K_B)e/K_B leaves S unchanged. Full scalar/aether propagation and Ward needed to fix the physical amplitude."
+}
