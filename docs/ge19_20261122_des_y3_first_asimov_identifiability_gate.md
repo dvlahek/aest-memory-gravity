@@ -36,6 +36,22 @@ The scientific result is limited but unambiguous: a **shape-independent fraction
 - If a matching physically action-certified \`d gamma_t/d eta\` is absent (current state), **NO** numerical \`sigma_eta\`, \`Delta chi²\` or observed detection can be claimed. Do not replace with the historical single-point W1.
 - At no stage inspect observed \`VALUE\` rows, fit cosmological/nuisance parameters, select the most promising residual, or claim to reproduce the official DES joint likelihood.
 
+
+## WSL researcher execution 2026-11-22 — asset lookup erratum, corrected
+
+The researcher executed the first canonical run and uploaded an original JSON/log which were archived **byte-for-byte** in [r1 JSON](../results/ge19_des_y3_asimov_20261122_r1.json) (Git blob \`9ae1f9a1492f8d451816743eb1acf1621d4a0c5f\`, SHA-256 \`8a2fd8b078622cdd9c76948a3640ee6958ed66ae1e04cdb49f6c4816e29bb52c\`) and [r1 log](../results/ge19_des_y3_asimov_20261122_r1.log) (Git blob \`73d4239a73009b288ee025d0ed59fb10fdd57561\`, SHA-256 \`96f0607c4b86293cb0b08c526a87670e4a83cc5d930f5bd1a95c0d2f64177d54\`).
+
+\`GE19_ASIMOV_PROJECTION_SELFTEST_PASS 3\` passed, followed by \`GE19_ASIMOV_ASSET_BLOCKED_REFERENCE_MISSING\`; therefore **no real DES covariance submatrix, GR rows or survey Fisher information was loaded**. This is **not a null observational result** and no memory \`sigma_eta\` is available.
+
+A pre-existing researcher [OBS06R2 WSL log](https://chatgpt.com) documents the actual original file path and checksum:
+\`\`\`text
+/home/dino/aest-memory-gravity/results/obs06_des_y3_gr/obs06_fixed_des_example_gr_192.npz
+SHA256 564542d47fa95d5b5fb3c5b0c8bb4eae1ecbc93f450bf993ea0bbb98310546e3
+\`\`\`
+The first GE19 Asimov script mistakenly looked only for \`obs06_fixed_gr_192.npz\`, **not the original longer filename**. In commit \`153469fb\`, the unchanged mathematical diagnostic now searches *both* filename aliases within the known project trees and accepts only the exact pinned hash. A direct explicit \`--reference-npz results/obs06_des_y3_gr/obs06_fixed_des_example_gr_192.npz\` argument remains the strongest reproducibility route. If source files have been moved/removed since OBS06R2, existence must be rechecked; original log provenance is not proof the bytes still exist now.
+
+The rerun should use output suffix \`r2\` to avoid overwriting the original r1 asset-blocked evidence. If the original OBS06 NPZ lacks individually certified \`GR\`, \`cov\` or reliable 1-based lens/source mappings, the script will return \`GE19_ASIMOV_ASSET_BLOCKED_...\` with a header-only NPZ manifest rather than manufacture an index. **No manual mapping is authorized based solely on presumed ordering or observed data.**
+
 ## What is required for the next *physical* Asimov go/no-go
 
 Generate **one** original quarter-normalized, finite-k growing-state- and retarded-history-certified delayed *galaxy-Weyl cross-spectrum* across the actual survey \`k,z,ell\` support. Project it through pinned lens/source n(z), calibrated \`gamma_t\` angular windows and scale cuts and verify numerical errors below the resulting template norm. Construct the full nuisance/instantaneous-rival columns \`D_phys\` with physically stated priors; calculate profiled \`F_\perp\). Only then, if sufficiently distinguishable, unblind the existing public \`gamma_t\` data for an actual test. The current strict classification is **PHYSICAL_ASIMOV_BLOCKED_MISSING_DELAYED_GAMMAT_TANGENT; DES_DETECTION=FALSE**.
