@@ -13,7 +13,7 @@ LOCKS={
  'ge19/physics_gate/primordial_k2_XS_retarded_bath_hierarchy_20261122.py': 'a7fa9069fb2670a0231ed8374d09ebd0b684d192',
  'ge19/physics_gate/exact_X_S_stress_lift_scalar_current_bridge_20261122.py': '6eb7e886fb04b8bdfd49295b2a298937c98c8612',
  'v019/patch/source/aest_memory.c': '9a522a653a1855eda3cb67e856f9fc10a1e73d54',
- 'docs/ge19_20261119_primordial_initial_stress_null_direction.md': '33a0e880f24874fbf0e5f80b4c113d1000f14eba',
+ 'docs/ge19_20261119_primordial_initial_stress_null_direction.md': '89f4ca32d2a61361a4987829595987585cb164b7',
 }
 
 def algebra():
