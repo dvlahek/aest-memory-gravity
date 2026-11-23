@@ -75,6 +75,20 @@ There is a stronger warning about attempting to "add one more Ward constraint": 
 
 For the original action `\gamma=1/4`, when density/phase/electric/continuity definitions and their evolution are imposed, *every term vanishes without a further algebraic condition on `X_2(t_i)` or `S_2(t_i)`*. A nonzero instantaneous spatial scalar current is balanced by evolution of its temporal charge; it is **not** required to vanish. Consequently, **within the source-verified reduced model, Ward is a propagation/compatibility condition, not an extra two-amplitude selection rule**. This does **not** extend to yet-unmapped independent multiplier/boundary or full 3+1 covariant action constraints, which might select or exclude branches.
 
+### Concrete aether-field content of the two amplitudes
+
+This is not merely an abstract two-by-two ODE ambiguity. The **original scalar/aether definitions** give at order k², with the same coupled matter velocity coefficient `V_{A2}`:
+
+```math
+\boxed{
+\alpha_{A2}=X_2-aV_{A2},
+\qquad
+E_{A2}=\frac{S_2-(2-K_B)QX_2}{K_B}.
+}
+```
+
+Thus a change `(\delta X_2,\delta S_2)=(\varepsilon,0)` at fixed matter/metric data changes `\alpha_{A2}` by `\varepsilon` and `E_{A2}` by `-(2-K_B)Q\varepsilon/K_B`, despite an unchanged k² Einstein source. This is exactly the old **instantaneous stress-null direction**, now expressed on the proper k² manifold. The gauge-invariant strain `\chi_2=QX_2` changes, so the ambiguity must **not** be declared a pure gauge mode without analyzing the full action constraints. The evolution can lift this stress-null state and create genuine k⁴ metric response.
+
 ## 3. The singular radiation past: bounded X₂ does not mean unique mode
 
 The exact reduced second-order equation for `X_2` was derived in the [indicial parent](../ge19/physics_gate/primordial_X2_second_order_radiation_asymptotic_20261122.py):
