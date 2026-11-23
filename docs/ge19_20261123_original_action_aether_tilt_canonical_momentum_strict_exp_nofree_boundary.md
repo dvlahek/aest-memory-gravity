@@ -181,7 +181,7 @@ c_A²(t)=\frac{1}{3L}[1+o(1)],\quad
 f(t)=\frac{Dt}{3L}[1+o(1)].
 ```
 
-The Volterra map (9) is a contraction sufficiently near \(t=0\) in the weighted space \(|X_2(t)|\le C\,t²/L\), \(|P_2(t)|\le C\,t²/\sqrt L\): the self-coupling kernels have respectively extra factors \(O(\sqrt t\,\sqrt L)\) or \(O(t\sqrt L)\), tending to zero, while the source terms land in these weights. Hence there is a **unique no-free particular solution in this regularity class**, with
+The Volterra system (9) admits a contraction formulation sufficiently near \(t=0\) in the weighted class \(|X_2(t)|\le C_X t²/L\), \(|P_2(t)|\le C_P t²/\sqrt L\), using an equivalent scaled product norm or a two-step Volterra iteration. Explicitly, the self-map \(X\to X\) contributes \(O(t\sqrt L)\), the off-diagonal map \(P\to X\) contributes \(O(\sqrt t\sqrt L)\), and \(P\to P\) contributes \(O(t\sqrt L)\), all small as \(t\to0\); the remaining map \(X\to P\) is bounded but need not itself be small. The off-diagonal loop has norm \(O(\sqrt t\sqrt L)\), allowing contraction after rescaling; the forcing falls in the same weighted class. Hence there is a **unique no-free particular solution in this regularity class**, with
 
 ```math
 \boxed{
