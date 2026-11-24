@@ -171,7 +171,26 @@ These rational coefficients follow by two elementary Volterra integrations after
 
 The strict \(t\to0\) regime is also not a proxy for a survey-scale \(k\), cosmological equality/recombination transitions, or a dark-energy era. Do not extrapolate the \(t^6\) onset to DES redshifts or infer a detectability bound.
 
-## D. Decision: actual next physics task, not another proof-by-assertion
+## D. First direct *Einstein density source* from delayed-only aether momentum — NOT a solved Weyl potential
+
+The delayed `X_{2,1}\sim t⁶` coefficient is **not** the earliest direct Einstein-sector source: the original action density dictionary also contains `-k² S_A/(3a²)`. Equation (7), with `S_{2,1}=P_{2,1}/a`, gives the separately identifiable delayed-only coefficient
+
+```math
+\boxed{
+S_{2,1}^{\rm delayed}(t)=
+\frac{D M_{\omega²}Z_0²}{1232}\,t^5[1+o(1)],
+\qquad
+(D_{A,4}^{S})_{1}^{\rm delayed}
+=-\frac{D M_{\omega²}Z_0²}{3696 A_r²}\,
+t^4[1+o(1)] .
+}\tag{8}
+```
+
+The physical field's one-sided `eta` perturbation of this particular **direct** density term is `\eta k^4 (D_{A,4}^{S})_{1}^{\rm delayed}+O(\eta²)`. This is a strict Exp early **delayed-only direct stress onset at \(k^4 t^4\)**, while the delayed scalar strain tangent starts at \(k² t^6\). The distinction is a consequence of the explicit \(a^{-2}\) factor in the *original action dictionary*; it does not signal a contradiction.
+
+**Never identify the direct term (8) with the full physical \(D_{A,4}\), \(\Phi_4\), \(W_4\), or an observed lensing effect.** The induced phase perturbation \(\delta Q_4\), coupled ordinary-matter backreaction and the complete Einstein k⁴ constraints can cancel or modify it. Indeed the **next actual physics gate** is to solve *that full backreaction*, not to insert (8) alone as a Weyl template.
+
+## E. Decision: actual next physics task, not another proof-by-assertion
 
 **We have an explicit conditional primordial theory prediction** under the well-defined additional state condition \(\Xi/Q\to0\): \(X_2\) early forced amplitude, its physically retarded \(r_j,q_j,p_j\), and separate early \(\eta\)-tangent terms with an exact delayed-only \(t^6\) onset. This is significantly narrower than an arbitrary sheared template and uses no empirical tuning.
 
